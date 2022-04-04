@@ -246,7 +246,19 @@ def simulate(neuronModel,threshold, axons, connections, inputs, outputs):
     firedNeurons = [] #np.array([])
 
 def read_config(config_path):
+  """reads in the network configuaration file
 
+  Parameters
+  ----------
+  config_path : str
+      The path to the yaml file specifying the network parameters
+
+  Returns
+  -------
+  config : dict
+      A dicitonary containing the configuration parameters from the yaml file. Key: parameter name Value: parameter value
+
+  """
   with open(config_path) as f:
       config = yaml.load(f)
 
@@ -279,6 +291,10 @@ def map_neuron_type_to_int(neuron_type):
     raise Exception("Invalid neuron type")
 
 def run_sim():
+  """Reads in netwokr parameters from config file and runs network simulation
+  Reads in network parameters from config.yaml and simulates the network. At each timestep fired neurons and post firing membrane potentials are printed to the terminal.
+
+  """
   config_path = r'./config.yaml'
   config = read_config(config_path)
 
