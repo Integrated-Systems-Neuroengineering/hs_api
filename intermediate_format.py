@@ -1,3 +1,4 @@
+import numpy as np
 def read_conn_file(conn_file_path, print_to_screen = False):
   '''
   Parse out axon and neuron addresses and synaptic weights from a given connectivity text file
