@@ -14,16 +14,15 @@
       devShell = channels.nixpkgs.mkShell {
         name = "poetry-flake";
         buildInputs = with channels.nixpkgs; [
-          stdenv.cc.cc.lib
-          #libz
-          zlib
-          zstd
           # Change your python version here
           (python39.withPackages (pp: with pp; [
             poetry
           ]))
           #LD_LIBRARY_PATH = "${stdenv.cc.cc.lib}/lib";
           # Add non-python packages here
+          stdenv.cc.cc.lib
+          zlib
+          zstd
 
         ];
         LD_LIBRARY_PATH = "${channels.nixpkgs.stdenv.cc.cc.lib}/lib:${channels.nixpkgs.zlib}/lib";#specify the location of all the .so files the python packages will need to find.
