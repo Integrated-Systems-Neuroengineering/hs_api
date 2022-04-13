@@ -10,6 +10,7 @@ numba = "^0.55.1"
 numpy = ">=1.18,<1.22"
 PyYAML = "^6.0"
 jupyterlab = "^3.3.3"
+matplotlib = "^3.5.1"
 
 [tool.poetry.dev-dependencies]
 
