@@ -22,7 +22,7 @@ class CRI_network:
         """
         if (self.target == "simpleSim"):
             if(not self.simpleSim):
-                _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuronModel']), self.config['threshold'], self.axons, self.connections, self.inputs)
+                _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuron_type']), self.config['threshold'], self.axons, self.connections, self.inputs)
 
             self.simpleSim.free_run()
         else:
@@ -31,7 +31,7 @@ class CRI_network:
     def step(self,target="simpleSim"):
         if (self.target == "simpleSim"):
             if(not self.simpleSim):
-                _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuronModel']), self.config['threshold'], self.axons, self.connections, self.inputs)
+                _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuron_type']), self.config['threshold'], self.axons, self.connections, self.inputs)
 
             _simple_sim.step_run()
         else:
