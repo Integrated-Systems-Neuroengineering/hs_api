@@ -319,8 +319,8 @@ class simple_sim:
           self.inputs = inputs
           self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
-          self.initialize_sim_vars()
-    def initialize_sim_vars(self):
+          self.initialize_sim_vars(numNeurons)
+    def initialize_sim_vars(self, numNeurons):
           self.membranePotentials = np.zeros(numNeurons)
           self.firedNeurons = [] #np.array([], dtype=np.single)
 
