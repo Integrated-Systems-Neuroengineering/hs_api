@@ -309,53 +309,53 @@ def run_sim():
 
   simulate(neuron_model, threshold, axons, connections, inputs)
 
-  class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections, inputs):
-          self.stepNum = 0
-          self.neuronModel = neuronModel
-          self.threshold = threshold
-          self.axons = axons
-          self.connections = connections
-          self.inputs = inputs
-          self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
-          self.numNeurons = len(connections)
-          initialize_sim_vars()
-    def initialize_sim_vars(self):
-          self.membranePotentials = np.zeros(numNeurons)
-          self.firedNeurons = [] #np.array([], dtype=np.single)
+class simple_sim:
+def __init__(self, neuronModel, threshold, axons, connections, inputs):
+      self.stepNum = 0
+      self.neuronModel = neuronModel
+      self.threshold = threshold
+      self.axons = axons
+      self.connections = connections
+      self.inputs = inputs
+      self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
+      self.numNeurons = len(connections)
+      initialize_sim_vars()
+def initialize_sim_vars(self):
+      self.membranePotentials = np.zeros(numNeurons)
+      self.firedNeurons = [] #np.array([], dtype=np.single)
 
-    def free_run(self):
-        for time in self.timesteps:
-            currentInputs = np.array(self.inputs[time])
-            #do phase one
-            self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
-            # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
+def free_run(self):
+    for time in self.timesteps:
+        currentInputs = np.array(self.inputs[time])
+        #do phase one
+        self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
+        # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
-            #do phase two
-            print(time, self.firedNeurons)
-            self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
+        #do phase two
+        print(time, self.firedNeurons)
+        self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
 
-            print(time, 'Vmem', self.membranePotentials)
+        print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
-            #
-    def step_run(self):
-        if (self.stepNum == self.timesteps):
-            print("Reinitializing simulation to timestep zero")
-            initialize_sim_vars()
-            self.stepNum == 0
-        else:
-            time = self.stepNum
-            currentInputs = np.array(self.inputs[time])
-            #do phase one
-            self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
-            # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
+        self.firedNeurons = [] #np.array([])
+        #
+def step_run(self):
+    if (self.stepNum == self.timesteps):
+        print("Reinitializing simulation to timestep zero")
+        initialize_sim_vars()
+        self.stepNum == 0
+    else:
+        time = self.stepNum
+        currentInputs = np.array(self.inputs[time])
+        #do phase one
+        self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
+        # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
-            #do phase two
-            print(time, self.firedNeurons)
-            self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
+        #do phase two
+        print(time, self.firedNeurons)
+        self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
 
-            print(time, 'Vmem', self.membranePotentials)
+        print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
-            self.stepNum = self.stepNum+1
+        self.firedNeurons = [] #np.array([])
+        self.stepNum = self.stepNum+1
