@@ -22,7 +22,7 @@ class CRI_network:
         """
         if (self.target == "simpleSim"):
             if(not self.simpleSim):
-                _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
+                self.simpleSim = _simple_sim.simple_sim(_simple_sim.map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
 
             self.simpleSim.free_run()
         else:
