@@ -1,0 +1,6 @@
+connectivity_file: ./test_connectivity_2.txt
+global_neuron_params:
+  v_thr: 1
+inputs_file: ./test_inputs_2.txt
+neuron_type: I&F
+outputs_file: ./out.txt
