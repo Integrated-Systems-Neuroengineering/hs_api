@@ -339,6 +339,23 @@ class simple_sim:
 
             self.firedNeurons = [] #np.array([])
             #
+
+    def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
+        breakpoint()
+        if axonFlag:
+            synapses = self.axons[preIndex]
+        else:
+            synapses = self.connections[preIndex]
+        search_synapses = [idx for idx,i in enumerate(synapses) if i[0] == postIndex ]
+        if (len(search_synapses) != 1):
+            raise ValueError('0 or multiple valid synapses found')
+        synapseIdx = (search_synapses[0])
+        if axonFlag:
+            self.axons[preIndex][synapseIdx] = (self.axons[preIndex][synapseIdx][0],weight)
+        else:
+            self.connections[preIndex][synapseIdx] = (self.connections[preIndex][synapseIdx][0],weight)
+
+
     def step_run(self):
         if (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -355,7 +372,8 @@ class simple_sim:
             print(time, self.firedNeurons)
             self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
 
-            print(time, 'Vmem', self.membranePotentials)
+            #print(time, 'Vmem', self.membranePotentials)
 
             self.firedNeurons = [] #np.array([])
             self.stepNum = self.stepNum+1
+            return self.membranePotentials

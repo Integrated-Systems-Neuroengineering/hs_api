@@ -17,28 +17,28 @@ class CRI_network:
             print('Initilizing to run on hardware')
             self.CRI = network(self.axons, self.connections, self.inputs, {}, self.config)
             self.CRI.initalize_network()
+        elif(self.target == "simpleSim"):
+            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
 
-    def update_synapse(self):
-        pass
-
-    def freeRun(self):
-        """Run Network countinuously
-
-        """
+    def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
         if (self.target == "simpleSim"):
-            if(not self.simpleSim):
-                self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
+            self.simpleSim.write_synapse(preIndex, postIndex, weight, axonFlag)
+        elif (self.target == "CRI"):
+            self.CRI.write_synapse(preIndex, postIndex, weight, axonFlag)
+        else:
+            raise Exception("Invalid Target")
 
-            self.simpleSim.free_run()
+    def read_synapse(self,preIndex, postIndex, axonFlag = False):
+        if (self.target == "simpleSim"):
+            print("moo")
+        elif (self.target == "CRI"):
+            return self.CRI.read_synapse(preIndex, postIndex, axonFlag)
         else:
             raise Exception("Invalid Target")
 
     def step(self,target="simpleSim"):
         if (self.target == "simpleSim"):
-            if(not self.simpleSim):
-                self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
-
-            self.simpleSim.step_run()
+            return self.simpleSim.step_run()
         elif (self.target == "CRI"):
             return self.CRI.run_step()
         else:
