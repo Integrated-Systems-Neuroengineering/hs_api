@@ -355,15 +355,31 @@ class simple_sim:
         else:
             self.connections[preIndex][synapseIdx] = (self.connections[preIndex][synapseIdx][0],weight)
 
+    def read_synapse(self,preIndex, postIndex, axonFlag = False):
+        breakpoint()
+        if axonFlag:
+            synapses = self.axons[preIndex]
+        else:
+            synapses = self.connections[preIndex]
+        search_synapses = [idx for idx,i in enumerate(synapses) if i[0] == postIndex ]
+        if (len(search_synapses) != 1):
+            raise ValueError('0 or multiple valid synapses found')
+        synapseIdx = (search_synapses[0])
+        if axonFlag:
+            return self.axons[preIndex][synapseIdx]
+        else:
+            return self.connections[preIndex][synapseIdx]
 
-    def step_run(self):
+
+    def step_run(self,inputs):
         if (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
             self.stepNum == 0
         else:
             time = self.stepNum
-            currentInputs = np.array(self.inputs[time])
+            #currentInputs = np.array(self.inputs[time])
+            currentInputs = inputs
             #do phase one
             self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
