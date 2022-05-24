@@ -30,17 +30,17 @@ class CRI_network:
 
     def read_synapse(self,preIndex, postIndex, axonFlag = False):
         if (self.target == "simpleSim"):
-            print("moo")
+            return self.simpleSim.read_synapse(preIndex, postIndex, axonFlag)
         elif (self.target == "CRI"):
             return self.CRI.read_synapse(preIndex, postIndex, axonFlag)
         else:
             raise Exception("Invalid Target")
 
-    def step(self,target="simpleSim"):
+    def step(self,inputs,target="simpleSim"):
         if (self.target == "simpleSim"):
-            return self.simpleSim.step_run()
+            return self.simpleSim.step_run(inputs)
         elif (self.target == "CRI"):
-            return self.CRI.run_step()
+            return self.CRI.run_step(inputs)
         else:
             raise Exception("Invalid Target")
 
