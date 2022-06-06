@@ -341,7 +341,7 @@ class simple_sim:
             #
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
-        breakpoint()
+        #breakpoint()
         if axonFlag:
             synapses = self.axons[preIndex]
         else:

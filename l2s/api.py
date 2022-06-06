@@ -7,7 +7,7 @@ class CRI_network:
 
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, inputs, target = 'simpleSim'):
+    def __init__(self,axons,connections,config, inputs, target = 'simpleSim', simDump = False):
         self.userAxons = copy.deepcopy(axons)
         self.userConnections = copy.deepcopy(connections)
         self.axons, self.connections, self.symbol2index = self.__format_input(self.userAxons,self.userConnections)
@@ -16,9 +16,10 @@ class CRI_network:
         self.simpleSim = None
         self.target = target
         self.key2index = {}
+        self.simDump = simDump
         if(self.target == 'CRI'):
             print('Initilizing to run on hardware')
-            self.CRI = network(self.axons, self.connections, self.inputs, {}, self.config)
+            self.CRI = network(self.axons, self.connections, self.inputs, {}, self.config, simDump = simDump)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
@@ -96,6 +97,15 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
 
+    def sim_flush(self,file):
+        if (self.target == "simpleSim"):
+            raise Exception("sim_flush not available for simpleSim")
+        elif (self.target == "CRI"):
+            self.CRI.sim_flush(file)
+        else:
+            raise Exception("Invalid Target")
+    
+
 
 
     def step(self,inputs,target="simpleSim"):
@@ -105,8 +115,9 @@ class CRI_network:
             output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
         elif (self.target == "CRI"):
             output = self.CRI.run_step(inputs)
-            numNeurons = len(self.connections)
-            output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+            if(not self.simDump):
+                numNeurons = len(self.connections)
+                output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
         else:
             raise Exception("Invalid Target")
         return output
