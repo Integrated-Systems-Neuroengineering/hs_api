@@ -236,10 +236,10 @@ def simulate(neuronModel,threshold, axons, connections, inputs):
     # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
     #do phase two
-    print(time, firedNeurons)
+    #print(time, firedNeurons)
     membranePotentials = phase_two(firedNeurons, currentInputs, membranePotentials, axons, connections)#update the membrane potentials
     
-    print(time, 'Vmem', membranePotentials)
+    #print(time, 'Vmem', membranePotentials)
     
     firedNeurons = [] #np.array([])
 
@@ -332,10 +332,10 @@ class simple_sim:
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
             #do phase two
-            print(time, self.firedNeurons)
+            #print(time, self.firedNeurons)
             self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
 
-            print(time, 'Vmem', self.membranePotentials)
+            #print(time, 'Vmem', self.membranePotentials)
 
             self.firedNeurons = [] #np.array([])
             #
@@ -385,7 +385,7 @@ class simple_sim:
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
             #do phase two
-            print(time, self.firedNeurons)
+            #print(time, self.firedNeurons)
             self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
 
             #print(time, 'Vmem', self.membranePotentials)
