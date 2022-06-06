@@ -11,6 +11,7 @@ numpy = ">=1.18,<1.22"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
 cri-simulations = {path = "../CRI_Simulations"}
+bidict = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
