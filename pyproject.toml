@@ -7,7 +7,7 @@ authors = ["Justin Frank & Abhinav Uppal"]
 [tool.poetry.dependencies]
 python = ">=3.9,<3.11"
 numba = "^0.55.1"
-numpy = ">=1.18,<1.22"
+numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
 cri-simulations = {path = "../CRI_Simulations"}
