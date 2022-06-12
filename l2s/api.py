@@ -109,12 +109,13 @@ class CRI_network:
 
 
     def step(self,inputs,target="simpleSim"):
+        formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
-            output = self.simpleSim.step_run(inputs)
+            output = self.simpleSim.step_run(formated_inputs)
             #breakpoint()
             output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
         elif (self.target == "CRI"):
-            output = self.CRI.run_step(inputs)
+            output = self.CRI.run_step(formated_inputs)
             if(not self.simDump):
                 numNeurons = len(self.connections)
                 output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
