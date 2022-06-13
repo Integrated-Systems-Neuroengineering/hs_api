@@ -44,14 +44,14 @@ class CRI_network:
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
-                self.connectome.connectomeDict[axonKey].addSynapse(synapse(postsynapticNeuron,weight))
+                self.connectome.connectomeDict[axonKey].addSynapse(postsynapticNeuron,weight)
 
         for neuronKey in self.userConnections:
             synapses = self.userConnections[neuronKey]
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
-                self.connectome.connectomeDict[neuronKey].addSynapse(synapse(postsynapticNeuron,weight))
+                self.connectome.connectomeDict[neuronKey].addSynapse(postsynapticNeuron,weight)
         print("moo")
         
 
@@ -97,6 +97,7 @@ class CRI_network:
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preIndex, postIndex, weight):
+        #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
         preIndex, synapseType = self.symbol2index[preIndex]
         if (synapseType == 'axons'):
