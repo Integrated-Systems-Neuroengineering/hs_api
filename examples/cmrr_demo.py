@@ -1,63 +1,99 @@
 from l2s.api import CRI_network
 import sys
+import subprocess
 
 #Define a configuration dictionary
 config = {}
 config['neuron_type'] = "I&F"
 config['global_neuron_params'] = {}
-config['global_neuron_params']['v_thr'] = 2
+config['global_neuron_params']['v_thr'] = 10
 
 ############################
 # Let's try a simple network
 ############################
 
 #Define an inputs dictionary
-inputs = {0: [0],
-          1: [0],
-          2: [0],
-          3: [0]}
+inputs = {0: ['alpha','beta'],
+          1: ['alpha','beta'],
+          2: ['alpha','beta'],
+          3: ['alpha','beta'],
+          4: ['alpha','beta'],
+          5: ['alpha','beta'],
+          6: ['alpha','beta'],
+          7: ['alpha','beta']}
+for i in range(100):
+  inputs[i+7] = ['alpha','beta']
+
 
 #Define an axons dictionary
-axons = {'a': [('b', 1.0)]}
+axons = {'alpha': [('a', 3.0)],
+         'beta': [('t', 3.0)]}
 
 #Define a connections dictionary
-connections = {'b': []}
+connections = {'a': [('b', 1.0)],
+               'b': [],
+               'c': [],
+               'd': [],
+               'e': [],
+               'f': [],
+               'g': [],
+               'h': [],
+               'i': [],
+               'j': [],
+               'k': [],
+               'l': [],
+               'm': [],
+               'n': [],
+               'o': [],
+               'p': [],
+               'q': [],
+               'r': [],
+               's': [],
+               't': [('d', 1.0)],
+               'u': []}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,inputs = inputs,target='CRI',simDump = True)
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,inputs = inputs,target='CRI')
 softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,inputs = inputs)
 
-hardwareNetwork.write_synapse('a', 'b', 2)
-softwareNetwork.write_synapse('a', 'b', 2)
+#hardwareNetwork.write_synapse('a', 'b', 2)
+#softwareNetwork.write_synapse('a', 'b', 2)
 
 #Execute the network stepwise in the hardware and the simulator
-for i in range(len(inputs)):
-    hwResult = hardwareNetwork.step(inputs[i])
-    swResult = softwareNetwork.step(inputs[i])
+for i in range(100):
+    hwResult = hardwareNetwork.step(inputs[0])
+    swResult = softwareNetwork.step(inputs[0])
     print("timestep: "+str(i)+":")
     print("hardware result: ")
     print(hwResult)
     print("software result: ")
     print(swResult)
     #Verify that the outputs match
-    #for idx in range(len(swResult)):
-     #   if(swResult[idx][1] != hwResult[idx][1][3]):
-      #      print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
+    for idx in range(len(swResult)):
+        if(swResult[idx][1] != hwResult[idx][1][3]):
+            print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
+#print("last flush")
+#print(subprocess.run(['sudo', 'adxdma_dmadump', 'rb', '0', '0' ,'0x40'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))
 
-#hardwareNetwork.sim_flush('simDump.txt')
+#hardwareNetwork.sim_flush('Jun11simDump.txt')
 
 #sys.exit()
 
 ############################
 # Let's try a complex network
 ############################
-
+"""
 #Define an inputs dictionary
 inputs = {0: [1, 3, 4],
           1: [4],
           2: [0, 3, 4],
           3: [4],
-          4: [0, 2, 3, 4]}
+          4: [0, 2, 3, 4],
+          5: [1, 3, 4],
+          6: [4],
+          7: [0, 3, 4],
+          8: [4],
+          9: [0, 2, 3, 4]}
 
 #Define an axons dictionary
 axons = {'a': [(1, 1.0), (2, 1.0)],
@@ -103,7 +139,7 @@ connections = {0: [(4, 8.0), (6, 8.0)],
                38: [(26, 1.0)], 39: [(27, 1.0)]}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-hardwareNetwork = CRI_network(axons=axons,connections=connections, config=config, inputs = inputs, target='CRI', simDump = True)
+hardwareNetwork = CRI_network(axons=axons,connections=connections, config=config, inputs = inputs, target='CRI')
 softwareNetwork = CRI_network(axons=axons,connections=connections, config=config,inputs = inputs)
 
 #Execute the network stepwise in the hardware and the simulator
@@ -116,10 +152,10 @@ for i in range(len(inputs)):
     print("software result: ")
     print(swResult)
     
-hardwareNetwork.sim_flush('simDumpFull.txt')
-print('dumped')
+#hardwareNetwork.sim_flush('simDumpFull.txt')
+    #print('dumped')
     #Verify that the outputs match
-    #for idx in range(len(swResult)):
-    #    if(swResult[idx][1] != hwResult[idx][1][3]):
-    #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
-
+    for idx in range(len(swResult)):
+        if(swResult[idx][1] != hwResult[idx][1][3]):
+            print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
+"""
