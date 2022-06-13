@@ -1,5 +1,6 @@
 from l2s._simple_sim import simple_sim, map_neuron_type_to_int
 from cri_simulations import network
+from cri_simulations.utils import *
 from bidict import bidict
 import copy
 
@@ -10,19 +11,49 @@ class CRI_network:
     def __init__(self,axons,connections,config, inputs, target = 'simpleSim', simDump = False):
         self.userAxons = copy.deepcopy(axons)
         self.userConnections = copy.deepcopy(connections)
-        self.axons, self.connections, self.symbol2index = self.__format_input(self.userAxons,self.userConnections)
+        self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
         self.inputs = inputs #This may later be settable via a function for continuous running networks
         self.config = config
         self.simpleSim = None
         self.target = target
         self.key2index = {}
         self.simDump = simDump
+        self.connectome = None
+        self.gen_connectome()
         if(self.target == 'CRI'):
             print('Initilizing to run on hardware')
-            self.CRI = network(self.axons, self.connections, self.inputs, {}, self.config, simDump = simDump)
+            self.CRI = network(self.connectome, self.inputs, {}, self.config, simDump = simDump)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
+
+
+    def gen_connectome(self):
+        self.connectome = connectome()
+        
+        #add neurons/axons to connectome
+        for axonKey in self.userAxons:
+            self.connectome.addNeuron(neuron(axonKey,"axon"))
+        for neuronKey in self.userConnections:
+            self.connectome.addNeuron(neuron(neuronKey,"neuron"))
+
+
+        #assign synapses to neurons in connectome
+        for axonKey in self.userAxons:
+            synapses = self.userAxons[axonKey]
+            for axonSynapse in synapses:
+                weight = axonSynapse[1]
+                postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
+                self.connectome.connectomeDict[axonKey].addSynapse(synapse(postsynapticNeuron,weight))
+
+        for neuronKey in self.userConnections:
+            synapses = self.userConnections[neuronKey]
+            for neuronSynapse in synapses:
+                weight = neuronSynapse[1]
+                postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
+                self.connectome.connectomeDict[neuronKey].addSynapse(synapse(postsynapticNeuron,weight))
+        print("moo")
+        
 
     def __format_input(self,axons,connections):
         #breakpoint()
