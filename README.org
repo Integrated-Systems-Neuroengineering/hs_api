@@ -1,0 +1,33 @@
+#+title: L2s Readme
+
+* Introduction
+This repository contains a Python library for interacting with the ISN CRI project hosted at SDSC. More about this project can be found here [[a super cool link]] . This library allows a user to define a spiking neural network and execute it on one of two backends: the CRI neuromorphic hardware or if the hardware is not available a python simulation of the hardware.
+
+* Installation
+** Simple Installation
+** Development Installation
+- First install [[https://python-poetry.org/][Poetry]]
+- Then clone this repository
+#+BEGIN_SRC bash
+git clone git@github.com:3x10e8/L2S.git
+#+END_SRC
+- Next you will need to clone the cri-simulations repository into the same directory you just cloned this repository into
+#+BEGIN_SRC bash
+git clone git@github.com:nishraptor/CRI_Simulations.git
+#+END_SRC
+- cd into the L2S repo you cloned and install the needed dependencies
+#+BEGIN_SRC bash
+cd L2S
+poetry install
+#+END_SRC
+- finally activate the development environment
+#+BEGIN_SRC bash
+poetry shell
+#+END_SRC
+* Usage
+** Running on the Simulator
+*** Defining Network
+*** Updating Synapse weight
+*** Running a timestep
+** Submitting Jobs to Run on the Hardware
+The CRI hardware is hosted in the San Diego Supercomputting Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]]
