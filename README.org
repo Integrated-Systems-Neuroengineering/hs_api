@@ -30,4 +30,4 @@ poetry shell
 *** Updating Synapse weight
 *** Running a timestep
 ** Submitting Jobs to Run on the Hardware
-The CRI hardware is hosted in the San Diego Supercomputting Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]
+The CRI hardware is hosted in the San Diego Supercomputting Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]]
