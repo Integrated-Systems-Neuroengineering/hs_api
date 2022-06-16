@@ -26,8 +26,49 @@ poetry shell
 #+END_SRC
 * Usage
 ** Running on the Simulator
-*** Defining Network
-*** Updating Synapse weight
-*** Running a timestep
+*** Defining a Network
+Users are expected to provide three data structures in order to define a network
+**** Defining the Configuration Dictionary
+The configuration dictionary specifies a few properties that are shared by every neuron in the network
+- neuron_type specifies the type of neuron model used to calculate membrane potentials
+- global_neuron_params is a sub-dictionary of the configuration dictionary
+  - v_thr is an entry in the global_neuron_params dictionary, it sets the membrane potential threshold for all neurons in the network
+#+BEGIN_SRC python
+configuration = {}
+    configuration['neuron_type'] = "I&F"
+    configuration['global_neuron_params'] = {}
+    configuration['global_neuron_params']['v_thr'] = 4
+#+END_SRC
+**** Defining the Axons Dictionary
+The axons dictionary configures inputs to the network. Axons are synapses connected to neurons in the network that the user can manually send spikes over at a given timestep. Each key in the dictionary is the name of an axon. Each value is a list of two element tuples. Each tuple defines an in-going synapse to a neuron. The first element is the name of a neuron in the network and the second element is the weight of the synaptic connection. Synapse weights must be integers, but they may be positive or negative.
+#+BEGIN_SRC python
+axons = {'alpha': [('a', 3)],
+             'beta': [('t', 3)]}
+#+END_SRC python
+**** Defining the Connections Dictionary
+The connections dictionary defines the neurons in the network and the connections between them. Each key in the dictionary is the name of a neuron. Of note the names of neurons in the connections dictionary and the names of axons in the axons dictionary must be mutually exclusive. Each value is a list of two element tuples. Each tuple defines a synapse between neurons in the network. The first element is the name of the postsynaptic neuron and the the second element is the weight of the synapse. Synapse weights must be integers but they may be positive or negative. If a neuron has no outgoing synapses it's synapse list may be left empty.
+#+BEGIN_SRC python
+connections = {'a': [('b', 1)],
+                   'b': [],
+                   'c': [],
+                   'd': [('c', 1)]}
+#+END_SRC
+*** Initializing a network
+Once we've defined the above dictionaries we must pass them to the CRI_network constructor to create a CRI_network object.
+#+BEGIN_SRC python
+network = CRI_network(axons=axons,connections=connections,config=config)
+#+END_SRC
+*** Running a Timestep
+Once we've constructed an CRI_network object we can run a timestep. We do so by calling the step() method of CRI_network. This method expects a single input called inputs. Inputs defines the inputs to the network at the current timestep, in particular it is a list of names of axons that you wish to carry spikes into the network at the current timestep.
+#+BEGIN_SRC python
+inputs = ['alpha','beta']
+network.step(inputs)
+#+END_SRC
+This method will return a list of membrane potentials for all neurons in the network after the current timestep has elapsed.
+*** Updating Synapse Weights
+Once the CRI_network class the topology of the network is fixed, that is what axon and neurons are in the network and how they are connected via synapses may not be changed. However it is possible to update the weight of preexisting synapses in the network. This can be done by calling the write_synapse() method of CRI_network. write_synapse() takes three arguments, the presynaptic neuron name, the postsynaptic neuron name, and the new synapse weight.
+#+BEGIN_SRC python
+hardwareNetwork.write_synapse('a', 'b', 2)
+#+END_SRC
 ** Submitting Jobs to Run on the Hardware
-The CRI hardware is hosted in the San Diego Supercomputting Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]]
+The CRI hardware is hosted in the San Diego Supercomputing Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]]. First you must register an account with Neuroscience Gateway inorder to submit jobs.
