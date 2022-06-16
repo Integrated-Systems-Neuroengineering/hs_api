@@ -3,7 +3,7 @@ from cri_simulations import network
 from cri_simulations.utils import *
 from bidict import bidict
 import copy
-
+import logging
 class CRI_network:
 
     # TODO: remove inputs
@@ -21,7 +21,7 @@ class CRI_network:
         self.connectome = None
         self.gen_connectome()
         if(self.target == 'CRI'):
-            print('Initilizing to run on hardware')
+            logging.info('Initilizing to run on hardware')
             self.CRI = network(self.connectome, self.inputs, {}, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
@@ -53,7 +53,7 @@ class CRI_network:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
                 self.connectome.connectomeDict[neuronKey].addSynapse(postsynapticNeuron,weight)
-        print("moo")
+        #print("moo")
         
 
     def __format_input(self,axons,connections):
