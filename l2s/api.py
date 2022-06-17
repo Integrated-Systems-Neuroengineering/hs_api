@@ -2,20 +2,27 @@ from l2s._simple_sim import simple_sim, map_neuron_type_to_int
 from cri_simulations import network
 from cri_simulations.utils import *
 from bidict import bidict
+import os
 import copy
 import logging
 class CRI_network:
 
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, target = 'simpleSim', simDump = False, coreID=0):
+    def __init__(self,axons,connections,config, target = None, simDump = False, coreID=0):
+        if (target): #check if user provides an override for target
+            self.target = target
+        else:
+            if (self.checkHw()): #if not check for the magic file and set to run on hardware if the magic file exists
+                self.target = 'CRI'
+            else:
+                self.target = 'simpleSim'
         self.userAxons = copy.deepcopy(axons)
         self.userConnections = copy.deepcopy(connections)
         self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
         #self.inputs = inputs #This may later be settable via a function for continuous running networks
         self.config = config
         self.simpleSim = None
-        self.target = target
         self.key2index = {}
         self.simDump = simDump
         self.connectome = None
@@ -26,7 +33,13 @@ class CRI_network:
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections)
+        #breakpoint()
 
+    def checkHw(self):
+        """check if the magic file exists to demark that were running on a system with CRI hardware accessible
+        """
+        pathToFile = os.path.join(os.path.dirname(__file__), "magic.txt")
+        return os.path.exists(pathToFile)
 
     def gen_connectome(self):
         neuron.reset_count() #reset static variables for neuron class
