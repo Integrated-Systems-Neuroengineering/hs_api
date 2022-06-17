@@ -8,11 +8,11 @@ class CRI_network:
 
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, inputs, target = 'simpleSim', simDump = False, coreID=0):
+    def __init__(self,axons,connections,config, target = 'simpleSim', simDump = False, coreID=0):
         self.userAxons = copy.deepcopy(axons)
         self.userConnections = copy.deepcopy(connections)
         self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
-        self.inputs = inputs #This may later be settable via a function for continuous running networks
+        #self.inputs = inputs #This may later be settable via a function for continuous running networks
         self.config = config
         self.simpleSim = None
         self.target = target
@@ -22,10 +22,10 @@ class CRI_network:
         self.gen_connectome()
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
-            self.CRI = network(self.connectome, self.inputs, {}, self.config, simDump = simDump, coreOveride = coreID)
+            self.CRI = network(self.connectome, {}, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
-            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
+            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections)
 
 
     def gen_connectome(self):
