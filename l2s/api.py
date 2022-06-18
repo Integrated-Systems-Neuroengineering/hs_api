@@ -110,15 +110,18 @@ class CRI_network:
                     
 
     #wrap with a function to accept list input/output
-    def write_synapse(self,preIndex, postIndex, weight):
+    def write_synapse(self,preKey, postKey, weight):
+        #breakpoint()
+        self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).set_weight(weight) #update synapse weight in the connectome
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
-        preIndex, synapseType = self.symbol2index[preIndex]
+        preIndex, synapseType = self.symbol2index[preKey]
+        
         if (synapseType == 'axons'):
             axonFlag = True
         else:
             axonFlag = False
-        postIndex = self.symbol2index[postIndex][0]
+        postIndex = self.symbol2index[postKey][0]
 
         if (self.target == "simpleSim"):
             self.simpleSim.write_synapse(preIndex, postIndex, weight, axonFlag)
