@@ -12,6 +12,7 @@ PyYAML = "^6.0"
 matplotlib = "^3.5.1"
 cri-simulations = {path = "../CRI_Simulations", develop = true}
 bidict = "^0.22.0"
+ortools = "9.0.9048"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
