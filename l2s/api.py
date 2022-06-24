@@ -6,9 +6,9 @@ import copy
 
 class CRI_network:
 
-    # TODO: remove inputs
+    # TODO: remove inputs (6/23/22: defaulted to take an empty list representing no spiking axons)
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, inputs, target = 'simpleSim', simDump = False):
+    def __init__(self, axons, connections, config, inputs = [], target = 'simpleSim', simDump = False):
         self.userAxons = copy.deepcopy(axons)
         self.userConnections = copy.deepcopy(connections)
         self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
@@ -27,7 +27,6 @@ class CRI_network:
         elif(self.target == "simpleSim"):
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, self.inputs)
 
-
     def gen_connectome(self):
         self.connectome = connectome()
         
@@ -36,7 +35,6 @@ class CRI_network:
             self.connectome.addNeuron(neuron(axonKey,"axon"))
         for neuronKey in self.userConnections:
             self.connectome.addNeuron(neuron(neuronKey,"neuron"))
-
 
         #assign synapses to neurons in connectome
         for axonKey in self.userAxons:
@@ -54,8 +52,7 @@ class CRI_network:
                 self.connectome.connectomeDict[neuronKey].addSynapse(postsynapticNeuron,weight)
         print("moo")
         
-
-    def __format_input(self,axons,connections):
+    def __format_input(self, axons, connections):
         #breakpoint()
         axonKeys =  axons.keys()
         connectionKeys = connections.keys()
@@ -91,12 +88,10 @@ class CRI_network:
                 newTuple = (symbol2index[oldTuple[0]][0],oldTuple[1])
                 connectionIndexDict[idx][listIdx] = newTuple
 
-
         return axonIndexDict, connectionIndexDict, symbol2index
                     
-
     #wrap with a function to accept list input/output
-    def write_synapse(self,preIndex, postIndex, weight):
+    def write_synapse(self, preIndex, postIndex, weight):
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
         preIndex, synapseType = self.symbol2index[preIndex]
@@ -113,7 +108,7 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
 
-    def read_synapse(self,preIndex, postIndex):
+    def read_synapse(self, preIndex, postIndex):
         #convert user defined symbols to indicies
         preIndex, synapseType = self.symbol2index[preIndex]
         if (synapseType == 'axons'):
@@ -129,23 +124,26 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
 
-    def sim_flush(self,file):
+    def sim_flush(self, file):
         if (self.target == "simpleSim"):
             raise Exception("sim_flush not available for simpleSim")
         elif (self.target == "CRI"):
             self.CRI.sim_flush(file)
         else:
             raise Exception("Invalid Target")
-    
 
-
-
-    def step(self,inputs,target="simpleSim"):
+    def step(self, inputs=[], target="simpleSim"):
+        """
+        inputs now takes a default value of an empty list
+        This way, we can run empty inputs by just calling step_run() without having to call step_run([])
+        """
         formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
-            output = self.simpleSim.step_run(formated_inputs)
+            membranePotentials, firedNeurons = self.simpleSim.step_run(formated_inputs)
             #breakpoint()
-            output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+            output = {} # use a dict to not disrupt output handling of the CRI case
+            output['membranePotentials'] = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(membranePotentials)]
+            output['firedNeurons'] = [self.symbol2index.inverse[(idx,'connections')] for idx in firedNeurons]
         elif (self.target == "CRI"):
             output = self.CRI.run_step(formated_inputs)
             if(not self.simDump):
@@ -154,4 +152,3 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
         return output
-

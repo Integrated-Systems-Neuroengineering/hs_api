@@ -117,6 +117,7 @@ def phase_one(neuronModel, threshold, membranePotentials, firedNeurons):
   (Neuron Model = 3) ==> Non-leaky I&F Neuron
 
   """
+  firedNeurons = [] # start with an empty list, and append any neuron indices as they fire on this step
   for neuron, potential in enumerate(membranePotentials):
     if potential > threshold:
       membranePotentials[neuron] = 0
@@ -135,7 +136,7 @@ def phase_one(neuronModel, threshold, membranePotentials, firedNeurons):
 
 
 #@jit(nopython=True) # can't pass dict
-def phase_two(firedNeurons, currentInputs, membranePotentials, axons, connections ):
+def phase_two(firedNeurons, currentInputs, membranePotentials, axons, connections):
   """Processes spikes
 
   This function scans through the spiked neurons and axons in the network, and updates the membrane potential of all immediate postsynaptic neurons
@@ -176,7 +177,7 @@ def phase_two(firedNeurons, currentInputs, membranePotentials, axons, connection
 
   return membranePotentials
 
-def simulate(neuronModel,threshold, axons, connections, inputs):
+def simulate(neuronModel, threshold, axons, connections, inputs):
   """
   Simulates the network
 
@@ -340,7 +341,7 @@ class simple_sim:
             self.firedNeurons = [] #np.array([])
             #
 
-    def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
+    def write_synapse(self, preIndex, postIndex, weight, axonFlag = False):
         #breakpoint()
         if axonFlag:
             synapses = self.axons[preIndex]
@@ -355,7 +356,7 @@ class simple_sim:
         else:
             self.connections[preIndex][synapseIdx] = (self.connections[preIndex][synapseIdx][0],weight)
 
-    def read_synapse(self,preIndex, postIndex, axonFlag = False):
+    def read_synapse(self, preIndex, postIndex, axonFlag = False):
         breakpoint()
         if axonFlag:
             synapses = self.axons[preIndex]
@@ -371,7 +372,7 @@ class simple_sim:
             return self.connections[preIndex][synapseIdx]
 
 
-    def step_run(self,inputs):
+    def step_run(self, inputs):
         if (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
@@ -390,6 +391,6 @@ class simple_sim:
 
             #print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
+            #self.firedNeurons = [] #np.array([])
             self.stepNum = self.stepNum+1
-            return self.membranePotentials
+            return self.membranePotentials, self.firedNeurons
