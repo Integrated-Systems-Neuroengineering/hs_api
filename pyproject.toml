@@ -10,7 +10,7 @@ numba = "^0.55.1"
 numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
-#cri-simulations = {path = "../CRI_Simulations", develop = true}
+cri-simulations = {path = "../CRI_Simulations", develop = true, optional=true}
 bidict = "^0.22.0"
 
 [tool.poetry.dev-dependencies]
@@ -19,3 +19,6 @@ jupyterlab = "^3.3.3"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.extras]
+cri = ["cri-simulations"]
