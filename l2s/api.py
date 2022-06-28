@@ -1,6 +1,7 @@
 from l2s._simple_sim import simple_sim, map_neuron_type_to_int
-from cri_simulations import network
-from cri_simulations.utils import *
+#from cri_simulations import network
+#from cri_simulations.utils import *
+from l2s.utils import *
 from bidict import bidict
 import os
 import copy
