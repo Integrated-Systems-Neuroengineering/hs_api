@@ -17,11 +17,47 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
-        self.userAxons = copy.deepcopy(axons)
-        self.userConnections = copy.deepcopy(connections)
-        self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
+
+        #Checking for the axon type and synapse length
+        if (type(axons)==dict):
+            for keys in axons:
+                for values in axons[keys]:
+                    if((type(values)==tuple) and (len(values)==2)):
+                        self.userAxons = copy.deepcopy(axons)
+                    else: 
+                        logging.error('Each synapse should only consists of 2 elements: neuron, weight')
+        else:
+            logging.error('Axons should be a dictionary')
+        
+        #Checking for the connection type and synapse length
+        if (type(connections)==dict):
+            for keys in connections:
+                for values in connections[keys]:
+                    if((type(values)==tuple) and (len(values)==2)):
+                        self.userConnections = copy.deepcopy(connections)
+                        self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
+                    else: 
+                        logging.error('Each synapse should only consists of 2 elements: neuron, weight')
+        else:
+            logging.error('Connections should be a dictionary')
+        
         #self.inputs = inputs #This may later be settable via a function for continuous running networks
-        self.config = config
+        
+        #Checking for config type and keys
+        if (type(config)==dict):
+            if ('neuron_type' and 'global_neuron_params') in config:
+                self.config = config
+            else: 
+                logging.error('config does not contain neuron type or global neuron params')
+        else:
+            logging.error('config should be a dictionary')
+      
+        # self.userAxons = copy.deepcopy(axons)
+        # self.userConnections = copy.deepcopy(connections)
+        # self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
+        # self.inputs = inputs #This may later be settable via a function for continuous running networks
+        # self.config = config
+
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
@@ -129,6 +165,11 @@ class CRI_network:
             self.CRI.write_synapse(preIndex, postIndex, weight, axonFlag)
         else:
             raise Exception("Invalid Target")
+    
+    #Update a list of synapses
+    def write_listofSynapses(self, preKeys, postKeys, weights):
+        for i in range(len(preKeys)):
+            self.write_synapse(preKeys[i],postKeys[i],weights[i])
 
     def read_synapse(self,preIndex, postIndex):
         #convert user defined symbols to indicies
@@ -157,18 +198,37 @@ class CRI_network:
 
 
 
-    def step(self,inputs,target="simpleSim"):
+    def step(self,inputs,target="simpleSim",spike=False):
         formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
             output = self.simpleSim.step_run(formated_inputs)
             #breakpoint()
-            output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+            if (spike == False):
+                output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+                return output
+            else:
+                spikeOutput = []
+                for idx,potential in enumerate(output):
+                    if potential > self.config['global_neuron_params']['v_thr']:
+                        spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
+                return spikeOutput
         elif (self.target == "CRI"):
-            output = self.CRI.run_step(formated_inputs)
+            output, spikeDict = self.CRI.run_step(formated_inputs)
             if(not self.simDump):
                 numNeurons = len(self.connections)
-                output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                if (spike == False):
+                    output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    return output
+                else: 
+                    spikeOutput = []
+                    for idx,potential in enumerate(output[:numNeurons]):
+                        if potential[3] > self.config['global_neuron_params']['v_thr']:
+                            spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
+                    for executionRun_counter in spikeDict:
+                        for i in range(14):
+                            spikeDict[executionRun_counter][i] = (spikeDict[executionRun_counter][i][0], self.symbol2index.inverse[(spikeDict[executionRun_counter][i][1],'connections')])
+                return spikeOutput, spikeDict
         else:
             raise Exception("Invalid Target")
-        return output
+        
 
