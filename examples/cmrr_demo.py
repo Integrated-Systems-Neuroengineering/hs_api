@@ -22,7 +22,7 @@ inputs = {0: ['alpha','beta'],
           6: ['alpha','beta'],
           7: ['alpha','beta']}
 for i in range(100):
-  inputs[i+7] = ['alpha','beta']
+    inputs[i+7] = ['alpha','beta']
 
 
 #Define an axons dictionary
@@ -53,8 +53,8 @@ connections = {'a': [('b', 1.0)],
                'u': []}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,inputs = inputs,target='CRI')
-softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,inputs = inputs)
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI')
+softwareNetwork = CRI_network(axons=axons,connections=connections,config=config)
 
 #hardwareNetwork.write_synapse('a', 'b', 2)
 #softwareNetwork.write_synapse('a', 'b', 2)
