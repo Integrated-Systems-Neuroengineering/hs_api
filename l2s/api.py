@@ -198,37 +198,34 @@ class CRI_network:
 
 
 
-    def step(self,inputs,target="simpleSim",spike=False):
+    def step(self,inputs,target="simpleSim",membranePotential=False):
+        #breakpoint()
         formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
             output = self.simpleSim.step_run(formated_inputs)
+            spikeOutput = []
+            for idx,potential in enumerate(output): #replace forloop with list comprehension
+                if potential > self.config['global_neuron_params']['v_thr']:
+                    spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
             #breakpoint()
-            if (spike == False):
-                output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
-                return output
+            output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+            if (membranePotential == True):
+                return output, spikeOutput
             else:
-                spikeOutput = []
-                for idx,potential in enumerate(output):
-                    if potential > self.config['global_neuron_params']['v_thr']:
-                        spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
                 return spikeOutput
+
         elif (self.target == "CRI"):
-            output, spikeDict = self.CRI.run_step(formated_inputs)
-            if(not self.simDump):
+            
+            if(self.simDump):
+                return self.CRI.run_step(formated_inputs)
+            else:
+                output, spikeList = self.CRI.run_step(formated_inputs)
                 numNeurons = len(self.connections)
-                if (spike == False):
+                if (membranePotential == True):
                     output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
-                    return output
+                    return output, spikeList
                 else: 
-                    spikeOutput = []
-                    for idx,potential in enumerate(output[:numNeurons]):
-                        if potential[3] > self.config['global_neuron_params']['v_thr']:
-                            spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
-                    for executionRun_counter in spikeDict:
-                        for i in range(14):
-                            spikeDict[executionRun_counter][i] = (spikeDict[executionRun_counter][i][0], self.symbol2index.inverse[(spikeDict[executionRun_counter][i][1],'connections')])
-                return spikeOutput, spikeDict
+                    return spikeList
         else:
             raise Exception("Invalid Target")
-        
 
