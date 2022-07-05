@@ -35,14 +35,22 @@ class CRI_network:
                 for values in connections[keys]:
                     if((type(values)==tuple) and (len(values)==2)):
                         self.userConnections = copy.deepcopy(connections)
+                        
+                        #TODO:remove symboel2index
                         self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
+                        # self.axons, self.connections = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
                     else: 
                         logging.error('Each synapse should only consists of 2 elements: neuron, weight')
         else:
             logging.error('Connections should be a dictionary')
         
         #self.inputs = inputs #This may later be settable via a function for continuous running networks
-        
+       
+        # self.userAxons = copy.deepcopy(axons)
+        # self.userConnections = copy.deepcopy(connections)
+        # self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections)
+        # self.config = config
+
         #Checking for config type and keys
         if (type(config)==dict):
             if ('neuron_type' and 'global_neuron_params') in config:
@@ -51,12 +59,6 @@ class CRI_network:
                 logging.error('config does not contain neuron type or global neuron params')
         else:
             logging.error('config should be a dictionary')
-      
-        # self.userAxons = copy.deepcopy(axons)
-        # self.userConnections = copy.deepcopy(connections)
-        # self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
-        # self.inputs = inputs #This may later be settable via a function for continuous running networks
-        # self.config = config
 
         self.simpleSim = None
         self.key2index = {}
@@ -112,8 +114,11 @@ class CRI_network:
         #ensure keys in axon and neuron dicts are mutually exclusive
         if (set(axonKeys) & set(connectionKeys)):
             raise Exception("Axon and Connection Keys must be mutually exclusive")
+        
+        #TODO:delete
         #map those keys to indicies
         mapDict = {} #holds maping from symbols to indicies
+
 
         axonIndexDict = {}
         #construct axon dictionary with ordinal numbers as keys
@@ -141,9 +146,9 @@ class CRI_network:
                 newTuple = (symbol2index[oldTuple[0]][0],oldTuple[1])
                 connectionIndexDict[idx][listIdx] = newTuple
 
-
+        #TODO: remove symbol2index 
         return axonIndexDict, connectionIndexDict, symbol2index
-                    
+        # return axonIndexDict, connectionIndexDict
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preKey, postKey, weight):
@@ -151,12 +156,17 @@ class CRI_network:
         self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).set_weight(weight) #update synapse weight in the connectome
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
+        
+        #TODO: remove symbol2index
         preIndex, synapseType = self.symbol2index[preKey]
+        #preIndex, synapseType = self.connectome.get_merged_neurons()[preKey]
         
         if (synapseType == 'axons'):
             axonFlag = True
         else:
             axonFlag = False
+
+        #TODO: remove symbol2index
         postIndex = self.symbol2index[postKey][0]
 
         if (self.target == "simpleSim"):
