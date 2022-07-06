@@ -22,7 +22,7 @@ for i in range(100):
     #else:
     #    inputs[i] = ['alpha', 'beta']
 
-print(inputs)
+#print(inputs)
 
 #Define an axons dictionary
 axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)]}
@@ -72,7 +72,7 @@ connections = {'01': [],
                'z': []}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs=[], target='CRI')
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs=['b'], target='CRI')
 softwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs=['a','b','c'], target='simpleSim')
 
 #hardwareNetwork.write_synapse('alpha', 'a', -3)
@@ -81,6 +81,7 @@ softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,
 #Execute the network stepwise in the hardware and the simulator
 for i in range(100):
     start = time.time()
+    print("executing a timestep: ")
     hwResult, hwSpike = hardwareNetwork.step(inputs[i], membranePotential=True)
     end = time.time()
     #print(end - start)
@@ -88,7 +89,7 @@ for i in range(100):
     swResult, swSpike = softwareNetwork.step(inputs[i], membranePotential=True)
     end = time.time()
     #print(end - start)
-    print("timestep: "+str(i)+":")
+    #print("timestep: "+str(i)+":")
     print("hardware result: ")
     #print(synthSpike)
     print(hwSpike)
@@ -98,7 +99,7 @@ for i in range(100):
     print(swResult)
     #Verify that the outputs match
     for idx in range(len(swResult)):
-        if(swResult[idx][1] != hwResult[idx][1][3]):
+        if(swResult[idx][1] != hwResult[idx][1]):
             print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
 #print("last flush")
 #print(subprocess.run(['sudo', 'adxdma_dmadump', 'rb', '0', '0' ,'0x40'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))

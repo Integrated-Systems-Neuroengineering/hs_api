@@ -219,14 +219,18 @@ class CRI_network:
             if(self.simDump):
                 return self.CRI.run_step(formated_inputs)
             else:
-                output, spikeList = self.CRI.run_step(formated_inputs)
-                #breakpoint()
-                spikeList = [(spike[0],self.symbol2index.inverse[(spike[1],'connections')]) for spike in spikeList]
-                numNeurons = len(self.connections)
+                
                 if (membranePotential == True):
-                    output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    output, spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    #we currently ignore the run execution counter
+                    spikeList = [self.symbol2index.inverse[(spike[1],'connections')] for spike in spikeList]
+                    numNeurons = len(self.connections)
+                    #we currently only print the membrane potential, not the other contents of the spike packet
+                    output = [(self.symbol2index.inverse[(idx,'connections')], data[3]) for idx,data in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output, spikeList
                 else: 
+                    spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeList = [(spike[0],self.symbol2index.inverse[(spike[1],'connections')]) for spike in spikeList]
                     return spikeList
         else:
             raise Exception("Invalid Target")
