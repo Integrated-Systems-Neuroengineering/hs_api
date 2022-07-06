@@ -6,10 +6,10 @@ import os
 import copy
 import logging
 class CRI_network:
-
+     
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, target = None, simDump = False, coreID=0):
+    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0):
         if (target): #check if user provides an override for target
             self.target = target
         else:
@@ -17,6 +17,8 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
+
+        self.outputs = outputs #outputs is a list
 
         #Checking for the axon type and synapse length
         if (type(axons)==dict):
@@ -63,9 +65,11 @@ class CRI_network:
         self.simDump = simDump
         self.connectome = None
         self.gen_connectome()
+         
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
-            self.CRI = network(self.connectome, {}, self.config, simDump = simDump, coreOveride = coreID)
+            formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+            self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections)
@@ -85,7 +89,7 @@ class CRI_network:
         for axonKey in self.userAxons:
             self.connectome.addNeuron(neuron(axonKey,"axon"))
         for neuronKey in self.userConnections:
-            self.connectome.addNeuron(neuron(neuronKey,"neuron"))
+            self.connectome.addNeuron(neuron(neuronKey,"neuron", output = neuronKey in self.outputs ))
 
 
         #assign synapses to neurons in connectome
