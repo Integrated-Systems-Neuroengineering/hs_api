@@ -206,13 +206,9 @@ class CRI_network:
         #breakpoint()
         formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
-            output = self.simpleSim.step_run(formated_inputs)
-            spikeOutput = []
-            for idx,potential in enumerate(output): #replace forloop with list comprehension
-                if potential > self.config['global_neuron_params']['v_thr']:
-                    spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
-            #breakpoint()
+            output, spikeOutput = self.simpleSim.step_run(formated_inputs)
             output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+            spikeOutput = [self.symbol2index.inverse[(spike,'connections')] for spike in spikeOutput]
             if (membranePotential == True):
                 return output, spikeOutput
             else:

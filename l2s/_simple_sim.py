@@ -382,6 +382,7 @@ class simple_sim:
             #currentInputs = np.array(self.inputs[time])
             currentInputs = inputs
             #do phase one
+            self.firedNeurons = [] #np.array([])
             self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
@@ -391,6 +392,6 @@ class simple_sim:
 
             #print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
+            
             self.stepNum = self.stepNum+1
-            return self.membranePotentials
+            return self.membranePotentials, self.firedNeurons
