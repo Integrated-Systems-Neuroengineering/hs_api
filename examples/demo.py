@@ -16,7 +16,7 @@ config['global_neuron_params']['v_thr'] = 9
 inputs = {}
 for i in range(100):
     if (i%3 == 0):
-    inputs[i] = ['alpha']
+        inputs[i] = ['alpha']
     elif(i%3 == 1):
         inputs[i] = ['beta']
     else:
