@@ -72,7 +72,8 @@ class CRI_network:
             self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
-            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections)
+            formatedOutputs = self.connectome.get_outputs_idx()
+            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs)
         #breakpoint()
 
     def checkHw(self):
