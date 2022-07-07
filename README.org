@@ -6,7 +6,7 @@ This repository contains a Python library for interacting with the ISN CRI proje
 * Installation
 ** Simple Installation
 #+BEGIN_SRC bash
-pip install --extra-index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.python.org/simple l2s==0.1.4
+pip install l2s
 #+END_SRC
 ** Development Installation
 - First install [[https://python-poetry.org/][Poetry]]
