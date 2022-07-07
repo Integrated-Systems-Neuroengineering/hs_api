@@ -60,7 +60,7 @@ connections = {'a': [('b', 1)],
                    'd': [('c', 1)]}
 #+END_SRC
 **** Defining the Outputs List
-The outputs list defines the neurons in the network the user wishes to recieve spikes from. Each element in the list is the key of a neuron in the connections dictionary.
+The outputs list defines the neurons in the network the user wishes to receive spikes from. Each element in the list is the key of a neuron in the connections dictionary.
 #+BEGIN_SRC python
 outputs = ['a', 'b']
 #+END_SRC
