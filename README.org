@@ -47,7 +47,7 @@ configuration = {}
 The axons dictionary configures inputs to the network. Axons are synapses connected to neurons in the network that the user can manually send spikes over at a given timestep. Each key in the dictionary is the name of an axon. Each value is a list of two element tuples. Each tuple defines an in-going synapse to a neuron. The first element is the name of a neuron in the network and the second element is the weight of the synaptic connection. Synapse weights must be integers, but they may be positive or negative.
 #+BEGIN_SRC python
 axons = {'alpha': [('a', 3)],
-             'beta': [('t', 3)]}
+             'beta': [('d', 3)]}
 #+END_SRC python
 **** Defining the Connections Dictionary
 The connections dictionary defines the neurons in the network and the connections between them. Each key in the dictionary is the name of a neuron. Of note the names of neurons in the connections dictionary and the names of axons in the axons dictionary must be mutually exclusive. Each value is a list of two element tuples. Each tuple defines a synapse between neurons in the network. The first element is the name of the postsynaptic neuron and the the second element is the weight of the synapse. Synapse weights must be integers but they may be positive or negative. If a neuron has no outgoing synapses it's synapse list may be left empty.
@@ -57,16 +57,23 @@ connections = {'a': [('b', 1)],
                    'c': [],
                    'd': [('c', 1)]}
 #+END_SRC
-*** Initializing a network
-Once we've defined the above dictionaries we must pass them to the CRI_network constructor to create a CRI_network object.
+**** Defining the Outputs List
+The outputs list defines the neurons in the network the user wishes to recieve spikes from. Each element in the list is the key of a neuron in the connections dictionary.
 #+BEGIN_SRC python
-network = CRI_network(axons=axons,connections=connections,config=config)
+outputs = ['a', 'b']
+#+END_SRC
+*** Initializing a network
+Once we've defined the above dictionaries and list we must pass them to the CRI_network constructor to create a CRI_network object.
+#+BEGIN_SRC python
+network = CRI_network(axons=axons,connections=connections,config=config, outputs=outputs)
 #+END_SRC
 *** Running a Timestep
-Once we've constructed an CRI_network object we can run a timestep. We do so by calling the step() method of CRI_network. This method expects a single input called inputs. Inputs defines the inputs to the network at the current timestep, in particular it is a list of names of axons that you wish to carry spikes into the network at the current timestep.
+Once we've constructed an CRI_network object we can run a timestep. We do so by calling the step() method of CRI_network. This method expects a single input called inputs. Inputs defines the inputs to the network at the current timestep, in particular it is a list of names of axons that you wish to carry spikes into the network at the current timestep. Normally network.step() returns a list of the keys that correspond to neurons that spiked during the given timestep, however the membranePotential parameter can be set to True to additionally output the membranePotentials for all neurons in the network.
 #+BEGIN_SRC python
 inputs = ['alpha','beta']
-network.step(inputs)
+spikes = network.step(inputs)
+#Alternative
+potentials, spikes = network.step(inputs, membranePotential=True)
 #+END_SRC
 This method will return a list of membrane potentials for all neurons in the network after the current timestep has elapsed.
 *** Updating Synapse Weights
