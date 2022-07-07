@@ -56,7 +56,7 @@ connections = {'a': [('b', 1.0)],
 hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI')
 softwareNetwork = CRI_network(axons=axons,connections=connections,config=config)
 
-#hardwareNetwork.write_synapse('a', 'b', 2)
+hardwareNetwork.write_synapse('a', 'b', 2)
 #softwareNetwork.write_synapse('a', 'b', 2)
 
 #Execute the network stepwise in the hardware and the simulator
