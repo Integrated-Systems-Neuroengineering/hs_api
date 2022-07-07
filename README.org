@@ -18,7 +18,7 @@ git clone https://github.com/Integrated-Systems-Neuroengineering/L2S.git
 #+BEGIN_SRC bash
 git clone https://github.com/Integrated-Systems-Neuroengineering/CRI_Simulations_Public.git
 #+END_SRC
-- cd into the L2S repo you cloned and install the needed dependencies
+- cd into the L2S repo you cloned and install the needed dependencies. Resolving dependencies may take a while.
 #+BEGIN_SRC bash
 cd L2S
 poetry install
