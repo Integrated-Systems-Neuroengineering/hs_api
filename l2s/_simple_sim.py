@@ -310,12 +310,13 @@ def run_sim():
   simulate(neuron_model, threshold, axons, connections, inputs)
 
 class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections):
+    def __init__(self, neuronModel, threshold, axons, connections, outputs):
           self.stepNum = 0
           self.neuronModel = neuronModel
           self.threshold = threshold
           self.axons = axons
           self.connections = connections
+          self.outputs = outputs
           #self.inputs = inputs
           #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
@@ -394,4 +395,5 @@ class simple_sim:
 
             
             self.stepNum = self.stepNum+1
-            return self.membranePotentials, self.firedNeurons
+            outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
+            return self.membranePotentials, outputSpikes
