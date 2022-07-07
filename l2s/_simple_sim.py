@@ -310,20 +310,20 @@ def run_sim():
   simulate(neuron_model, threshold, axons, connections, inputs)
 
 class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections, inputs):
+    def __init__(self, neuronModel, threshold, axons, connections):
           self.stepNum = 0
           self.neuronModel = neuronModel
           self.threshold = threshold
           self.axons = axons
           self.connections = connections
-          self.inputs = inputs
-          self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
+          #self.inputs = inputs
+          #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
           self.initialize_sim_vars(self.numNeurons)
     def initialize_sim_vars(self, numNeurons):
           self.membranePotentials = np.zeros(numNeurons)
           self.firedNeurons = [] #np.array([], dtype=np.single)
-
+    """
     def free_run(self):
         for time in self.timesteps:
             currentInputs = np.array(self.inputs[time])
@@ -339,6 +339,7 @@ class simple_sim:
 
             self.firedNeurons = [] #np.array([])
             #
+    """
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
         #breakpoint()
@@ -372,7 +373,7 @@ class simple_sim:
 
 
     def step_run(self,inputs):
-        if (self.stepNum == self.timesteps):
+        if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
             self.stepNum == 0
@@ -381,6 +382,7 @@ class simple_sim:
             #currentInputs = np.array(self.inputs[time])
             currentInputs = inputs
             #do phase one
+            self.firedNeurons = [] #np.array([])
             self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
@@ -390,6 +392,6 @@ class simple_sim:
 
             #print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
+            
             self.stepNum = self.stepNum+1
-            return self.membranePotentials
+            return self.membranePotentials, self.firedNeurons
