@@ -25,7 +25,8 @@ for i in range(100):
 #print(inputs)
 
 #Define an axons dictionary
-axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)]}
+axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)],
+         'beta' : [('a', 2.0)]}
 
 #Define a connections dictionary
 connections = {'a': [('z',4)],
