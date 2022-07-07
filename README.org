@@ -12,7 +12,7 @@ pip install --extra-index-url https://test.pypi.org/simple/ --extra-index-url ht
 - First install [[https://python-poetry.org/][Poetry]]
 - Then clone this repository
 #+BEGIN_SRC bash
-git clone git@github.com:3x10e8/L2S.git
+git clone git@github.com:Integrated-Systems-Neuroengineering/L2S.git
 #+END_SRC
 - Next you will need to clone the cri-simulations repository into the same directory you just cloned this repository into
 #+BEGIN_SRC bash
