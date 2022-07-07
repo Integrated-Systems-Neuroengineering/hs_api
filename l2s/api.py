@@ -17,7 +17,6 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
-
         #Checking for the axon type and synapse length
         if (type(axons)==dict):
             for keys in axons:
@@ -34,11 +33,12 @@ class CRI_network:
             for keys in connections:
                 for values in connections[keys]:
                     if((type(values)==tuple) and (len(values)==2)):
+                        #userConnections and userAxons are required for connectome
+                        #connectome used in _format_input
                         self.userConnections = copy.deepcopy(connections)
-                        
-                        #TODO:remove symboel2index
-                        self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
-                        # self.axons, self.connections = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
+                        self.connectome = None
+                        self.gen_connectome()
+                        self.axons, self.connections = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
                     else: 
                         logging.error('Each synapse should only consists of 2 elements: neuron, weight')
         else:
@@ -59,12 +59,12 @@ class CRI_network:
                 logging.error('config does not contain neuron type or global neuron params')
         else:
             logging.error('config should be a dictionary')
+        
 
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
-        self.connectome = None
-        self.gen_connectome()
+        
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
             self.CRI = network(self.connectome, {}, self.config, simDump = simDump, coreOveride = coreID)
@@ -114,41 +114,29 @@ class CRI_network:
         #ensure keys in axon and neuron dicts are mutually exclusive
         if (set(axonKeys) & set(connectionKeys)):
             raise Exception("Axon and Connection Keys must be mutually exclusive")
-        
-        #TODO:delete
-        #map those keys to indicies
-        mapDict = {} #holds maping from symbols to indicies
-
 
         axonIndexDict = {}
         #construct axon dictionary with ordinal numbers as keys
         for idx, symbol in enumerate(axonKeys):
             axonIndexDict[idx] = axons[symbol]
-            mapDict[symbol] = (idx,'axons')
         connectionIndexDict = {}
         #construct connections dicitonary with ordinal numbers as keys
         for idx, symbol in enumerate(connectionKeys):
             connectionIndexDict[idx] = connections[symbol]
-            mapDict[symbol] = (idx,'connections')
-
-        symbol2index = bidict(mapDict)
         
         #go through and change symbol based postsynaptic neuron values to corresponding index
         for idx in axonIndexDict:
             for listIdx in range(len(axonIndexDict[idx])):
                 oldTuple = axonIndexDict[idx][listIdx]
-                newTuple = (symbol2index[oldTuple[0]][0],oldTuple[1])
+                newTuple = (self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),oldTuple[1])
                 axonIndexDict[idx][listIdx] = newTuple
 
         for idx in connectionIndexDict:
             for listIdx in range(len(connectionIndexDict[idx])):
                 oldTuple = connectionIndexDict[idx][listIdx]
-                newTuple = (symbol2index[oldTuple[0]][0],oldTuple[1])
+                newTuple = (self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),oldTuple[1])
                 connectionIndexDict[idx][listIdx] = newTuple
-
-        #TODO: remove symbol2index 
-        return axonIndexDict, connectionIndexDict, symbol2index
-        # return axonIndexDict, connectionIndexDict
+        return axonIndexDict, connectionIndexDict
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preKey, postKey, weight):
@@ -157,17 +145,15 @@ class CRI_network:
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
         
-        #TODO: remove symbol2index
-        preIndex, synapseType = self.symbol2index[preKey]
-        #preIndex, synapseType = self.connectome.get_merged_neurons()[preKey]
+        preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
+        synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
         
         if (synapseType == 'axons'):
             axonFlag = True
         else:
             axonFlag = False
 
-        #TODO: remove symbol2index
-        postIndex = self.symbol2index[postKey][0]
+        postIndex = self.connectome.get_neuron_by_key(postKey).get_coreTypeIdx()
 
         if (self.target == "simpleSim"):
             self.simpleSim.write_synapse(preIndex, postIndex, weight, axonFlag)
@@ -183,12 +169,13 @@ class CRI_network:
 
     def read_synapse(self,preIndex, postIndex):
         #convert user defined symbols to indicies
-        preIndex, synapseType = self.symbol2index[preIndex]
+        preIndex = self.connectome.get_neuron_by_key(preIndex).get_coreTypeIdx()
+        synapseType = self.connectome.get_neuron_by_key(preIndex).get_neuron_type()
         if (synapseType == 'axons'):
             axonFlag = True
         else:
             axonFlag = False
-        postIndex = self.symbol2index[postIndex][0]
+        postIndex = self.connectome.get_neuron_by_key(postIndex).get_coreTypeIdx()
 
         if (self.target == "simpleSim"):
             return self.simpleSim.read_synapse(preIndex, postIndex, axonFlag)
@@ -209,31 +196,31 @@ class CRI_network:
 
 
     def step(self,inputs,target="simpleSim",spike=False):
-        formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies 
+        formated_inputs = [self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx() for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
             output = self.simpleSim.step_run(formated_inputs)
             #breakpoint()
             if (spike == False):
-                output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output)]
+                output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), potential) for idx,potential in enumerate(output)]
                 return output
             else:
                 spikeOutput = []
                 for idx,potential in enumerate(output):
                     if potential > self.config['global_neuron_params']['v_thr']:
-                        spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
+                        spikeOutput.append(self.connectome.get_neuron_by_idx(idx).get_user_key())
                 return spikeOutput
         elif (self.target == "CRI"):
             output, spikeDict = self.CRI.run_step(formated_inputs)
             if(not self.simDump):
                 numNeurons = len(self.connections)
                 if (spike == False):
-                    output = [(self.symbol2index.inverse[(idx,'connections')], potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output
                 else: 
                     spikeOutput = []
                     for idx,potential in enumerate(output[:numNeurons]):
                         if potential[3] > self.config['global_neuron_params']['v_thr']:
-                            spikeOutput.append(self.symbol2index.inverse[(idx,'connections')])
+                            spikeOutput.append(self.connectome.get_neuron_by_idx(idx).get_user_key())
                     for executionRun_counter in spikeDict:
                         for i in range(14):
                             spikeDict[executionRun_counter][i] = (spikeDict[executionRun_counter][i][0], self.symbol2index.inverse[(spikeDict[executionRun_counter][i][1],'connections')])
