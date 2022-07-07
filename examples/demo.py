@@ -64,7 +64,7 @@ Network = CRI_network(axons=axons,connections=connections,config=config, outputs
 
 for i in range(100):
     print("executing a timestep: ")
-    Result, Spike = softwareNetwork.step(inputs[i], membranePotential=True)
+    Result, Spike = Network.step(inputs[i], membranePotential=True)
     print("result: ")
     print(Spike)
     print(Result)
