@@ -310,12 +310,13 @@ def run_sim():
   simulate(neuron_model, threshold, axons, connections, inputs)
 
 class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections):
+    def __init__(self, neuronModel, threshold, axons, connections, outputs):
           self.stepNum = 0
           self.neuronModel = neuronModel
           self.threshold = threshold
           self.axons = axons
           self.connections = connections
+          self.outputs = outputs
           #self.inputs = inputs
           #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
@@ -382,6 +383,7 @@ class simple_sim:
             #currentInputs = np.array(self.inputs[time])
             currentInputs = inputs
             #do phase one
+            self.firedNeurons = [] #np.array([])
             self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
@@ -391,6 +393,7 @@ class simple_sim:
 
             #print(time, 'Vmem', self.membranePotentials)
 
-            self.firedNeurons = [] #np.array([])
+            
             self.stepNum = self.stepNum+1
-            return self.membranePotentials
+            outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
+            return self.membranePotentials, outputSpikes
