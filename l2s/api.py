@@ -6,10 +6,10 @@ import os
 import copy
 import logging
 class CRI_network:
-
+     
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, target = None, simDump = False, coreID=0):
+    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0):
         if (target): #check if user provides an override for target
             self.target = target
         else:
@@ -17,6 +17,9 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
+
+        self.outputs = outputs #outputs is a list
+
         #Checking for the axon type and synapse length
         if (type(axons)==dict):
             for keys in axons:
@@ -64,13 +67,17 @@ class CRI_network:
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
-        
+        self.connectome = None
+        self.gen_connectome()
+         
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
-            self.CRI = network(self.connectome, {}, self.config, simDump = simDump, coreOveride = coreID)
+            formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+            self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
-            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections)
+            formatedOutputs = self.connectome.get_outputs_idx()
+            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs)
         #breakpoint()
 
     def checkHw(self):
@@ -87,7 +94,7 @@ class CRI_network:
         for axonKey in self.userAxons:
             self.connectome.addNeuron(neuron(axonKey,"axon"))
         for neuronKey in self.userConnections:
-            self.connectome.addNeuron(neuron(neuronKey,"neuron"))
+            self.connectome.addNeuron(neuron(neuronKey,"neuron", output = neuronKey in self.outputs ))
 
 
         #assign synapses to neurons in connectome
@@ -192,40 +199,36 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
     
-
-
-
-    def step(self,inputs,target="simpleSim",spike=False):
+    def step(self,inputs,target="simpleSim",membranePotential=False):
+        #formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
         formated_inputs = [self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx() for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
-            output = self.simpleSim.step_run(formated_inputs)
-            #breakpoint()
-            if (spike == False):
-                output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), potential) for idx,potential in enumerate(output)]
-                return output
+            output, spikeOutput = self.simpleSim.step_run(formated_inputs)
+            output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), potential) for idx,potential in enumerate(output)]
+            spikeOutput = [self.connectome.get_neuron_by_idx(spike).get_user_key() for spike in spikeOutput]
+            if (membranePotential == True):
+                return output, spikeOutput
             else:
-                spikeOutput = []
-                for idx,potential in enumerate(output):
-                    if potential > self.config['global_neuron_params']['v_thr']:
-                        spikeOutput.append(self.connectome.get_neuron_by_idx(idx).get_user_key())
                 return spikeOutput
+
         elif (self.target == "CRI"):
-            output, spikeDict = self.CRI.run_step(formated_inputs)
-            if(not self.simDump):
-                numNeurons = len(self.connections)
-                if (spike == False):
-                    output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), potential) for idx,potential in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
-                    return output
+            
+            if(self.simDump):
+                return self.CRI.run_step(formated_inputs)
+            else:
+                
+                if (membranePotential == True):
+                    output, spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    #we currently ignore the run execution counter
+                    spikeList = [self.connectome.get_neuron_by_idx(spike[1]).get_user_key() for spike in spikeList]
+                    numNeurons = len(self.connections)
+                    #we currently only print the membrane potential, not the other contents of the spike packet
+                    output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), data[3]) for idx,data in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    return output, spikeList
                 else: 
-                    spikeOutput = []
-                    for idx,potential in enumerate(output[:numNeurons]):
-                        if potential[3] > self.config['global_neuron_params']['v_thr']:
-                            spikeOutput.append(self.connectome.get_neuron_by_idx(idx).get_user_key())
-                    for executionRun_counter in spikeDict:
-                        for i in range(14):
-                            spikeDict[executionRun_counter][i] = (spikeDict[executionRun_counter][i][0], self.symbol2index.inverse[(spikeDict[executionRun_counter][i][1],'connections')])
-                return spikeOutput, spikeDict
+                    spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeList = [(spike[0],self.symbol2index.inverse[(spike[1],'connections')]) for spike in spikeList]
+                    return spikeList
         else:
             raise Exception("Invalid Target")
-        
 
