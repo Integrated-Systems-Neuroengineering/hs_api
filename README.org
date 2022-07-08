@@ -81,7 +81,7 @@ This method will return a list of membrane potentials for all neurons in the net
 *** Updating Synapse Weights
 Once the CRI_network class the topology of the network is fixed, that is what axon and neurons are in the network and how they are connected via synapses may not be changed. However it is possible to update the weight of preexisting synapses in the network. This can be done by calling the write_synapse() method of CRI_network. write_synapse() takes three arguments, the presynaptic neuron name, the postsynaptic neuron name, and the new synapse weight.
 #+BEGIN_SRC python
-hardwareNetwork.write_synapse('a', 'b', 2)
+network.write_synapse('a', 'b', 2)
 #+END_SRC
 ** Submitting Jobs to Run on the Hardware
 The same Python scripts you've developed and run on your local machine can be deployed to the CRI servers to run on the actual CRI hardware. Just make sure all the libraries you import in your script are [[Python libraries present on the CRI servers][available on the CRI servers]]. The CRI hardware is hosted in the San Diego Supercomputing Center and jobs may be submitted to run on the hardware via the [[https://www.nsgportal.org/index.html][Neuroscience Gateway]]. First you must register an account with Neuroscience Gateway in order to submit jobs. Perform the following steps to submit a task to NSG:
