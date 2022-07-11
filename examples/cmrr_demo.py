@@ -102,7 +102,7 @@ for i in range(100):
     #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
 #print("last flush")
 #print(subprocess.run(['sudo', 'adxdma_dmadump', 'rb', '0', '0' ,'0x40'], stdout=subprocess.PIPE, check=True).stdout.decode('utf-8'))
-hardwareNetwork.sim_flush('Jul6.txt')
+#hardwareNetwork.sim_flush('Jul6.txt')
 
 #sys.exit()
 
