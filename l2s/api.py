@@ -227,7 +227,7 @@ class CRI_network:
                     return output, spikeList
                 else: 
                     spikeList = self.CRI.run_step(formated_inputs, membranePotential)
-                    spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
+                    spikeList = [self.connectome.get_neuron_by_idx(spike[1]).get_user_key() for spike in spikeList]
                     return spikeList
         else:
             raise Exception("Invalid Target")
