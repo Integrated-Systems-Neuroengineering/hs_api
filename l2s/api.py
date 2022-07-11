@@ -216,7 +216,6 @@ class CRI_network:
             if(self.simDump):
                 return self.CRI.run_step(formated_inputs)
             else:
-                
                 if (membranePotential == True):
                     output, spikeList = self.CRI.run_step(formated_inputs, membranePotential)
                     #we currently ignore the run execution counter
@@ -227,8 +226,10 @@ class CRI_network:
                     return output, spikeList
                 else: 
                     spikeList = self.CRI.run_step(formated_inputs, membranePotential)
-                    spikeList = [(spike[0],self.symbol2index.inverse[(spike[1],'connections')]) for spike in spikeList]
+                    spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
                     return spikeList
         else:
             raise Exception("Invalid Target")
+
+        
 
