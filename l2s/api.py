@@ -10,6 +10,7 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0):
+        #return
         if (target): #check if user provides an override for target
             self.target = target
         else:
@@ -24,35 +25,22 @@ class CRI_network:
         if (type(axons)==dict):
             for keys in axons:
                 for values in axons[keys]:
-                    if((type(values)==tuple) and (len(values)==2)):
-                        self.userAxons = copy.deepcopy(axons)
-                    else: 
+                    if(not((type(values)==tuple) and (len(values)==2))): 
                         logging.error('Each synapse should only consists of 2 elements: neuron, weight')
         else:
             logging.error('Axons should be a dictionary')
-        
+        self.userAxons = copy.deepcopy(axons)
         #Checking for the connection type and synapse length
         if (type(connections)==dict):
             for keys in connections:
                 for values in connections[keys]:
-                    if((type(values)==tuple) and (len(values)==2)):
-                        #userConnections and userAxons are required for connectome
-                        #connectome used in _format_input
-                        self.userConnections = copy.deepcopy(connections)
-                        self.connectome = None
-                        self.gen_connectome()
-                        self.axons, self.connections = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
-                    else: 
+                    if(not((type(values)==tuple) and (len(values)==2))):
                         logging.error('Each synapse should only consists of 2 elements: neuron, weight')
         else:
             logging.error('Connections should be a dictionary')
+        self.userConnections = copy.deepcopy(connections)
         
-        #self.inputs = inputs #This may later be settable via a function for continuous running networks
-       
-        # self.userAxons = copy.deepcopy(axons)
-        # self.userConnections = copy.deepcopy(connections)
-        # self.axons, self.connections, self.symbol2index = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections)
-        # self.config = config
+
 
         #Checking for config type and keys
         if (type(config)==dict):
@@ -69,6 +57,7 @@ class CRI_network:
         self.simDump = simDump
         self.connectome = None
         self.gen_connectome()
+        self.axons, self.connections = self.__format_input(copy.deepcopy(axons),copy.deepcopy(connections))
          
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
@@ -79,6 +68,7 @@ class CRI_network:
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs)
         #breakpoint()
+        print("initialized")
 
     def checkHw(self):
         """check if the magic file exists to demark that were running on a system with CRI hardware accessible
@@ -93,9 +83,10 @@ class CRI_network:
         #add neurons/axons to connectome
         for axonKey in self.userAxons:
             self.connectome.addNeuron(neuron(axonKey,"axon"))
+        print("added axons to connectome")
         for neuronKey in self.userConnections:
             self.connectome.addNeuron(neuron(neuronKey,"neuron", output = neuronKey in self.outputs ))
-
+        print("added neurons to connectome")
 
         #assign synapses to neurons in connectome
         for axonKey in self.userAxons:
@@ -104,15 +95,16 @@ class CRI_network:
                 weight = axonSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
                 self.connectome.connectomeDict[axonKey].addSynapse(postsynapticNeuron,weight)
-
+        print("added axon synpases")
         for neuronKey in self.userConnections:
             synapses = self.userConnections[neuronKey]
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
                 self.connectome.connectomeDict[neuronKey].addSynapse(postsynapticNeuron,weight)
-        #print("moo")
+        print("added neuron synapses")
         
+        print("generated Connectome")
 
     def __format_input(self,axons,connections):
         #breakpoint()
