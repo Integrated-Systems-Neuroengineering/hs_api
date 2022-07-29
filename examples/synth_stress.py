@@ -80,6 +80,9 @@ for i in range(steps):
     print(hwSpike)
     print(hwResult)
     print("timestep: "+str(i)+" end")
+    if (set(hwSpike) != set(swSpike)):
+        print("Incongruent Spike Results Detected")
+        breakpoint()
     for idx in range(len(swResult)):
         if(swResult[idx][1] != hwResult[idx][1]):
             print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
