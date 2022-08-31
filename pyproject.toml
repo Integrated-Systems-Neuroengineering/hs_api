@@ -10,7 +10,7 @@ numba = "^0.55.1"
 numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
-cri-simulations = {path = "../CRI_Simulations_Public", develop = true}
+cri-simulations = {path = "../CRI_Simulations", develop = true}
 bidict = "^0.22.0"
 
 [tool.poetry.dev-dependencies]

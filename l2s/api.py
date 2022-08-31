@@ -146,8 +146,8 @@ class CRI_network:
         
         preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
         synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
-        
-        if (synapseType == 'axons'):
+        breakpoint()
+        if (synapseType == 'axon'):
             axonFlag = True
         else:
             axonFlag = False

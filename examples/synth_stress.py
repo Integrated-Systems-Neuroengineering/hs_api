@@ -63,7 +63,7 @@ class synthnet:
          numInputs = random.randrange(0,self.numAxons)
          return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
 
-synth = synthnet(1000,10000,-10,10,1000)
+synth = synthnet(1000,100000,-10,10,1000)
 #breakpoint()
 #Initialize a CRI_network object for interacting with the hardware and the software
 hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys())
@@ -73,17 +73,29 @@ softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDic
 steps = 100
 for i in range(steps):
     currInput = synth.gen_inputs()
-    hwResult, hwSpike = hardwareNetwork.step(currInput, membranePotential=True)
-    swResult, swSpike = softwareNetwork.step(currInput, membranePotential=True)
+    hwSpike = hardwareNetwork.step(currInput, membranePotential=False)
+    swSpike = softwareNetwork.step(currInput, membranePotential=False)
     print("timestep: "+str(i)+":")
-    print("hardware result: ")
-    print(hwSpike)
-    print(hwResult)
-    print("timestep: "+str(i)+" end")
+    #print("hardware result: ")
+    #print(hwSpike)
+    #print(hwResult)
+    #print("timestep: "+str(i)+" end")
+    magicBreak = False
     if (set(hwSpike) != set(swSpike)):
         print("Incongruent Spike Results Detected")
+        #breakpoint()
+        magicBreak = True
+    else:
+        print("Spike Results match simulator")
+    #potentialFlag = False
+    #for idx in range(len(swResult)):
+    #    if(swResult[idx][1] != hwResult[idx][1]):
+    #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
+    #        potentialFlag = True
+    #        magicBreak = True
+    #if potentialFlag:
+    #    print("Incongruent Membrane Potential Results Detected")
+    #else:
+    #    print("Membrane Potentials Match")
+    if magicBreak:
         breakpoint()
-    for idx in range(len(swResult)):
-        if(swResult[idx][1] != hwResult[idx][1]):
-            print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
-            breakpoint()
