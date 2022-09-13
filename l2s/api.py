@@ -146,7 +146,7 @@ class CRI_network:
         
         preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
         synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
-        breakpoint()
+        
         if (synapseType == 'axon'):
             axonFlag = True
         else:
@@ -166,11 +166,14 @@ class CRI_network:
         for i in range(len(preKeys)):
             self.write_synapse(preKeys[i],postKeys[i],weights[i])
 
-    def read_synapse(self,preIndex, postIndex):
+    # def read_synapse(self,preIndx, postIndex):#should this be preKey?
+    def read_synapse(self,preKey, postIndex):
         #convert user defined symbols to indicies
-        preIndex = self.connectome.get_neuron_by_key(preIndex).get_coreTypeIdx()
-        synapseType = self.connectome.get_neuron_by_key(preIndex).get_neuron_type()
-        if (synapseType == 'axons'):
+        preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
+        synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
+        # preIndex = self.connectome.get_neuron_by_key(preIndex).get_coreTypeIdx()
+        # synapseType = self.connectome.get_neuron_by_key(preIndex).get_neuron_type()
+        if (synapseType == 'axon'):#TODO: need to fix this typo
             axonFlag = True
         else:
             axonFlag = False
