@@ -139,11 +139,9 @@ class CRI_network:
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preKey, postKey, weight):
-        #breakpoint()
         self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).set_weight(weight) #update synapse weight in the connectome
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
-        
         preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
         synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
         

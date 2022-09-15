@@ -10,11 +10,8 @@ import logging
 class testL2s(unittest.TestCase):
 
     def setUp(self):
-        self.generateNetworks(10,100,10,-10,10)
-        # self.synth = synthnet(100,1000,-10,10,1000)
-        # self.hardware = CRI_network(axons=self.synth.axonsDict,connections=self.synth.neuronsDict,config=self.config,target='CRI', outputs = self.synth.neuronsDict.keys())
-        # self.software = CRI_network(axons=self.synth.axonsDict,connections=self.synth.neuronsDict,config=self.config,target='simpleSim', outputs = self.synth.neuronsDict.keys())
-        
+        self.generateNetworks(10,100,100,-10,10)
+
     def tearDown(self):
         pass
 
@@ -68,6 +65,7 @@ class testL2s(unittest.TestCase):
         self.hardware = CRI_network(axons=axons,connections=connections,config=config, target='CRI', outputs = connections.keys(), simDump=simDump)
     
     def test_write(self):
+        
         lenSynapses = 0
         while(lenSynapses < 1):
             idx = rnd.randrange(0,self.numAxons-1)
@@ -157,35 +155,35 @@ class testL2s(unittest.TestCase):
         self.assertEqual(True, os.stat(file).st_size != 0)
 
     def test_write_list_synapse(self):
-        idices = rnd.sample(range(0, self.numAxons-1), rnd.randrange(0,self.numAxons))
-        lenSynapses = [len(self.hardware.connectome.get_axon_by_idx(idx).get_synapses()) for idx in idices ]
+        indicies = rnd.sample(range(0, self.numAxons-1), rnd.randrange(0,self.numAxons))
+        lenSynapses = [len(self.hardware.connectome.get_axon_by_idx(idx).get_synapses()) for idx in indicies ]
         for i, length in enumerate(lenSynapses):
             if(length == 0):
-                del idices[i]
+                del indicies[i]
                 del lenSynapses[i]
-        axons = [ 'A' + str(idx) for idx in idices]
-        hardware_synapses = [self.hardware.connectome.get_axon_by_idx(idx).get_synapses() for idx in idices]
-        software_synapses = [self.software.connectome.get_axon_by_idx(idx).get_synapses() for idx in idices]
+        axons = [ 'A' + str(idx) for idx in indicies]
+        hardware_synapses = [self.hardware.connectome.get_axon_by_idx(idx).get_synapses() for idx in indicies]
+        software_synapses = [self.software.connectome.get_axon_by_idx(idx).get_synapses() for idx in indicies]
         synapseIdicies = [0]*len(axons)
         for i, length in enumerate(lenSynapses):
             if length > 1: synapseIdicies[i] = rnd.randrange(0, length-1) 
         synapseKeys = []
         for i,synapseIdx in enumerate(synapseIdicies):
-            synapseKeys.append(synapses[i][synapseIdx].get_postsynapticNeuron().get_user_key())
+            synapseKeys.append(hardware_synapses[i][synapseIdx].get_postsynapticNeuron().get_user_key())
         newWeights = [ rnd.randrange(self.minWeight, self.maxWeight) for i in axons]
         self.hardware.write_listofSynapses(axons, synapseKeys, newWeights)
         self.software.write_listofSynapses(axons, synapseKeys, newWeights)
 
-        for i, synapse in enumerate(synapses):
+        for i, synapse in enumerate(hardware_synapses):
             for synap in synapse:
                 if synap.get_postsynapticNeuron().get_user_key() == synapseKeys[i]:
                     synap.set_weight(newWeights[i])
             try:
-                self.assertCountEqual(hardware_synapses[i],self.hardware.connectome.get_axon_by_idx(idx).get_synapses())
-                self.assertCountEqual(software_synapses[i],self.software.connectome.get_axon_by_idx(idx).get_synapses())
+                self.assertCountEqual(hardware_synapses[i],self.hardware.connectome.get_axon_by_idx(indicies[i]).get_synapses())
+                self.assertCountEqual(software_synapses[i],self.software.connectome.get_axon_by_idx(indicies[i]).get_synapses())
             except AssertionError:
                 print(hardware_synapses[i])
-                print(self.hardware.connectome.get_axon_by_idx(idx).get_synapses())
+                print(self.hardware.connectome.get_axon_by_idx(indicies[i]).get_synapses())
 
 
 if __name__ == '__main__':
