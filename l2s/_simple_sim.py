@@ -358,7 +358,7 @@ class simple_sim:
             self.connections[preIndex][synapseIdx] = (self.connections[preIndex][synapseIdx][0],weight)
 
     def read_synapse(self,preIndex, postIndex, axonFlag = False):
-        breakpoint()
+        # breakpoint()
         if axonFlag:
             synapses = self.axons[preIndex]
         else:
