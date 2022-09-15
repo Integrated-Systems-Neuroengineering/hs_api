@@ -139,25 +139,25 @@ class CRI_network:
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preKey, postKey, weight):
-        #breakpoint()
         self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).set_weight(weight) #update synapse weight in the connectome
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
-        
         preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
         synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
-        breakpoint()
+        
         if (synapseType == 'axon'):
             axonFlag = True
         else:
             axonFlag = False
 
         postIndex = self.connectome.get_neuron_by_key(postKey).get_coreTypeIdx()
+        
+        index = self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).get_index()
 
         if (self.target == "simpleSim"):
             self.simpleSim.write_synapse(preIndex, postIndex, weight, axonFlag)
         elif (self.target == "CRI"):
-            self.CRI.write_synapse(preIndex, postIndex, weight, axonFlag)
+            self.CRI.write_synapse(preIndex, index, weight, axonFlag)
         else:
             raise Exception("Invalid Target")
     
@@ -166,20 +166,25 @@ class CRI_network:
         for i in range(len(preKeys)):
             self.write_synapse(preKeys[i],postKeys[i],weights[i])
 
-    def read_synapse(self,preIndex, postIndex):
+    
+    def read_synapse(self,preKey, postKey):
         #convert user defined symbols to indicies
-        preIndex = self.connectome.get_neuron_by_key(preIndex).get_coreTypeIdx()
-        synapseType = self.connectome.get_neuron_by_key(preIndex).get_neuron_type()
-        if (synapseType == 'axons'):
+        preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
+        synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
+        
+        if (synapseType == 'axon'):
             axonFlag = True
         else:
             axonFlag = False
-        postIndex = self.connectome.get_neuron_by_key(postIndex).get_coreTypeIdx()
+
+        postIndex = self.connectome.get_neuron_by_key(postKey).get_coreTypeIdx()
+
+        index = self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).get_index()
 
         if (self.target == "simpleSim"):
             return self.simpleSim.read_synapse(preIndex, postIndex, axonFlag)
         elif (self.target == "CRI"):
-            return self.CRI.read_synapse(preIndex, postIndex, axonFlag)
+            return self.CRI.read_synapse(preIndex, index, axonFlag)
         else:
             raise Exception("Invalid Target")
 
@@ -208,7 +213,6 @@ class CRI_network:
             if(self.simDump):
                 return self.CRI.run_step(formated_inputs)
             else:
-                
                 if (membranePotential == True):
                     output, spikeList = self.CRI.run_step(formated_inputs, membranePotential)
                     #we currently ignore the run execution counter
@@ -223,4 +227,6 @@ class CRI_network:
                     return spikeList
         else:
             raise Exception("Invalid Target")
+
+        
 
