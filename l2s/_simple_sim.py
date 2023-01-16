@@ -2,6 +2,8 @@ from numba import jit
 import numpy as np
 import yaml
 from ast import literal_eval
+import copy
+from scipy.sparse import dok_array
 
 def load_network(input, connex, output):
     """Loads the network specification.
@@ -320,6 +322,7 @@ class simple_sim:
           #self.inputs = inputs
           #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
+          self.gen_weights()
           self.initialize_sim_vars(self.numNeurons)
     def initialize_sim_vars(self, numNeurons):
           self.membranePotentials = np.zeros(numNeurons)
@@ -341,9 +344,35 @@ class simple_sim:
             self.firedNeurons = [] #np.array([])
             #
     """
+    def gen_weights(self):
+        nNeurons = len(self.connections)
+        nAxons = len(self.axons)
+        S = dok_array((nNeurons,nNeurons), dtype=np.float32)
+        for key, value in self.connections.items():
+            for synapse in value:
+                presynapticIdx = key
+                postsynapticIdx,weight = synapse
+                S[presynapticIdx,postsynapticIdx] = weight
+
+        A = dok_array((nAxons,nNeurons), dtype=np.float32)
+        for key, value in self.axons.items():
+            for synapse in value:
+                presynapticIdx = key
+                postsynapticIdx,weight = synapse
+                A[presynapticIdx, postsynapticIdx] = weight
+        breakpoint()
+        self.neuronWeights = S.tocsr().transpose()
+        self.axonWeights = A.tocsr().transpose()
+
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
-        #breakpoint()
+        breakpoint()
+        #do the new code
+        if axonFlag:
+             self.axonWeights[postIndex, preIndex] = weight
+        else:
+            self.neuronWeights[postIndex, preIndex] = weight
+        """
         if axonFlag:
             synapses = self.axons[preIndex]
         else:
@@ -356,9 +385,15 @@ class simple_sim:
             self.axons[preIndex][synapseIdx] = (self.axons[preIndex][synapseIdx][0],weight)
         else:
             self.connections[preIndex][synapseIdx] = (self.connections[preIndex][synapseIdx][0],weight)
+        """
 
     def read_synapse(self,preIndex, postIndex, axonFlag = False):
         # breakpoint()
+        if axonFlag:
+            return self.axonWeights[postIndex, preIndex]
+        else:
+            return self.neuornWeights[postIndex, preIndex]
+        """
         if axonFlag:
             synapses = self.axons[preIndex]
         else:
@@ -371,16 +406,45 @@ class simple_sim:
             return self.axons[preIndex][synapseIdx]
         else:
             return self.connections[preIndex][synapseIdx]
-
+        """
 
     def step_run(self,inputs):
+
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
             self.stepNum == 0
         else:
+
+            #new method
+            #membranePotentials = copy.deepcopy(self.membranePotentials)
+            nNeurons = len(self.connections)
+            nAxons = len(self.axons)
+
+            spiked_inds = np.argwhere(self.membranePotentials > self.threshold)
+            self.membranePotentials[spiked_inds] = 0
+            self.firedNeurons = spiked_inds
+
+            #now let's try phase two
+            a = np.zeros(nAxons)
+            a[inputs] = 1
+            s = np.zeros(nNeurons)
+            s[spiked_inds] = 1
+
+
+            membraneUpdatesAxon = self.axonWeights@a
+
+            #handle membranes
+            membraneUpdates = self.neuronWeights@s
+            membranePotentials = self.membranePotentials + membraneUpdates + membraneUpdatesAxon
+            self.membranePotentials = membranePotentials
+
+
+
             time = self.stepNum
             #currentInputs = np.array(self.inputs[time])
+            #
+            """
             currentInputs = inputs
             #do phase one
             self.firedNeurons = [] #np.array([])
@@ -393,7 +457,15 @@ class simple_sim:
 
             #print(time, 'Vmem', self.membranePotentials)
 
-            
+            """
             self.stepNum = self.stepNum+1
+
             outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
+            """
+            if np.array_equal(newtest, self.membranePotentials):
+                print("good test")
+            else:
+                print("error")
+                breakpoint()
+            """
             return self.membranePotentials, outputSpikes
