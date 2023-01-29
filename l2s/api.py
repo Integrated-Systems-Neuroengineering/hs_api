@@ -235,5 +235,6 @@ class CRI_network:
             formated_inputs.append([self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx() for symbol in curInputs]) #convert symbols to internal indicies
 
         spikeList = self.CRI.run_cont(formated_inputs)
-        spikeList = [self.connectome.get_neuron_by_idx(spike[1]).get_user_key() for spike in spikeList]
-        return spikeList
+        if self.simDump == False:
+            spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
+            return spikeList
