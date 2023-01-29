@@ -119,7 +119,7 @@ def phase_one(neuronModel, threshold, membranePotentials, firedNeurons):
   """
   for neuron, potential in enumerate(membranePotentials):
     if potential > threshold:
-      membranePotentials[neuron] = 0
+      membranePotentials[neuron] = membranePotentials[neuron] - threshold #subtraction model
       firedNeurons.append(neuron) #np.append(firedNeurons, neuron)
     else:
           #match neuronModel:
