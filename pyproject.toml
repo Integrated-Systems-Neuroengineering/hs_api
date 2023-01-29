@@ -11,7 +11,15 @@ numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
 cri-simulations = {path = "../CRI_Simulations", develop = true}
-bidict = "^0.22.0"
+bidict = ">=0.22.0"
+tqdm = ">=4.64.1"
+torch = ">=1.10.2"
+snntorch = "*"
+torchvision = ">=0.11.3"
+pytorch-lightning = ">=1.5.10"
+tensorboard = ">=2.8.0"
+torchmetrics = ">=0.7.2"
+scikit-learn = ">=1.0.2"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
