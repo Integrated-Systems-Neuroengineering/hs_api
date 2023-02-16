@@ -19,6 +19,7 @@ import os
 import shutil
 import argparse
 import time
+from quant_layer import *
 
 # dataloader arguments
 batch_size = 128
@@ -82,11 +83,11 @@ class Net(nn.Module):
         super().__init__()
 
         # Initialize layers
-        self.fc1 = nn.Linear(num_inputs, num_hidden)
-        self.lif1 = snn.Leaky(beta=beta)
+        self.fc1 = QuantLinear(num_inputs, num_hidden, bias=True)
+        self.lif1 = snn.Leaky(beta=beta, threshold=0.1)
         
-        self.fc2 = nn.Linear(num_hidden, num_outputs)
-        self.lif2 = snn.Leaky(beta=beta)
+        self.fc2 = QuantLinear(num_hidden, num_outputs, bias=True)
+        self.lif2 = snn.Leaky(beta=beta, threshold=0.1)
 
     def forward(self, x):
 
@@ -168,7 +169,7 @@ is_best = 0
 
 if not os.path.exists('result'):
     os.makedirs('result')
-fdir = 'result/'+'mnist_2layer_MLP'
+fdir = 'result/'+'mnist_2layer_MLP_quant_aware_trained'
 if not os.path.exists(fdir):
     os.makedirs(fdir)
 

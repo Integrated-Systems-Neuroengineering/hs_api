@@ -157,7 +157,7 @@ optimizer = torch.optim.Adam(net.parameters(), lr=5e-4, betas=(0.9, 0.999))
 
 # In[22]:
 
-PATH = "result/mnist_2layer_MLP_quantized/model_best.pth.tar"
+PATH = "/Volumes/export/isn/gopa/CRI_proj/L2S_justin/snntorch_mnist/result/mnist_2layer_MLP_quantized/model_best.pth.tar"
 checkpoint = torch.load(PATH)
 net.load_state_dict(checkpoint['state_dict'])
 device = torch.device("cuda") 
@@ -365,7 +365,7 @@ def run_CRI_hw(inputList):
         #each time step
         for slice in currInput:
             start_time = time.time()
-            hwSpike, total_time_perstep = hardwareNetwork.step(slice, membranePotential=False)
+            hwSpike = hardwareNetwork.step(slice, membranePotential=False)
             end_time = time.time()
             #total_time_cri = total_time_cri + end_time-start_time
             total_time_cri = total_time_cri + total_time_perstep
