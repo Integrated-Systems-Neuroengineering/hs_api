@@ -12,6 +12,10 @@ PyYAML = "^6.0"
 matplotlib = "^3.5.1"
 cri-simulations = {path = "../CRI_Simulations", develop = true}
 bidict = "^0.22.0"
+snntorch = "^0.5.3"
+torchvision = "^0.14.1"
+xeus-python = "^0.15.0"
+tqdm = "^4.64.1"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
