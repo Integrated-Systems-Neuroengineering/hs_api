@@ -20,7 +20,6 @@ class CRI_network:
                 self.target = 'simpleSim'
 
         self.outputs = outputs #outputs is a list
-
         #Checking for the axon type and synapse length
         if (type(axons)==dict):
             for keys in axons:
@@ -61,7 +60,10 @@ class CRI_network:
          
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
-            formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+	    ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
+            #formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+            formatedOutputs = self.connectome.get_outputs_idx()
+            print('formatedOutputs:',formatedOutputs)
             self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
@@ -77,7 +79,6 @@ class CRI_network:
         return os.path.exists(pathToFile)
 
     def gen_connectome(self):
-        #breakpoint()
         neuron.reset_count() #reset static variables for neuron class
         self.connectome = connectome()
         
@@ -239,7 +240,7 @@ class CRI_network:
 
         result = self.CRI.run_cont(formated_inputs)
         spikeList = result[0]
-        #breakpoint()
+        breakpoint()
         if self.simDump == False:
             spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
             return (spikeList, result[1], result[2])
