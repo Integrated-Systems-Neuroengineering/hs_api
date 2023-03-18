@@ -1,4 +1,4 @@
-from numba import jit
+#from numba import jit
 import numpy as np
 import yaml
 from ast import literal_eval
