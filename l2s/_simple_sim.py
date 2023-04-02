@@ -312,7 +312,7 @@ def run_sim():
   simulate(neuron_model, threshold, axons, connections, inputs)
 
 class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections, outputs, sparse=True):
+    def __init__(self, neuronModel, threshold, axons, connections, outputs):
           self.stepNum = 0
           self.neuronModel = neuronModel
           self.threshold = threshold
@@ -320,7 +320,7 @@ class simple_sim:
           self.connections = connections
           self.outputs = outputs
           #TODO: remove the self.sparse option it's just for testing
-          self.sparse = sparse
+          #self.sparse = sparse
           #self.inputs = inputs
           #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
@@ -417,70 +417,37 @@ class simple_sim:
             initialize_sim_vars()
             self.stepNum == 0
         else:
-            if self.sparse:
-                #new method
-                #membranePotentials = copy.deepcopy(self.membranePotentials)
-                nNeurons = len(self.connections)
-                nAxons = len(self.axons)
-                spiked_inds = np.nonzero(self.membranePotentials > self.threshold)
-                self.membranePotentials[spiked_inds] = 0
-                #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
-                self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
+            #membranePotentials = copy.deepcopy(self.membranePotentials)
+            nNeurons = len(self.connections)
+            nAxons = len(self.axons)
+            spiked_inds = np.nonzero(self.membranePotentials > self.threshold)
+            self.membranePotentials[spiked_inds] = 0
+            #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
+            self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
 
-                #you'll need to do extra work here depending on neuron type
-                if self.neuronModel == 0:
-                    #memoryless neuron
-                    #in this scenario you "might" be able to save some time by not reseting
-                    #the spiked neurons above
-                    self.membranePotentials.fill(0)
-                if self.neuronModel == 2:
-                    #Leaky Integrate and fire
-                    self.membranePotentials = self.membranePotentials - (self.membranePotentials // (2**3))
+            #you'll need to do extra work here depending on neuron type
+            if self.neuronModel == 0:
+                #memoryless neuron
+                #in this scenario you "might" be able to save some time by not reseting
+                #the spiked neurons above
+                self.membranePotentials.fill(0)
+            if self.neuronModel == 2:
+                #Leaky Integrate and fire
+                self.membranePotentials = self.membranePotentials - (self.membranePotentials // (2**3))
 
+            #now let's try phase two
+            a = np.zeros(nAxons)
+            a[inputs] = 1
+            s = np.zeros(nNeurons)
+            s[spiked_inds] = 1
 
+            membraneUpdatesAxon = self.axonWeights@a
+            membraneUpdates = self.neuronWeights@s
 
-                #now let's try phase two
-                a = np.zeros(nAxons)
-                a[inputs] = 1
-                s = np.zeros(nNeurons)
-                s[spiked_inds] = 1
-
-
-                membraneUpdatesAxon = self.axonWeights@a
-
-                #handle membranes
-                membraneUpdates = self.neuronWeights@s
-                membranePotentials = self.membranePotentials + membraneUpdates + membraneUpdatesAxon
-                self.membranePotentials = membranePotentials
-
-
-
-
-            else:
-            #currentInputs = np.array(self.inputs[time])
-            #
-
-                currentInputs = inputs
-            #do phase one
-                self.firedNeurons = [] #np.array([])
-                self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
-            # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
-
-            #do phase two
-            #print(time, self.firedNeurons)
-                self.membranePotentials = phase_two(self.firedNeurons, currentInputs, self.membranePotentials, self.axons, self.connections)#update the membrane potentials
-
-            #print(time, 'Vmem', self.membranePotentials)
-
+            membranePotentials = self.membranePotentials + membraneUpdates + membraneUpdatesAxon
+            self.membranePotentials = membranePotentials
 
             self.stepNum = self.stepNum+1
             #breakpoint()
             outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
-            """
-            if np.array_equal(newtest, self.membranePotentials):
-                print("good test")
-            else:
-                print("error")
-                breakpoint()
-            """
             return self.membranePotentials, outputSpikes
