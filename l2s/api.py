@@ -20,7 +20,6 @@ class CRI_network:
                 self.target = 'simpleSim'
 
         self.outputs = outputs #outputs is a list
-
         #Checking for the axon type and synapse length
         if (type(axons)==dict):
             for keys in axons:
@@ -61,7 +60,10 @@ class CRI_network:
          
         if(self.target == 'CRI'):
             logging.info('Initilizing to run on hardware')
-            formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+	    ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
+            #formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
+            formatedOutputs = self.connectome.get_outputs_idx()
+            print('formatedOutputs:',formatedOutputs)
             self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
@@ -214,17 +216,19 @@ class CRI_network:
                 return self.CRI.run_step(formated_inputs)
             else:
                 if (membranePotential == True):
-                    output, spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    output, spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeList = spikeResult[0]
                     #we currently ignore the run execution counter
                     spikeList = [self.connectome.get_neuron_by_idx(spike[1]).get_user_key() for spike in spikeList]
                     numNeurons = len(self.connections)
                     #we currently only print the membrane potential, not the other contents of the spike packet
                     output = [(self.connectome.get_neuron_by_idx(idx).get_user_key(), data[3]) for idx,data in enumerate(output[:numNeurons])] #because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
-                    return output, spikeList
+                    return output, (spikeList,spikeResult[1],spikeResult[2])
                 else: 
-                    spikeList = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeList = spikeResult[0]
                     spikeList = [self.connectome.get_neuron_by_idx(spike[1]).get_user_key() for spike in spikeList]
-                    return spikeList
+                    return (spikeList,spikeResult[1],spikeResult[2])
         else:
             raise Exception("Invalid Target")
 
@@ -234,7 +238,9 @@ class CRI_network:
         for curInputs in inputs:
             formated_inputs.append([self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx() for symbol in curInputs]) #convert symbols to internal indicies
 
-        spikeList = self.CRI.run_cont(formated_inputs)
+        result = self.CRI.run_cont(formated_inputs)
+        spikeList = result[0]
+        breakpoint()
         if self.simDump == False:
             spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
-            return spikeList
+            return (spikeList, result[1], result[2])

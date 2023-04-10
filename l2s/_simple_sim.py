@@ -1,4 +1,4 @@
-from numba import jit
+#from numba import jit
 import numpy as np
 import yaml
 from ast import literal_eval
@@ -119,7 +119,7 @@ def phase_one(neuronModel, threshold, membranePotentials, firedNeurons):
   """
   for neuron, potential in enumerate(membranePotentials):
     if potential > threshold:
-      membranePotentials[neuron] = membranePotentials[neuron] - threshold #subtraction model
+      membranePotentials[neuron] = 0 #subtraction model
       firedNeurons.append(neuron) #np.append(firedNeurons, neuron)
     else:
           #match neuronModel:
