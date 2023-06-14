@@ -1,25 +1,20 @@
 [tool.poetry]
-name = "l2s"
+name = "hs_api"
 version = "0.1.0"
 description = "CRI User Software"
 authors = ["Justin Frank & Abhinav Uppal"]
 
 [tool.poetry.dependencies]
-python = ">=3.9,<3.11"
-#numba = "^0.55.1"
+
+python = ">=3.10,<3.11"
+numba = "^0.55.1"
+numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
-cri-simulations = {path = "../CRI_Simulations", develop = true}
-bidict = ">=0.22.0"
-tqdm = ">=4.64.1"
-torch = ">=1.10.2"
-snntorch = "*"
-torchvision = ">=0.11.3"
-pytorch-lightning = ">=1.5.10"
-tensorboard = ">=2.8.0"
-torchmetrics = ">=0.7.2"
-scikit-learn = ">=1.0.2"
-numpy = "^1.24.2"
+bidict = "^0.22.0"
+tqdm = "^4.64.1"
+connectome_utils = {path = "../connectome_utils", develop = true}
+fxpmath = "^0.4.8"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
