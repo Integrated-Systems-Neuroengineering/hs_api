@@ -5,6 +5,7 @@ description = "CRI User Software"
 authors = ["Justin Frank & Abhinav Uppal"]
 
 [tool.poetry.dependencies]
+
 python = ">=3.10,<3.11"
 numba = "^0.55.1"
 numpy = ">=1.18"
@@ -14,6 +15,7 @@ bidict = "^0.22.0"
 tqdm = "^4.64.1"
 connectome_utils = {path = "../connectome_utils", develop = true}
 fxpmath = "^0.4.8"
+
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
 
