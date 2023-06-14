@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "l2s"
+name = "hs_api"
 version = "0.1.0"
 description = "CRI User Software"
 authors = ["Justin Frank & Abhinav Uppal"]
