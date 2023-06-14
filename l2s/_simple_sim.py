@@ -3,8 +3,8 @@ import numpy as np
 import yaml
 from ast import literal_eval
 import copy
-from scipy.sparse import dok_array
-
+#from scipy.sparse import dok_array
+from fxpmath import Fxp
 def load_network(input, connex, output):
     """Loads the network specification.
 
@@ -314,8 +314,13 @@ def run_sim():
 class simple_sim:
     def __init__(self, neuronModel, threshold, axons, connections, outputs):
           self.stepNum = 0
+          self.formatDict = {
+                "membrane_potential" : 'fxp-s16/0',
+                "synapse_weights" : 'fxp-s16/0',
+                "voltage_threshold" : 'fxp-s16/0'
+            }
           self.neuronModel = neuronModel
-          self.threshold = threshold
+          self.threshold = Fxp(threshold,dtype=self.formatDict['voltage_threshold'])
           self.axons = axons
           self.connections = connections
           self.outputs = outputs
@@ -325,9 +330,11 @@ class simple_sim:
           #self.timesteps = range(len(inputs)) #TODO What if not every timestep is enumerated in inputs
           self.numNeurons = len(connections)
           self.gen_weights()
+
           self.initialize_sim_vars(self.numNeurons)
+
     def initialize_sim_vars(self, numNeurons):
-          self.membranePotentials = np.zeros(numNeurons)
+          self.membranePotentials = Fxp(np.zeros(numNeurons),dtype=self.formatDict['membrane_potential'])
           self.firedNeurons = [] #np.array([], dtype=np.single)
     """
     def free_run(self):
@@ -349,22 +356,22 @@ class simple_sim:
     def gen_weights(self):
         nNeurons = len(self.connections)
         nAxons = len(self.axons)
-        S = dok_array((nNeurons,nNeurons), dtype=np.float32)
+        S = Fxp(np.zeros((nNeurons,nNeurons)),dtype=self.formatDict['synapse_weights'])
         for key, value in self.connections.items():
             for synapse in value:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 S[presynapticIdx,postsynapticIdx] = weight
 
-        A = dok_array((nAxons,nNeurons), dtype=np.float32)
+        A = Fxp(np.zeros((nAxons,nNeurons)), dtype=self.formatDict['synapse_weights'])
         for key, value in self.axons.items():
             for synapse in value:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 A[presynapticIdx, postsynapticIdx] = weight
         #breakpoint()
-        self.neuronWeights = S.tocsr().transpose()
-        self.axonWeights = A.tocsr().transpose()
+        self.neuronWeights = np.transpose(S)
+        self.axonWeights = np.transpose(A)
 
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
@@ -392,9 +399,9 @@ class simple_sim:
     def read_synapse(self,preIndex, postIndex, axonFlag = False):
         # breakpoint()
         if axonFlag:
-            return self.axonWeights[postIndex, preIndex]
+            return self.axonWeights[postIndex, preIndex]()
         else:
-            return self.neuornWeights[postIndex, preIndex]
+            return self.neuornWeights[postIndex, preIndex]()
         """
         if axonFlag:
             synapses = self.axons[preIndex]
@@ -411,6 +418,7 @@ class simple_sim:
         """
 
     def step_run(self,inputs):
+        #breakpoint()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -420,7 +428,7 @@ class simple_sim:
             #membranePotentials = copy.deepcopy(self.membranePotentials)
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
-            spiked_inds = np.nonzero(self.membranePotentials > self.threshold)
+            spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
             self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
@@ -433,7 +441,7 @@ class simple_sim:
                 self.membranePotentials.fill(0)
             if self.neuronModel == 2:
                 #Leaky Integrate and fire
-                self.membranePotentials = self.membranePotentials - (self.membranePotentials // (2**3))
+                self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**3)))
 
             #now let's try phase two
             a = np.zeros(nAxons)
@@ -445,9 +453,9 @@ class simple_sim:
             membraneUpdates = self.neuronWeights@s
 
             membranePotentials = self.membranePotentials + membraneUpdates + membraneUpdatesAxon
-            self.membranePotentials = membranePotentials
+            self.membranePotentials(membranePotentials)
 
             self.stepNum = self.stepNum+1
             #breakpoint()
             outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
-            return self.membranePotentials, outputSpikes
+            return self.membranePotentials(), outputSpikes
