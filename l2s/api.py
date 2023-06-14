@@ -1,6 +1,7 @@
 from l2s._simple_sim import simple_sim, map_neuron_type_to_int
-from cri_simulations import network
-from cri_simulations.utils import *
+#from cri_simulations import network
+#from cri_simulations.utils import *
+from connectome_utils.connectome import *
 from bidict import bidict
 import os
 import copy
@@ -18,6 +19,9 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
+
+        if self.target == 'CRI':
+            from cri_simulations import network
 
         self.outputs = outputs #outputs is a list
 
