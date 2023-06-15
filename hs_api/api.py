@@ -1,6 +1,7 @@
-from l2s._simple_sim import simple_sim, map_neuron_type_to_int
-from cri_simulations import network
-from cri_simulations.utils import *
+from hs_api._simple_sim import simple_sim, map_neuron_type_to_int
+#from cri_simulations import network
+#from cri_simulations.utils import *
+from connectome_utils.connectome import *
 from bidict import bidict
 import os
 import copy
@@ -18,6 +19,9 @@ class CRI_network:
                 self.target = 'CRI'
             else:
                 self.target = 'simpleSim'
+
+        if self.target == 'CRI':
+            from cri_simulations import network
 
         self.outputs = outputs #outputs is a list
         #Checking for the axon type and synapse length
@@ -70,7 +74,7 @@ class CRI_network:
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs)
         #breakpoint()
-        print("initialized")
+        #print("initialized")
 
     def checkHw(self):
         """check if the magic file exists to demark that were running on a system with CRI hardware accessible
@@ -85,10 +89,10 @@ class CRI_network:
         #add neurons/axons to connectome
         for axonKey in self.userAxons:
             self.connectome.addNeuron(neuron(axonKey,"axon"))
-        print("added axons to connectome")
+        #print("added axons to connectome")
         for neuronKey in self.userConnections:
             self.connectome.addNeuron(neuron(neuronKey,"neuron", output = neuronKey in self.outputs ))
-        print("added neurons to connectome")
+        #print("added neurons to connectome")
 
         #assign synapses to neurons in connectome
         for axonKey in self.userAxons:
@@ -97,16 +101,16 @@ class CRI_network:
                 weight = axonSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
                 self.connectome.connectomeDict[axonKey].addSynapse(postsynapticNeuron,weight)
-        print("added axon synpases")
+        #print("added axon synpases")
         for neuronKey in self.userConnections:
             synapses = self.userConnections[neuronKey]
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
                 self.connectome.connectomeDict[neuronKey].addSynapse(postsynapticNeuron,weight)
-        print("added neuron synapses")
+        #print("added neuron synapses")
         
-        print("generated Connectome")
+        #print("generated Connectome")
 
     def __format_input(self,axons,connections):
         #breakpoint()
