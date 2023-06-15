@@ -21,7 +21,7 @@ class CRI_network:
                 self.target = 'simpleSim'
 
         if self.target == 'CRI':
-            from cri_simulations import network
+            from hs_bridge import network
 
         self.outputs = outputs #outputs is a list
         #Checking for the axon type and synapse length
