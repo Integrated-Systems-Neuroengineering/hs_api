@@ -17,16 +17,11 @@ import cri_simulations
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
-from helper import isSNNLayer
+from converter.utils import isSNNLayer
 #import sparselinear as sl
 
-def pad_with(vector, pad_width, iaxis, kwargs):
-    pad_value = kwargs.get('padder', 10)
-    vector[:pad_width[0]] = pad_value
-    vector[-pad_width[1]:] = pad_value
-# a = np.arange(6)
-# a = a.reshape((2, 3))
-# np.pad(a, 1, pad_with, padder=-1)
+# def isSNNLayer(layer):
+#     return isinstance(layer, MultiStepLIFNode) or isinstance(layer, LIFNode) or isinstance(layer, IFNode)
 
 class CRI_Converter():
     
@@ -313,7 +308,6 @@ class CRI_Converter():
         filters = layer.weight.detach().cpu().numpy()
         h_i, w_i = input.shape[-2], input.shape[-1] 
         input_layer = input.reshape(input.shape[-2], input.shape[-1])
-        #TODO: add padding of 0s
         print(f'Input.shape: {input_layer.shape}')
         input_padded = np.pad(input_layer, 1, pad_with, padder=-1)
         input_padded = input_padded.reshape((input.shape[0], input_padded.shape[0], input_padded.shape[1]))
@@ -422,13 +416,13 @@ class CRI_Converter():
         total_time_cri = 0
         for currInput in tqdm(inputList):
             #initiate the hardware for each image
-            break()
+            breakpoint()
             cri_simulations.FPGA_Execution.fpga_controller.clear(len(self.neuron_dict), False, 0)  ##Num_neurons, simDump, coreOverride
             spikeRate = [0]*10
             #each time step
             for slice in tqdm(currInput):
                 start_time = time.time()
-                break()
+                breakpoint()
                 hwSpike, latency, hbmAcc = hardwareNetwork.step(slice, membranePotential=False)
                 print(f'hwSpike: {hwSpike}\n. latency : {latency}\n. hbmAcc:{hbmAcc}')
     #             print("Mem:",mem)
