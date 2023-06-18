@@ -312,18 +312,21 @@ def run_sim():
   simulate(neuron_model, threshold, axons, connections, inputs)
 
 class simple_sim:
-    def __init__(self, neuronModel, threshold, axons, connections, outputs):
+    def __init__(self, neuronModel, threshold, axons, connections, outputs, perturb= False, perturbMag = 18):
           self.stepNum = 0
           self.formatDict = {
-                "membrane_potential" : 'fxp-s16/0',
+                "membrane_potential" : 'fxp-s35/0',
                 "synapse_weights" : 'fxp-s16/0',
-                "voltage_threshold" : 'fxp-s16/0'
+                "voltage_threshold" : 'fxp-s16/0',
+                "perturbation" : 'fxp-s16/0'
             }
           self.neuronModel = neuronModel
           self.threshold = Fxp(threshold,dtype=self.formatDict['voltage_threshold'])
           self.axons = axons
           self.connections = connections
           self.outputs = outputs
+          self.perturb = perturb
+          self.perturbMag = perturbMag
           #TODO: remove the self.sparse option it's just for testing
           #self.sparse = sparse
           #self.inputs = inputs
@@ -418,7 +421,7 @@ class simple_sim:
         """
 
     def step_run(self,inputs):
-        #breakpoint()
+        breakpoint()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -428,6 +431,14 @@ class simple_sim:
             #membranePotentials = copy.deepcopy(self.membranePotentials)
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
+
+            if self.perturb:
+                perturbBits = 16
+                perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
+                if self.perturbMag > 0:
+                    perturbation = perturbation << self.perturbMag
+                self.membranePotentials(self.membranePotentials+perturbation)
+
             spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
