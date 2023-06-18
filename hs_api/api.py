@@ -10,7 +10,7 @@ class CRI_network:
      
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0):
+    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturb = False, perturbMag = 0):
         #return
         if (target): #check if user provides an override for target
             self.target = target
@@ -53,8 +53,9 @@ class CRI_network:
                 logging.error('config does not contain neuron type or global neuron params')
         else:
             logging.error('config should be a dictionary')
-        
 
+        self.perturb = perturb
+        self.perturbMag = perturbMag
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
@@ -72,7 +73,7 @@ class CRI_network:
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             formatedOutputs = self.connectome.get_outputs_idx()
-            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs)
+            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs,perturb = self.perturb, perturbMag = self.perturbMag)
         #breakpoint()
         #print("initialized")
 
