@@ -31,7 +31,7 @@ def weight_quantization(b):
             input, input_q = ctx.saved_tensors
             i = (input.abs()>1.).float()     # >1 means clipped. # output matrix is a form of [True, False, True, ...]
             sign = input.sign()              # output matrix is a form of [+1, -1, -1, +1, ...]
-            #grad_alpha = (grad_output*(sign*i + (input_q-input)*(1-i))).sum()
+            # grad_alpha = (grad_output*(sign*i + (input_q-input)*(1-i))).sum()
             grad_alpha = (grad_output*(sign*i + (0.0)*(1-i))).sum()
             # above line, if i = True,  and sign = +1, "grad_alpha = grad_output * 1"
             #             if i = False, "grad_alpha = grad_output * (input_q-input)"
@@ -41,18 +41,13 @@ def weight_quantization(b):
     return _pq().apply
 
 class weight_quantize_fn(nn.Module):
-    def __init__(self, w_bit):
+    def __init__(self, w_bit, w_alpha):
         super(weight_quantize_fn, self).__init__()
         self.w_bit = w_bit-1
-        #self.wgt_alpha = wgt_alpha
         self.weight_q = weight_quantization(b=self.w_bit)
-        self.register_parameter('wgt_alpha', Parameter(torch.tensor(3.0)))
+        self.wgt_alpha = w_alpha
     def forward(self, weight):
-        mean = weight.data.mean()
-        std = weight.data.std()
-        weight = weight.add(-mean).div(std)      # weights normalization
         weight_q = self.weight_q(weight, self.wgt_alpha)
-
         return weight_q
 
 def act_quantization(b):
