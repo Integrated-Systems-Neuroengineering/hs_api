@@ -317,7 +317,7 @@ class simple_sim:
           self.formatDict = {
                 "membrane_potential" : 'fxp-s35/0',
                 "synapse_weights" : 'fxp-s16/0',
-                "voltage_threshold" : 'fxp-s16/0',
+                "voltage_threshold" : 'fxp-s35/0',
                 "perturbation" : 'fxp-s16/0'
             }
           self.neuronModel = neuronModel
