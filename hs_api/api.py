@@ -1,7 +1,7 @@
 from hs_api._simple_sim import simple_sim, map_neuron_type_to_int
 #from cri_simulations import network
 #from cri_simulations.utils import *
-from connectome_utils.connectome import *
+#from connectome_utils.connectome import *
 from bidict import bidict
 import os
 import copy
