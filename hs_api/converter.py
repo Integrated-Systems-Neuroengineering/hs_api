@@ -16,6 +16,11 @@ import snntorch as snn
 import multiprocessing as mp
 import numpy as np
 
+def pad_with(vector, pad_width, iaxis, kwargs):
+    pad_value = kwargs.get('padder', 10)
+    vector[:pad_width[0]] = pad_value
+    vector[-pad_width[1]:] = pad_value
+
 def isSNNLayer(layer):
     return isinstance(layer, MultiStepLIFNode) or isinstance(layer, LIFNode) or isinstance(layer, IFNode)
 
@@ -493,7 +498,7 @@ class CRI_Converter():
         h_i, w_i = input.shape[-2], input.shape[-1] 
         input_layer = input.reshape(input.shape[-2], input.shape[-1])
         print(f'Input.shape: {input_layer.shape}')
-        input_padded = np.pad(input_layer, 1, pad_with, padder=-1)
+        input_padded = np.pad(input_layer, 1,pad_with, padder=-1)
         input_padded = input_padded.reshape((input.shape[0], input_padded.shape[0], input_padded.shape[1]))
         print(f'input_padded: {input_padded.shape}')
         start_time = time.time()
