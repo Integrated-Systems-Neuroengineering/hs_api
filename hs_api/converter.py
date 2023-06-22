@@ -17,16 +17,103 @@ import multiprocessing as mp
 import numpy as np
 
 def pad_with(vector, pad_width, iaxis, kwargs):
+    """
+    Pads an array with a specified value.
+
+    Parameters
+    ----------
+    vector : np.ndarray
+        Input array.
+    pad_width : int or sequence of ints
+        Number of values padded to the edges of each axis.
+    iaxis : int
+        An indicator of the current axis.
+    kwargs : dict
+        Optional keyword arguments. 
+
+    Returns
+    -------
+    np.ndarray
+        The padded array.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> a = np.array([1, 2, 3, 4, 5])
+    >>> np.pad(a, 2, pad_with, padder=2)
+    array([2, 2, 1, 2, 3, 4, 5, 2, 2])
+    """
+    
     pad_value = kwargs.get('padder', 10)
     vector[:pad_width[0]] = pad_value
     vector[-pad_width[1]:] = pad_value
 
 def isSNNLayer(layer):
+    """
+    Checks if a layer is an instance of a Spiking Neural Network (SNN) layer.
+
+    Parameters
+    ----------
+    layer : object
+        The layer to check.
+
+    Returns
+    -------
+    bool
+        True if the layer is an instance of a SNN layer, False otherwise.
+
+    Examples
+    --------
+    >>> from norse.torch.module.lif import LIFCell
+    >>> layer = LIFCell()
+    >>> isSNNLayer(layer)
+    True
+    """
+    
     return isinstance(layer, MultiStepLIFNode) or isinstance(layer, LIFNode) or isinstance(layer, IFNode)
 
 def weight_quantization(b):
+    """
+    Applies weight quantization to the input.
 
+    Parameters
+    ----------
+    b : int
+        The number of bits to use for the quantization.
+
+    Returns
+    -------
+    function
+        A function that applies weight quantization to its input.
+
+    Examples
+    --------
+    >>> weight_quantization_func = weight_quantization(8)
+    >>> weight_quantization_func(some_input)
+    """
+    
     def uniform_quant(x, b):
+        """
+        Applies uniform quantization to the input.
+
+        Parameters
+        ----------
+        x : torch.Tensor
+            The input tensor.
+        b : int
+            The number of bits to use for the quantization.
+
+        Returns
+        -------
+        torch.Tensor
+            The quantized tensor.
+
+        Examples
+        --------
+        >>> x = torch.tensor([1.1, 2.2, 3.3])
+        >>> uniform_quant(x, 2)
+        tensor([1., 2., 3.])
+        """
         xdiv = x.mul((2 ** b - 1))
         xhard = xdiv.round().div(2 ** b - 1)
         #print('uniform quant bit: ', b)
@@ -70,6 +157,37 @@ class weight_quantize_fn(nn.Module):
         return weight_q
 
 class Quantize_Network():
+    """
+    A class to perform quantization on a neural network.
+
+    Parameters
+    ----------
+    w_alpha : float, optional
+        The alpha value for the quantization. Default is 1.
+    dynamic_alpha : bool, optional
+        Whether to use dynamic alpha for quantization. Default is False.
+
+    Attributes
+    ----------
+    w_alpha : float
+        The alpha value for the quantization.
+    dynamic_alpha : bool
+        Whether to use dynamic alpha for quantization.
+    v_threshold : float or None
+        The threshold for the quantization. Default is None.
+    w_bits : int
+        The number of bits to use for the quantization.
+    w_delta : float
+        The delta value for the quantization.
+    weight_quant : weight_quantize_fn
+        The weight quantization function.
+
+    Examples
+    --------
+    >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
+    >>> q_net.quantize(some_model)
+    """
+    
     def __init__(self, w_alpha = 1, dynamic_alpha = False):
         self.w_alpha = w_alpha #Range of the parameter (CSNN:4, Transformer: 5)
         self.dynamic_alpha = dynamic_alpha
@@ -79,6 +197,25 @@ class Quantize_Network():
         self.weight_quant = weight_quantize_fn(self.w_bits, self.w_alpha)
     
     def quantize(self, model):
+        """
+        Performs quantization on a model.
+
+        Parameters
+        ----------
+        model : torch.nn.Module
+            The input model.
+
+        Returns
+        -------
+        torch.nn.Module
+            The quantized model.
+
+        Examples
+        --------
+        >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
+        >>> q_net.quantize(some_model)
+        """
+        
         new_model = copy.deepcopy(model)
         start_time = time.time()
         module_names = list(new_model._modules)
@@ -104,6 +241,24 @@ class Quantize_Network():
         return new_model
     
     def quantize_block(self, model):
+        """
+        Performs quantization on a block of a model.
+
+        Parameters
+        ----------
+        model : torch.nn.Module
+            The input model.
+
+        Returns
+        -------
+        torch.nn.Module
+            The quantized model.
+
+        Examples
+        --------
+        >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
+        >>> q_net.quantize_block(some_model)
+        """
         new_model = copy.deepcopy(model)
         module_names = list(new_model._modules)
         
@@ -123,6 +278,25 @@ class Quantize_Network():
         return new_model
     
     def _quantize(self, layer):
+        """
+        Helper function to performs quantization on a layer.
+
+        Parameters
+        ----------
+        layer : torch.nn.Module
+            The input layer.
+
+        Returns
+        -------
+        torch.nn.Module
+            The quantized layer.
+
+        Examples
+        --------
+        >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
+        >>> q_net._quantize(some_layer)
+        """
+        
         if isSNNLayer(layer):
             return self._quantize_LIF(layer)
 
@@ -149,11 +323,28 @@ class Quantize_Network():
             layer.bias = nn.Parameter(self.weight_quant(layer.bias))
             quantized_layer.bias = nn.Parameter(layer.bias/self.w_delta)
         
-        
         return quantized_layer
 
-    
+
     def _quantize_LIF(self,layer):
+        """
+        Helper function to performs quantization on a LIF layer.
+
+        Parameters
+        ----------
+        layer : torch.nn.Module
+            The input layer.
+
+        Returns
+        -------
+        torch.nn.Module
+            The quantized layer.
+
+        Examples
+        --------
+        >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
+        >>> q_net._quantize_LIF(some_layer)
+        """
         
         layer.v_threshold = layer.v_threshold/self.w_delta
         self.v_threshold = layer.v_threshold
@@ -161,11 +352,38 @@ class Quantize_Network():
         return layer
 
 class BN_Folder():
+    """
+    A class to perform batch normalization folding on a model.
+
+    Examples
+    --------
+    >>> bn_folder = BN_Folder()
+    >>> bn_folder.fold(some_model)
+    """
+    
     def __init__(self):
         super().__init__()
         
     def fold(self, model):
+        """
+        Performs batch normalization folding on a model.
 
+        Parameters
+        ----------
+        model : torch.nn.Module
+            The input model.
+
+        Returns
+        -------
+        torch.nn.Module
+            The model with batch normalization folded.
+
+        Examples
+        --------
+        >>> bn_folder = BN_Folder()
+        >>> bn_folder.fold(some_model)
+        """
+        
         new_model = copy.deepcopy(model)
 
         module_names = list(new_model._modules)
@@ -192,6 +410,39 @@ class BN_Folder():
 
 
     def _bn_folding(self, prev_w, prev_b, bn_rm, bn_rv, bn_eps, bn_w, bn_b, model_2d):
+        """
+        Performs batch normalization folding on a layer.
+
+        Parameters
+        ----------
+        prev_w : torch.nn.Parameter
+            The weight parameter of the previous layer.
+        prev_b : torch.nn.Parameter or None
+            The bias parameter of the previous layer.
+        bn_rm : torch.Tensor
+            The running mean of the batch normalization layer.
+        bn_rv : torch.Tensor
+            The running variance of the batch normalization layer.
+        bn_eps : float
+            The epsilon value of the batch normalization layer.
+        bn_w : torch.nn.Parameter
+            The weight parameter of the batch normalization layer.
+        bn_b : torch.nn.Parameter
+            The bias parameter of the batch normalization layer.
+        model_2d : bool
+            Whether the model is 2D.
+
+        Returns
+        -------
+        tuple of torch.nn.Parameter
+            The folded weight and bias parameters.
+
+        Examples
+        --------
+        >>> bn_folder = BN_Folder()
+        >>> bn_folder._bn_folding(some_parameters)
+        """
+        
         if prev_b is None:
             prev_b = bn_rm.new_zeros(bn_rm.shape)
             
@@ -206,6 +457,27 @@ class BN_Folder():
         return torch.nn.Parameter(w_fold), torch.nn.Parameter(b_fold)
         
     def _fold_conv_bn_eval(self, prev, bn):
+        """
+        Performs batch normalization folding on a convolutional layer in evaluation mode.
+
+        Parameters
+        ----------
+        prev : torch.nn.Module
+            The previous layer.
+        bn : torch.nn.Module
+            The batch normalization layer.
+
+        Returns
+        -------
+        torch.nn.Module
+            The folded layer.
+
+        Examples
+        --------
+        >>> bn_folder = BN_Folder()
+        >>> bn_folder._fold_conv_bn_eval(some_prev_layer, some_bn_layer)
+        """
+        
         assert(not (prev.training or bn.training)), "Fusion only for eval!"
         fused_prev = copy.deepcopy(prev)
         
@@ -220,6 +492,82 @@ class BN_Folder():
 
 
 class CRI_Converter():
+    """
+    A class to convert a neural network model into an equivalent model compatible
+    with the CRI (Capacitive ReRAM Inverter) hardware.
+
+    Parameters
+    ----------
+    num_steps : int, optional
+        The number of time steps in the input. Default is 4.
+    input_layer : int, optional
+        The index of the input layer. Default is 0.
+    output_layer : int, optional
+        The index of the output layer. Default is 11.
+    input_shape : tuple of int, optional
+        The shape of the input data. Default is (1, 28, 28).
+    backend : str, optional
+        The backend to use. Default is 'spikingjelly'.
+    v_threshold : float, optional
+        The voltage threshold for the neurons. Default is 1e6.
+    embed_dim : int, optional
+        The embedding dimension. Default is 4.
+
+    Attributes
+    ----------
+    HIGH_SYNAPSE_WEIGHT : float
+        The high synapse weight value. Default is 1e6.
+    axon_dict : defaultdict of list
+        A dictionary mapping each axon to a list of connected neurons.
+    neuron_dict : defaultdict of list
+        A dictionary mapping each neuron to a list of connected axons.
+    output_neurons : list
+        A list of output neurons.
+    input_shape : np.ndarray
+        The shape of the input data.
+    num_steps : int
+        The number of time steps in the input.
+    axon_offset : int
+        The current offset for axon indexing.
+    neuron_offset : int
+        The current offset for neuron indexing.
+    backend : str
+        The backend to use.
+    save_input : bool
+        Whether to save the input data.
+    bias_start_idx : int or None
+        The starting index for bias neurons.
+    curr_input : np.ndarray or None
+        The current input data.
+    input_layer : int
+        The index of the input layer.
+    output_layer : int
+        The index of the output layer.
+    layer_index : int
+        The current layer index.
+    total_axonSyn : int
+        The total number of axon synapses.
+    total_neuronSyn : int
+        The total number of neuron synapses.
+    max_fan : int
+        The maximum fan-out.
+    v_threshold : float
+        The voltage threshold for the neurons.
+    q : np.ndarray or None
+        The q matrix for attention conversion.
+    v : np.ndarray or None
+        The v matrix for attention conversion.
+    k : np.ndarray or None
+        The k matrix for attention conversion.
+    embed_dim : int
+        The embedding dimension.
+
+    Examples
+    --------
+    >>> converter = CRI_Converter()
+    >>> converter.layer_converter(some_model)
+    >>> converter.input_converter(some_input_data)
+    """
     
     HIGH_SYNAPSE_WEIGHT = 1e6
     
@@ -252,6 +600,25 @@ class CRI_Converter():
     '''Given an img, encode it into spikes and then convert it to axons lists
     '''
     def input_converter(self, input_data):
+        """
+        Converts input data into a spike train and then into a list of axon indices.
+
+        Parameters
+        ----------
+        input_data : torch.Tensor
+            The input data.
+
+        Returns
+        -------
+        list of list of str
+            The batch of spikes, with each spike represented by its axon index.
+
+        Examples
+        --------
+        >>> converter = CRI_Converter()
+        >>> converter.input_converter(some_input_data)
+        """
+        
         self.input_shape = input_data.shape
         print('input batch data shape: ', input_data.shape)
         return self._input_converter(input_data)
@@ -280,7 +647,19 @@ class CRI_Converter():
         
     
     def layer_converter(self, model):
-        
+        """
+        Converts a model into a CRI-compatible model.
+
+        Parameters
+        ----------
+        model : torch.nn.Module
+            The input model.
+
+        Examples
+        --------
+        >>> converter = CRI_Converter()
+        >>> converter.layer_converter(some_model)
+        """
         module_names = list(model._modules)
         
         #TODO: Construct the axon dict here
@@ -354,14 +733,18 @@ class CRI_Converter():
             self.axon_offset = len(self.axon_dict)
         return output.transpose(-2,-1)
     
-    """ Given two matrix, maps the matrix multiplication a@b into CRI neurons connections
-    
-    Args:
-        a: a np array of strings with T*N*D neuron names
-        b: a np array of strings with T*N*D neuron names
-        
-    """
     def _matrix_mul_cri(self, x, y):
+        """
+        Maps the matrix multiplication operation into CRI neurons connections.
+
+        Parameters
+        ----------
+        x : np.ndarray
+            The first input matrix.
+        y : np.ndarray
+            The second input matrix.
+
+        """
         #TODO: parallelize each time step 
         print(f"x.shape: {x.shape}")
         h, w = x.shape
@@ -600,6 +983,27 @@ class CRI_Converter():
         print("Max fan out of neuron: ", self.max_fan)
     
     def run_CRI_hw(self,inputList,hardwareNetwork):
+        """
+        Runs a set of inputs through the hardware implementation of the network and gets the output predictions.
+
+        Parameters
+        ----------
+        inputList : list of list of str
+            The input data, where each item is a list of axon indices representing the spikes.
+        hardwareNetwork : object
+            The hardware network object.
+
+        Returns
+        -------
+        list of int
+            The output predictions.
+
+        Examples
+        --------
+        >>> converter = CRI_Converter()
+        >>> converter.run_CRI_hw(some_inputList, some_hardwareNetwork)
+        """
+        
         predictions = []
         #each image
         total_time_cri = 0
@@ -630,12 +1034,29 @@ class CRI_Converter():
         print(f"Total execution time CRIFPGA: {total_time_cri:.5f} s")
         return(predictions)
     
-    ''' Given a input list of spikes and a softwareNetwork
-        The function calls the step function of HiAER-Spike network 
-        And returns the prediction in the idx format
-        It also measures the total execution time of the software simulation
-    '''
+    
     def run_CRI_sw(self,inputList,softwareNetwork):
+        """
+        Runs a set of inputs through the software simulation of the network and gets the output predictions.
+
+        Parameters
+        ----------
+        inputList : list of list of str
+            The input data, where each item is a list of axon indices representing the spikes.
+        softwareNetwork : object
+            The software network object.
+
+        Returns
+        -------
+        list of int
+            The output predictions.
+
+        Examples
+        --------
+        >>> converter = CRI_Converter()
+        >>> converter.run_CRI_sw(some_inputList, some_softwareNetwork)
+        """
+        
         predictions = []
         total_time_cri = 0
         #each image
