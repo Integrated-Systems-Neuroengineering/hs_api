@@ -7,7 +7,48 @@ import os
 import copy
 import logging
 class CRI_network:
-     
+    """
+    This class represents a CRI network which initializes the network, checks hardware, generates connectome,
+    formats input, reads and writes synapse, and runs simulation steps.
+
+    Attributes
+    ----------
+    userAxons : dict
+        A copy of the axons dictionary provided by the user.
+    userConnections : dict
+        A copy of the connections dictionary provided by the user.
+    config : dict
+        The configuration parameters for the network.
+    perturb : bool
+        A boolean value indicating whether to perturb the network.
+    perturbMag : int
+        The magnitude of perturbation.
+    simpleSim : str
+        A string representing the simple simulation.
+    key2index : dict
+        A dictionary mapping keys to indices.
+    simDump : bool
+        A boolean value indicating whether to dump simulation results.
+    connectome : str
+        A string representing the connectome of the network.
+    axons : dict
+        The formatted axons dictionary.
+    connections : dict
+        The formatted connections dictionary.
+
+    See Also
+    --------
+    checkHw, gen_connectome, __format_input, write_synapse, write_listofSynapses, read_synapse, sim_flush, step, run_cont
+
+    Examples
+    --------
+    >>> axons = {'axon1': [('neuron1', 1), ('neuron2', 2)]}
+    >>> connections = {'neuron1': [('axon1', 1)], 'neuron2': [('axon1', 2)]}
+    >>> config = {'neuron_type': 'type1', 'global_neuron_params': {'v_thr': 1.0}}
+    >>> outputs = ['output1', 'output2']
+    >>> network = CRI_network(axons, connections, config, outputs)
+    """
+    
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturb = False, perturbMag = 0):
@@ -78,12 +119,37 @@ class CRI_network:
         #print("initialized")
 
     def checkHw(self):
-        """check if the magic file exists to demark that were running on a system with CRI hardware accessible
+        """
+        Checks if the magic file exists to demark that we're running on a system with CRI hardware accessible.
+
+        Returns
+        -------
+        bool
+            True if the magic file exists, False otherwise.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.checkHw()
+        True
         """
         pathToFile = os.path.join(os.path.dirname(__file__), "magic.txt")
         return os.path.exists(pathToFile)
 
     def gen_connectome(self):
+        """
+        Generates a connectome for the CRI network.
+
+        Notes
+        -----
+        The function resets the count of neurons and creates a new connectome. It then adds neurons/axons and assigns synapses to them.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.gen_connectome()
+        """
+        
         neuron.reset_count() #reset static variables for neuron class
         self.connectome = connectome()
         
@@ -114,6 +180,34 @@ class CRI_network:
         #print("generated Connectome")
 
     def __format_input(self,axons,connections):
+        """
+        Formats the input axons and connections.
+
+        Parameters
+        ----------
+        axons : dict
+            A dictionary containing axon data.
+        connections : dict
+            A dictionary containing connection data.
+
+        Returns
+        -------
+        tuple
+            A tuple containing two dictionaries for formatted axons and connections.
+
+        Raises
+        ------
+        Exception
+            If Axon and Connection Keys are not mutually exclusive.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> axons = {'axon1': [('neuron1', 1), ('neuron2', 2)]}
+        >>> connections = {'neuron1': [('axon1', 1)], 'neuron2': [('axon1', 2)]}
+        >>> network.__format_input(axons, connections)
+        """
+        
         #breakpoint()
         axonKeys =  axons.keys()
         connectionKeys = connections.keys()
@@ -146,6 +240,29 @@ class CRI_network:
 
     #wrap with a function to accept list input/output
     def write_synapse(self,preKey, postKey, weight):
+        """
+        Writes a synapse to the connectome.
+
+        Parameters
+        ----------
+        preKey : str
+            A string representing the key of the presynaptic neuron.
+        postKey : str
+            A string representing the key of the postsynaptic neuron.
+        weight : int
+            An integer representing the weight of the synapse.
+
+        Raises
+        ------
+        Exception
+            If the target is not valid ("simpleSim" or "CRI").
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.write_synapse('axon1', 'neuron1', 1)
+        """
+        
         self.connectome.get_neuron_by_key(preKey).get_synapse(postKey).set_weight(weight) #update synapse weight in the connectome
         #TODO: you must update the connectome!!!
         #convert user defined symbols to indicies
@@ -170,11 +287,57 @@ class CRI_network:
     
     #Update a list of synapses
     def write_listofSynapses(self, preKeys, postKeys, weights):
+        """
+        Writes a list of synapses to the connectome.
+
+        Parameters
+        ----------
+        preKeys : list of str
+            A list of strings representing the keys of the presynaptic neurons.
+        postKeys : list of str
+            A list of strings representing the keys of the postsynaptic neurons.
+        weights : list of int
+            A list of integers representing the weights of the synapses.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> preKeys = ['axon1', 'axon2']
+        >>> postKeys = ['neuron1', 'neuron2']
+        >>> weights = [1, 2]
+        >>> network.write_listofSynapses(preKeys, postKeys, weights)
+        """
         for i in range(len(preKeys)):
             self.write_synapse(preKeys[i],postKeys[i],weights[i])
 
     
     def read_synapse(self,preKey, postKey):
+        """
+        Reads a synapse from the connectome.
+
+        Parameters
+        ----------
+        preKey : str
+            A string representing the key of the presynaptic neuron.
+        postKey : str
+            A string representing the key of the postsynaptic neuron.
+
+        Returns
+        -------
+        int
+            The weight of the synapse.
+
+        Raises
+        ------
+        Exception
+            If the target is not valid ("simpleSim" or "CRI").
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.read_synapse('axon1', 'neuron1')
+        1
+        """
         #convert user defined symbols to indicies
         preIndex = self.connectome.get_neuron_by_key(preKey).get_coreTypeIdx()
         synapseType = self.connectome.get_neuron_by_key(preKey).get_neuron_type()
@@ -196,6 +359,28 @@ class CRI_network:
             raise Exception("Invalid Target")
 
     def sim_flush(self,file):
+        """
+        Flushes the simulation results to a file.
+
+        Parameters
+        ----------
+        file : str
+            A string representing the file to which to flush the simulation results.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        Exception
+            If the target is not "CRI" or if the target is invalid.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.sim_flush('results.txt')
+        """
         if (self.target == "simpleSim"):
             raise Exception("sim_flush not available for simpleSim")
         elif (self.target == "CRI"):
@@ -204,6 +389,34 @@ class CRI_network:
             raise Exception("Invalid Target")
     
     def step(self,inputs,target="simpleSim",membranePotential=False):
+        """
+        Runs a step of the simulation.
+
+        Parameters
+        ----------
+        inputs : list
+            A list of inputs for the simulation.
+        target : str, optional
+            A string representing the target for the simulation. Default is "simpleSim".
+        membranePotential : bool, optional
+            A boolean value indicating whether to return the membrane potential. Default is False.
+
+        Returns
+        -------
+        list or tuple
+            The simulation outputs or a tuple containing the simulation outputs and spike outputs.
+
+        Raises
+        ------
+        Exception
+            If the target is invalid.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.step(['input1', 'input2'])
+        """
+        
         #formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
         formated_inputs = [self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx() for symbol in inputs] #convert symbols to internal indicies 
         if (self.target == "simpleSim"):
@@ -238,6 +451,29 @@ class CRI_network:
             raise Exception("Invalid Target")
 
     def run_cont(self,inputs):
+        """
+        Runs a continuous simulation.
+
+        Parameters
+        ----------
+        inputs : list of list
+            A list of lists of inputs for the simulation.
+
+        Returns
+        -------
+        tuple
+            A tuple containing the spike list, a boolean indicating whether a break occurred, and the execution counter.
+
+        Raises
+        ------
+        Exception
+            If the simulation dump flag is False and an error occurs during the conversion of neuron indices to user keys.
+
+        Examples
+        --------
+        >>> network = CRI_network(axons, connections, config, outputs)
+        >>> network.run_cont([['input1', 'input2'], ['input3', 'input4']])
+        """
         #formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
         formated_inputs = []
         for curInputs in inputs:
