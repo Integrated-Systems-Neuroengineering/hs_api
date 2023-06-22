@@ -35,10 +35,7 @@ class CRI_network:
         The formatted axons dictionary.
     connections : dict
         The formatted connections dictionary.
-
-    See Also
-    --------
-    checkHw, gen_connectome, __format_input, write_synapse, write_listofSynapses, read_synapse, sim_flush, step, run_cont
+        
 
     Examples
     --------
