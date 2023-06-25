@@ -48,7 +48,7 @@ class CRI_network:
     
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturb = False, perturbMag = 0):
+    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturbMag = 0, leak = 0):
         #return
         if (target): #check if user provides an override for target
             self.target = target
@@ -111,7 +111,7 @@ class CRI_network:
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             formatedOutputs = self.connectome.get_outputs_idx()
-            self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs,perturb = self.perturb, perturbMag = self.perturbMag)
+            self.simpleSim = simple_sim( self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs, perturbMag = self.perturbMag, leak = self.leak)
         #breakpoint()
         #print("initialized")
 
