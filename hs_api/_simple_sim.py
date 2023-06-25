@@ -433,7 +433,7 @@ class simple_sim:
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
 
-            if self.perturb:
+            if self.perturbMag > 0:
                 perturbBits = 16
                 perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
                 if self.perturbMag > 0:
@@ -453,7 +453,8 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             #if self.neuronModel == 2:
                 #Leaky Integrate and fire
-                self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**self.leak)))
+
+            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**self.leak)))
 
             #now let's try phase two
             a = np.zeros(nAxons)
