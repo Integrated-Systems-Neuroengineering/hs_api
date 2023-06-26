@@ -268,8 +268,8 @@ class Quantize_Network():
                 if name.isnumeric() or name == 'attn' or name == 'mlp':
                     # print('Block Quantized: ',name)
                     new_model._modules[name] = self.quantize_block(new_model._modules[name])
-                else:
-                    # print('Block Unquantized: ', name)
+                # else:
+                #     # print('Block Unquantized: ', name)
             else:
                 if name == 'attn_lif':
                     continue
