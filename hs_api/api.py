@@ -94,7 +94,11 @@ class CRI_network:
 
         #self.perturb = perturb
         self.perturbMag = perturbMag
+        if perturbMag > 16:
+            logging.error('perturbMag must be less than 16')
         self.leak = leak
+        if leak > 2**6:
+            logging.error('Leak must be less than two to the sixth')
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
