@@ -423,7 +423,7 @@ class simple_sim:
         """
 
     def step_run(self,inputs):
-        breakpoint()
+        #breakpoint()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -434,13 +434,14 @@ class simple_sim:
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
 
-            if self.perturbMag > 0:
+            if self.perturbMag < 17:
                 perturbBits = 17
                 perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
+                #if self.perturbMag > 0:
+                breakpoint()
                 if self.perturbMag > 0:
-                    breakpoint()
                     perturbation (perturbation >> self.perturbMag)
-                    perturbation = perturbation | Fxp(1, signed=False, n_word=35, n_frac=0)
+                perturbation (perturbation | Fxp(1, signed=False, n_word=35, n_frac=0))
                 self.membranePotentials(self.membranePotentials+perturbation)
 
             spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
