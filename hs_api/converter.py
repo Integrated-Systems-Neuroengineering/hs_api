@@ -1228,7 +1228,7 @@ class CRI_Converter:
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
                 spikeIdx = [int(spike) - self.bias_start_idx for spike in swSpike]
-  		for idx in spikeIdx:
+                for idx in spikeIdx:
                     spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
