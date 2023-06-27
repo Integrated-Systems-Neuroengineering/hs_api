@@ -48,7 +48,7 @@ class CRI_network:
     
     # TODO: remove inputs
     # TODO: move target config.yaml
-    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturbMag = 0, leak = 0):
+    def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturbMag = None, leak = 0):
         #return
         if (target): #check if user provides an override for target
             self.target = target
@@ -94,8 +94,9 @@ class CRI_network:
 
         #self.perturb = perturb
         self.perturbMag = perturbMag
-        if perturbMag > 16:
-            logging.error('perturbMag must be less than 16')
+        if perturbMag:
+            if perturbMag > 16:
+                logging.error('perturbMag must be less than 16')
         self.leak = leak
         if leak > 2**6:
             logging.error('Leak must be less than two to the sixth')
