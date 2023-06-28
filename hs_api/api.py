@@ -113,7 +113,7 @@ class CRI_network:
             #formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
             formatedOutputs = self.connectome.get_outputs_idx()
             print('formatedOutputs:',formatedOutputs)
-            self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, coreOveride = coreID)
+            self.CRI = network(self.connectome, formatedOutputs, self.config, simDump = simDump, leak=self.leak, shift=self.perturbMag coreOveride = coreID)
             self.CRI.initalize_network()
         elif(self.target == "simpleSim"):
             formatedOutputs = self.connectome.get_outputs_idx()
