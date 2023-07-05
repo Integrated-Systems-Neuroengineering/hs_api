@@ -1,11 +1,17 @@
 from hs_api._simple_sim import simple_sim, map_neuron_type_to_int
 #from cri_simulations import network
 #from cri_simulations.utils import *
-#from connectome_utils.connectome import *
+from connectome_utils.connectome import *
 from bidict import bidict
 import os
 import copy
 import logging
+
+
+class perturbMagError(ValueError):
+    pass
+
+
 class CRI_network:
     """
     This class represents a CRI network which initializes the network, checks hardware, generates connectome,
@@ -49,7 +55,6 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(self,axons,connections,config, outputs, target = None, simDump = False, coreID=0, perturb = False, perturbMag = 0):
-        #return
         if (target): #check if user provides an override for target
             self.target = target
         else:
@@ -93,6 +98,8 @@ class CRI_network:
             logging.error('config should be a dictionary')
 
         self.perturb = perturb
+        if perturbMag > (6) or perturbMag < 0 or not isinstance(perturbMag, int):
+            raise perturbMagError('bad perturbMag')
         self.perturbMag = perturbMag
         self.simpleSim = None
         self.key2index = {}
@@ -112,7 +119,6 @@ class CRI_network:
         elif(self.target == "simpleSim"):
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(map_neuron_type_to_int(self.config['neuron_type']), self.config['global_neuron_params']['v_thr'], self.axons, self.connections, outputs = formatedOutputs,perturb = self.perturb, perturbMag = self.perturbMag)
-        #breakpoint()
         #print("initialized")
 
     def checkHw(self):
@@ -146,7 +152,7 @@ class CRI_network:
         >>> network = CRI_network(axons, connections, config, outputs)
         >>> network.gen_connectome()
         """
-        
+        #breakpoint()
         neuron.reset_count() #reset static variables for neuron class
         self.connectome = connectome()
         
@@ -478,7 +484,7 @@ class CRI_network:
 
         result = self.CRI.run_cont(formated_inputs)
         spikeList = result[0]
-        breakpoint()
+        #breakpoint()
         if self.simDump == False:
             spikeList = [(spike[0],self.connectome.get_neuron_by_idx(spike[1]).get_user_key()) for spike in spikeList]
             return (spikeList, result[1], result[2])
