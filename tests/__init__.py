@@ -1,1 +1,0 @@
-from tests.test_l2s import *
