@@ -318,7 +318,7 @@ class simple_sim:
                 "membrane_potential" : 'fxp-s35/0',
                 "synapse_weights" : 'fxp-s16/0',
                 "voltage_threshold" : 'fxp-s35/0',
-                "perturbation" : 'fxp-s16/0'
+                "perturbation" : 'fxp-s17/0'
             }
           self.neuronModel = neuronModel
           self.threshold = Fxp(threshold,dtype=self.formatDict['voltage_threshold'])
@@ -433,10 +433,16 @@ class simple_sim:
             nAxons = len(self.axons)
 
             if self.perturb:
-                perturbBits = 16
+                perturbBits = 17
                 perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
-                if self.perturbMag > 0:
-                    perturbation = perturbation << self.perturbMag
+                perturbation( perturbation | Fxp(1,dtype='fxp-u17/0') )#set LSB to 1
+                shift = self.perturbMag - (perturbBits - 1)
+                if shift > 0:
+                    perturbation = perturbation << shift
+                elif shift < 0:
+                    perturbation = perturbation >> shift
+                else:
+                    pass #do nothing since Fxp doesn't like shifts
                 self.membranePotentials(self.membranePotentials+perturbation)
 
             spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
