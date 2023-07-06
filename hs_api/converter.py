@@ -1189,6 +1189,13 @@ class CRI_Converter:
                 spikeIdx = [int(spike) - self.bias_start_idx for spike in hwSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
+            if self.num_steps == 1:
+                hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+                for idx in spikeIdx:
+                    spikeRate[idx] += 1
+            hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+            for idx in spikeIdx:
+                spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
 
@@ -1227,8 +1234,15 @@ class CRI_Converter:
                 swSpike = softwareNetwork.step(slice, membranePotential=False)
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
-                spikeIdx = [int(spike) - self.bias_start_idx for spike in hwSpike]
+                spikeIdx = [int(spike) - self.bias_start_idx for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
+            if self.num_steps == 1:
+                swSpike = softwareNetwork.step(slice, membranePotential=False)
+                for idx in spikeIdx:
+                    spikeRate[idx] += 1
+            swSpike = softwareNetwork.step(slice, membranePotential=False)
+            for idx in spikeIdx:
+                spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
