@@ -434,14 +434,17 @@ class simple_sim:
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
 
-            if self.perturbMag is not None and self.perturbMag < 17:
+            if self.perturb:
                 perturbBits = 17
                 perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
-                #if self.perturbMag > 0:
-                # breakpoint()
-                if self.perturbMag > 0:
-                    perturbation (perturbation >> self.perturbMag)
-                perturbation (perturbation | Fxp(1, signed=False, n_word=35, n_frac=0))
+                perturbation( perturbation | Fxp(1,dtype='fxp-u17/0') )#set LSB to 1
+                shift = self.perturbMag - (perturbBits - 1)
+                if shift > 0:
+                    perturbation = perturbation << shift
+                elif shift < 0:
+                    perturbation = perturbation >> shift
+                else:
+                    pass #do nothing since Fxp doesn't like shifts
                 self.membranePotentials(self.membranePotentials+perturbation)
 
             spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
