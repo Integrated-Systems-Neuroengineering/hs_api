@@ -437,7 +437,6 @@ class simple_sim:
             if self.perturbMag != None:
                 perturbBits = 17
                 perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
-                breakpoint()
                 perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )#set LSB to 1
                 shift = self.perturbMag - (perturbBits - 1)
                 if shift > 0:
