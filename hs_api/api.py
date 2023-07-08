@@ -115,7 +115,7 @@ class CRI_network:
         else:
             logging.error("config should be a dictionary")
 
-        self.perturb = perturb
+        #self.perturb = perturb
         if perturbMag > (6) or perturbMag < 0 or not isinstance(perturbMag, int):
             raise perturbMagError('bad perturbMag')
         self.perturbMag = perturbMag
