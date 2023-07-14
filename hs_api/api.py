@@ -63,7 +63,7 @@ class CRI_network:
         target=None,
         simDump=False,
         coreID=0,
-        perturbMag=None,
+        perturbMag=1, #TODO: change
         leak=0,
     ):
         # return
@@ -116,15 +116,16 @@ class CRI_network:
             logging.error("config should be a dictionary")
 
         #self.perturb = perturb
-        if perturbMag > (6) or perturbMag < 0 or not isinstance(perturbMag, int):
-            raise perturbMagError('bad perturbMag')
-        self.perturbMag = perturbMag
-        if perturbMag:
-            if perturbMag > 16:
-                logging.error("perturbMag must be less than 16")
+        #if perturbMag > 35 or perturbMag < 0 or not isinstance(perturbMag, int):
+        #    raise perturbMagError('bad perturbMag')
+        #self.perturbMag = perturbMag
+        #if perturbMag:
+        #    if perturbMag > 16:
+        #        logging.error("perturbMag must be less than 16")
         self.leak = leak
         if leak > 2**6:
             logging.error("Leak must be less than two to the sixth")
+        self.perturbMag = perturbMag
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
@@ -146,9 +147,10 @@ class CRI_network:
                 self.config,
                 simDump=simDump,
                 leak=self.leak,
-                shift=self.perturbMag,
+                perturbMag=self.perturbMag,
                 coreOveride=coreID,
             )
+            #breakpoint()
             self.CRI.initalize_network()
         elif self.target == "simpleSim":
             formatedOutputs = self.connectome.get_outputs_idx()
@@ -162,6 +164,14 @@ class CRI_network:
             )
         # breakpoint()
         # print("initialized")
+
+    def set_perturbMag(self,perturbMag):
+        if self.target == 'simpleSim':
+            print('implement me')
+        elif self.target == 'CRI':
+            self.CRI.set_perturbMag(perturbMag)
+        else:
+            loggin.error('invalid target') 
 
     def checkHw(self):
         """
@@ -521,7 +531,9 @@ class CRI_network:
                     ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output, (spikeList, spikeResult[1], spikeResult[2])
                 else:
+                    #breakpoint()
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
+                    #breakpoint()
                     spikeList = spikeResult[0]
                     spikeList = [
                         self.connectome.get_neuron_by_idx(spike[1]).get_user_key()
