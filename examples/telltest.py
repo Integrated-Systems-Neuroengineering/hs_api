@@ -71,7 +71,7 @@ def main():
   config = {}
   config['neuron_type'] = "I&F" #redundent
   config['global_neuron_params'] = {}
-  config['global_neuron_params']['v_thr'] = 2**18 #voltage threshold is zero
+  config['global_neuron_params']['v_thr'] = 0 #voltage threshold is zero
 
   synsum = 0
   for key in connections.keys():
@@ -86,39 +86,46 @@ def main():
 
   breakpoint()
 
-  softwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs = list(connections.keys()), target='CRI', perturbMag=20, leak=leak)
+  softwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs = list(connections.keys()), target='CRI', perturbMag=20, leak=0)
   perturbMag=20
-
+  perturbAll = []
+  timeAll = []
   resAll = [] #compute result at each step
+  perturbAll.append(perturbMag)
+  t0 = time.time()
   for i in range(200000000):
       #breakpoint()
-      if i == 10: #every 50 steps reduce noise magnitude by one bit
-        if perturbMag > 1: # stop once noise magnitude is zero
+      if i !=0 and i%50==0: #every 50 steps reduce noise magnitude by one bit
+        if perturbMag > 0: # stop once noise magnitude is zero
           perturbMag = perturbMag - stepSize #reduce by one bit
           softwareNetwork.set_perturbMag(perturbMag) #set perturbation magnitude
+          perturbAll.append(perturbMag)
           print('PerturbMag: '+str(perturbMag))
-          res = computeRes(connections,swResult) # compute result
+          timeAll.append(time.time()-t0)
+          res = computeRes(connections,swResult[0]) # compute result
           print('Result: '+str(res))
           resAll.append(res)
         else:
-          res = computeRes(connections,swResult) # compute result
+          timeAll.append(time.time()-t0)
+          res = computeRes(connections,swResult[0]) # compute result
           print('Result: '+str(res))
           resAll.append(res)
           break
 
       swResult = softwareNetwork.step([]) #run step with no external inputs
 
-      print("software result: ")
+      #print("software result: ")
       #swResult.sort() #sort and print result
-      print(swResult)
-      print(len(swResult[0]))
-      print(perturbMag)
+      #print(swResult)
+      #print(len(swResult[0]))
+      #print(perturbMag)
 
       #convert result to onehot encoding
       #print( [1 if q in swResult.sort() else 0 for q in list(connections.keys())])
 
   print(resAll)
-
+  print(perturbAll)
+  print(timeAll)
 
 if __name__ == '__main__':
     main()
