@@ -338,6 +338,9 @@ class simple_sim:
 
           self.initialize_sim_vars(self.numNeurons)
 
+    def set_perturbMag(self, perturbMag):
+        self.perturbMag = perturbMag
+
     def initialize_sim_vars(self, numNeurons):
           self.membranePotentials = Fxp(np.zeros(numNeurons),dtype=self.formatDict['membrane_potential'])
           self.firedNeurons = [] #np.array([], dtype=np.single)
