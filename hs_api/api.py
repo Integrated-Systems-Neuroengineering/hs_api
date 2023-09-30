@@ -167,7 +167,7 @@ class CRI_network:
 
     def set_perturbMag(self,perturbMag):
         if self.target == 'simpleSim':
-            print('implement me')
+            self.simpleSim .set_perturbMag(perturbMag)
         elif self.target == 'CRI':
             self.CRI.set_perturbMag(perturbMag)
         else:
