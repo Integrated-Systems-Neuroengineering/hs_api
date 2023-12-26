@@ -62,11 +62,10 @@ class CRI_network:
         outputs,
         target=None,
         simDump=False,
-        coreID=0,
-        perturbMag=1, #TODO: change
-        leak=0,
+        coreID=0
     ):
         # return
+        #breakpoint()
         if target:  # check if user provides an override for target
             self.target = target
         else:
@@ -91,11 +90,10 @@ class CRI_network:
                         )
         else:
             logging.error("Axons should be a dictionary")
-        self.userAxons = copy.deepcopy(axons)
-        # Checking for the connection type and synapse length
+        self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                for values in connections[keys]:
+                for values in connections[keys][0]: #synapse list is first element in tuple
                     if not ((type(values) == tuple) and (len(values) == 2)):
                         logging.error(
                             "Each synapse should only consists of 2 elements: neuron, weight"
@@ -122,15 +120,16 @@ class CRI_network:
         #if perturbMag:
         #    if perturbMag > 16:
         #        logging.error("perturbMag must be less than 16")
-        self.leak = leak
-        if leak > 2**6:
-            logging.error("Leak must be less than two to the sixth")
-        self.perturbMag = perturbMag
+        #self.leak = leak
+        #if leak > 2**6:
+        #    logging.error("Leak must be less than two to the sixth")
+        #self.perturbMag = perturbMag
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
         self.connectome = None
         self.gen_connectome()
+        breakpoint()
         self.axons, self.connections = self.__format_input(
             copy.deepcopy(axons), copy.deepcopy(connections)
         )
@@ -159,8 +158,8 @@ class CRI_network:
                 self.axons,
                 self.connections,
                 outputs=formatedOutputs,
-                perturbMag=self.perturbMag,
-                leak=self.leak,
+                #perturbMag=self.perturbMag,
+                #leak=self.leak,
             )
         # breakpoint()
         # print("initialized")
@@ -213,8 +212,9 @@ class CRI_network:
             self.connectome.addNeuron(neuron(axonKey, "axon"))
         # print("added axons to connectome")
         for neuronKey in self.userConnections:
+            neuron_model = self.userConnections[neuronKey][1]
             self.connectome.addNeuron(
-                neuron(neuronKey, "neuron", output=neuronKey in self.outputs)
+                neuron(neuronKey, "neuron", output=neuronKey in self.outputs,neuronModel=neuron_model)
             )
         # print("added neurons to connectome")
 
@@ -229,7 +229,8 @@ class CRI_network:
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
-            synapses = self.userConnections[neuronKey]
+            synapses = self.userConnections[neuronKey][0]
+            #breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
@@ -296,13 +297,15 @@ class CRI_network:
                 axonIndexDict[idx][listIdx] = newTuple
 
         for idx in connectionIndexDict:
-            for listIdx in range(len(connectionIndexDict[idx])):
-                oldTuple = connectionIndexDict[idx][listIdx]
+            #breakpoint()
+            for listIdx in range(len(connectionIndexDict[idx][0])):
+                oldTuple = connectionIndexDict[idx][0][listIdx]
                 newTuple = (
                     self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),
                     oldTuple[1],
                 )
-                connectionIndexDict[idx][listIdx] = newTuple
+                connectionIndexDict[idx][0][listIdx] = newTuple
+        #breakpoint()
         return axonIndexDict, connectionIndexDict
 
     # wrap with a function to accept list input/output
