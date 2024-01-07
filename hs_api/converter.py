@@ -1109,7 +1109,7 @@ class CRI_Converter:
         else:
             return np.array((layer.out_channels, int(h_out), int(w_out)))
 
-    def _avgPool_shape(self, layer, input_shape):
+    def _maxPool_shape(self, layer, input_shape):
         h_out = (
             input_shape[-2] + layer.padding * 2 - (layer.kernel_size)
         ) / layer.stride + 1
