@@ -11,7 +11,6 @@ import time
 from tqdm import tqdm
 from collections import defaultdict
 
-# import cri_simulations
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
@@ -742,15 +741,12 @@ class CRI_Converter:
         elif isinstance(layer, nn.Conv2d):
             self._conv_converter(layer)
 
-        elif isinstance(layer, nn.AvgPool2d):
-            self._avgPool_converter(layer)
-
         elif isinstance(layer, nn.MaxPool2d):
-            self._avgPool_converter(layer)
+            self._maxPool_converter(layer)
 
         else:
             pass
-            # print("Unconvertered layer: ", layer)
+            # print("Unsupported layer: ", layer)
         self.layer_index += 1
 
     def _attention_converter(self, model):
@@ -1037,10 +1033,10 @@ class CRI_Converter:
                                     # print(neuron, self.neuron_dict[neuron])
                                     # break
 
-    def _avgPool_converter(self, layer):
+    def _maxPool_converter(self, layer):
         # print(f'Converting layer: {layer}')
-        # print('Constructing hidden avgpool layer')
-        output_shape = self._avgPool_shape(layer, self.curr_input.shape)
+        # print('Constructing hidden maxpool layer')
+        output_shape = self._maxPool_shape(layer, self.curr_input.shape)
         # print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
         self.neuron_offset += np.prod(self.curr_input.shape)
         # print(f'Neuron_offset: {self.neuron_offset}')
@@ -1053,11 +1049,11 @@ class CRI_Converter:
             ]
         ).reshape(output_shape)
         # print(f'Last output: {output.flatten()[-1]}')
-        self._avgPool_weight(self.curr_input, output, layer)
+        self._maxPool_weight(self.curr_input, output, layer)
         self.curr_input = output
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
-    def _avgPool_weight(self, input, output, layer):
+    def _maxPool_weight(self, input, output, layer):
         h_k, w_k = layer.kernel_size, layer.kernel_size
         h_o, w_o = output.shape[-2], output.shape[-1]
         h_i, w_i = input.shape[-2], input.shape[-1]
@@ -1168,13 +1164,14 @@ class CRI_Converter:
         >>> converter = CRI_Converter()
         >>> converter.run_CRI_hw(some_inputList, some_hardwareNetwork)
         """
-
+        import hs_bridge
+        
         predictions = []
         # each image
         total_time_cri = 0
         for currInput in inputList:
             # initiate the hardware for each image
-            cri_simulations.FPGA_Execution.fpga_controller.clear(
+            hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
             )  ##Num_neurons, simDump, coreOverride
             spikeRate = [0] * 10
