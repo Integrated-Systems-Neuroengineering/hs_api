@@ -11,7 +11,7 @@ import time
 from tqdm import tqdm
 from collections import defaultdict
 import pickle
-
+import os
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
@@ -644,12 +644,17 @@ class CRI_Converter:
             neuron_dict.pkl, 
             output_neurons.pkl
         """
+        if not os.path.exists(self.converted_model_pth):
+            os.makedirs(self.converted_model_pth)
+            print(f'Mkdir {self.converted_model_pth}.')
+            
         with open(f'{self.converted_model_pth}/axon_dict.pkl', 'wb') as f:
             pickle.dump(self.axon_dict, f)
         with open(f'{self.converted_model_pth}/neuron_dict.pkl', 'wb') as f:
             pickle.dump(self.neuron_dict, f)
         with open(f'{self.converted_model_pth}/output_neurons.pkl', 'wb') as f:
             pickle.dump(self.output_neurons, f)    
+        print(f"Model saved at {self.converted_model_pth}.")
 
     def input_converter(self, input_data):
         """
@@ -678,6 +683,7 @@ class CRI_Converter:
     def _input_converter(self, input_data):
         encoder = encoding.PoissonEncoder()
         current_input = input_data.view(input_data.size(0), -1)
+        breakpoint()
         batch = []
         if self.dvs:
             for img in current_input:
