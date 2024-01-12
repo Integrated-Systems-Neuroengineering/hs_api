@@ -527,6 +527,8 @@ class CRI_Converter:
     converted_model_pth: str, optional
         Save the converted network into a .pkl file at converted_model_pth. 
         Default is "./converted_model"
+    dvs: bool
+        Convert the input data as DVS datasets
 
     Attributes
     ----------
@@ -578,6 +580,8 @@ class CRI_Converter:
         The k matrix for attention conversion.
     embed_dim : int
         The embedding dimension.
+    dvs: bool
+        Whether using dvs datasets.
 
     Examples
     --------
@@ -598,6 +602,7 @@ class CRI_Converter:
         v_threshold,
         embed_dim,
         backend="spikingjelly",
+        dvs = False,
         converted_model_pth= "./converted_model",
     ):
         self.axon_dict = defaultdict(list)
@@ -619,6 +624,9 @@ class CRI_Converter:
         self.max_fan = 0
         self.v_threshold = v_threshold
         self.converted_model_pth = converted_model_pth
+        
+        # For dvs datasets
+        self.dvs = dvs
 
         # For spikformer only
         self.q = None
@@ -671,19 +679,34 @@ class CRI_Converter:
         encoder = encoding.PoissonEncoder()
         current_input = input_data.view(input_data.size(0), -1)
         batch = []
-        for img in current_input:
-            spikes = []
-            for step in range(self.num_steps):
-                encoded_img = encoder(img)
-                input_spike = [
-                    "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
-                ]
-                bias_spike = [
-                    "a" + str(idx)
-                    for idx in range(self.bias_start_idx, len(self.axon_dict))
-                ]  # firing bias neurons at each step
-                spikes.append(input_spike + bias_spike)
-            batch.append(spikes)
+        if self.dvs:
+            for img in current_input:
+                spikes = []
+                for step in range(self.num_steps):
+                    encoded_img = encoder(img[step])
+                    input_spike = [
+                        "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
+                    ]
+                    bias_spike = [
+                        "a" + str(idx)
+                        for idx in range(self.bias_start_idx, len(self.axon_dict))
+                    ]  # firing bias neurons at each step
+                    spikes.append(input_spike + bias_spike)
+                batch.append(spikes)
+        else:
+            for img in current_input:
+                spikes = []
+                for step in range(self.num_steps):
+                    encoded_img = encoder(img)
+                    input_spike = [
+                        "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
+                    ]
+                    bias_spike = [
+                        "a" + str(idx)
+                        for idx in range(self.bias_start_idx, len(self.axon_dict))
+                    ]  # firing bias neurons at each step
+                    spikes.append(input_spike + bias_spike)
+                batch.append(spikes)
         # TODO: if we don't do rate encoding?
         if self.save_input:
             with open("/Volumes/export/isn/keli/code/CRI/data/cri_mnist.csv", "w") as f:

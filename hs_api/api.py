@@ -171,7 +171,7 @@ class CRI_network:
         elif self.target == 'CRI':
             self.CRI.set_perturbMag(perturbMag)
         else:
-            loggin.error('invalid target') 
+            logging.error('invalid target') 
 
     def checkHw(self):
         """
