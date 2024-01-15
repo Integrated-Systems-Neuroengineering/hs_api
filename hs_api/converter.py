@@ -683,24 +683,25 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
-        encoder = encoding.PoissonEncoder()
+        current_input = None
         if self.dvs:
+            # Flatten the input data to [B, T, -1]
+            current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
+        else:
             # Flatten the input data to [B, -1]
             current_input = input_data.view(input_data.size(0), -1)
-        else:
-            # Flatten the input data to [B, T, -1]
-            current_input = input_data.view(input_data.size(0), input_data.size(0), -1)
+            
         batch = []
-        
         for img in current_input:
             spikes = []
             for step in range(self.num_steps):
+                input_image = None
                 if self.dvs:
-                    encoded_img = encoder(img[step])
+                    input_image = img[step]
                 else:
-                    encoded_img = encoder(img)
+                    input_image = img
                 input_spike = [
-                    "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
+                    "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
                 ]
                 # firing bias neurons at each step
                 bias_spike = [
