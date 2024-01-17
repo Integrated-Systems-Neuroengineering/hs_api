@@ -1180,6 +1180,7 @@ class CRI_Converter:
         predictions = []
         # each image
         total_time_cri = 0
+        output_idx = [i for i in range(10)]
         for currInput in inputList:
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
@@ -1196,13 +1197,23 @@ class CRI_Converter:
                 total_time_cri = total_time_cri + end_time - start_time
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
             if self.num_steps == 1:
-                hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+                # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
+                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+            # Empty input for output delay 
+            hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
             for idx in spikeIdx:
+                if idx not in output_idx:
+                    print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
@@ -1245,11 +1256,15 @@ class CRI_Converter:
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
+            # empty input for phase delay 
             if self.num_steps == 1:
-                swSpike = softwareNetwork.step(slice, membranePotential=False)
+                swSpike = softwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
-            swSpike = softwareNetwork.step(slice, membranePotential=False)
+            # empty input for output delay 
+            swSpike = softwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
             for idx in spikeIdx:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
