@@ -11,8 +11,7 @@ import time
 import os
 import argparse
 import datetime
-from hs_api.converter import Quantize_Network
-from test_converter import CRI_Converter
+from hs_api.converter import CRI_Converter, Quantize_Network
 
 def main():
     # Training 

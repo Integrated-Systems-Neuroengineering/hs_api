@@ -11,7 +11,7 @@ import time
 from tqdm import tqdm
 from collections import defaultdict
 import pickle
-
+import os
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
@@ -474,6 +474,8 @@ class BN_Folder:
 
         assert not (prev.training or bn.training), "Fusion only for eval!"
         fused_prev = copy.deepcopy(prev)
+        
+        # TODO: fix the bias = 0s when bias should be none
 
         if isinstance(bn, nn.BatchNorm2d):
             fused_prev.weight, fused_prev.bias = self._bn_folding(
@@ -527,6 +529,8 @@ class CRI_Converter:
     converted_model_pth: str, optional
         Save the converted network into a .pkl file at converted_model_pth. 
         Default is "./converted_model"
+    dvs: bool
+        Convert the input data as DVS datasets
 
     Attributes
     ----------
@@ -578,6 +582,8 @@ class CRI_Converter:
         The k matrix for attention conversion.
     embed_dim : int
         The embedding dimension.
+    dvs: bool
+        Whether using dvs datasets.
 
     Examples
     --------
@@ -598,6 +604,7 @@ class CRI_Converter:
         v_threshold,
         embed_dim,
         backend="spikingjelly",
+        dvs = False,
         converted_model_pth= "./converted_model",
     ):
         self.axon_dict = defaultdict(list)
@@ -619,6 +626,9 @@ class CRI_Converter:
         self.max_fan = 0
         self.v_threshold = v_threshold
         self.converted_model_pth = converted_model_pth
+        
+        # For dvs datasets
+        self.dvs = dvs
 
         # For spikformer only
         self.q = None
@@ -636,12 +646,17 @@ class CRI_Converter:
             neuron_dict.pkl, 
             output_neurons.pkl
         """
+        if not os.path.exists(self.converted_model_pth):
+            os.makedirs(self.converted_model_pth)
+            print(f'Mkdir {self.converted_model_pth}.')
+            
         with open(f'{self.converted_model_pth}/axon_dict.pkl', 'wb') as f:
             pickle.dump(self.axon_dict, f)
         with open(f'{self.converted_model_pth}/neuron_dict.pkl', 'wb') as f:
             pickle.dump(self.neuron_dict, f)
         with open(f'{self.converted_model_pth}/output_neurons.pkl', 'wb') as f:
             pickle.dump(self.output_neurons, f)    
+        print(f"Model saved at {self.converted_model_pth}.")
 
     def input_converter(self, input_data):
         """
@@ -668,22 +683,34 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
-        encoder = encoding.PoissonEncoder()
-        current_input = input_data.view(input_data.size(0), -1)
+        current_input = None
+        if self.dvs:
+            # Flatten the input data to [B, T, -1]
+            current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
+        else:
+            # Flatten the input data to [B, -1]
+            current_input = input_data.view(input_data.size(0), -1)
+            
         batch = []
         for img in current_input:
             spikes = []
             for step in range(self.num_steps):
-                encoded_img = encoder(img)
+                input_image = None
+                if self.dvs:
+                    input_image = img[step]
+                else:
+                    input_image = img
                 input_spike = [
-                    "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
+                    "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
                 ]
+                # firing bias neurons at each step
                 bias_spike = [
                     "a" + str(idx)
                     for idx in range(self.bias_start_idx, len(self.axon_dict))
-                ]  # firing bias neurons at each step
+                ]  
                 spikes.append(input_spike + bias_spike)
             batch.append(spikes)
+        
         # TODO: if we don't do rate encoding?
         if self.save_input:
             with open("/Volumes/export/isn/keli/code/CRI/data/cri_mnist.csv", "w") as f:
@@ -930,7 +957,7 @@ class CRI_Converter:
                 self.neuron_dict[neuron_id] = []
                 self.output_neurons.append(neuron_id)
             
-        elif layer.bias is not None:
+        if layer.bias is not None:
             print(f'Constructing {layer.bias.shape[0]} bias axons for linear layer')
             self._cri_bias(layer, outputs)
             self.axon_offset = len(self.axon_dict)
@@ -965,10 +992,11 @@ class CRI_Converter:
             # print(f'Last output: {output[-1][-1]}')
             self._conv_weight(self.curr_input, output, layer)
 
-        if layer.bias is not None:
-            print(f'Constructing {layer.bias.shape[0]} bias axons from conv layer.')
-            self._cri_bias(layer, output)
-            self.axon_offset = len(self.axon_dict)
+        #TODO: Fixing the bias issue
+        # if layer.bias is not None:
+        #     print(f'Constructing {layer.bias.shape[0]} bias axons from conv layer.')
+        #     self._cri_bias(layer, output)
+        #     self.axon_offset = len(self.axon_dict)
 
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
@@ -1058,7 +1086,7 @@ class CRI_Converter:
             bias_id = "a" + str(bias_idx + self.axon_offset)
             if isinstance(layer, nn.Conv2d):
                 self.axon_dict[bias_id] = [
-                    (str(neuron_idx), int(bias))
+                    (str(neuron_idx), int(bias)) 
                     for neuron_idx in outputs[bias_idx].flatten()
                 ]
             elif isinstance(layer, nn.Linear):
@@ -1152,6 +1180,7 @@ class CRI_Converter:
         predictions = []
         # each image
         total_time_cri = 0
+        output_idx = [i for i in range(10)]
         for currInput in inputList:
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
@@ -1166,22 +1195,32 @@ class CRI_Converter:
                 )
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
-                spikeIdx = [int(spike) - self.bias_start_idx for spike in hwSpike]
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
             if self.num_steps == 1:
-                hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+                # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
+                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+            # Empty input for output delay 
+            hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
             for idx in spikeIdx:
+                if idx not in output_idx:
+                    print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
 
     def run_CRI_sw(self, inputList, softwareNetwork):
         """
-        Runs a set of inputs through the software simulation of the network and gets the output predictions.
+        Runs a batch of inputs through the software simulation of the network and gets the output predictions.
 
         Parameters
         ----------
@@ -1214,14 +1253,18 @@ class CRI_Converter:
                 swSpike = softwareNetwork.step(slice, membranePotential=False)
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
-                spikeIdx = [int(spike) - self.bias_start_idx for spike in swSpike]
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
+            # empty input for phase delay 
             if self.num_steps == 1:
-                swSpike = softwareNetwork.step(slice, membranePotential=False)
+                swSpike = softwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
-            swSpike = softwareNetwork.step(slice, membranePotential=False)
+            # empty input for output delay 
+            swSpike = softwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
             for idx in spikeIdx:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
