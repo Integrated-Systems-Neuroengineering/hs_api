@@ -46,4 +46,4 @@ class LIF_neuron(neuron_model):
         return self.leak
 
     def get_neuronModel(self):
-        return 1
+        return 2
