@@ -661,12 +661,12 @@ class CRI_Converter:
 
     def input_converter(self, input_data):
         """
-        Converts input data into a spike train and then into a list of axon indices.
+        Converts a batch of input image in spikes over T timesteps into a list of axon indices.
 
         Parameters
         ----------
         input_data : torch.Tensor
-            The input data.
+            The input data batch in spikes.
 
         Returns
         -------
@@ -684,23 +684,15 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
-        current_input = None
-        if self.dvs:
-            # Flatten the input data to [B, T, -1]
-            current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
-        else:
-            # Flatten the input data to [B, -1]
-            current_input = input_data.view(input_data.size(0), -1)
+        
+        # Flatten the input data to [B, T, -1]
+        current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
             
         batch = []
         for img in current_input:
             spikes = []
             for step in range(self.num_steps):
-                input_image = None
-                if self.dvs:
-                    input_image = img[step]
-                else:
-                    input_image = img
+                input_image = img[step]
                 input_spike = [
                     "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
                 ]
@@ -926,7 +918,7 @@ class CRI_Converter:
         neuron_type = None
         # TODO: Add neuron type for the connection dic of linear layer neurons
         if self.layer_index != self.input_layer:
-            neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+            neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6-1)
         self._linear_weight(self.curr_input, output, layer, neuron_type)
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
@@ -999,7 +991,7 @@ class CRI_Converter:
             
             # TODO: ADD neuron type 
             if self.layer_index != self.input_layer:
-                neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+                neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6-1)
                 for neuron in self.curr_input.flatten():
                     self.neuron_dict[str(neuron)] = ([],neuron_type)
             # print(f'Last output: {output[-1][-1]}')
@@ -1070,7 +1062,7 @@ class CRI_Converter:
                 self.neuron_offset, self.neuron_offset + np.prod(output_shape)
             )]
         ).reshape(output_shape)
-        neuron_type = ANN_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+        neuron_type = ANN_neuron(threshold=self.v_threshold, shift=8, leak=2**6-1)
         #TODO: Add Neuron type
         for neuron in self.curr_input.flatten():
             self.neuron_dict[str(neuron)] = ([],neuron_type)
