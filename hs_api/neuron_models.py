@@ -47,3 +47,22 @@ class LIF_neuron(neuron_model):
 
     def get_neuronModel(self):
         return 2
+
+class ANN_neuron(neuron_model):
+    def __init__(self, threshold, shift, leak):
+        self.threshold = threshold
+        #TODO: to be determined 
+        self.shift = shift
+        self.leak = leak
+    
+    def get_threshold(self):
+        return self.threshold
+
+    def get_shift(self):
+        return self.shift
+
+    def get_leak(self):
+        return self.leak
+
+    def get_neuronModel(self):
+        return 0

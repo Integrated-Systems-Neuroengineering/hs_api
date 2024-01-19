@@ -10,45 +10,12 @@ import csv
 import time
 from tqdm import tqdm
 from collections import defaultdict
-
-# import cri_simulations
+import pickle
+import os
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
-
-
-def pad_with(vector, pad_width, iaxis, kwargs):
-    """
-    Pads an array with a specified value.
-
-    Parameters
-    ----------
-    vector : np.ndarray
-        Input array.
-    pad_width : int or sequence of ints
-        Number of values padded to the edges of each axis.
-    iaxis : int
-        An indicator of the current axis.
-    kwargs : dict
-        Optional keyword arguments.
-
-    Returns
-    -------
-    np.ndarray
-        The padded array.
-
-    Examples
-    --------
-    >>> import numpy as np
-    >>> a = np.array([1, 2, 3, 4, 5])
-    >>> np.pad(a, 2, pad_with, padder=2)
-    array([2, 2, 1, 2, 3, 4, 5, 2, 2])
-    """
-
-    pad_value = kwargs.get("padder", 10)
-    vector[: pad_width[0]] = pad_value
-    vector[-pad_width[1] :] = pad_value
-
+from hs_api.neuron_models import ANN_neuron, LIF_neuron
 
 def isSNNLayer(layer):
     """
@@ -508,6 +475,8 @@ class BN_Folder:
 
         assert not (prev.training or bn.training), "Fusion only for eval!"
         fused_prev = copy.deepcopy(prev)
+        
+        # TODO: fix the bias = 0s when bias should be none
 
         if isinstance(bn, nn.BatchNorm2d):
             fused_prev.weight, fused_prev.bias = self._bn_folding(
@@ -558,6 +527,11 @@ class CRI_Converter:
         It should be set to the v_threshold of Quantize Network.
     embed_dim : int
         The embedding dimension. Only used for spikeformer.
+    converted_model_pth: str, optional
+        Save the converted network into a .pkl file at converted_model_pth. 
+        Default is "./converted_model"
+    dvs: bool
+        Convert the input data as DVS datasets
 
     Attributes
     ----------
@@ -599,6 +573,8 @@ class CRI_Converter:
         The maximum fan-out.
     v_threshold : float
         The voltage threshold for the neurons.
+    converted_model_pth : str
+        The path to the converted network file. 
     q : np.ndarray or None
         The q matrix for attention conversion.
     v : np.ndarray or None
@@ -607,6 +583,8 @@ class CRI_Converter:
         The k matrix for attention conversion.
     embed_dim : int
         The embedding dimension.
+    dvs: bool
+        Whether using dvs datasets.
 
     Examples
     --------
@@ -616,6 +594,7 @@ class CRI_Converter:
     """
 
     HIGH_SYNAPSE_WEIGHT = 1e6
+    NULL_NEURON = -1
 
     def __init__(
         self,
@@ -626,9 +605,11 @@ class CRI_Converter:
         v_threshold,
         embed_dim,
         backend="spikingjelly",
+        dvs = False,
+        converted_model_pth= "./converted_model",
     ):
         self.axon_dict = defaultdict(list)
-        self.neuron_dict = defaultdict(list)
+        self.neuron_dict = defaultdict(tuple)
         self.output_neurons = []
         self.input_shape = np.array(input_shape)
         self.num_steps = num_steps
@@ -645,12 +626,38 @@ class CRI_Converter:
         self.total_neuronSyn = 0
         self.max_fan = 0
         self.v_threshold = v_threshold
+        self.converted_model_pth = converted_model_pth
+        
+        # For dvs datasets
+        self.dvs = dvs
 
         # For spikformer only
         self.q = None
         self.v = None
         self.k = None
         self.embed_dim = embed_dim
+        
+        #constant
+        self.NULL_NEURON = -1
+        
+    def save_model(self):
+        """
+        Save the converted model into three .pkl files: 
+            axon_dict.pkl, 
+            neuron_dict.pkl, 
+            output_neurons.pkl
+        """
+        if not os.path.exists(self.converted_model_pth):
+            os.makedirs(self.converted_model_pth)
+            print(f'Mkdir {self.converted_model_pth}.')
+            
+        with open(f'{self.converted_model_pth}/axon_dict.pkl', 'wb') as f:
+            pickle.dump(self.axon_dict, f)
+        with open(f'{self.converted_model_pth}/neuron_dict.pkl', 'wb') as f:
+            pickle.dump(self.neuron_dict, f)
+        with open(f'{self.converted_model_pth}/output_neurons.pkl', 'wb') as f:
+            pickle.dump(self.output_neurons, f)    
+        print(f"Model saved at {self.converted_model_pth}.")
 
     def input_converter(self, input_data):
         """
@@ -677,22 +684,34 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
-        encoder = encoding.PoissonEncoder()
-        current_input = input_data.view(input_data.size(0), -1)
+        current_input = None
+        if self.dvs:
+            # Flatten the input data to [B, T, -1]
+            current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
+        else:
+            # Flatten the input data to [B, -1]
+            current_input = input_data.view(input_data.size(0), -1)
+            
         batch = []
         for img in current_input:
             spikes = []
             for step in range(self.num_steps):
-                encoded_img = encoder(img)
+                input_image = None
+                if self.dvs:
+                    input_image = img[step]
+                else:
+                    input_image = img
                 input_spike = [
-                    "a" + str(idx) for idx, axon in enumerate(encoded_img) if axon != 0
+                    "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
                 ]
+                # firing bias neurons at each step
                 bias_spike = [
                     "a" + str(idx)
                     for idx in range(self.bias_start_idx, len(self.axon_dict))
-                ]  # firing bias neurons at each step
+                ]  
                 spikes.append(input_spike + bias_spike)
             batch.append(spikes)
+        
         # TODO: if we don't do rate encoding?
         if self.save_input:
             with open("/Volumes/export/isn/keli/code/CRI/data/cri_mnist.csv", "w") as f:
@@ -718,10 +737,10 @@ class CRI_Converter:
         module_names = list(model._modules)
 
         # TODO: Construct the axon dict here
-        axons = np.array(
-            ["a" + str(i) for i in range(np.prod(self.input_shape))]
-        ).reshape(self.input_shape)
-        self.curr_input = axons
+        # axons = np.array(
+        #     ["a" + str(i) for i in range(np.prod(self.input_shape))]
+        # ).reshape(self.input_shape)
+        # self.curr_input = axons
 
         for k, name in enumerate(module_names):
             if len(list(model._modules[name]._modules)) > 0 and not isSNNLayer(
@@ -738,19 +757,14 @@ class CRI_Converter:
         # print(name, self.layer_index)
         if isinstance(layer, nn.Linear):
             self._linear_converter(layer)
-
         elif isinstance(layer, nn.Conv2d):
             self._conv_converter(layer)
-
-        elif isinstance(layer, nn.AvgPool2d):
-            self._avgPool_converter(layer)
-
         elif isinstance(layer, nn.MaxPool2d):
-            self._avgPool_converter(layer)
-
+            self._maxPool_converter(layer)
         else:
+            print("Unsupported layer: ", layer)
             pass
-            # print("Unconvertered layer: ", layer)
+            
         self.layer_index += 1
 
     def _attention_converter(self, model):
@@ -898,27 +912,28 @@ class CRI_Converter:
     def _linear_converter(self, layer):
         output_shape = layer.out_features
         if self.layer_index == self.input_layer:
-            # print('Constructing axons from linear Layer')
-            # print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
+            print('Constructing axons from linear Layer')
+            print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
+            #TODO: need to set the curr_input in the beginning 
             self.axon_offset += np.prod(self.curr_input.shape)
         else:
-            # print('Constructing neurons from linear Layer')
-            # print("Hidden layer shape(infeature, outfeature): ", self.curr_input.shape, layer.out_features)
+            print('Constructing neurons from linear Layer')
+            print("Hidden layer shape(infeature, outfeature): ", self.curr_input.shape, layer.out_features)
             self.neuron_offset += np.prod(self.curr_input.shape)
         output = np.array(
-            [
-                str(i)
-                for i in range(self.neuron_offset, self.neuron_offset + output_shape)
-            ]
+            [ i for i in range(self.neuron_offset, self.neuron_offset + output_shape)]
         )
-        # print(f'Last output: {output[-1]}')
-        self._linear_weight(self.curr_input, output, layer)
+        neuron_type = None
+        # TODO: Add neuron type for the connection dic of linear layer neurons
+        if self.layer_index != self.input_layer:
+            neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+        self._linear_weight(self.curr_input, output, layer, neuron_type)
         self.curr_input = output
-        # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
+        print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
-    def _linear_weight(self, input, outputs, layer):
+    def _linear_weight(self, input, outputs, layer, neuron_type):
         inputs = input.flatten()
-        weight = layer.weight.detach().cpu().numpy().transpose()
+        weight = layer.weight.detach().cpu().numpy().transpose() #[inputs_num, outputs_num]
         for neuron_idx, neuron in enumerate(weight):
             if self.layer_index == self.input_layer:
                 neuron_entry = [
@@ -929,7 +944,7 @@ class CRI_Converter:
                 self.axon_dict[inputs[neuron_idx]] = neuron_entry
             else:
                 curr_neuron_offset, next_neuron_offset = (
-                    self.neuron_offset - inputs.shape[0],
+                    self.neuron_offset - inputs.shape[0], # Linear layer: inputs shape should be a int
                     self.neuron_offset,
                 )
                 # print(f'curr_neuron_offset, next_neuron_offset: {curr_neuron_offset, next_neuron_offset}')
@@ -939,61 +954,66 @@ class CRI_Converter:
                     if syn_weight != 0
                 ]
                 neuron_id = str(neuron_idx + curr_neuron_offset)
-                self.neuron_dict[neuron_id] = neuron_entry
+                #TODO: ADD neuron type
+                self.neuron_dict[neuron_id] = (neuron_entry, neuron_type) 
         if self.layer_index == self.output_layer:
-            # print('Instantiate output neurons')
+            print('Instantiate output neurons')
             for output_neuron in range(layer.out_features):
                 neuron_id = str(output_neuron + self.neuron_offset)
-                self.neuron_dict[neuron_id] = []
+                #TODO: ADD neuron type
+                self.neuron_dict[neuron_id] = ([],neuron_type)
                 self.output_neurons.append(neuron_id)
-        elif layer.bias is not None:
-            # print(f'Constructing {layer.bias.shape[0]} bias axons for linear layer')
-            self._cri_bias(layer, output)
+            
+        if layer.bias is not None:
+            print(f'Constructing {layer.bias.shape[0]} bias axons for linear layer')
+            self._cri_bias(layer, outputs)
             self.axon_offset = len(self.axon_dict)
 
     def _conv_converter(self, layer):
-        # print(f'Converting layer: {layer}')
+        print(f'Converting layer: {layer}')
         input_shape, output_shape, axons, output = None, None, None, None
         start_time = time.time()
-        if self.layer_index == 0:
-            # print('Constructing Axons from Conv2d Layer')
+        if self.layer_index == self.input_layer:
+            print('Constructing Axons from Conv2d Layer')
             output_shape = self._conv_shape(layer, self.input_shape)
-            # print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
-            # axons = np.array(['a' + str(i) for i in range(np.prod(self.input_shape))]).reshape(self.input_shape)
+            print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
             axons = np.array([i for i in range(np.prod(self.input_shape))]).reshape(
                 self.input_shape
             )
-            # output = np.array([str(i) for i in range(np.prod(output_shape))]).reshape(output_shape)
             output = np.array([i for i in range(np.prod(output_shape))]).reshape(
                 output_shape
             )
             self._conv_weight(axons, output, layer)
             self.axon_offset = len(self.axon_dict)
         else:
-            # print('Constructing Neurons from Conv2d Layer')
+            print('Constructing Neurons from Conv2d Layer')
             output_shape = self._conv_shape(layer, self.curr_input.shape)
-            # print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
+            print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
             self.neuron_offset += np.prod(self.curr_input.shape)
             # print(f'Neuron_offset: {self.neuron_offset}')
             output = np.array(
-                [
-                    str(i)
-                    for i in range(
-                        self.neuron_offset, self.neuron_offset + np.prod(output_shape)
-                    )
-                ]
+                [i for i in range(
+                    self.neuron_offset, self.neuron_offset + np.prod(output_shape)
+                )]
             ).reshape(output_shape)
+            
+            # TODO: ADD neuron type 
+            if self.layer_index != self.input_layer:
+                neuron_type = LIF_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+                for neuron in self.curr_input.flatten():
+                    self.neuron_dict[str(neuron)] = ([],neuron_type)
             # print(f'Last output: {output[-1][-1]}')
             self._conv_weight(self.curr_input, output, layer)
 
-        if layer.bias is not None:
-            # print(f'Constructing {layer.bias.shape[0]} bias axons from conv layer.')
-            self._cri_bias(layer, output)
-            self.axon_offset = len(self.axon_dict)
+        #TODO: Fixing the bias issue
+        # if layer.bias is not None:
+        #     print(f'Constructing {layer.bias.shape[0]} bias axons from conv layer.')
+        #     self._cri_bias(layer, output)
+        #     self.axon_offset = len(self.axon_dict)
 
         self.curr_input = output
-        # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
-        # print(f'Converting {layer} takes {time.time()-start_time}')
+        print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
+        print(f'Converting {layer} takes {time.time()-start_time}')
 
     def _conv_weight(self, input, output, layer):
         h_k, w_k = layer.kernel_size
@@ -1001,14 +1021,16 @@ class CRI_Converter:
         pad_top, pad_left = h_k // 2, w_k // 2
         filters = layer.weight.detach().cpu().numpy()
         h_i, w_i = input.shape[-2], input.shape[-1]
-        input_layer = input.reshape(input.shape[-2], input.shape[-1])
-        # print(f'Input.shape: {input_layer.shape}')
-        input_padded = np.pad(input_layer, 1, pad_with, padder=-1)
-        input_padded = input_padded.reshape(
-            (input.shape[0], input_padded.shape[0], input_padded.shape[1])
-        )
-        # print(f'input_padded: {input_padded.shape}')
-        start_time = time.time()
+
+        input_padded = input
+        if layer.padding != 0:
+            # Pad the input with -1 (-1 since the input neuron idx starts at 0)
+            print(f'input shape: {input.shape}')
+            dim = 2
+            pad = layer.padding*dim
+            input_padded = F.pad(torch.from_numpy(input), pad, value=self.NULL_NEURON).numpy()
+            print(f'input_padded shape: {input_padded.shape}')
+        
         # for n in tqdm(range(input.shape[0])):
         for c in tqdm(range(input.shape[0])):
             for row in range(pad_top, h_i):
@@ -1024,45 +1046,48 @@ class CRI_Converter:
                         post_syn = output[fil_idx, row - pad_top, col - pad_left]
                         for i, neurons in enumerate(patch):
                             for j, neuron in enumerate(neurons):
-                                if self.layer_index == 0:
-                                    if fil[c, i, j] != 0 and neuron != -1:
+                                if self.layer_index == self.input_layer:
+                                    if fil[c, i, j] != 0 and neuron != self.NULL_NEURON:
                                         self.axon_dict["a" + str(neuron)].append(
                                             (str(post_syn), int(fil[c, i, j]))
                                         )
                                 else:
-                                    if fil[c, i, j] != 0:
-                                        self.neuron_dict[str(neuron)].append(
+                                    if fil[c, i, j] != 0 and neuron != self.NULL_NEURON:
+                                        #TODO: ADD neuron type
+                                        self.neuron_dict[str(neuron)][0].append(
                                             (str(post_syn), int(fil[c, i, j]))
                                         )
-                                    # print(neuron, self.neuron_dict[neuron])
-                                    # break
 
-    def _avgPool_converter(self, layer):
-        # print(f'Converting layer: {layer}')
-        # print('Constructing hidden avgpool layer')
-        output_shape = self._avgPool_shape(layer, self.curr_input.shape)
-        # print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
+    def _maxPool_converter(self, layer):
+        print(f'Converting layer: {layer}')
+        print('Constructing hidden maxpool layer')
+        output_shape = self._maxPool_shape(layer, self.curr_input.shape)
+        print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
         self.neuron_offset += np.prod(self.curr_input.shape)
-        # print(f'Neuron_offset: {self.neuron_offset}')
+        print(f'Neuron_offset: {self.neuron_offset}')
         output = np.array(
-            [
-                str(i)
-                for i in range(
-                    self.neuron_offset, self.neuron_offset + np.prod(output_shape)
-                )
-            ]
+            [i for i in range(
+                self.neuron_offset, self.neuron_offset + np.prod(output_shape)
+            )]
         ).reshape(output_shape)
-        # print(f'Last output: {output.flatten()[-1]}')
-        self._avgPool_weight(self.curr_input, output, layer)
+        neuron_type = ANN_neuron(threshold=self.v_threshold, shift=8, leak=2**6)
+        #TODO: Add Neuron type
+        for neuron in self.curr_input.flatten():
+            self.neuron_dict[str(neuron)] = ([],neuron_type)
+        self._maxPool_weight(self.curr_input, output, layer, neuron_type)
         self.curr_input = output
-        # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
+        print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
-    def _avgPool_weight(self, input, output, layer):
+    def _maxPool_weight(self, input, output, layer, neuron_type):
         h_k, w_k = layer.kernel_size, layer.kernel_size
         h_o, w_o = output.shape[-2], output.shape[-1]
         h_i, w_i = input.shape[-2], input.shape[-1]
         pad_top, pad_left = h_k // 2, w_k // 2
-        scaler = self.v_threshold  # TODO: finetuning maybe?
+        
+        # double the weight of the synapse for maxpooling to make sure 
+        # that the postsynaptic neuron will spike 
+        scaler = self.v_threshold * 2  
+        
         # print(h_i, w_i,input,output)
         for c in tqdm(range(input.shape[0])):
             for row in range(0, h_i, 2):
@@ -1071,7 +1096,7 @@ class CRI_Converter:
                     post_syn = str(output[c, row // 2, col // 2])
                     for i, neurons in enumerate(patch):
                         for j, neuron in enumerate(neurons):
-                            self.neuron_dict[str(neuron)].append((post_syn, scaler))
+                            self.neuron_dict[str(neuron)][0].append((post_syn, scaler))
 
     def _cri_bias(self, layer, outputs, atten_flag=False):
         biases = layer.bias.detach().cpu().numpy()
@@ -1079,7 +1104,7 @@ class CRI_Converter:
             bias_id = "a" + str(bias_idx + self.axon_offset)
             if isinstance(layer, nn.Conv2d):
                 self.axon_dict[bias_id] = [
-                    (str(neuron_idx), int(bias))
+                    (str(neuron_idx), int(bias)) 
                     for neuron_idx in outputs[bias_idx].flatten()
                 ]
             elif isinstance(layer, nn.Linear):
@@ -1113,7 +1138,7 @@ class CRI_Converter:
         else:
             return np.array((layer.out_channels, int(h_out), int(w_out)))
 
-    def _avgPool_shape(self, layer, input_shape):
+    def _maxPool_shape(self, layer, input_shape):
         h_out = (
             input_shape[-2] + layer.padding * 2 - (layer.kernel_size)
         ) / layer.stride + 1
@@ -1168,13 +1193,15 @@ class CRI_Converter:
         >>> converter = CRI_Converter()
         >>> converter.run_CRI_hw(some_inputList, some_hardwareNetwork)
         """
-
+        import hs_bridge
+        
         predictions = []
         # each image
         total_time_cri = 0
+        output_idx = [i for i in range(10)]
         for currInput in inputList:
             # initiate the hardware for each image
-            cri_simulations.FPGA_Execution.fpga_controller.clear(
+            hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
             )  ##Num_neurons, simDump, coreOverride
             spikeRate = [0] * 10
@@ -1186,22 +1213,32 @@ class CRI_Converter:
                 )
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
-                spikeIdx = [int(spike) - self.bias_start_idx for spike in hwSpike]
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
             if self.num_steps == 1:
-                hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+                # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
+                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    if idx not in output_idx:
+                        print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
+            # Empty input for output delay 
+            hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
             for idx in spikeIdx:
+                if idx not in output_idx:
+                    print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
 
     def run_CRI_sw(self, inputList, softwareNetwork):
         """
-        Runs a set of inputs through the software simulation of the network and gets the output predictions.
+        Runs a batch of inputs through the software simulation of the network and gets the output predictions.
 
         Parameters
         ----------
@@ -1234,14 +1271,18 @@ class CRI_Converter:
                 swSpike = softwareNetwork.step(slice, membranePotential=False)
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
-                spikeIdx = [int(spike) - self.bias_start_idx for spike in swSpike]
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
+            # empty input for phase delay 
             if self.num_steps == 1:
-                swSpike = softwareNetwork.step(slice, membranePotential=False)
+                swSpike = softwareNetwork.step([], membranePotential=False)
+                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
-            swSpike = softwareNetwork.step(slice, membranePotential=False)
+            # empty input for output delay 
+            swSpike = softwareNetwork.step([], membranePotential=False)
+            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
             for idx in spikeIdx:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
