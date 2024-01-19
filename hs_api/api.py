@@ -129,7 +129,7 @@ class CRI_network:
         self.simDump = simDump
         self.connectome = None
         self.gen_connectome()
-        breakpoint()
+        #breakpoint()
         self.axons, self.connections = self.__format_input(
             copy.deepcopy(axons), copy.deepcopy(connections)
         )
@@ -145,8 +145,6 @@ class CRI_network:
                 formatedOutputs,
                 self.config,
                 simDump=simDump,
-                leak=self.leak,
-                perturbMag=self.perturbMag,
                 coreOveride=coreID,
             )
             #breakpoint()
