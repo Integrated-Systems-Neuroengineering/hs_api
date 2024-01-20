@@ -1191,6 +1191,7 @@ class CRI_Converter:
         total_time_cri = 0
         output_idx = [i for i in range(10)]
         for currInput in inputList: # each batch
+            print("Testing one img")
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
@@ -1198,10 +1199,12 @@ class CRI_Converter:
             spikeRate = [0] * 10
             # each time step
             for slice in currInput:
+                print("Testing one time step")
                 start_time = time.time()
                 hwSpike, latency, hbmAcc = hardwareNetwork.step(
                     slice, membranePotential=False
                 )
+                breakpoint()
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
@@ -1225,6 +1228,7 @@ class CRI_Converter:
                     print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
+        print("Finish testing one batch")
         return predictions
 
     def run_CRI_sw(self, inputList, softwareNetwork):
