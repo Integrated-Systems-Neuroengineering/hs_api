@@ -1190,8 +1190,9 @@ class CRI_Converter:
         
         total_time_cri = 0
         output_idx = [i for i in range(10)]
+        
         for currInput in inputList: # each batch
-            print("Testing one img")
+            print("Testing one image")
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
@@ -1212,22 +1213,32 @@ class CRI_Converter:
                     if idx not in output_idx:
                         print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            if self.num_steps == 1:
-                # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
-                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                
+                if self.num_steps == 1:
+                    # Empty input for output delay 
+                    # HiAER spike only get spikes after the spikes have occurred
+                    hwSpike, latency, hbmAcc = hardwareNetwork.step([], membranePotential=False)
+                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
+                    for idx in spikeIdx:
+                        if idx not in output_idx:
+                            print(f"Error: invalid output spike {idx}")
+                        spikeRate[idx] += 1
+                
+                # Empty input for output delay 
+                hwSpike, latency, hbmAcc = hardwareNetwork.step([], membranePotential=False)
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
                     if idx not in output_idx:
                         print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            # Empty input for output delay 
-            hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
-            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
-            for idx in spikeIdx:
-                if idx not in output_idx:
-                    print(f"Error: invalid output spike {idx}")
-                spikeRate[idx] += 1
+                
+                breakpoint()
+                
+                if hardwareNetwork.simDump:
+                    hardwareNetwork.sim_flush(f'Img_{len(predictions)+1}_simflush_output.txt')
+            
             predictions.append(spikeRate.index(max(spikeRate)))
+        
         print("Finish testing one batch")
         return predictions
 
