@@ -684,17 +684,16 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
+        breakpoint()
+        # Flatten the input data to [B, T, C*H*W]
+        current_input = input_data.reshape(input_data.shape[0], input_data.shape[1], -1)
         
-        # Flatten the input data to [B, T, -1]
-        current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
-            
         batch = []
-        for img in current_input:
-            spikes = []
-            for step in range(self.num_steps):
-                input_image = img[step]
+        for steps in current_input:
+            spikes = [] 
+            for step in steps:
                 input_spike = [
-                    "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
+                    "a" + str(idx) for idx, axon in enumerate(step) if axon != 0
                 ]
                 # firing bias neurons at each step
                 bias_spike = [
@@ -1170,8 +1169,8 @@ class CRI_Converter:
 
         Parameters
         ----------
-        inputList : list of list of str
-            The input data, where each item is a list of axon indices representing the spikes.
+        inputList : a list of list of str
+            The input spikes of a batch of data
         hardwareNetwork : object
             The hardware network object.
 
@@ -1188,10 +1187,10 @@ class CRI_Converter:
         import hs_bridge
         
         predictions = []
-        # each image
+        
         total_time_cri = 0
         output_idx = [i for i in range(10)]
-        for currInput in inputList:
+        for currInput in inputList: # each batch
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
