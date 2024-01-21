@@ -636,9 +636,6 @@ class CRI_Converter:
         self.k = None
         self.embed_dim = embed_dim
         
-        #constant
-        self.NULL_NEURON = -1
-        
     def save_model(self):
         """
         Save the converted model into three .pkl files: 
@@ -704,11 +701,11 @@ class CRI_Converter:
                     "a" + str(idx) for idx, axon in enumerate(input_image) if axon != 0
                 ]
                 # firing bias neurons at each step
-                bias_spike = [
-                    "a" + str(idx)
-                    for idx in range(self.bias_start_idx, len(self.axon_dict))
-                ]  
-                spikes.append(input_spike + bias_spike)
+                # bias_spike = [
+                #     "a" + str(idx)
+                #     for idx in range(self.bias_start_idx, len(self.axon_dict))
+                # ]  
+                spikes.append(input_spike)
             batch.append(spikes)
         
         # TODO: if we don't do rate encoding?
@@ -761,7 +758,7 @@ class CRI_Converter:
         elif isinstance(layer, nn.MaxPool2d):
             self._maxPool_converter(layer)
         else:
-            print("Unsupported layer: ", layer)
+            # print("Unsupported layer: ", layer)
             pass
             
         self.layer_index += 1
@@ -909,20 +906,26 @@ class CRI_Converter:
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
     def _linear_converter(self, layer):
-        output_shape = layer.out_features
-        if self.layer_index == self.input_layer:
+        if self.layer_index == 10:
             print('Constructing axons from linear Layer')
-            print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
-            self.axon_offset += np.prod(self.curr_input.shape)
+            print(f'Input layer shape(infeature, outfeature): {layer.in_features} {layer.out_features}')
+            axon = np.array(
+                [ i for i in range(self.axon_offset, self.axon_offset + layer.in_features)]
+            )
+            output = np.array(
+                [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
+            )
+            self.axon_offset += layer.in_features
+            self._linear_weight(axon, output, layer)
         else:
             print('Constructing neurons from linear Layer')
-            print("Hidden layer shape(infeature, outfeature): ", self.curr_input.shape, layer.out_features)
-            self.neuron_offset += np.prod(self.curr_input.shape)
-        output = np.array(
-            [ i for i in range(self.neuron_offset, self.neuron_offset + output_shape)]
-        )
+            print("Hidden layer shape(infeature, outfeature): ", layer.in_features, layer.out_features)
+            output = np.array(
+                [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
+            )
+            self.neuron_offset += layer.in_features
+            self._linear_weight(self.curr_input, output, layer)
         
-        self._linear_weight(self.curr_input, output, layer)
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
@@ -930,27 +933,19 @@ class CRI_Converter:
         inputs = input.flatten()
         weight = layer.weight.detach().cpu().numpy().transpose()
         for neuron_idx, neuron in enumerate(weight):
-            if self.layer_index == self.input_layer:
-                neuron_entry = [
-                    (str(base_postsyn_id), int(syn_weight))
-                    for base_postsyn_id, syn_weight in enumerate(neuron)
+            neuron_entry = [
+                (str(base_postsyn_id + self.neuron_offset), int(syn_weight))
+                for base_postsyn_id, syn_weight in enumerate(neuron)
                     if syn_weight != 0
-                ]
-                self.axon_dict[inputs[neuron_idx]] = neuron_entry
+            ]
+            if self.layer_index == 10:
+                neuron_id = str(neuron_idx + self.axon_offset)
+                self.axon_dict[neuron_id] = neuron_entry
             else:
-                curr_neuron_offset, next_neuron_offset = (
-                    self.neuron_offset - inputs.shape[0],
-                    self.neuron_offset,
-                )
-                # print(f'curr_neuron_offset, next_neuron_offset: {curr_neuron_offset, next_neuron_offset}')
-                neuron_entry = [
-                    (str(base_postsyn_id + next_neuron_offset), int(syn_weight))
-                    for base_postsyn_id, syn_weight in enumerate(neuron)
-                    if syn_weight != 0
-                ]
-                neuron_id = str(neuron_idx + curr_neuron_offset)
+                neuron_id = str(neuron_idx + self.neuron_offset)
                 self.neuron_dict[neuron_id] = neuron_entry
-        if self.layer_index == self.output_layer:
+                
+        if self.layer_index == 13:
             print('Instantiate output neurons')
             for output_neuron in range(layer.out_features):
                 neuron_id = str(output_neuron + self.neuron_offset)
@@ -963,11 +958,11 @@ class CRI_Converter:
             self.axon_offset = len(self.axon_dict)
 
     def _conv_converter(self, layer):
-        print(f'Converting layer: {layer}')
+        # print(f'Converting layer: {layer}')
         input_shape, output_shape, axons, output = None, None, None, None
         start_time = time.time()
-        if self.layer_index == self.input_layer:
-            print('Constructing Axons from Conv2d Layer')
+        if self.layer_index == 0:
+            print('Constructing Axons from first Conv2d Layer')
             output_shape = self._conv_shape(layer, self.input_shape)
             print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
             axons = np.array([i for i in range(np.prod(self.input_shape))]).reshape(
@@ -976,8 +971,26 @@ class CRI_Converter:
             output = np.array([i for i in range(np.prod(output_shape))]).reshape(
                 output_shape
             )
+            self.axon_offset += np.prod(self.input_shape)
+            self.neuron_offset += np.prod(output_shape)
             self._conv_weight(axons, output, layer)
-            self.axon_offset = len(self.axon_dict)
+        elif self.layer_index == 4:
+            print('Constructing Axons from Second Conv2d Layer')
+            output_shape = self._conv_shape(layer, self.curr_input.shape)
+            print(f'Input layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
+            axons = np.array(
+                [i for i in range(
+                    self.axon_offset, self.axon_offset + np.prod(self.curr_input.shape)
+                )]
+            ).reshape(self.curr_input.shape)
+            output = np.array(
+                [i for i in range(
+                    self.neuron_offset, self.neuron_offset + np.prod(output_shape)
+                )]
+            ).reshape(output_shape)
+            self.axon_offset += np.prod(self.curr_input.shape)
+            self.neuron_offset += np.prod(output_shape)
+            self._conv_weight(axons, output, layer)
         else:
             print('Constructing Neurons from Conv2d Layer')
             output_shape = self._conv_shape(layer, self.curr_input.shape)
@@ -1000,7 +1013,7 @@ class CRI_Converter:
 
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
-        print(f'Converting {layer} takes {time.time()-start_time}')
+        # print(f'Converting {layer} takes {time.time()-start_time}')
 
     def _conv_weight(self, input, output, layer):
         h_k, w_k = layer.kernel_size
@@ -1012,11 +1025,11 @@ class CRI_Converter:
         input_padded = input
         if layer.padding != 0:
             # Pad the input with -1 (-1 since the input neuron idx starts at 0)
-            print(f'input shape: {input.shape}')
+            # print(f'input shape: {input.shape}')
             dim = 2
             pad = layer.padding*dim
             input_padded = F.pad(torch.from_numpy(input), pad, value=self.NULL_NEURON).numpy()
-            print(f'input_padded shape: {input_padded.shape}')
+            # print(f'input_padded shape: {input_padded.shape}')
         
         # for n in tqdm(range(input.shape[0])):
         for c in tqdm(range(input.shape[0])):
@@ -1033,7 +1046,7 @@ class CRI_Converter:
                         post_syn = output[fil_idx, row - pad_top, col - pad_left]
                         for i, neurons in enumerate(patch):
                             for j, neuron in enumerate(neurons):
-                                if self.layer_index == self.input_layer:
+                                if self.layer_index == 0 or self.layer_index == 4:
                                     if fil[c, i, j] != 0 and neuron != self.NULL_NEURON:
                                         self.axon_dict["a" + str(neuron)].append(
                                             (str(post_syn), int(fil[c, i, j]))
@@ -1043,22 +1056,26 @@ class CRI_Converter:
                                         self.neuron_dict[str(neuron)].append(
                                             (str(post_syn), int(fil[c, i, j]))
                                         )
+        
+        print('Instantiate output neurons')
+        for output_neuron in output.flatten():
+            neuron_id = str(output_neuron)
+            self.neuron_dict[neuron_id] = []
+            self.output_neurons.append(neuron_id)
 
     def _maxPool_converter(self, layer):
-        print(f'Converting layer: {layer}')
-        print('Constructing hidden maxpool layer')
+        # print(f'Converting layer: {layer}')
+        # print('Constructing hidden maxpool layer')
         output_shape = self._maxPool_shape(layer, self.curr_input.shape)
-        print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
-        self.neuron_offset += np.prod(self.curr_input.shape)
-        print(f'Neuron_offset: {self.neuron_offset}')
+        # print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
+        # self.neuron_offset += np.prod(self.curr_input.shape)
+        # print(f'Neuron_offset: {self.neuron_offset}')
         output = np.array(
-            [i for i in range(
-                self.neuron_offset, self.neuron_offset + np.prod(output_shape)
-            )]
+            [i for i in range(np.prod(output_shape))]
         ).reshape(output_shape)
-        self._maxPool_weight(self.curr_input, output, layer)
+        # self._maxPool_weight(self.curr_input, output, layer)
         self.curr_input = output
-        print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
+        # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
     def _maxPool_weight(self, input, output, layer):
         h_k, w_k = layer.kernel_size, layer.kernel_size
@@ -1080,10 +1097,20 @@ class CRI_Converter:
                         for j, neuron in enumerate(neurons):
                             self.neuron_dict[str(neuron)].append((post_syn, scaler))
 
+        print('Instantiate output neurons')
+        for output_neuron in output.flatten():
+            neuron_id = str(output_neuron)
+            if self.layer_index == 1:
+                self.maxPool1Neuron[neuron_id] = []
+                self.maxPool1Output.append(neuron_id)
+            elif self.layer_index == 5:
+                self.maxPool2Neuron[neuron_id] = []
+                self.maxPool2Output.append(neuron_id)
+
     def _cri_bias(self, layer, outputs, atten_flag=False):
         biases = layer.bias.detach().cpu().numpy()
         for bias_idx, bias in enumerate(biases):
-            bias_id = "a" + str(bias_idx + self.axon_offset)
+            bias_id = 'a' + str(bias_idx + self.axon_offset)
             if isinstance(layer, nn.Conv2d):
                 self.axon_dict[bias_id] = [
                     (str(neuron_idx), int(bias)) 
