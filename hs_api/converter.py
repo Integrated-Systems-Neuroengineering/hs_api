@@ -916,6 +916,7 @@ class CRI_Converter:
                 [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
             )
             self.axon_offset += layer.in_features
+            self.neuron_offset += layer.out_features
             self._linear_weight(axon, output, layer)
         else:
             print('Constructing neurons from linear Layer')
@@ -923,7 +924,6 @@ class CRI_Converter:
             output = np.array(
                 [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
             )
-            self.neuron_offset += layer.in_features
             self._linear_weight(self.curr_input, output, layer)
         
         self.curr_input = output
@@ -931,24 +931,23 @@ class CRI_Converter:
 
     def _linear_weight(self, input, outputs, layer):
         inputs = input.flatten()
-        weight = layer.weight.detach().cpu().numpy().transpose()
+        weight = layer.weight.detach().cpu().numpy().transpose() #[i,o]
         for neuron_idx, neuron in enumerate(weight):
             neuron_entry = [
-                (str(base_postsyn_id + self.neuron_offset), int(syn_weight))
-                for base_postsyn_id, syn_weight in enumerate(neuron)
+                (str(outputs[post_idx]), int(syn_weight))
+                for post_idx, syn_weight in enumerate(neuron)
                     if syn_weight != 0
             ]
+            neuron_id = str(inputs[neuron_idx])
             if self.layer_index == 10:
-                neuron_id = str(neuron_idx + self.axon_offset)
                 self.axon_dict[neuron_id] = neuron_entry
             else:
-                neuron_id = str(neuron_idx + self.neuron_offset)
                 self.neuron_dict[neuron_id] = neuron_entry
                 
         if self.layer_index == 13:
             print('Instantiate output neurons')
-            for output_neuron in range(layer.out_features):
-                neuron_id = str(output_neuron + self.neuron_offset)
+            for output_neuron in outputs:
+                neuron_id = str(output_neuron)
                 self.neuron_dict[neuron_id] = []
                 self.output_neurons.append(neuron_id)
             
@@ -971,9 +970,10 @@ class CRI_Converter:
             output = np.array([i for i in range(np.prod(output_shape))]).reshape(
                 output_shape
             )
+            self._conv_weight(axons, output, layer)
             self.axon_offset += np.prod(self.input_shape)
             self.neuron_offset += np.prod(output_shape)
-            self._conv_weight(axons, output, layer)
+            
         elif self.layer_index == 4:
             print('Constructing Axons from Second Conv2d Layer')
             output_shape = self._conv_shape(layer, self.curr_input.shape)
@@ -988,9 +988,9 @@ class CRI_Converter:
                     self.neuron_offset, self.neuron_offset + np.prod(output_shape)
                 )]
             ).reshape(output_shape)
+            self._conv_weight(axons, output, layer)
             self.axon_offset += np.prod(self.curr_input.shape)
             self.neuron_offset += np.prod(output_shape)
-            self._conv_weight(axons, output, layer)
         else:
             print('Constructing Neurons from Conv2d Layer')
             output_shape = self._conv_shape(layer, self.curr_input.shape)
