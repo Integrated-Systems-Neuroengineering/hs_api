@@ -1202,9 +1202,14 @@ class CRI_Converter:
             for slice in currInput:
                 print("Testing one time step")
                 start_time = time.time()
-                hwSpike, latency, hbmAcc = hardwareNetwork.step(
-                    slice, membranePotential=False
-                )
+                if hardwareNetwork.simDump:
+                    hwSpike = hardwareNetwork.step(
+                        slice, membranePotential=False
+                    )
+                else:
+                    hwSpike, latency, hbmAcc = hardwareNetwork.step(
+                        slice, membranePotential=False
+                    )
                 breakpoint()
                 end_time = time.time()
                 total_time_cri = total_time_cri + end_time - start_time
@@ -1214,10 +1219,17 @@ class CRI_Converter:
                         print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
                 
+                # Empty input for phase delay 
+                # HiAER spike only get spikes the step after the spikes have occurred                
                 if self.num_steps == 1:
-                    # Empty input for output delay 
-                    # HiAER spike only get spikes after the spikes have occurred
-                    hwSpike, latency, hbmAcc = hardwareNetwork.step([], membranePotential=False)
+                    if hardwareNetwork.simDump:
+                        hwSpike = hardwareNetwork.step(
+                            [], membranePotential=False
+                        )
+                    else:
+                        hwSpike, latency, hbmAcc = hardwareNetwork.step(
+                            [], membranePotential=False
+                        )
                     spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                     for idx in spikeIdx:
                         if idx not in output_idx:
@@ -1225,7 +1237,14 @@ class CRI_Converter:
                         spikeRate[idx] += 1
                 
                 # Empty input for output delay 
-                hwSpike, latency, hbmAcc = hardwareNetwork.step([], membranePotential=False)
+                if hardwareNetwork.simDump:
+                    hwSpike = hardwareNetwork.step(
+                        [], membranePotential=False
+                    )
+                else:
+                    hwSpike, latency, hbmAcc = hardwareNetwork.step(
+                        [], membranePotential=False
+                    )
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
                     if idx not in output_idx:
