@@ -940,7 +940,7 @@ class CRI_Converter:
             ]
             neuron_id = str(inputs[neuron_idx])
             if self.layer_index == 10:
-                self.axon_dict[neuron_id] = neuron_entry
+                self.axon_dict['a'+neuron_id] = neuron_entry
             else:
                 self.neuron_dict[neuron_id] = neuron_entry
                 
