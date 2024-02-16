@@ -44,7 +44,6 @@ def isSNNLayer(layer):
         or isinstance(layer, IFNode)
     )
 
-
 def weight_quantization(b):
     """
     Applies weight quantization to the input.
@@ -121,7 +120,6 @@ def weight_quantization(b):
 
     return _pq().apply
 
-
 class weight_quantize_fn(nn.Module):
     def __init__(self, w_bit, w_alpha):
         super(weight_quantize_fn, self).__init__()
@@ -132,7 +130,6 @@ class weight_quantize_fn(nn.Module):
     def forward(self, weight):
         weight_q = self.weight_q(weight, self.wgt_alpha)
         return weight_q
-
 
 class Quantize_Network:
     """
@@ -339,7 +336,6 @@ class Quantize_Network:
 
         return layer
 
-
 class BN_Folder:
     """
     A class to perform batch normalization folding on a model.
@@ -446,6 +442,7 @@ class BN_Folder:
             w_fold = prev_w * (bn_w * bn_var_rsqrt).view(-1, 1, 1, 1)
         else:
             w_fold = prev_w * (bn_w * bn_var_rsqrt).view(-1, 1)
+        
         b_fold = (prev_b - bn_rm) * bn_var_rsqrt * bn_w + bn_b
 
         return torch.nn.Parameter(w_fold), torch.nn.Parameter(b_fold)
@@ -501,7 +498,6 @@ class BN_Folder:
             )
 
         return fused_prev
-
 
 class CRI_Converter:
     """
@@ -735,11 +731,13 @@ class CRI_Converter:
         """
         module_names = list(model._modules)
 
-        # TODO: Construct the axon dict here
-        # axons = np.array(
-        #     ["a" + str(i) for i in range(np.prod(self.input_shape))]
-        # ).reshape(self.input_shape)
-        # self.curr_input = axons
+        # Construct the axon dict keys and set it as curr_input
+        axons = np.array(
+            [i for i in range(np.prod(self.input_shape))]
+        ).reshape(self.input_shape)
+        self.curr_input = axons
+        self.axon_offset += np.prod(self.curr_input.shape)
+        self.bias_start_idx = self.axon_offset
 
         for k, name in enumerate(module_names):
             if len(list(model._modules[name]._modules)) > 0 and not isSNNLayer(
@@ -762,7 +760,6 @@ class CRI_Converter:
             self._maxPool_converter(layer)
         else:
             print("Unsupported layer: ", layer)
-            pass
             
         self.layer_index += 1
 
@@ -907,141 +904,177 @@ class CRI_Converter:
             self.neuron_dict[str(output_neuron)] = []
             self.output_neurons.append(neuron_id)
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
-
+    
     def _linear_converter(self, layer):
-        output_shape = layer.out_features
+        """
+        Takes in a PyTorch linear layer and generate the postsynaptic neurons (numpy array) 
+        Call _linear_weight to unroll the connections
+
+        Parameters
+        ----------
+        layer : PyTorch linear layer 
+        """
         if self.layer_index == self.input_layer:
-            print('Constructing axons from linear Layer')
-            print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
-            self.axon_offset += np.prod(self.curr_input.shape)
+            print('Building synapses between axons and neurons from linear Layer')    
         else:
-            print('Constructing neurons from linear Layer')
-            print("Hidden layer shape(infeature, outfeature): ", self.curr_input.shape, layer.out_features)
+            print('Building synapese from neurons to neurons from linear Layer')
             self.neuron_offset += np.prod(self.curr_input.shape)
+            
+        print(f'layer shape(infeature, outfeature): {layer.in_features} {layer.out_features}')
         output = np.array(
-            [ i for i in range(self.neuron_offset, self.neuron_offset + output_shape)]
+            [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
         )
-        
-        self._linear_weight(self.curr_input, output, layer)
+        self._linear_weight(self.curr_input.flatten(), output, layer)
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
-    def _linear_weight(self, input, outputs, layer):
-        inputs = input.flatten()
-        weight = layer.weight.detach().cpu().numpy().transpose()
-        for neuron_idx, neuron in enumerate(weight):
+    def _linear_weight(self, input, output, layer):
+        """
+        Unroll the linear layer by building the synapses between 
+        presynaptic neurons and postsynaptic neurons 
+
+        Parameters
+        ----------
+        input : numpy array of shape (*, in_features)
+            The presynaptic neurons
+        
+        output : numpy array of shape (*, out_features)
+            The postsynaptic neurons  
+            
+        layer : PyTorch linear layer 
+        """
+        weights = layer.weight.detach().cpu().numpy().transpose() # (in, out)
+        for preIdx, weight in enumerate(weights):
             if self.layer_index == self.input_layer:
-                neuron_entry = [
-                    (str(base_postsyn_id), int(syn_weight))
-                    for base_postsyn_id, syn_weight in enumerate(neuron)
-                    if syn_weight != 0
+                postSynNeurons = [
+                    (output[postIdx], int(synWeight))
+                    for postIdx, synWeight in enumerate(weight)
+                    if synWeight != 0
                 ]
-                self.axon_dict[inputs[neuron_idx]] = neuron_entry
+                self.axon_dict["a" + str(input[preIdx])] = postSynNeurons
             else:
-                curr_neuron_offset, next_neuron_offset = (
-                    self.neuron_offset - inputs.shape[0],
-                    self.neuron_offset,
-                )
                 # print(f'curr_neuron_offset, next_neuron_offset: {curr_neuron_offset, next_neuron_offset}')
-                neuron_entry = [
-                    (str(base_postsyn_id + next_neuron_offset), int(syn_weight))
-                    for base_postsyn_id, syn_weight in enumerate(neuron)
-                    if syn_weight != 0
+                postSynNeurons = [
+                    (output[postIdx], int(synWeight))
+                    for postIdx, synWeight in enumerate(weight)
+                    if synWeight != 0
                 ]
-                neuron_id = str(neuron_idx + curr_neuron_offset)
-                self.neuron_dict[neuron_id] = neuron_entry
+                self.neuron_dict[str(input[preIdx])] = postSynNeurons
+        
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons')
-            for output_neuron in range(layer.out_features):
-                neuron_id = str(output_neuron + self.neuron_offset)
-                self.neuron_dict[neuron_id] = []
-                self.output_neurons.append(neuron_id)
+            for postSynNeuron in output:
+                self.neuron_dict[str(postSynNeuron)] = []
+                self.output_neurons.append(str(postSynNeuron))
             
         if layer.bias is not None:
-            print(f'Constructing {layer.bias.shape[0]} bias axons for linear layer')
-            self._cri_bias(layer, outputs)
+            self._cri_bias(layer, output)
+            print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons for linear layer')
             self.axon_offset = len(self.axon_dict)
-
+            
     def _conv_converter(self, layer):
-        print(f'Converting layer: {layer}')
-        input_shape, output_shape, axons, output = None, None, None, None
-        start_time = time.time()
-        if self.layer_index == self.input_layer:
-            print('Constructing Axons from Conv2d Layer')
-            output_shape = self._conv_shape(layer, self.input_shape)
-            print(f'Input layer shape(infeature, outfeature): {self.input_shape} {output_shape}')
-            axons = np.array([i for i in range(np.prod(self.input_shape))]).reshape(
-                self.input_shape
-            )
-            output = np.array([i for i in range(np.prod(output_shape))]).reshape(
-                output_shape
-            )
-            self._conv_weight(axons, output, layer)
-            self.axon_offset = len(self.axon_dict)
-        else:
-            print('Constructing Neurons from Conv2d Layer')
-            output_shape = self._conv_shape(layer, self.curr_input.shape)
-            print(f'Hidden layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
-            self.neuron_offset += np.prod(self.curr_input.shape)
-            # print(f'Neuron_offset: {self.neuron_offset}')
-            output = np.array(
-                [i for i in range(
-                    self.neuron_offset, self.neuron_offset + np.prod(output_shape)
-                )]
-            ).reshape(output_shape)
-            # print(f'Last output: {output[-1][-1]}')
-            self._conv_weight(self.curr_input, output, layer)
+        """
+        Takes in a PyTorch Conv layer and generate the postsynaptic neurons (numpy array) 
+        Call _conv_shape and _conv_weight to calculate the 
+        output shape and perform unrolling respectively
 
-        #TODO: Fixing the bias issue
-        # if layer.bias is not None:
-        #     print(f'Constructing {layer.bias.shape[0]} bias axons from conv layer.')
-        #     self._cri_bias(layer, output)
-        #     self.axon_offset = len(self.axon_dict)
+        Parameters
+        ----------
+        layer : PyTorch Conv layer 
+            (currently only support Conv2d)
+
+        """
+        print(f'Converting layer: {layer}')
+        output = None
+        
+        if self.layer_index == self.input_layer:
+            print('Building synapese from axons to neurons from Conv2d Layer')
+        else:
+            print('Building synapese from neurons to neurons from Conv2d Layer')
+            self.neuron_offset += np.prod(self.curr_input.shape)
+            
+        output_shape = self._conv_shape(layer, self.curr_input.shape)
+        print(f'Layer shape(infeature, outfeature): {self.curr_input.shape} {output_shape}')
+        
+        output = np.array(
+        [i for i in range(
+            self.neuron_offset, self.neuron_offset + np.prod(output_shape)
+        )]
+        ).reshape(output_shape)
+
+        self._conv_weight(self.curr_input, output, layer)
+
+        if layer.bias is not None:
+            self._cri_bias(layer, output)
+            print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons from conv layer.')
+            self.axon_offset = len(self.axon_dict)
 
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
-        print(f'Converting {layer} takes {time.time()-start_time}')
-
+    
     def _conv_weight(self, input, output, layer):
-        h_k, w_k = layer.kernel_size
-        h_o, w_o = output.shape[-2], output.shape[-1]
-        pad_top, pad_left = h_k // 2, w_k // 2
-        filters = layer.weight.detach().cpu().numpy()
-        h_i, w_i = input.shape[-2], input.shape[-1]
+        """
+        Unroll the convolutional layer by building the synapses between 
+        presynaptic neurons and postsynaptic neurons 
+        Currently supports parameters: padding and stride 
 
-        input_padded = input
-        if layer.padding != 0:
-            # Pad the input with -1 (-1 since the input neuron idx starts at 0)
-            print(f'input shape: {input.shape}')
-            dim = 2
-            pad = layer.padding*dim
-            input_padded = F.pad(torch.from_numpy(input), pad, value=self.NULL_NEURON).numpy()
-            print(f'input_padded shape: {input_padded.shape}')
+        Parameters
+        ----------
+        input : numpy array of shape (c, h, w)
+            The presynaptic neurons
         
-        # for n in tqdm(range(input.shape[0])):
+        output : numpy array of shape (c', h', w')
+            The postsynaptic neurons  
+            
+        layer : PyTorch Conv layer 
+            (currently only support Conv2d)
+
+        """
+        # Get the layer parameters and weights
+        kernel = layer.kernel_size
+        stride = layer.stride
+        padding = layer.padding
+        filters = layer.weight.detach().cpu().numpy()
+        
+        # Check parameters (int or tuple) and convert them all to tuple
+        if isinstance(kernel, int):
+            kernel = (fil, fil)
+        if isinstance(stride, int):
+            stride =(stride, stride)
+        if isinstance(padding, int):
+            padding = (padding, padding)
+            
+        #Pad the input if padding is not zero
+        if sum(layer.padding) != 0:
+            # Pad the input with -1 (input neuron idx starts at 0)
+            print(f'input shape: {input.shape}')
+            dim = 2 #pad the last two dim of the input array
+            pad = layer.padding*dim 
+            input = F.pad(torch.from_numpy(input), pad, value=self.NULL_NEURON).numpy()
+            print(f'input_padded shape: {input.shape}')
+        
+        h, w = input.shape[-2], input.shape[-1]
+        # iterate throught the input array based on the kernel ans stride size
         for c in tqdm(range(input.shape[0])):
-            for row in range(pad_top, h_i):
-                for col in range(pad_left, w_i):
-                    # Input axons/neurons
-                    patch = input_padded[
-                        c,
-                        row - pad_top : row + pad_top + 1,
-                        col - pad_left : col + pad_left + 1,
-                    ]
-                    for fil_idx, fil in enumerate(filters):
-                        # print(fil.shape)
-                        post_syn = output[fil_idx, row - pad_top, col - pad_left]
-                        for i, neurons in enumerate(patch):
-                            for j, neuron in enumerate(neurons):
+            for row in range(0, h-kernel[0]+1, stride[0]):
+                for col in range(0, w-kernel[1]+1, stride[1]):
+                    preSynNeurons = input[c, row:row+kernel[0], col:col+kernel[1]]
+                    # iterate each of the filter
+                    for filIdx, fil in enumerate(filters):
+                        # find the postsynaptic neuron
+                        postSynNeuron = output[filIdx,row//stride[0], col//stride[1]]
+                        # and add a synapse between each of the neuron in preSynNeurons & postSynNeuron
+                        for i, rows in enumerate(preSynNeurons):
+                            for j, pre in enumerate(rows):
                                 if self.layer_index == self.input_layer:
-                                    if fil[c, i, j] != 0 and neuron != self.NULL_NEURON:
-                                        self.axon_dict["a" + str(neuron)].append(
-                                            (str(post_syn), int(fil[c, i, j]))
+                                    if fil[c, i, j] != 0 and pre != self.NULL_NEURON:
+                                        self.axon_dict["a" + str(pre)].append(
+                                            (str(postSynNeuron), int(fil[c, i, j]))
                                         )
                                 else:
-                                    if fil[c, i, j] != 0 and neuron != self.NULL_NEURON:
-                                        self.neuron_dict[str(neuron)].append(
-                                            (str(post_syn), int(fil[c, i, j]))
+                                    if fil[c, i, j] != 0 and pre != self.NULL_NEURON:
+                                        self.neuron_dict[str(pre)].append(
+                                            (str(postSynNeuron), int(fil[c, i, j]))
                                         )
 
     def _maxPool_converter(self, layer):
@@ -1082,23 +1115,24 @@ class CRI_Converter:
 
     def _cri_bias(self, layer, outputs, atten_flag=False):
         biases = layer.bias.detach().cpu().numpy()
-        for bias_idx, bias in enumerate(biases):
-            bias_id = "a" + str(bias_idx + self.axon_offset)
-            if isinstance(layer, nn.Conv2d):
-                self.axon_dict[bias_id] = [
-                    (str(neuron_idx), int(bias)) 
-                    for neuron_idx in outputs[bias_idx].flatten()
-                ]
-            elif isinstance(layer, nn.Linear):
-                if atten_flag:
+        for output_chan, bias in enumerate(biases):
+            if bias != 0:
+                bias_id = "a" + str(output_chan + self.axon_offset)
+                if isinstance(layer, nn.Conv2d):
                     self.axon_dict[bias_id] = [
-                        (str(neuron_idx), int(bias))
-                        for neuron_idx in outputs[bias_idx, :].flatten()
+                        (str(neuron_idx), int(bias)) 
+                        for neuron_idx in outputs[output_chan].flatten()
                     ]
+                elif isinstance(layer, nn.Linear):
+                    if atten_flag:
+                        self.axon_dict[bias_id] = [
+                            (str(neuron_idx), int(bias))
+                            for neuron_idx in outputs[output_chan, :].flatten()
+                        ]
+                    else:
+                        self.axon_dict[bias_id] = [(str(outputs[output_chan]), int(bias))]
                 else:
-                    self.axon_dict[bias_id] = [(str(outputs[bias_idx]), int(bias))]
-            else:
-                print(f"Unspported layer: {layer}")
+                    print(f"Unspported layer: {layer}")
 
     def _conv_shape(self, layer, input_shape):
         h_out = (
@@ -1156,7 +1190,7 @@ class CRI_Converter:
 
     def run_CRI_hw(self, inputList, hardwareNetwork):
         """
-        Runs a set of inputs through the hardware implementation of the network and gets the output predictions.
+        Runs a bach of input through the hardware implementation of the network and gets the output predictions.
 
         Parameters
         ----------
@@ -1178,9 +1212,11 @@ class CRI_Converter:
         import hs_bridge
         
         predictions = []
-        # each image
+        
         total_time_cri = 0
         output_idx = [i for i in range(10)]
+        
+        # each image 
         for currInput in inputList:
             # initiate the hardware for each image
             hs_bridge.FPGA_Execution.fpga_controller.clear(
@@ -1269,3 +1305,5 @@ class CRI_Converter:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
         return predictions
+    
+    
