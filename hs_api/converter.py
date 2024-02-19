@@ -947,15 +947,14 @@ class CRI_Converter:
         for preIdx, weight in enumerate(weights):
             if self.layer_index == self.input_layer:
                 postSynNeurons = [
-                    (output[postIdx], int(synWeight))
+                    (str(output[postIdx]), int(synWeight))
                     for postIdx, synWeight in enumerate(weight)
                     if synWeight != 0
                 ]
                 self.axon_dict["a" + str(input[preIdx])] = postSynNeurons
             else:
-                # print(f'curr_neuron_offset, next_neuron_offset: {curr_neuron_offset, next_neuron_offset}')
                 postSynNeurons = [
-                    (output[postIdx], int(synWeight))
+                    (str(output[postIdx]), int(synWeight))
                     for postIdx, synWeight in enumerate(weight)
                     if synWeight != 0
                 ]
