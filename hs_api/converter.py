@@ -656,12 +656,12 @@ class CRI_Converter:
 
     def input_converter(self, input_data):
         """
-        Converts input data into a spike train and then into a list of axon indices.
+        Converts input data into a list of axon indices.
 
         Parameters
         ----------
         input_data : torch.Tensor
-            The input data.
+            The input data of the shape (B, -1).
 
         Returns
         -------
@@ -679,6 +679,9 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
+        """
+        Convert 
+        """
         current_input = None
         if self.dvs:
             # Flatten the input data to [B, T, -1]
@@ -736,7 +739,7 @@ class CRI_Converter:
             [i for i in range(np.prod(self.input_shape))]
         ).reshape(self.input_shape)
         self.curr_input = axons
-        self.axon_offset += np.prod(self.curr_input.shape)
+        self.axon_offset = np.prod(self.curr_input.shape)
         self.bias_start_idx = self.axon_offset
 
         for k, name in enumerate(module_names):
@@ -921,11 +924,25 @@ class CRI_Converter:
             self.neuron_offset += np.prod(self.curr_input.shape)
             
         print(f'layer shape(infeature, outfeature): {layer.in_features} {layer.out_features}')
+        
         output = np.array(
             [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
         )
         self._linear_weight(self.curr_input.flatten(), output, layer)
+            
+        if layer.bias is not None:
+            self._cri_bias(layer, output)
+            print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons for linear layer')
+            self.axon_offset = len(self.axon_dict)
+            
+        if self.layer_index == self.output_layer:
+            print('Instantiate output neurons')
+            for postSynNeuron in output:
+                self.neuron_dict[str(postSynNeuron)] = []
+                self.output_neurons.append(str(postSynNeuron))
+            
         self.curr_input = output
+            
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
     def _linear_weight(self, input, output, layer):
@@ -949,27 +966,14 @@ class CRI_Converter:
                 postSynNeurons = [
                     (str(output[postIdx]), int(synWeight))
                     for postIdx, synWeight in enumerate(weight)
-                    if synWeight != 0
                 ]
                 self.axon_dict["a" + str(input[preIdx])] = postSynNeurons
             else:
                 postSynNeurons = [
                     (str(output[postIdx]), int(synWeight))
                     for postIdx, synWeight in enumerate(weight)
-                    if synWeight != 0
                 ]
                 self.neuron_dict[str(input[preIdx])] = postSynNeurons
-        
-        if self.layer_index == self.output_layer:
-            print('Instantiate output neurons')
-            for postSynNeuron in output:
-                self.neuron_dict[str(postSynNeuron)] = []
-                self.output_neurons.append(str(postSynNeuron))
-            
-        if layer.bias is not None:
-            self._cri_bias(layer, output)
-            print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons for linear layer')
-            self.axon_offset = len(self.axon_dict)
             
     def _conv_converter(self, layer):
         """
@@ -1066,12 +1070,12 @@ class CRI_Converter:
                         for i, rows in enumerate(preSynNeurons):
                             for j, pre in enumerate(rows):
                                 if self.layer_index == self.input_layer:
-                                    if fil[c, i, j] != 0 and pre != self.NULL_NEURON:
+                                    if pre != self.NULL_NEURON:
                                         self.axon_dict["a" + str(pre)].append(
                                             (str(postSynNeuron), int(fil[c, i, j]))
                                         )
                                 else:
-                                    if fil[c, i, j] != 0 and pre != self.NULL_NEURON:
+                                    if pre != self.NULL_NEURON:
                                         self.neuron_dict[str(pre)].append(
                                             (str(postSynNeuron), int(fil[c, i, j]))
                                         )
