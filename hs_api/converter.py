@@ -1221,7 +1221,7 @@ class CRI_Converter:
         predictions = []
         
         total_time_cri = 0
-        output_idx = [i for i in range(10)]
+        output_idx = [i for i in range(len(self.output_neurons))]
         
         # each image 
         for currInput in inputList:
@@ -1229,7 +1229,7 @@ class CRI_Converter:
             hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(self.neuron_dict), False, 0
             )  ##Num_neurons, simDump, coreOverride
-            spikeRate = [0] * 10
+            spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
                 start_time = time.time()
@@ -1289,7 +1289,7 @@ class CRI_Converter:
         for currInput in tqdm(inputList):
             # reset the membrane potential to zero
             softwareNetwork.simpleSim.initialize_sim_vars(len(self.neuron_dict))
-            spikeRate = [0] * 10
+            spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
                 start_time = time.time()
