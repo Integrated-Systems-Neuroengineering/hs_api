@@ -741,6 +741,8 @@ class CRI_Converter:
         self.curr_input = axons
         self.axon_offset = np.prod(self.curr_input.shape)
         self.bias_start_idx = self.axon_offset
+        for axon in axons.flatten():
+            self.axon_dict['a'+str(axon)] = []
 
         for k, name in enumerate(module_names):
             if len(list(model._modules[name]._modules)) > 0 and not isSNNLayer(
@@ -1061,6 +1063,7 @@ class CRI_Converter:
         for c in tqdm(range(input.shape[0])):
             for row in range(0, h-kernel[0]+1, stride[0]):
                 for col in range(0, w-kernel[1]+1, stride[1]):
+                    # (col, row) : index of the top left corner of the input patch
                     preSynNeurons = input[c, row:row+kernel[0], col:col+kernel[1]]
                     # iterate each of the filter
                     for filIdx, fil in enumerate(filters):
@@ -1118,15 +1121,18 @@ class CRI_Converter:
 
     def _cri_bias(self, layer, outputs, atten_flag=False):
         biases = layer.bias.detach().cpu().numpy()
-        for output_chan, bias in enumerate(biases):
-            if bias != 0:
-                bias_id = "a" + str(output_chan + self.axon_offset)
-                if isinstance(layer, nn.Conv2d):
+        if isinstance(layer, nn.Conv2d):
+            for output_chan, bias in enumerate(biases):
+                if bias != 0:
+                    bias_id = "a" + str(output_chan + self.axon_offset)
                     self.axon_dict[bias_id] = [
-                        (str(neuron_idx), int(bias)) 
-                        for neuron_idx in outputs[output_chan].flatten()
-                    ]
-                elif isinstance(layer, nn.Linear):
+                            (str(neuron_idx), int(bias)) 
+                            for neuron_idx in outputs[output_chan].flatten()
+                        ]
+        elif isinstance(layer, nn.Linear):
+            for output_chan, bias in enumerate(biases):
+                if bias != 0:
+                    bias_id = "a" + str(output_chan + self.axon_offset)
                     if atten_flag:
                         self.axon_dict[bias_id] = [
                             (str(neuron_idx), int(bias))
@@ -1134,8 +1140,8 @@ class CRI_Converter:
                         ]
                     else:
                         self.axon_dict[bias_id] = [(str(outputs[output_chan]), int(bias))]
-                else:
-                    print(f"Unspported layer: {layer}")
+        else:
+            print(f"Unspported layer: {layer}")
 
     def _conv_shape(self, layer, input_shape):
         h_out = (
