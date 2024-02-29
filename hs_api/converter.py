@@ -1123,23 +1123,21 @@ class CRI_Converter:
         biases = layer.bias.detach().cpu().numpy()
         if isinstance(layer, nn.Conv2d):
             for output_chan, bias in enumerate(biases):
-                if bias != 0:
-                    bias_id = "a" + str(output_chan + self.axon_offset)
-                    self.axon_dict[bias_id] = [
-                            (str(neuron_idx), int(bias)) 
-                            for neuron_idx in outputs[output_chan].flatten()
-                        ]
+                bias_id = "a" + str(output_chan + self.axon_offset)
+                self.axon_dict[bias_id] = [
+                        (str(neuron_idx), int(bias)) 
+                        for neuron_idx in outputs[output_chan].flatten()
+                    ]
         elif isinstance(layer, nn.Linear):
             for output_chan, bias in enumerate(biases):
-                if bias != 0:
-                    bias_id = "a" + str(output_chan + self.axon_offset)
-                    if atten_flag:
-                        self.axon_dict[bias_id] = [
-                            (str(neuron_idx), int(bias))
-                            for neuron_idx in outputs[output_chan, :].flatten()
-                        ]
-                    else:
-                        self.axon_dict[bias_id] = [(str(outputs[output_chan]), int(bias))]
+                bias_id = "a" + str(output_chan + self.axon_offset)
+                if atten_flag:
+                    self.axon_dict[bias_id] = [
+                        (str(neuron_idx), int(bias))
+                        for neuron_idx in outputs[output_chan, :].flatten()
+                    ]
+                else:
+                    self.axon_dict[bias_id] = [(str(outputs[output_chan]), int(bias))]
         else:
             print(f"Unspported layer: {layer}")
 
