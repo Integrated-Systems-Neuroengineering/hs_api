@@ -18,7 +18,7 @@ parser.add_argument('-p', default=0, type=int, help='padding size')
 parser.add_argument('-c', default=4, type=int, help='channel size')
 parser.add_argument('-alpha',  default=4, type=int, help='Range of value for quantization')
 parser.add_argument('-b', default=1, type=int, help='batch size')
-parser.add_argument('-T', default=4, type=int)
+parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/dvs_gesture/checkpoint_max_T_16_C_20_lr_0.001.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/DVS128Gesture', type=str, help='path to dataset')
 
