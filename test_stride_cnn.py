@@ -3,7 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder
-from spikingjelly.activation_based import neuron, surrogate, encoding, layer
+from spikingjelly.activation_based import neuron, surrogate, encoding, layer, functional
 from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 from torch.utils.data import DataLoader
 from hs_api.api import CRI_network
@@ -132,10 +132,11 @@ def main():
     
     with torch.no_grad():
         for img, label in test_loader:
-            cri_input = []
+            img = img.transpose(0, 1) # [N, T, C, H, W] -> [T, N, C, H, W]
             label_onehot = F.one_hot(label, 11).float()
             out_tor= 0.
             
+            cri_input = []
             for t in img:
                 encoded_img = encoder(t)
                 cri_input.append(encoded_img)
@@ -144,10 +145,11 @@ def main():
             out_tor = out_tor/args.T
             
             cri_input = torch.stack(cri_input)
+            cri_input = cri_input.transpose(0, 1) # [T, N, C, H, W] -> [N, T, C, H, W]
             cri_input = cn.input_converter(cri_input)
             out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
             
-            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')
+            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor.argmax(1)}')
             
             loss = loss_fun(out_fr, label)
             test_samples += label.numel()
@@ -157,12 +159,15 @@ def main():
             loss_torch = loss_fun(out_tor, label_onehot)
             test_loss_torch += loss_torch.item() * label.numel()
             test_acc_torch += (out_tor.argmax(1)==label).float().sum().item()
-            
+            functional.reset_net(net)
     
     test_time = time.time()
     test_speed = test_samples / (test_time - start_time)
     test_loss /= test_samples
     test_acc /= test_samples
+    
+    test_loss_torch /= test_samples
+    test_acc_torch /= test_samples
     
     writer.add_scalar('test_loss', test_loss)
     writer.add_scalar('test_acc', test_acc)            

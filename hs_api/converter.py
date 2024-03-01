@@ -675,7 +675,6 @@ class CRI_Converter:
         """
 
         self.input_shape = input_data.shape
-        print("input batch data shape: ", input_data.shape)
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
