@@ -656,7 +656,7 @@ class CRI_Converter:
 
     def input_converter(self, input_data):
         """
-        Converts input data into a list of axon indices.
+        Converts a batch of input data into a list of corresponding axon indices.
 
         Parameters
         ----------
@@ -665,7 +665,7 @@ class CRI_Converter:
 
         Returns
         -------
-        list of list of str
+        [[[spike indices of a single frame] * T (timesteps)] * B (batch number)]
             The batch of spikes, with each spike represented by its axon index.
 
         Examples
@@ -679,9 +679,6 @@ class CRI_Converter:
         return self._input_converter(input_data)
 
     def _input_converter(self, input_data):
-        """
-        Convert 
-        """
         current_input = None
         if self.dvs:
             # Flatten the input data to [B, T, -1]
@@ -1201,8 +1198,8 @@ class CRI_Converter:
 
         Parameters
         ----------
-        inputList : list of list of str
-            The input data, where each item is a list of axon indices representing the spikes.
+        inputList : [ [ []* T ] * B ]
+            The input data, where each most inner item is a list of axon indices representing the spikes.
         hardwareNetwork : object
             The hardware network object.
 
@@ -1220,7 +1217,6 @@ class CRI_Converter:
         
         predictions = []
         
-        total_time_cri = 0
         output_idx = [i for i in range(len(self.output_neurons))]
         
         # each image 
@@ -1232,12 +1228,9 @@ class CRI_Converter:
             spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
-                start_time = time.time()
                 hwSpike, latency, hbmAcc = hardwareNetwork.step(
                     slice, membranePotential=False
                 )
-                end_time = time.time()
-                total_time_cri = total_time_cri + end_time - start_time
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
                     if idx not in output_idx:
@@ -1259,6 +1252,8 @@ class CRI_Converter:
                     print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
+            print(f'CRI spike output: {spikeRate}')
+        
         return predictions
 
     def run_CRI_sw(self, inputList, softwareNetwork):

@@ -95,9 +95,12 @@ def main():
                     output_layer = output_layer, 
                     input_shape = input_shape,
                     v_threshold = v_threshold,
-                    embed_dim=0)
+                    embed_dim=0,
+                    dvs=True)
     
     cn.layer_converter(net_quan)
+    
+    breakpoint()
     
     config = {}
     config['neuron_type'] = "I&F"
@@ -118,32 +121,43 @@ def main():
     test_acc = 0
     test_samples = 0
     
+    test_loss_torch = 0
+    test_acc_torch = 0
+    
     writer = SummaryWriter(log_dir='./log_hardware')
     encoder = encoding.PoissonEncoder()
     
     loss_fun = nn.MSELoss()
 
-    for img, label in test_loader:
-        img = img.transpose(0, 1) # [B, T, C, H, W] -> [T, B, C, H, W]
-        label_onehot = F.one_hot(label, 11).float()
-        out_fr = 0.
-        
-        cri_input = []
-        
-        for t in img:
-            encoded_img = encoder(t)
-            cri_input.append(encoded_img)
-        
-        cri_input = torch.stack(cri_input)
-        cri_input = cn.input_converter(cri_input)
-        
-        out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+    
+    with torch.no_grad():
+        for img, label in test_loader:
+            cri_input = []
+            label_onehot = F.one_hot(label, 11).float()
+            out_tor= 0.
             
-        loss = loss_fun(out_fr, label_onehot)
-        test_samples += label.numel()
-        test_loss += loss.item() * label.numel()
-
-        test_acc += (out_fr.argmax(1) == label).float().sum().item()      
+            for t in img:
+                encoded_img = encoder(t)
+                cri_input.append(encoded_img)
+                out_tor += net(encoded_img)
+                
+            out_tor = out_tor/args.T
+            
+            cri_input = torch.stack(cri_input)
+            cri_input = cn.input_converter(cri_input)
+            out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+            
+            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')
+            
+            loss = loss_fun(out_fr, label)
+            test_samples += label.numel()
+            test_loss += loss.item() * label.numel()
+            test_acc += (out_fr == label).float().sum().item()      
+            
+            loss_torch = loss_fun(out_tor, label_onehot)
+            test_loss_torch += loss_torch.item() * label.numel()
+            test_acc_torch += (out_tor.argmax(1)==label).float().sum().item()
+            
     
     test_time = time.time()
     test_speed = test_samples / (test_time - start_time)
@@ -154,7 +168,9 @@ def main():
     writer.add_scalar('test_acc', test_acc)            
     
     print(f'test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}')
+    print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
     print(f'test speed ={test_speed: .4f} images/s')
+    
 
     
 if __name__ == '__main__':
