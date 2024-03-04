@@ -1035,13 +1035,13 @@ class CRI_Converter:
         kernel = layer.kernel_size
         stride = layer.stride
         padding = layer.padding
-        filters = layer.weight.detach().cpu().numpy()
+        weight = layer.weight.detach().cpu().numpy()
         
         # Check parameters (int or tuple) and convert them all to tuple
         if isinstance(kernel, int):
-            kernel = (fil, fil)
+            kernel = (kernel, kernel)
         if isinstance(stride, int):
-            stride =(stride, stride)
+            stride = (stride, stride)
         if isinstance(padding, int):
             padding = (padding, padding)
             
@@ -1059,24 +1059,24 @@ class CRI_Converter:
         for c in tqdm(range(input.shape[0])):
             for row in range(0, h-kernel[0]+1, stride[0]):
                 for col in range(0, w-kernel[1]+1, stride[1]):
-                    # (col, row) : index of the top left corner of the input patch
+                    # (row, col) : local index of the top left corner of the input patch
                     preSynNeurons = input[c, row:row+kernel[0], col:col+kernel[1]]
                     # iterate each of the filter
-                    for filIdx, fil in enumerate(filters):
+                    for wIdx, w in enumerate(weight):
                         # find the postsynaptic neuron
-                        postSynNeuron = output[filIdx,row//stride[0], col//stride[1]]
+                        postSynNeuron = output[wIdx,row//stride[0], col//stride[1]]
                         # and add a synapse between each of the neuron in preSynNeurons & postSynNeuron
                         for i, rows in enumerate(preSynNeurons):
                             for j, pre in enumerate(rows):
                                 if self.layer_index == self.input_layer:
                                     if pre != self.NULL_NEURON:
                                         self.axon_dict["a" + str(pre)].append(
-                                            (str(postSynNeuron), int(fil[c, i, j]))
+                                            (str(postSynNeuron), int(w[c, i, j]))
                                         )
                                 else:
                                     if pre != self.NULL_NEURON:
                                         self.neuron_dict[str(pre)].append(
-                                            (str(postSynNeuron), int(fil[c, i, j]))
+                                            (str(postSynNeuron), int(w[c, i, j]))
                                         )
 
     def _maxPool_converter(self, layer):
@@ -1278,7 +1278,7 @@ class CRI_Converter:
         """
 
         predictions = []
-        total_time_cri = 0
+        
         # each image
         for currInput in tqdm(inputList):
             # reset the membrane potential to zero
@@ -1286,10 +1286,7 @@ class CRI_Converter:
             spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
-                start_time = time.time()
                 swSpike = softwareNetwork.step(slice, membranePotential=False)
-                end_time = time.time()
-                total_time_cri = total_time_cri + end_time - start_time
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1

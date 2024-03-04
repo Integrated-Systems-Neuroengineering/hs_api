@@ -90,7 +90,7 @@ def main():
     input_shape = (2, 128, 128)
     v_threshold = qn.v_threshold
 
-    cn = CRI_Converter(num_steps = 4,
+    cn = CRI_Converter(num_steps = args.T,
                     input_layer = input_layer, 
                     output_layer = output_layer, 
                     input_shape = input_shape,
@@ -114,6 +114,13 @@ def main():
                     outputs = cn.output_neurons,
                     simDump=False,
                     coreID=1)
+    softwareNetwork = CRI_network(dict(cn.axon_dict),
+                connections=dict(cn.neuron_dict),
+                config=config,target='simpleSim', 
+                outputs = cn.output_neurons,
+                simDump=False,
+                coreID=1)
+
 
     start_time = time.time()
     
@@ -124,11 +131,9 @@ def main():
     test_loss_torch = 0
     test_acc_torch = 0
     
-    writer = SummaryWriter(log_dir='./log_hardware')
     encoder = encoding.PoissonEncoder()
     
     loss_fun = nn.MSELoss()
-
     
     with torch.no_grad():
         for img, label in test_loader:
@@ -140,16 +145,17 @@ def main():
             for t in img:
                 encoded_img = encoder(t)
                 cri_input.append(encoded_img)
-                out_tor += net(encoded_img)
+                out_tor += net_quan(encoded_img)
                 
             out_tor = out_tor/args.T
             
             cri_input = torch.stack(cri_input)
             cri_input = cri_input.transpose(0, 1) # [T, N, C, H, W] -> [N, T, C, H, W]
             cri_input = cn.input_converter(cri_input)
-            out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+            # out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+            out_fr = torch.tensor(cn.run_CRI_sw(cri_input,softwareNetwork), dtype=float).to(device)    
             
-            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor.argmax(1)}')
+            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')
             
             loss = loss_fun(out_fr, label)
             test_samples += label.numel()
@@ -159,7 +165,7 @@ def main():
             loss_torch = loss_fun(out_tor, label_onehot)
             test_loss_torch += loss_torch.item() * label.numel()
             test_acc_torch += (out_tor.argmax(1)==label).float().sum().item()
-            functional.reset_net(net)
+            functional.reset_net(net_quan)
     
     test_time = time.time()
     test_speed = test_samples / (test_time - start_time)
@@ -167,10 +173,7 @@ def main():
     test_acc /= test_samples
     
     test_loss_torch /= test_samples
-    test_acc_torch /= test_samples
-    
-    writer.add_scalar('test_loss', test_loss)
-    writer.add_scalar('test_acc', test_acc)            
+    test_acc_torch /= test_samples        
     
     print(f'test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}')
     print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
