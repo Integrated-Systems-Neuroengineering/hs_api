@@ -1035,7 +1035,7 @@ class CRI_Converter:
         kernel = layer.kernel_size
         stride = layer.stride
         padding = layer.padding
-        filters = layer.weight.detach().cpu().numpy()
+        weight = layer.weight.detach().cpu().numpy()
         
         # Check parameters (int or tuple) and convert them all to tuple
         if isinstance(kernel, int):
@@ -1062,21 +1062,21 @@ class CRI_Converter:
                     # (row, col) : local index of the top left corner of the input patch
                     preSynNeurons = input[c, row:row+kernel[0], col:col+kernel[1]]
                     # iterate each of the filter
-                    for filIdx, fil in enumerate(filters):
+                    for wIdx, w in enumerate(weight):
                         # find the postsynaptic neuron
-                        postSynNeuron = output[filIdx,row//stride[0], col//stride[1]]
+                        postSynNeuron = output[wIdx,row//stride[0], col//stride[1]]
                         # and add a synapse between each of the neuron in preSynNeurons & postSynNeuron
                         for i, rows in enumerate(preSynNeurons):
                             for j, pre in enumerate(rows):
                                 if self.layer_index == self.input_layer:
                                     if pre != self.NULL_NEURON:
                                         self.axon_dict["a" + str(pre)].append(
-                                            (str(postSynNeuron), int(fil[c, i, j]))
+                                            (str(postSynNeuron), int(w[c, i, j]))
                                         )
                                 else:
                                     if pre != self.NULL_NEURON:
                                         self.neuron_dict[str(pre)].append(
-                                            (str(postSynNeuron), int(fil[c, i, j]))
+                                            (str(postSynNeuron), int(w[c, i, j]))
                                         )
 
     def _maxPool_converter(self, layer):
