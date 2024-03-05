@@ -19,9 +19,9 @@ parser.add_argument('-c', default=4, type=int, help='channel size')
 parser.add_argument('-alpha',  default=4, type=int, help='Range of value for quantization')
 parser.add_argument('-b', default=1, type=int, help='batch size')
 parser.add_argument('-T', default=16, type=int)
-parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pt', type=str, help='checkpoint file')
+parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
-parser.add_argument('-targets', default=11, type=int, help='Number of labels')
+parser.add_argument('-targets', default=10, type=int, help='Number of labels')
 class Net(nn.Module):
     def __init__(self, in_channels = 2, channels=8, spiking_neuron: callable = None, **kwargs):
         super().__init__()
@@ -98,6 +98,12 @@ def main():
             outputs = cn.output_neurons,
             simDump=False,
             coreID=1)
+    hardwareNetwork = CRI_network(dict(cn.axon_dict),
+                    connections=dict(cn.neuron_dict),
+                    config=config,target='CRI', 
+                    outputs = cn.output_neurons,
+                    simDump=False,
+                    coreID=1)
     
     start_time = time.time()
     
@@ -107,6 +113,9 @@ def main():
     
     test_loss_torch = 0
     test_acc_torch = 0
+    
+    test_loss_hard = 0
+    test_acc_hard = 0
     
     encoder = encoding.PoissonEncoder()
     
@@ -129,10 +138,10 @@ def main():
             cri_input = torch.stack(cri_input)
             cri_input = cri_input.transpose(0, 1) # [T, N, C, H, W] -> [N, T, C, H, W]
             cri_input = cn.input_converter(cri_input)
-            # out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+            out_hard = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
             out_fr = torch.tensor(cn.run_CRI_sw(cri_input,softwareNetwork), dtype=float).to(device)    
             
-            print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')
+            print(f'Label : {label} Soft: {out_fr} Hard: {out_hard} Torch_Pred: {out_tor}')
             
             loss = loss_fun(out_fr, label)
             test_samples += label.numel()
@@ -142,6 +151,11 @@ def main():
             loss_torch = loss_fun(out_tor, label_onehot)
             test_loss_torch += loss_torch.item() * label.numel()
             test_acc_torch += (out_tor.argmax(1)==label).float().sum().item()
+            
+            loss_hard = loss_fun(out_hard, label)
+            test_loss_hard += loss_hard.item() * label.numel()
+            test_acc_hard += (out_hard==label).float().sum().item()
+            
             functional.reset_net(net_quan)
     
     test_time = time.time()
@@ -152,8 +166,12 @@ def main():
     test_loss_torch /= test_samples
     test_acc_torch /= test_samples        
     
+    test_loss_hard /= test_samples
+    test_acc_hard /= test_samples  
+    
     print(f'test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}')
     print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
+    print(f'test_loss_hard ={test_loss_hard: .4f}, test_acc_torch ={test_acc_hard: .4f}')
     print(f'test speed ={test_speed: .4f} images/s')
     
 

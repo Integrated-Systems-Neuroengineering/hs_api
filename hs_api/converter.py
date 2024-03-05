@@ -1302,6 +1302,7 @@ class CRI_Converter:
             for idx in spikeIdx:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
+            print(f'CRI spike output: {spikeRate}')
         return predictions
     
     
