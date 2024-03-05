@@ -21,7 +21,7 @@ parser.add_argument('-b', default=1, type=int, help='batch size')
 parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/dvs_gesture/checkpoint_max_T_16_C_20_lr_0.001.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/DVS128Gesture', type=str, help='path to dataset')
-
+parser.add_argument('-targets', default=11, type=int, help='Number of labels')
 class DVSGestureNet(nn.Module):
     def __init__(self, channels=128, encoder = 3, spiking_neuron: callable = None, **kwargs):
         super().__init__()
@@ -138,7 +138,7 @@ def main():
     with torch.no_grad():
         for img, label in test_loader:
             img = img.transpose(0, 1) # [N, T, C, H, W] -> [T, N, C, H, W]
-            label_onehot = F.one_hot(label, 11).float()
+            label_onehot = F.one_hot(label, args.targets).float()
             out_tor= 0.
             
             cri_input = []
