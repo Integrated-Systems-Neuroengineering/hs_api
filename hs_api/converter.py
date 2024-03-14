@@ -331,7 +331,7 @@ class Quantize_Network:
         >>> q_net._quantize_LIF(some_layer)
         """
 
-        layer.v_threshold = layer.v_threshold / self.w_delta
+        layer.v_threshold = int(layer.v_threshold / self.w_delta)
         self.v_threshold = layer.v_threshold
 
         return layer
@@ -635,6 +635,12 @@ class CRI_Converter:
         #constant
         self.NULL_NEURON = -1
         
+        #testing
+        self.cnn_axons = defaultdict(list)
+        self.cnn_neurons = defaultdict(list)
+        self.cnn_output = []
+        self.weight_offset = 0
+        
     def save_model(self):
         """
         Save the converted model into three .pkl files: 
@@ -677,6 +683,19 @@ class CRI_Converter:
         self.input_shape = input_data.shape
         return self._input_converter(input_data)
 
+    def _input_converter_step(self, input_data):
+        '''
+        Takes in a batch of single step input data and convert them to spike indicies
+
+        '''
+        batch = []
+        current_input = input_data.view(input_data.size(0), -1)
+        for img in current_input:
+            input_spikes = ["a" + str(idx) for idx, axon in enumerate(img) if axon != 0]
+            bias_spikes = ["a" + str(idx) for idx in range(self.bias_start_idx, len(self.cnn_axons))]
+            batch.append(input_spikes + bias_spikes)
+        return batch
+    
     def _input_converter(self, input_data):
         current_input = None
         if self.dvs:
@@ -739,6 +758,9 @@ class CRI_Converter:
         self.bias_start_idx = self.axon_offset
         for axon in axons.flatten():
             self.axon_dict['a'+str(axon)] = []
+            #Testing
+            self.cnn_axons['a'+str(axon)] = []
+        
 
         for k, name in enumerate(module_names):
             if len(list(model._modules[name]._modules)) > 0 and not isSNNLayer(
@@ -938,7 +960,7 @@ class CRI_Converter:
             for postSynNeuron in output:
                 self.neuron_dict[str(postSynNeuron)] = []
                 self.output_neurons.append(str(postSynNeuron))
-            
+        
         self.curr_input = output
             
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
@@ -1009,6 +1031,13 @@ class CRI_Converter:
             self._cri_bias(layer, output)
             print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons from conv layer.')
             self.axon_offset = len(self.axon_dict)
+        
+        #Testing    
+        if self.layer_index == self.output_layer:
+            print('Instantiate output neurons')
+            for postSynNeuron in output.flatten():
+                self.cnn_neurons[str(postSynNeuron)] = []
+                self.cnn_output.append(str(postSynNeuron))
 
         self.curr_input = output
         print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
@@ -1073,6 +1102,10 @@ class CRI_Converter:
                                         self.axon_dict["a" + str(pre)].append(
                                             (str(postSynNeuron), int(fil[c, i, j]))
                                         )
+                                        #Testing 
+                                        self.cnn_axons["a" + str(pre)].append(
+                                            (str(postSynNeuron), int(fil[c, i, j] +self.weight_offset))
+                                        )
                                 else:
                                     if pre != self.NULL_NEURON:
                                         self.neuron_dict[str(pre)].append(
@@ -1122,6 +1155,11 @@ class CRI_Converter:
                 bias_id = "a" + str(output_chan + self.axon_offset)
                 self.axon_dict[bias_id] = [
                         (str(neuron_idx), int(bias)) 
+                        for neuron_idx in outputs[output_chan].flatten()
+                    ]
+                #Testing
+                self.cnn_axons[bias_id] = [
+                        (str(neuron_idx), int(bias+self.weight_offset)) 
                         for neuron_idx in outputs[output_chan].flatten()
                     ]
         elif isinstance(layer, nn.Linear):
@@ -1193,7 +1231,8 @@ class CRI_Converter:
 
     def run_CRI_hw(self, inputList, hardwareNetwork):
         """
-        Runs a bach of input through the hardware implementation of the network and gets the output predictions.
+        Runs a bach of input through the hardware implementation of the network
+        Returns the output predictions and the output spikes
 
         Parameters
         ----------
@@ -1206,6 +1245,8 @@ class CRI_Converter:
         -------
         list of int
             The output predictions.
+        list of list
+            The output spikes
 
         Examples
         --------
@@ -1215,6 +1256,7 @@ class CRI_Converter:
         import hs_bridge
         
         predictions = []
+        outputSpikes = []
         
         output_idx = [i for i in range(len(self.output_neurons))]
         
@@ -1251,13 +1293,14 @@ class CRI_Converter:
                     print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
-            print(f'CRI spike output: {spikeRate}')
+            outputSpikes.append(spikeRate)
         
-        return predictions
+        return predictions, outputSpikes
 
     def run_CRI_sw(self, inputList, softwareNetwork):
         """
-        Runs a batch of inputs through the software simulation of the network and gets the output predictions.
+        Runs a batch of inputs through the software simulation of the network,
+        returns the output predictions and output spikes
 
         Parameters
         ----------
@@ -1270,14 +1313,17 @@ class CRI_Converter:
         -------
         list of int
             The output predictions.
+        list of list
+            The output spikes.
 
         Examples
         --------
         >>> converter = CRI_Converter()
-        >>> converter.run_CRI_sw(some_inputList, some_softwareNetwork)
+        >>> predictions, outputSpikes = converter.run_CRI_sw(some_inputList, some_softwareNetwork)
         """
 
         predictions = []
+        outputSpikes = []
         
         # each image
         for currInput in tqdm(inputList):
@@ -1302,7 +1348,7 @@ class CRI_Converter:
             for idx in spikeIdx:
                 spikeRate[idx] += 1
             predictions.append(spikeRate.index(max(spikeRate)))
-            print(f'CRI spike output: {spikeRate}')
-        return predictions
+            outputSpikes.append(spikeRate)
+        return predictions, outputSpikes
     
-    
+

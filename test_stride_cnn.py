@@ -113,13 +113,17 @@ def main():
                     config=config,target='CRI', 
                     outputs = cn.output_neurons,
                     simDump=False,
-                    coreID=1)
+                    coreID=1,
+                    perturbMag=8, #Zero randomness  
+                    leak=2**6)
     softwareNetwork = CRI_network(dict(cn.axon_dict),
                 connections=dict(cn.neuron_dict),
                 config=config,target='simpleSim', 
                 outputs = cn.output_neurons,
                 simDump=False,
-                coreID=1)
+                coreID=1,
+                perturbMag=8, #Zero randomness  
+                leak=2**6)
 
 
     start_time = time.time()

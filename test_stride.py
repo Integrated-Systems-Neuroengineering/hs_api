@@ -22,6 +22,7 @@ parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
+
 class Net(nn.Module):
     def __init__(self, in_channels = 2, channels=8, spiking_neuron: callable = None, **kwargs):
         super().__init__()
@@ -41,14 +42,19 @@ class Net(nn.Module):
         x = self.linear(x)
         x = self.lif2(x)
         return x
+
+    def forward_cnn(self, x:torch.Tensor):
+        x = self.conv(x)
+        x = self.bn(x)
+        x = self.lif1(x)
+        return x
     
 def main():
     
     args = parser.parse_args()
     print(args)
     
-    #Prepare the dataset
-    # DVS128
+    # Prepare the dataset
     test_set = NMNIST(root=args.data_dir, train=False, data_type='frame', frames_number=args.T, split_by='number')
     
     # Create DataLoaders
@@ -97,13 +103,17 @@ def main():
             config=config,target='simpleSim', 
             outputs = cn.output_neurons,
             simDump=False,
-            coreID=1)
+            coreID=1,
+            perturbMag=8, #Zero randomness  
+            leak=2**6)
     hardwareNetwork = CRI_network(dict(cn.axon_dict),
-                    connections=dict(cn.neuron_dict),
-                    config=config,target='CRI', 
-                    outputs = cn.output_neurons,
-                    simDump=False,
-                    coreID=1)
+            connections=dict(cn.neuron_dict),
+            config=config,target='CRI', 
+            outputs = cn.output_neurons,
+            simDump=False,
+            coreID=1,
+            perturbMag=8, #Zero randomness  
+            leak=2**6)
     
     start_time = time.time()
     
@@ -123,11 +133,12 @@ def main():
     
     with torch.no_grad():
         for img, label in test_loader:
-            img = img.transpose(0, 1) # [N, T, C, H, W] -> [T, N, C, H, W]
+            img = img.transpose(0, 1) # [B, T, C, H, W] -> [T, B, C, H, W]
             label_onehot = F.one_hot(label, args.targets).float()
-            out_tor= 0.
+            out_tor = 0.
             
             cri_input = []
+            
             for t in img:
                 encoded_img = encoder(t)
                 cri_input.append(encoded_img)
@@ -171,7 +182,7 @@ def main():
     
     print(f'test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}')
     print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
-    print(f'test_loss_hard ={test_loss_hard: .4f}, test_acc_torch ={test_acc_hard: .4f}')
+    print(f'test_loss_hard ={test_loss_hard: .4f}, test_acc_hard ={test_acc_hard: .4f}')
     print(f'test speed ={test_speed: .4f} images/s')
     
 
