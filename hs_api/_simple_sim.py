@@ -3,7 +3,7 @@ import numpy as np
 import yaml
 from ast import literal_eval
 import copy
-#from scipy.sparse import dok_array
+from scipy.sparse import dok_array, csr_matrix
 from fxpmath import Fxp
 def load_network(input, connex, output):
     """Loads the network specification.
@@ -364,22 +364,25 @@ class simple_sim:
     def gen_weights(self):
         nNeurons = len(self.connections)
         nAxons = len(self.axons)
-        S = Fxp(np.zeros((nNeurons,nNeurons)),dtype=self.formatDict['synapse_weights'])
+        S = dok_array((nNeurons,nNeurons), dtype=np.float32)
         for key, value in self.connections.items():
             for synapse in value:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 S[presynapticIdx,postsynapticIdx] = weight
 
-        A = Fxp(np.zeros((nAxons,nNeurons)), dtype=self.formatDict['synapse_weights'])
+        A = dok_array((nAxons,nNeurons), dtype=np.float32)
         for key, value in self.axons.items():
             for synapse in value:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 A[presynapticIdx, postsynapticIdx] = weight
         #breakpoint()
-        self.neuronWeights = np.transpose(S)
-        self.axonWeights = np.transpose(A)
+        #self.neuronWeights = np.transpose(S)
+        #self.axonWeights = np.transpose(A)
+        breakpoint()
+        self.neuronWeights = Fxp( csr_matrix(S.transpose()) , dtype=self.formatDict['synapse_weights'])
+        self.axonWeights = Fxp( csr_matrix(A.transpose()) , dtype=self.formatDict['synapse_weights'])
 
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
@@ -426,7 +429,7 @@ class simple_sim:
         """
 
     def step_run(self,inputs):
-        #breakpoint()
+        breakpoint()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -465,19 +468,41 @@ class simple_sim:
                 #Leaky Integrate and fire
 
             self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**self.leak)))
-
             #now let's try phase two
             a = np.zeros(nAxons)
             a[inputs] = 1
-            s = np.zeros(nNeurons)
-            s[spiked_inds] = 1
+            a = np.atleast_2d(a)
+            a = csr_matrix(np.transpose(a))
+            #a = Fxp(csr_matrix(a),dtype=self.formatDict['membrane_potential'])
+            spikeVec = np.zeros(nNeurons)
+            spikeVec[spiked_inds] = 1
+            spikeVec = np.atleast_2d(spikeVec)
+            spikeVec = csr_matrix(np.transpose(spikeVec))
+            #s = Fxp(csr_matrix(s),dtype=self.formatDict['membrane_potential'])
 
-            membraneUpdatesAxon = self.axonWeights@a
-            membraneUpdates = self.neuronWeights@s
 
-            membranePotentials = self.membranePotentials + membraneUpdates + membraneUpdatesAxon
+            breakpoint()
+            #membraneUpdatesAxon = self.axonWeights.matmul(a)
+            #membraneUpdates = self.neuronWeights.matmul(spikeVec)
+            #do things a little lazy for now
+            membraneUpdatesAxon = self.axonWeights.get_val() @ a
+            membraneUpdates = self.neuronWeights.get_val() @ spikeVec
+            breakpoint()
+            membraneUpdatesAxon = Fxp(membraneUpdatesAxon,dtype=self.formatDict['membrane_potential'])
+            breakpoint()
+            membraneUpdates = Fxp(membraneUpdates,dtype=self.formatDict['membrane_potential'])
+
+            breakpoint()
+
+
+
+            combinedUpdates = membraneUpdates + membraneUpdatesAxon
+            breakpoint()
+            membranePotentials = self.membranePotentials + combinedUpdates.transpose()
+            membranePotentials = membranePotentials.flatten()
+            breakpoint()
             self.membranePotentials(membranePotentials)
-
+            breakpoint()
             self.stepNum = self.stepNum+1
             #breakpoint()
             outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
