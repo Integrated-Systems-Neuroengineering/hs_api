@@ -151,11 +151,11 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = int(qn.v_threshold)
     
-    softwareNetwork = CRI_network(dict(cn.cnn_axons),
+    hardwareNetwork = CRI_network(dict(cn.cnn_axons),
             connections=dict(cn.cnn_neurons),
             config=config,target='CRI', 
             outputs = cn.cnn_output,
-            simDump=False,
+            simDump=True,
             coreID=1,
             perturbMag=17, #Zero randomness  
             leak=2**6) #IF
@@ -196,21 +196,21 @@ def main():
                         axons_w.append((k,w))
                 input_axons.append(axons_w)
                 
-                # swOutput: [(key, potential) for all the neurons in softwareNetwork] 
-                swOutput, spikeResult  = softwareNetwork.step(cri_input[0], membranePotential=True)
-                swSpike, latency, hbmAcc = spikeResult
-                spikeIdx = [int(spike) for spike in swSpike]
+                # hwOutput: [(key, potential) for all the neurons in hardwareNetwork] 
+                hwOutput, spikeResult  = hardwareNetwork.step(cri_input[0], membranePotential=True)
+                hwSpike, latency, hbmAcc = spikeResult
+                spikeIdx = [int(spike) for spike in hwSpike]
                 
-                cri_v_list.append(torch.tensor([v for k,v in swOutput]).unsqueeze(0))
+                cri_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0))
                 if i != 0:
                     cri_spikes = torch.zeros(cnn_out.shape).flatten()
                     cri_spikes[spikeIdx] = 1
                     cri_s_list.append(cri_spikes.unsqueeze(0))
             
             # empty input for phase delay 
-            swOutput, spikeResult = softwareNetwork.step([], membranePotential=True)
-            swSpike, latency, hbmAcc = spikeResult
-            spikeIdx = [int(spike) for spike in swSpike]
+            hwOutput, spikeResult = hardwareNetwork.step([], membranePotential=True)
+            hwSpike, latency, hbmAcc = spikeResult
+            spikeIdx = [int(spike) for spike in hwSpike]
             cri_spikes = torch.zeros(cnn_out.shape).flatten()
             cri_spikes[spikeIdx] = 1
             cri_s_list.append(cri_spikes.unsqueeze(0))
@@ -273,7 +273,7 @@ def main():
             
             # reset pyplot interface
             plt.close()
-            
+            hardwareNetwork.sim_flush()
             breakpoint()
 
     
