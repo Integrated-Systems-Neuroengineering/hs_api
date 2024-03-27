@@ -22,6 +22,7 @@ parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/dvs_gesture/checkpoint_max_T_16_C_20_lr_0.001.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/DVS128Gesture', type=str, help='path to dataset')
 parser.add_argument('-targets', default=11, type=int, help='Number of labels')
+
 class DVSGestureNet(nn.Module):
     def __init__(self, channels=128, encoder = 3, spiking_neuron: callable = None, **kwargs):
         super().__init__()
@@ -55,13 +56,12 @@ class DVSGestureNet(nn.Module):
         return self.conv_fc(x)
     
 def main():
-    
+    #python test_stride_cnn.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/dvs_gesture/checkpoint_max_T_16_C_20_lr_0.001.pth -data-dir /Users/keli/Code/CRI/data/DVS128Gesture
     args = parser.parse_args()
     print(args)
     
     #Prepare the dataset
     # DVS128
-    train_set = DVS128Gesture(root=args.data_dir, train=True, data_type='frame', frames_number=args.T, split_by='number')
     test_set = DVS128Gesture(root=args.data_dir, train=False, data_type='frame', frames_number=args.T, split_by='number')
     
     # Create DataLoaders
@@ -114,7 +114,7 @@ def main():
                     outputs = cn.output_neurons,
                     simDump=False,
                     coreID=1,
-                    perturbMag=8, #Zero randomness  
+                    perturbMag=0, #Zero randomness  
                     leak=2**6)
     softwareNetwork = CRI_network(dict(cn.axon_dict),
                 connections=dict(cn.neuron_dict),
@@ -122,8 +122,8 @@ def main():
                 outputs = cn.output_neurons,
                 simDump=False,
                 coreID=1,
-                perturbMag=8, #Zero randomness  
-                leak=2**6)
+                perturbMag=0, #Zero randomness  
+                leak=2**6) #LIF
 
 
     start_time = time.time()
@@ -156,7 +156,7 @@ def main():
             cri_input = torch.stack(cri_input)
             cri_input = cri_input.transpose(0, 1) # [T, N, C, H, W] -> [N, T, C, H, W]
             cri_input = cn.input_converter(cri_input)
-            # out_fr = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
+            # out_fr = torch.tensor(cn.run_CRI_sw(cri_input,hardwareNetwork), dtype=float).to(device)    
             out_fr = torch.tensor(cn.run_CRI_sw(cri_input,softwareNetwork), dtype=float).to(device)    
             
             print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')

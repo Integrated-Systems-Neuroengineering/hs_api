@@ -1,4 +1,4 @@
-from l2s.api import CRI_network
+from hs_api.api import CRI_network
 import sys
 import subprocess
 import time
@@ -63,11 +63,13 @@ class synthnet:
          numInputs = random.randrange(0,self.numAxons)
          return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
 
-synth = synthnet(1000,10000,-2,10,100)
+
+synth = synthnet(100,100,-2,10,10)
 #breakpoint()
+
 #Initialize a CRI_network object for interacting with the hardware and the software
 breakpoint()
-hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
+hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
 softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim')
 
 #a = synth.gen_inputs()
@@ -102,7 +104,7 @@ for i in range(steps):
         #print(hwSpike)
         print(swSpike)
 
-cont_exec = True
+cont_exec = False
 if cont_exec:
     breakpoint()
     spikes, latency, access = hardwareNetwork.run_cont(stepInputs)

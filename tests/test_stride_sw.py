@@ -27,6 +27,7 @@ parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
+parser.add_argument('-figure-dir', default='/Users/keli/Code/CRI/hs_api/figure',type=str, help='path to output figure' )
 
 def norm(x: torch.Tensor):
     s = x.shape
@@ -143,6 +144,8 @@ def main():
     
     cn.layer_converter(net_quan)
     
+    breakpoint()
+    
     axons = [ key if '256' in [k for k, v in cn.axon_dict[key]] else '*' for key in cn.axon_dict.keys()]
     
     config = {}
@@ -220,11 +223,11 @@ def main():
             dpi = 100
             plot_2d_heatmap(array=tor_v_list.numpy(), title='PyTorch membrane potentials', xlabel='simulating step',
                                         ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/PyTorch_V_{img_idx}.png")
+            plt.savefig(f"../figure/PyTorch_V_{img_idx}.png")
             
             plot_2d_heatmap(array=cri_v_list.numpy(), title='CRI membrane potentials', xlabel='simulating step',
                                         ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/CRI_V_{img_idx}.png")
+            plt.savefig(f"../figure/CRI_V_{img_idx}.png")
             
             
             #plot the spikes
@@ -256,10 +259,10 @@ def main():
             
             visualizing.plot_1d_spikes(spikes=tor_s_list.numpy(), title='PyTorch Spikes', xlabel='simulating step',
                         ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/PyTorch_S_{img_idx}.png")
+            plt.savefig(f"../figure/PyTorch_S_{img_idx}.png")
             visualizing.plot_1d_spikes(spikes=cri_s_list.numpy(), title='CRI Spikes', xlabel='simulating step',
                         ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/CRI_S_{img_idx}.png")
+            plt.savefig(f"../figure/CRI_S_{img_idx}.png")
 
             
             # reset the membrane potential to zero
