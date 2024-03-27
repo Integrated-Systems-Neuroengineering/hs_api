@@ -377,16 +377,16 @@ class simple_sim:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 A[presynapticIdx, postsynapticIdx] = weight
-        #breakpoint()
+        ##breakpoint()
         #self.neuronWeights = np.transpose(S)
         #self.axonWeights = np.transpose(A)
-        breakpoint()
+        #breakpoint()
         self.neuronWeights = Fxp( csr_matrix(S.transpose()) , dtype=self.formatDict['synapse_weights'])
         self.axonWeights = Fxp( csr_matrix(A.transpose()) , dtype=self.formatDict['synapse_weights'])
 
 
     def write_synapse(self,preIndex, postIndex, weight, axonFlag = False):
-        #breakpoint()
+        ##breakpoint()
         #do the new code
         if axonFlag:
              self.axonWeights[postIndex, preIndex] = weight
@@ -408,7 +408,7 @@ class simple_sim:
         """
 
     def read_synapse(self,preIndex, postIndex, axonFlag = False):
-        # breakpoint()
+        # #breakpoint()
         if axonFlag:
             return self.axonWeights[postIndex, preIndex]()
         else:
@@ -429,7 +429,7 @@ class simple_sim:
         """
 
     def step_run(self,inputs):
-        breakpoint()
+        #breakpoint()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -481,29 +481,29 @@ class simple_sim:
             #s = Fxp(csr_matrix(s),dtype=self.formatDict['membrane_potential'])
 
 
-            breakpoint()
+            #breakpoint()
             #membraneUpdatesAxon = self.axonWeights.matmul(a)
             #membraneUpdates = self.neuronWeights.matmul(spikeVec)
             #do things a little lazy for now
             membraneUpdatesAxon = self.axonWeights.get_val() @ a
             membraneUpdates = self.neuronWeights.get_val() @ spikeVec
-            breakpoint()
+            #breakpoint()
             membraneUpdatesAxon = Fxp(membraneUpdatesAxon,dtype=self.formatDict['membrane_potential'])
-            breakpoint()
+            #breakpoint()
             membraneUpdates = Fxp(membraneUpdates,dtype=self.formatDict['membrane_potential'])
 
-            breakpoint()
+            #breakpoint()
 
 
 
             combinedUpdates = membraneUpdates + membraneUpdatesAxon
-            breakpoint()
+            #breakpoint()
             membranePotentials = self.membranePotentials + combinedUpdates.transpose()
             membranePotentials = membranePotentials.flatten()
-            breakpoint()
-            self.membranePotentials(membranePotentials)
-            breakpoint()
-            self.stepNum = self.stepNum+1
             #breakpoint()
+            self.membranePotentials(membranePotentials)
+            #breakpoint()
+            self.stepNum = self.stepNum+1
+            ##breakpoint()
             outputSpikes = [ i for i in self.firedNeurons if i in self.outputs]
             return self.membranePotentials(), outputSpikes

@@ -202,6 +202,7 @@ def main():
                 spikeIdx = [int(spike) for spike in hwSpike]
                 
                 cri_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0))
+                
                 if i != 0:
                     cri_spikes = torch.zeros(cnn_out.shape).flatten()
                     cri_spikes[spikeIdx] = 1
