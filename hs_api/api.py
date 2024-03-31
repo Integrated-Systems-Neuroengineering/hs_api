@@ -136,6 +136,7 @@ class CRI_network:
 
         if self.target == "CRI":
             logging.info("Initilizing to run on hardware")
+            self.connectome.pad_models()
             ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
             # formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
             formatedOutputs = self.connectome.get_outputs_idx()
