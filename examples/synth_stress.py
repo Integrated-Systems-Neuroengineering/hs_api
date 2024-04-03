@@ -1,4 +1,4 @@
-from l2s.api import CRI_network
+from hs_api.api import CRI_network
 import sys
 import subprocess
 import time
@@ -9,6 +9,7 @@ config = {}
 config['neuron_type'] = "I&F"
 config['global_neuron_params'] = {}
 config['global_neuron_params']['v_thr'] = 6
+
 
 ############################
 # Let's try a simple network
@@ -63,12 +64,20 @@ class synthnet:
          numInputs = random.randrange(0,self.numAxons)
          return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
 
-synth = synthnet(1000,10000,-2,10,100)
-#breakpoint()
+swTest = True
+membranePotential = True
+fixedSeed = True
+if fixedSeed:
+    random.seed(237)
+
+synth = synthnet(100,1000,-2,10,100)
+#continuous execution is more or less deprecated at the moment
+cont_exec = False
+sim_dump = True
 #Initialize a CRI_network object for interacting with the hardware and the software
-breakpoint()
-hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
-softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim')
+
+hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1, perturbMag = 0, simDump = sim_dump)
+softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim', perturbMag = 16)
 
 #a = synth.gen_inputs()
 #b = synth.gen_inputs()
@@ -79,14 +88,12 @@ softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDic
 steps = 9
 stepInputs = []
 stepSpikes = []
-swTest = True
-membranePotential = False
 if membranePotential:
     stepPotential = []
 for i in range(steps):
     currInput = synth.gen_inputs()
     stepInputs.append(currInput)
-    if swTest:
+    if swTest and not sim_dump:
     #    spikes = hardwareNetwork.run_cont(curInputs)
     #    breakpoint()
         #hwSpike = hardwareNetwork.step(currInput, membranePotential=False)
@@ -100,9 +107,10 @@ for i in range(steps):
         print("timestep: "+str(i)+":")
         #print("hardware result: ")
         #print(hwSpike)
-        print(swSpike)
+        #format: (timestep, fired neuron)
+        print(stepSpikes)
 
-cont_exec = True
+cont_exec = False
 if cont_exec:
     breakpoint()
     spikes, latency, access = hardwareNetwork.run_cont(stepInputs)
@@ -116,26 +124,35 @@ else:
     i = 0
     for currInput in stepInputs:
         #breakpoint()
-        if membranePotential:
+        if membranePotential and not sim_dump:
             hwMem, spikeResult = hardwareNetwork.step(currInput, membranePotential=True)
             spike, latency, hbmAcc = spikeResult
             potential= potential+[(i,membrane[0],membrane[1]) for membrane in hwMem]
+        elif sim_dump:
+            hardwareNetwork.step(currInput, membranePotential = False)
         else:
             spike, latency, hbmAcc = hardwareNetwork.step(currInput, membranePotential=False)
-        spikes= spikes+[(i,currSpike) for currSpike in spike]
-        i = i+1
-        print("timestep: "+str(i)+":")
-        print("Latency: "+str(latency))
-        print("hbmAcc: "+str(hbmAcc))
-        #print("hardware result: ")
-        #print(hwSpike)
-        #breakpoint()
-        print(spikes)
+
+        if not sim_dump:
+            spikes= spikes+[(i,currSpike) for currSpike in spike]
+            breakpoint()
+            print("timestep: "+str(i)+":")
+            print("Latency: "+str(latency))
+            print("hbmAcc: "+str(hbmAcc))
+            #print("hardware result: ")
+            #print(hwSpike)
+            #breakpoint()
+            print(spikes)
+            i = i+1
 
 #print(synth.axonsDict)
 print(spikes)
+breakpoint()
 
-if swTest:
+if sim_dump:
+    hardwareNetwork.sim_flush('seed.txt')
+
+if swTest and not sim_dump:
     breakpoint()
     print('results _____________________-')
 
