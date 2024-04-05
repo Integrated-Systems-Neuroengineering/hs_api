@@ -4,5 +4,5 @@ result/
 *data/
 */__pycache__*/
 figure/
-**figure/
+test_figure/
 log/
