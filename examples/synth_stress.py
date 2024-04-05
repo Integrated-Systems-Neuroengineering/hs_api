@@ -30,7 +30,7 @@ class synthnet:
         return 'a'+str(idx)
 
     def gen_neuron_name(self,idx):
-        return 'n'+str(idx)
+        return str(idx)
 
     def gen_synapse(self):
         return (self.draw_neuron(),self.draw_weight())
@@ -63,123 +63,127 @@ class synthnet:
          numInputs = random.randrange(0,self.numAxons)
          return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
 
+def main():
+    synth = synthnet(100,100,-2,10,10)
+    #breakpoint()
 
-synth = synthnet(100,100,-2,10,10)
-#breakpoint()
+    #Initialize a CRI_network object for interacting with the hardware and the software
+    breakpoint()
+    hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
+    softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim')
 
-#Initialize a CRI_network object for interacting with the hardware and the software
-breakpoint()
-hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
-softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim')
+    #a = synth.gen_inputs()
+    #b = synth.gen_inputs()
 
-#a = synth.gen_inputs()
-#b = synth.gen_inputs()
+    #curInputs = [a,b]
 
-#curInputs = [a,b]
+    #Execute the network stepwise in the hardware and the simulator
+    steps = 9
+    stepInputs = []
+    stepSpikes = []
+    swTest = True
+    membranePotential = False
+    if membranePotential:
+        stepPotential = []
+    for i in range(steps):
+        currInput = synth.gen_inputs()
+        stepInputs.append(currInput)
+        if swTest:
+        #    spikes = hardwareNetwork.run_cont(curInputs)
+        #    breakpoint()
+            #hwSpike = hardwareNetwork.step(currInput, membranePotential=False)
+            if membranePotential:
+                #breakpoint()
+                swMem, swSpike = softwareNetwork.step(currInput, membranePotential=True)
+                stepPotential = stepPotential+[(i,membrane[0],membrane[1]) for membrane in swMem]
+            else:
+                swSpike = softwareNetwork.step(currInput, membranePotential=False)
+            stepSpikes= stepSpikes+[(i,spike) for spike in swSpike]
+            print("timestep: "+str(i)+":")
+            #print("hardware result: ")
+            #print(hwSpike)
+            print(swSpike)
 
-#Execute the network stepwise in the hardware and the simulator
-steps = 9
-stepInputs = []
-stepSpikes = []
-swTest = True
-membranePotential = False
-if membranePotential:
-    stepPotential = []
-for i in range(steps):
-    currInput = synth.gen_inputs()
-    stepInputs.append(currInput)
-    if swTest:
-    #    spikes = hardwareNetwork.run_cont(curInputs)
-    #    breakpoint()
-        #hwSpike = hardwareNetwork.step(currInput, membranePotential=False)
+    cont_exec = False
+    if cont_exec:
+        breakpoint()
+        spikes, latency, access = hardwareNetwork.run_cont(stepInputs)
+        breakpoint()
+        print('latency: '+str(latency))
+        print('access: '+str(access))
+    else:
+        spikes=[]
         if membranePotential:
+            potential = []
+        i = 0
+        for currInput in stepInputs:
             #breakpoint()
-            swMem, swSpike = softwareNetwork.step(currInput, membranePotential=True)
-            stepPotential = stepPotential+[(i,membrane[0],membrane[1]) for membrane in swMem]
-        else:
-            swSpike = softwareNetwork.step(currInput, membranePotential=False)
-        stepSpikes= stepSpikes+[(i,spike) for spike in swSpike]
-        print("timestep: "+str(i)+":")
-        #print("hardware result: ")
-        #print(hwSpike)
-        print(swSpike)
+            if membranePotential:
+                hwMem, spikeResult = hardwareNetwork.step(currInput, membranePotential=True)
+                spike, latency, hbmAcc = spikeResult
+                potential= potential+[(i,membrane[0],membrane[1]) for membrane in hwMem]
+            else:
+                spike, latency, hbmAcc = hardwareNetwork.step(currInput, membranePotential=False)
+            spikes= spikes+[(i,currSpike) for currSpike in spike]
+            i = i+1
+            print("timestep: "+str(i)+":")
+            print("Latency: "+str(latency))
+            print("hbmAcc: "+str(hbmAcc))
+            #print("hardware result: ")
+            #print(hwSpike)
+            #breakpoint()
+            print(spikes)
 
-cont_exec = False
-if cont_exec:
-    breakpoint()
-    spikes, latency, access = hardwareNetwork.run_cont(stepInputs)
-    breakpoint()
-    print('latency: '+str(latency))
-    print('access: '+str(access))
-else:
-    spikes=[]
-    if membranePotential:
-        potential = []
-    i = 0
-    for currInput in stepInputs:
-        #breakpoint()
-        if membranePotential:
-            hwMem, spikeResult = hardwareNetwork.step(currInput, membranePotential=True)
-            spike, latency, hbmAcc = spikeResult
-            potential= potential+[(i,membrane[0],membrane[1]) for membrane in hwMem]
-        else:
-            spike, latency, hbmAcc = hardwareNetwork.step(currInput, membranePotential=False)
-        spikes= spikes+[(i,currSpike) for currSpike in spike]
-        i = i+1
-        print("timestep: "+str(i)+":")
-        print("Latency: "+str(latency))
-        print("hbmAcc: "+str(hbmAcc))
-        #print("hardware result: ")
-        #print(hwSpike)
-        #breakpoint()
-        print(spikes)
-
-#print(synth.axonsDict)
-print(spikes)
-
-if swTest:
-    breakpoint()
-    print('results _____________________-')
-
-    print(set(spikes)==set(stepSpikes))
-    print(set(stepSpikes)-set(spikes))
-    spikes.sort()
-    stepSpikes.sort()
-    #print(stepSpikes)
-    #print(spikes)
-    print(len(stepSpikes))
-    #print(stepSpikes)
-    print(len(spikes))
-
-    print(len(set(stepSpikes)-set(spikes)))
-    print(len(set(spikes)-set(stepSpikes)))
-    #print(spikes)
-    if membranePotential:
-        print(len(set(stepPotential)-set(potential)))
-    #print('up to match: ')
-    #smallStep = filter(lambda spike:spike[0]<8, stepSpikes)
-    #smallCont = filter(lambda spike:spike[0]<8, spikes)
-    #print(set(smallCont)==set(smallStep))
     #print(synth.axonsDict)
+    print(spikes)
 
-    #print(hwResult)
-    #print("timestep: "+str(i)+" end")
-    #magicBreak = False
-    #if (set(hwSpike) != set(swSpike)):
-    #    print("Incongruent Spike Results Detected")
-        #breakpoint()
-    #    magicBreak = True
-    #else:
-    #    print("Spike Results match simulator")
-    #potentialFlag = False
-    #for idx in range(len(swResult)):
-    #    if(swResult[idx][1] != hwResult[idx][1]):
-    #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
-    #        potentialFlag = True
-    #        magicBreak = True
-    #if potentialFlag:
-    #    print("Incongruent Membrane Potential Results Detected")
-    #else:
-    #    print("Membrane Potentials Match")
-    #if magicBreak:
-    #    breakpoint()
+    if swTest:
+        breakpoint()
+        print('results _____________________-')
+
+        print(set(spikes)==set(stepSpikes))
+        print(set(stepSpikes)-set(spikes))
+        spikes.sort()
+        stepSpikes.sort()
+        #print(stepSpikes)
+        #print(spikes)
+        print(len(stepSpikes))
+        #print(stepSpikes)
+        print(len(spikes))
+
+        print(len(set(stepSpikes)-set(spikes)))
+        print(len(set(spikes)-set(stepSpikes)))
+        #print(spikes)
+        if membranePotential:
+            print(len(set(stepPotential)-set(potential)))
+        #print('up to match: ')
+        #smallStep = filter(lambda spike:spike[0]<8, stepSpikes)
+        #smallCont = filter(lambda spike:spike[0]<8, spikes)
+        #print(set(smallCont)==set(smallStep))
+        #print(synth.axonsDict)
+
+        #print(hwResult)
+        #print("timestep: "+str(i)+" end")
+        #magicBreak = False
+        #if (set(hwSpike) != set(swSpike)):
+        #    print("Incongruent Spike Results Detected")
+            #breakpoint()
+        #    magicBreak = True
+        #else:
+        #    print("Spike Results match simulator")
+        #potentialFlag = False
+        #for idx in range(len(swResult)):
+        #    if(swResult[idx][1] != hwResult[idx][1]):
+        #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
+        #        potentialFlag = True
+        #        magicBreak = True
+        #if potentialFlag:
+        #    print("Incongruent Membrane Potential Results Detected")
+        #else:
+        #    print("Membrane Potentials Match")
+        #if magicBreak:
+        #    breakpoint()
+
+
+if __name__ == '__main__':
+    main()
