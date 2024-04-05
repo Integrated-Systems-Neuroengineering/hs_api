@@ -3,3 +3,6 @@
 result/
 *data/
 */__pycache__*/
+figure/
+**figure/
+log/
