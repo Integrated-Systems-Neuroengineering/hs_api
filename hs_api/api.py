@@ -511,7 +511,20 @@ class CRI_network:
 
         elif self.target == "CRI":
             if self.simDump:
-                return self.CRI.run_step(formated_inputs)
+                if membranePotential == True:
+                    output, spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
+                    spikeList = spikeResult[0]
+                    spikeList = [
+                        self.connectome.get_neuron_by_idx(spike[1]).get_user_key()
+                        for spike in spikeList
+                    ]
+                    numNeurons = len(self.connections)
+                    # we currently only print the membrane potential, not the other contents of the spike packet
+                    output = [
+                        (self.connectome.get_neuron_by_idx(idx).get_user_key(), data[3])
+                        for idx, data in enumerate(output[:numNeurons])
+                    ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    return output, (spikeList, spikeResult[1], spikeResult[2])
             else:
                 if membranePotential == True:
                     output, spikeResult = self.CRI.run_step(
