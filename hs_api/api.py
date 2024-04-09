@@ -93,7 +93,8 @@ class CRI_network:
         self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                for values in connections[keys][0]: #synapse list is first element in tuple
+                for values in connections[keys][1]: #synapse list is first element in tuple
+                    #breakpoint()
                     if not ((type(values) == tuple) and (len(values) == 2)):
                         logging.error(
                             "Each synapse should only consists of 2 elements: neuron, weight"
@@ -227,7 +228,8 @@ class CRI_network:
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
-            synapses = self.userConnections[neuronKey][0]
+            #breakpoint()
+            synapses = self.userConnections[neuronKey][1]
             #breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
@@ -295,14 +297,14 @@ class CRI_network:
                 axonIndexDict[idx][listIdx] = newTuple
 
         for idx in connectionIndexDict:
-            #breakpoint()
-            for listIdx in range(len(connectionIndexDict[idx][0])):
-                oldTuple = connectionIndexDict[idx][0][listIdx]
+            breakpoint()
+            for listIdx in range(len(connectionIndexDict[idx][1])):
+                oldTuple = connectionIndexDict[idx][1][listIdx]
                 newTuple = (
                     self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),
                     oldTuple[1],
                 )
-                connectionIndexDict[idx][0][listIdx] = newTuple
+                connectionIndexDict[idx][1][listIdx] = newTuple
         #breakpoint()
         return axonIndexDict, connectionIndexDict
 
