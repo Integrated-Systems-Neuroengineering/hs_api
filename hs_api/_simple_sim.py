@@ -5,6 +5,7 @@ from ast import literal_eval
 import copy
 from scipy.sparse import dok_array, csr_matrix
 from fxpmath import Fxp
+from fxpmath.functions import leftshiftArr, rightshiftArr
 def load_network(input, connex, output):
     """Loads the network specification.
 
@@ -322,7 +323,7 @@ class simple_sim:
                 "shift" : 'fxp-s6/0'
             }
           #self.neuronModel = neuronModel
-          self.threshold = Fxp(threshold,dtype=self.formatDict['voltage_threshold'])
+          #self.threshold = Fxp(threshold,dtype=self.formatDict['voltage_threshold'])
           self.axons = axons
           self.connections = connections
           self.outputs = outputs
@@ -366,7 +367,7 @@ class simple_sim:
         nAxons = len(self.axons)
         S = dok_array((nNeurons,nNeurons), dtype=np.float32)
         for key, value in self.connections.items():
-            for synapse in value:
+            for synapse in value[1]:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 S[presynapticIdx,postsynapticIdx] = weight
@@ -428,32 +429,48 @@ class simple_sim:
             return self.connections[preIndex][synapseIdx]
         """
 
+    def get_perturbMag(self):
+        perturbs = [self.connections[key][0].get_shift() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        return perturbs
+
+    def get_threshold(self):
+        threshs = [self.connections[key][0].get_threshold() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        return threshs
+
+    def get_leak(self):
+        breakpoint()
+        leaks = [self.connections[key][0].get_leak() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        return leaks
+
+
+
     def step_run(self,inputs):
         #breakpoint()
+        #
+        leaks = self.get_leak()
+        threshs = self.get_threshold()
+        perturbs = self.get_perturbMag()
 
         if False: #(self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
             self.stepNum == 0
         else:
+            shifts = self.get_perturbMag()
             #membranePotentials = copy.deepcopy(self.membranePotentials)
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
 
             if self.perturbMag != None:
                 perturbBits = 17
-                perturbation = np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons) #upper is exclusive so no need to subtract one
+                perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons), dtype =  self.formatDict['membrane_potential'] )#upper is exclusive so no need to subtract one
                 perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )#set LSB to 1
                 shift = self.perturbMag - (perturbBits - 1)
-                if shift > 0:
-                    perturbation(perturbation << abs(shift))
-                elif shift < 0:
-                    perturbation(perturbation >> abs(shift))
-                else:
-                    pass #do nothing since Fxp doesn't like shifts
+                perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs,0))
+                perturbation = rightshiftArr(perturbation, np.absolute(perturbs), np.less(perturbs,0))
                 self.membranePotentials(self.membranePotentials+perturbation)
 
-            spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
+            spiked_inds = np.nonzero(self.membranePotentials() > threshs)
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
             self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
@@ -466,8 +483,8 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             #if self.neuronModel == 2:
                 #Leaky Integrate and fire
-
-            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**self.leak)))
+            # you'll have to vectorize this
+            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // np.power(2,leaks)))
             #now let's try phase two
             a = np.zeros(nAxons)
             a[inputs] = 1
