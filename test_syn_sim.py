@@ -30,7 +30,7 @@ parser.add_argument('-p', default=0, type=int, help='padding size')
 parser.add_argument('-c', default=4, type=int, help='channel size')
 parser.add_argument('-alpha',  default=4, type=int, help='Range of value for quantization')
 parser.add_argument('-b', default=1, type=int, help='batch size')
-parser.add_argument('-T', default=16, type=int)
+parser.add_argument('-T', default=4, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
@@ -80,21 +80,30 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = 6
     
-    synth = synthnet(3,3,-2,6,10)
+    # synth = synthnet(3,3,-2,6,2)
+    axonsDict = {
+        'a0': [('0',2),('1',1)],
+        'a1': [('0',4),('1',3)]
+    }
     
-    hardwareNetwork = CRI_network(axons=synth.axonsDict,
-                                  connections=synth.neuronsDict,
+    neuronsDict = {
+        '0': [(1,1)],
+        '1': [(0,-1)]
+    }
+    
+    hardwareNetwork = CRI_network(axons=axonsDict,
+                                  connections=neuronsDict,
                                   config=config, 
                                   target='CRI', 
-                                  outputs = synth.neuronsDict.keys(),
+                                  outputs = neuronsDict.keys(),
                                   simDump=True,
                                   coreID=1,
                                   perturbMag=0,
                                   leak=2**6)
-    softwareNetwork = CRI_network(axons=synth.axonsDict,
-                                  connections=synth.neuronsDict,
+    softwareNetwork = CRI_network(axons=axonsDict,
+                                  connections=neuronsDict,
                                   config=config, 
-                                  outputs = synth.neuronsDict.keys(), 
+                                  outputs = neuronsDict.keys(), 
                                   target='simpleSim',
                                   perturbMag=0,
                                   leak=2**6)
@@ -102,9 +111,11 @@ def main():
     sw_s_list, hw_s_list = [], []
     sw_v_list, hw_v_list = [], []
     
+    input_lists = ['a0','a1','a0','a1']
+    
     for t in range(args.T):
         
-        input = synth.gen_inputs()
+        input = input_lists[t]
         
         # swOutput: [(key, potential) for all the neurons in softwareNetwork] 
         swOutput, swSpike  = softwareNetwork.step(input, membranePotential=True)
@@ -116,11 +127,11 @@ def main():
         hwSpikeIdx = [int(spike) for spike in hwSpike]   
         hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
-        sw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        sw_spikes = torch.zeros(len(neuronsDict)).flatten()
         sw_spikes[swSpikeIdx] = 1
         sw_s_list.append(sw_spikes.unsqueeze(0))
         
-        hw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        hw_spikes = torch.zeros(len(neuronsDict)).flatten()
         hw_spikes[hwSpikeIdx] = 1
         hw_s_list.append(hw_spikes.unsqueeze(0))
 
@@ -166,9 +177,9 @@ def main():
     plt.savefig(f"figure/HW_V.png")
     
     # reset the membrane potential to zero
-    softwareNetwork.simpleSim.initialize_sim_vars(len(synth.neuronsDict))
+    softwareNetwork.simpleSim.initialize_sim_vars(len(neuronsDict))
     hs_bridge.FPGA_Execution.fpga_controller.clear(
-                len(synth.neuronsDict), False, 0
+                len(neuronsDict), False, 0
             )
     breakpoint()
     hardwareNetwork.sim_flush("test_syn_sim.txt")
