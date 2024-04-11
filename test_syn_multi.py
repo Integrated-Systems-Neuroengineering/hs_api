@@ -21,7 +21,7 @@ import subprocess
 import time
 import pickle
 import random
-from examples.synth_stress import synthnet
+from hs_api.neuron_models import LIF_neuron
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', default=1, type=int, help='stride size')
@@ -70,6 +70,58 @@ def plot_2d_heatmap(array: np.ndarray, title: str, xlabel: str, ylabel: str, int
         cbar.ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     return fig
 
+class synthnet:
+
+    def __init__(self, numAxons, numNeurons, minWeight, maxWeight, maxFan):
+        self.numAxons = numAxons
+        self.numNeurons = numNeurons
+        self.maxWeight = maxWeight
+        self.minWeight = minWeight
+        self.maxFan = maxFan
+        self.neuronType = LIF_neuron(6, 0, 2**6) #0 shifts, IF neurons
+        self.axonsDict = {}
+        self.neuronsDict = {}
+        self.gen_axon_dict()
+        self.gen_neuron_dict()
+        
+
+    def gen_axon_name(self,idx):
+        return 'a'+str(idx)
+
+    def gen_neuron_name(self,idx):
+        return str(idx)
+
+    def gen_synapse(self):
+        return (self.draw_neuron(),self.draw_weight())
+
+    def draw_neuron(self):
+        idx = random.randrange(0,self.numNeurons)
+        return self.gen_neuron_name(idx)
+
+    def draw_weight(self):
+        #breakpoint()
+        return random.randrange(self.minWeight,self.maxWeight)
+
+    def roll_axon(self):
+        fan = random.randrange(0,self.maxFan)
+        return [self.gen_synapse() for i in range(fan)]
+
+    def roll_neuron(self):
+        fan = random.randrange(0,self.maxFan)
+        return (self.neuronType, [self.gen_synapse() for i in range(fan)])
+
+    def gen_axon_dict(self):
+        for i in range(self.numAxons):
+            self.axonsDict[self.gen_axon_name(i)] = self.roll_axon()
+
+    def gen_neuron_dict(self):
+         for i in range(self.numNeurons):
+            self.neuronsDict[self.gen_neuron_name(i)] = self.roll_neuron()
+
+    def gen_inputs(self):
+         numInputs = random.randrange(0,self.numAxons)
+         return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
+
     
 def main():
     args = parser.parse_args()
@@ -82,21 +134,19 @@ def main():
     
     synth = synthnet(100,100,-2,6,10)
     
+    breakpoint()
+    
     hardwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
                                   config=config, 
                                   target='CRI', 
                                   outputs = synth.neuronsDict.keys(),
-                                  coreID=1,
-                                  perturbMag=0,
-                                  leak=2**6)
+                                  coreID=1)
     softwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
                                   config=config, 
                                   outputs = synth.neuronsDict.keys(), 
-                                  target='simpleSim',
-                                  perturbMag=0,
-                                  leak=2**6)
+                                  target='simpleSim')
 
     sw_s_list, hw_s_list = [], []
     sw_v_list, hw_v_list = [], []
