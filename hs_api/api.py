@@ -297,7 +297,7 @@ class CRI_network:
                 axonIndexDict[idx][listIdx] = newTuple
 
         for idx in connectionIndexDict:
-            breakpoint()
+            #breakpoint()
             for listIdx in range(len(connectionIndexDict[idx][1])):
                 oldTuple = connectionIndexDict[idx][1][listIdx]
                 newTuple = (
