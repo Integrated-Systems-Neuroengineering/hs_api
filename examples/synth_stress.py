@@ -27,12 +27,13 @@ class synthnet:
         self.gen_axon_dict()
         self.gen_neuron_dict()
 
+    
     def gen_axon_name(self,idx):
         return 'a'+str(idx)
 
     def gen_neuron_name(self,idx):
         return 'n'+str(idx)
-
+    '''
     def gen_synapse(self):
         return (self.draw_neuron(),self.draw_weight())
 
@@ -43,14 +44,20 @@ class synthnet:
     def draw_weight(self):
         #breakpoint()
         return random.randrange(self.minWeight,self.maxWeight)
-
+    '''
     def roll_axon(self):
         fan = random.randrange(0,self.maxFan)
-        return [self.gen_synapse() for i in range(fan)]
+        axons = random.sample(range(0,self.Axons), maxFan)
+        axons = ['a'+str(neuron) for neuron in neurons]
+        synapses = random.choices(range(self.minWeight,self.maxWeight), maxFan)
+        tuple(zip(axons, synapses))
 
     def roll_neuron(self):
         fan = random.randrange(0,self.maxFan)
-        return [self.gen_synapse() for i in range(fan)]
+        neurons = random.sample(range(0,self.numNeurons), maxFan)
+        neurons = ['n'+str(neuron) for neuron in neurons]
+        synapses = random.choices(range(self.minWeight,self.maxWeight), maxFan)
+        tuple(zip(neurons, synapses))
 
     def gen_axon_dict(self):
         for i in range(self.numAxons):
