@@ -47,21 +47,23 @@ class synthnet:
     '''
     def roll_axon(self):
         fan = random.randrange(0,self.maxFan)
-        axons = random.sample(range(0,self.Axons), maxFan)
-        axons = ['a'+str(neuron) for neuron in neurons]
-        synapses = random.choices(range(self.minWeight,self.maxWeight), maxFan)
-        tuple(zip(axons, synapses))
+        axons = random.sample(range(0,self.numAxons), k=self.maxFan)
+        axons = ['a'+str(axon) for axon in axons]
+        synapses = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
+        return list(zip(axons, synapses))
+
 
     def roll_neuron(self):
         fan = random.randrange(0,self.maxFan)
-        neurons = random.sample(range(0,self.numNeurons), maxFan)
+        neurons = random.sample(range(0,self.numNeurons), k=self.maxFan)
         neurons = ['n'+str(neuron) for neuron in neurons]
-        synapses = random.choices(range(self.minWeight,self.maxWeight), maxFan)
-        tuple(zip(neurons, synapses))
+        synapses = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
+        return list(zip(neurons, synapses))
 
     def gen_axon_dict(self):
         for i in range(self.numAxons):
             self.axonsDict[self.gen_axon_name(i)] = self.roll_axon()
+        breakpoint()
 
     def gen_neuron_dict(self):
          for i in range(self.numNeurons):
@@ -77,13 +79,14 @@ fixedSeed = True
 if fixedSeed:
     random.seed(237)
 
-synth = synthnet(100,1000,-2,10,100)
+synth = synthnet(3,3,-2,10,2)
+breakpoint()
 #continuous execution is more or less deprecated at the moment
 cont_exec = False
 sim_dump = True
 #Initialize a CRI_network object for interacting with the hardware and the software
 
-hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1, perturbMag = 0, simDump = sim_dump)
+#hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1, perturbMag = 0, simDump = sim_dump)
 softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim', perturbMag = 16)
 
 #a = synth.gen_inputs()
