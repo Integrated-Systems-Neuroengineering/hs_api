@@ -47,23 +47,22 @@ class synthnet:
     '''
     def roll_axon(self):
         fan = random.randrange(0,self.maxFan)
-        axons = random.sample(range(0,self.numAxons), k=self.maxFan)
-        axons = ['a'+str(axon) for axon in axons]
-        synapses = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
-        return list(zip(axons, synapses))
+        neurons = random.sample(range(0,self.numAxons), k=fan)
+        neurons = [str(neuron) for neuron in neurons]
+        weights = random.choices(range(self.minWeight,self.maxWeight), k=fan)
+        return list(zip(neurons, weights))
 
 
     def roll_neuron(self):
         fan = random.randrange(0,self.maxFan)
-        neurons = random.sample(range(0,self.numNeurons), k=self.maxFan)
-        neurons = ['n'+str(neuron) for neuron in neurons]
-        synapses = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
+        neurons = random.sample(range(0,self.numNeurons), k=fan)
+        neurons = [str(neuron) for neuron in neurons]
+        synapses = random.choices(range(self.minWeight,self.maxWeight), k=fan)
         return list(zip(neurons, synapses))
 
     def gen_axon_dict(self):
         for i in range(self.numAxons):
             self.axonsDict[self.gen_axon_name(i)] = self.roll_axon()
-        breakpoint()
 
     def gen_neuron_dict(self):
          for i in range(self.numNeurons):
