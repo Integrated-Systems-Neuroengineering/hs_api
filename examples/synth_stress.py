@@ -42,19 +42,23 @@ class synthnet:
         return random.randrange(self.minWeight,self.maxWeight)
     '''
     def roll_axon(self):
-        fan = random.randrange(0,self.maxFan)
-        neurons = random.sample(range(0,self.numAxons), k=fan)
+        fan = random.randrange(1,self.maxFan)
+        neurons = random.sample(range(0,self.numNeurons), k=fan)
         neurons = [str(neuron) for neuron in neurons]
-        weights = random.choices(range(self.minWeight,self.maxWeight), k=fan)
+        weights = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
         return list(zip(neurons, weights))
 
 
-    def roll_neuron(self):
-        fan = random.randrange(0,self.maxFan)
+    def roll_neuron(self, idx):
+        fan = random.randrange(1,self.maxFan)
         neurons = random.sample(range(0,self.numNeurons), k=fan)
-        neurons = [str(neuron) for neuron in neurons]
-        synapses = random.choices(range(self.minWeight,self.maxWeight), k=fan)
-        return list(zip(neurons, synapses))
+        valid_neurons = []
+        for neuron in neurons:
+            if neuron != idx:
+                valid_neurons.append(str(neuron))
+
+        weights = random.choices(range(self.minWeight,self.maxWeight), k=self.maxFan)
+        return list(zip(valid_neurons, weights))
 
     def gen_axon_dict(self):
         for i in range(self.numAxons):
@@ -62,15 +66,16 @@ class synthnet:
 
     def gen_neuron_dict(self):
         for i in range(self.numNeurons):
-            self.neuronsDict[self.gen_neuron_name(i)] = self.roll_neuron()
+            self.neuronsDict[self.gen_neuron_name(i)] = self.roll_neuron(i)
 
     def gen_outputs(self):
         neurons = random.sample(range(0, self.numNeurons), k=self.numOutputs)
         self.outputNeurons = neurons
-        
+
     def gen_inputs(self):
-        numInputs = random.randrange(0,self.numAxons)
+        numInputs = random.randrange(1,self.numAxons)
         return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
+
 
 def main():
     
