@@ -1229,7 +1229,7 @@ class CRI_Converter:
         )
         print("Max fan out of neuron: ", self.max_fan)
 
-    def run_CRI_hw(self, inputList, hardwareNetwork):
+    def run_CRI_hw(self, inputList, hardwareNetwork, outputPotential=False):
         """
         Runs a bach of input through the hardware implementation of the network
         Returns the output predictions and the output spikes
@@ -1240,11 +1240,11 @@ class CRI_Converter:
             The input data, where each most inner item is a list of axon indices representing the spikes.
         hardwareNetwork : object
             The hardware network object.
+        outputPotential: bool, default False
+            The output potential flag, if set to true outputs membrane potential
 
         Returns
         -------
-        list of int
-            The output predictions.
         list of list
             The output spikes
 
@@ -1255,8 +1255,8 @@ class CRI_Converter:
         """
         import hs_bridge
         
-        predictions = []
         outputSpikes = []
+        membranePotential = []
         
         output_idx = [i for i in range(len(self.output_neurons))]
         
@@ -1269,11 +1269,20 @@ class CRI_Converter:
             spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
-                hwSpike, latency, hbmAcc = hardwareNetwork.step(
-                    slice, membranePotential=False
-                )
+                hwSpike = []
+                if outputPotential:
+                    potential, spikes = hardwareNetwork.step(
+                        slice, membranePotential=False
+                    )
+                    hwSpike, _, _ = spikes
+                    membranePotential.append([v for k,v in potential])
+                else:
+                    hwSpike, _, _ = hardwareNetwork.step(
+                        slice, membranePotential=False
+                    )
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                 for idx in spikeIdx:
+                    # Checking if the output spike is in the defined output neuron
                     if idx not in output_idx:
                         print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
@@ -1292,12 +1301,15 @@ class CRI_Converter:
                 if idx not in output_idx:
                     print(f"Error: invalid output spike {idx}")
                 spikeRate[idx] += 1
-            predictions.append(spikeRate.index(max(spikeRate)))
+            # Append the output spikes of each image to the output list
             outputSpikes.append(spikeRate)
         
-        return predictions, outputSpikes
+        if outputPotential:
+            return outputSpikes, membranePotential
+        else:
+            return outputSpikes
 
-    def run_CRI_sw(self, inputList, softwareNetwork):
+    def run_CRI_sw(self, inputList, softwareNetwork, outputPotential=False):
         """
         Runs a batch of inputs through the software simulation of the network,
         returns the output predictions and output spikes
@@ -1308,11 +1320,11 @@ class CRI_Converter:
             The input data, where each item is a list of axon indices representing the spikes.
         softwareNetwork : object
             The software network object.
-
+        outputPotential: bool, default False
+            The output potential flag, if set to true outputs membrane potential
+            
         Returns
         -------
-        list of int
-            The output predictions.
         list of list
             The output spikes.
 
@@ -1321,9 +1333,8 @@ class CRI_Converter:
         >>> converter = CRI_Converter()
         >>> predictions, outputSpikes = converter.run_CRI_sw(some_inputList, some_softwareNetwork)
         """
-
-        predictions = []
         outputSpikes = []
+        membranePotential = []
         
         # each image
         for currInput in tqdm(inputList):
@@ -1332,7 +1343,12 @@ class CRI_Converter:
             spikeRate = [0] * len(self.output_neurons)
             # each time step
             for slice in currInput:
-                swSpike = softwareNetwork.step(slice, membranePotential=False)
+                swSpike = []
+                if outputPotential:
+                    potential, swSpike = softwareNetwork.step(slice, membranePotential=True)
+                    membranePotential.append([v for k,v in potential])
+                else:
+                    swSpike = softwareNetwork.step(slice, membranePotential=False)
                 spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
                 for idx in spikeIdx:
                     spikeRate[idx] += 1
@@ -1347,8 +1363,12 @@ class CRI_Converter:
             spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
             for idx in spikeIdx:
                 spikeRate[idx] += 1
-            predictions.append(spikeRate.index(max(spikeRate)))
+            # Append the output spikes of each image to the output list
             outputSpikes.append(spikeRate)
-        return predictions, outputSpikes
+            
+        if outputPotential:
+            return outputSpikes, membranePotential
+        else:
+            return outputSpikes
     
 

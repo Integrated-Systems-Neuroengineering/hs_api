@@ -4,20 +4,17 @@ import subprocess
 import time
 import pickle
 import random
-#Define a configuration dictionary
-config = {}
-config['neuron_type'] = "I&F"
-config['global_neuron_params'] = {}
-config['global_neuron_params']['v_thr'] = 6
+
 
 ############################
 # Let's try a simple network
 ############################
 class synthnet:
 
-    def __init__(self,numAxons, numNeurons, minWeight, maxWeight, maxFan):
+    def __init__(self,numAxons, numNeurons, numOutputs, minWeight, maxWeight, maxFan):
         self.numAxons = numAxons
         self.numNeurons = numNeurons
+        self.numOutputs = numOutputs
         self.maxWeight = maxWeight
         self.minWeight = minWeight
         self.maxFan = maxFan
@@ -25,13 +22,14 @@ class synthnet:
         self.neuronsDict = {}
         self.gen_axon_dict()
         self.gen_neuron_dict()
-
+        self.gen_outputs()
+    
     def gen_axon_name(self,idx):
         return 'a'+str(idx)
 
     def gen_neuron_name(self,idx):
         return str(idx)
-
+    '''
     def gen_synapse(self):
         return (self.draw_neuron(),self.draw_weight())
 
@@ -42,35 +40,61 @@ class synthnet:
     def draw_weight(self):
         #breakpoint()
         return random.randrange(self.minWeight,self.maxWeight)
-
+    '''
     def roll_axon(self):
         fan = random.randrange(0,self.maxFan)
-        return [self.gen_synapse() for i in range(fan)]
+        neurons = random.sample(range(0,self.numAxons), k=fan)
+        neurons = [str(neuron) for neuron in neurons]
+        weights = random.choices(range(self.minWeight,self.maxWeight), k=fan)
+        return list(zip(neurons, weights))
+
 
     def roll_neuron(self):
         fan = random.randrange(0,self.maxFan)
-        return [self.gen_synapse() for i in range(fan)]
+        neurons = random.sample(range(0,self.numNeurons), k=fan)
+        neurons = [str(neuron) for neuron in neurons]
+        synapses = random.choices(range(self.minWeight,self.maxWeight), k=fan)
+        return list(zip(neurons, synapses))
 
     def gen_axon_dict(self):
         for i in range(self.numAxons):
             self.axonsDict[self.gen_axon_name(i)] = self.roll_axon()
 
     def gen_neuron_dict(self):
-         for i in range(self.numNeurons):
+        for i in range(self.numNeurons):
             self.neuronsDict[self.gen_neuron_name(i)] = self.roll_neuron()
 
+    def gen_outputs(self):
+        neurons = random.sample(range(0, self.numNeurons), k=self.numOutputs)
+        self.outputNeurons = neurons
+        
     def gen_inputs(self):
-         numInputs = random.randrange(0,self.numAxons)
-         return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
+        numInputs = random.randrange(0,self.numAxons)
+        return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
 
 def main():
-    synth = synthnet(100,100,-2,10,10)
-    #breakpoint()
+    
+    #Define a configuration dictionary
+    config = {}
+    config['neuron_type'] = "I&F"
+    config['global_neuron_params'] = {}
+    config['global_neuron_params']['v_thr'] = 6
 
-    #Initialize a CRI_network object for interacting with the hardware and the software
+    swTest = True
+    membranePotential = True
+    fixedSeed = True
+    if fixedSeed:
+        random.seed(237)
+
+    synth = synthnet(3,3,-2,10,2)
     breakpoint()
-    hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, target='CRI', outputs = synth.neuronsDict.keys(),coreID=1)
-    softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim')
+    #continuous execution is more or less deprecated at the moment
+    cont_exec = False
+    sim_dump = True
+    #Initialize a CRI_network object for interacting with the hardware and the software
+
+    #hardwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config,target='CRI', outputs = synth.neuronsDict.keys(),coreID=1, perturbMag = 0, simDump = sim_dump)
+    softwareNetwork = CRI_network(axons=synth.axonsDict,connections=synth.neuronsDict,config=config, outputs = synth.neuronsDict.keys(), target='simpleSim', perturbMag = 16)
 
     #a = synth.gen_inputs()
     #b = synth.gen_inputs()
@@ -81,14 +105,12 @@ def main():
     steps = 9
     stepInputs = []
     stepSpikes = []
-    swTest = True
-    membranePotential = False
     if membranePotential:
         stepPotential = []
     for i in range(steps):
         currInput = synth.gen_inputs()
         stepInputs.append(currInput)
-        if swTest:
+        if swTest and not sim_dump:
         #    spikes = hardwareNetwork.run_cont(curInputs)
         #    breakpoint()
             #hwSpike = hardwareNetwork.step(currInput, membranePotential=False)
@@ -102,7 +124,8 @@ def main():
             print("timestep: "+str(i)+":")
             #print("hardware result: ")
             #print(hwSpike)
-            print(swSpike)
+            #format: (timestep, fired neuron)
+            print(stepSpikes)
 
     cont_exec = False
     if cont_exec:
@@ -118,26 +141,35 @@ def main():
         i = 0
         for currInput in stepInputs:
             #breakpoint()
-            if membranePotential:
+            if membranePotential and not sim_dump:
                 hwMem, spikeResult = hardwareNetwork.step(currInput, membranePotential=True)
                 spike, latency, hbmAcc = spikeResult
                 potential= potential+[(i,membrane[0],membrane[1]) for membrane in hwMem]
+            elif sim_dump:
+                hardwareNetwork.step(currInput, membranePotential = False)
             else:
                 spike, latency, hbmAcc = hardwareNetwork.step(currInput, membranePotential=False)
-            spikes= spikes+[(i,currSpike) for currSpike in spike]
-            i = i+1
-            print("timestep: "+str(i)+":")
-            print("Latency: "+str(latency))
-            print("hbmAcc: "+str(hbmAcc))
-            #print("hardware result: ")
-            #print(hwSpike)
-            #breakpoint()
-            print(spikes)
+
+            if not sim_dump:
+                spikes= spikes+[(i,currSpike) for currSpike in spike]
+                breakpoint()
+                print("timestep: "+str(i)+":")
+                print("Latency: "+str(latency))
+                print("hbmAcc: "+str(hbmAcc))
+                #print("hardware result: ")
+                #print(hwSpike)
+                #breakpoint()
+                print(spikes)
+                i = i+1
 
     #print(synth.axonsDict)
     print(spikes)
+    breakpoint()
 
-    if swTest:
+    if sim_dump:
+        hardwareNetwork.sim_flush('seed.txt')
+
+    if swTest and not sim_dump:
         breakpoint()
         print('results _____________________-')
 
@@ -183,7 +215,6 @@ def main():
         #    print("Membrane Potentials Match")
         #if magicBreak:
         #    breakpoint()
-
 
 if __name__ == '__main__':
     main()
