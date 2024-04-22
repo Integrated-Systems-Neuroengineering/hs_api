@@ -96,7 +96,7 @@ class Net(nn.Module):
         return x
     
 def main():
-    #python test_stride_sw.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/nmnist/checkpoint_latest_T_16_C_20_lr_0.001_opt_adam.pth -data-dir /Users/keli/Code/CRI/data/NMNIST 
+    #python test_stride_hw.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/nmnist/checkpoint_latest_T_16_C_20_lr_0.001_opt_adam.pth -data-dir /Users/keli/Code/CRI/data/NMNIST 
     args = parser.parse_args()
     print(args)
     
@@ -175,8 +175,8 @@ def main():
             
             img = img.transpose(0, 1) # [1, T, C, H, W] -> [T, 1, C, H, W]
             
-            tor_v_list, hw_v_list = [], [], []
-            tor_s_list, hw_s_list = [], [], []
+            tor_v_list, hw_v_list = [], []
+            tor_s_list, hw_s_list = [], []
             
             tor_out, hw_out = 0., 0.
             
@@ -235,7 +235,6 @@ def main():
             #plot the spikes
             hw_s_list = torch.cat(hw_s_list)
             tor_s_list = torch.cat(tor_s_list)
-            sw_s_list = torch.cat(sw_s_list)
             
             #compare the pytorch and hw spike output
             num_matches = (tor_s_list==hw_s_list).sum()
