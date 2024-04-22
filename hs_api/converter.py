@@ -1272,7 +1272,7 @@ class CRI_Converter:
                 hwSpike = []
                 if outputPotential:
                     potential, spikes = hardwareNetwork.step(
-                        slice, membranePotential=False
+                        slice, membranePotential=True
                     )
                     hwSpike, _, _ = spikes
                     membranePotential.append([v for k,v in potential])
