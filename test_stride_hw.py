@@ -287,7 +287,7 @@ def main():
             
             # reset pyplot interface
             plt.close()
-            breakpoint()
+            # breakpoint()
 
     test_time = time.time()
     test_speed = test_samples / (test_time - start_time)
