@@ -121,7 +121,6 @@ def main():
     bn = BN_Folder()
     net_bn = bn.fold(net)
     
-    
     qn = Quantize_Network(w_alpha=args.alpha)
     net_quan = qn.quantize(net_bn)
     
@@ -150,7 +149,8 @@ def main():
     
     softwareNetwork = CRI_network(dict(cn.axon_dict),
             connections=dict(cn.neuron_dict),
-            config=config,target='simpleSim', 
+            config=config,
+            target='simpleSim', 
             outputs = cn.output_neurons,
             simDump=False,
             coreID=1,

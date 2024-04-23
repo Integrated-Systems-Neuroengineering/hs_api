@@ -215,7 +215,7 @@ def main():
             out_fr = out_fr/args.T
             print(f'Label : {label} Pred: {out_fr} Torch_Pred: {out_tor}')
             
-            loss = loss_fun(out_fr, label)
+            loss = loss_fun(out_fr, label_onehot)
             test_samples += label.numel()
             test_loss += loss.item() * label.numel()
             test_acc += (out_fr.argmax(1) == label).float().sum().item()      
@@ -228,20 +228,20 @@ def main():
             #plotting the membrane potential and spikes
             figsize = (12, 8)
             dpi = 100
-            plot_2d_heatmap(array=tor_v_list.numpy(), title='PyTorch membrane potentials', xlabel='simulating step',
-                                        ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/PyTorch_V_{img_idx}.png")
+            # plot_2d_heatmap(array=tor_v_list.numpy(), title='PyTorch membrane potentials', xlabel='simulating step',
+            #                             ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
+            # plt.savefig(f"figure/PyTorch_V_{img_idx}.png")
             
-            plot_2d_heatmap(array=cri_v_list.numpy(), title='HW membrane potentials', xlabel='simulating step',
-                                        ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/CRI_V_{img_idx}.png")
+            # plot_2d_heatmap(array=cri_v_list.numpy(), title='HW membrane potentials', xlabel='simulating step',
+            #                             ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
+            # plt.savefig(f"figure/CRI_V_{img_idx}.png")
             
-            visualizing.plot_1d_spikes(spikes=tor_s_list.numpy(), title='PyTorch Spikes', xlabel='simulating step',
-                        ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/PyTorch_S_{img_idx}.png")
-            visualizing.plot_1d_spikes(spikes=cri_s_list.numpy(), title='HW Spikes', xlabel='simulating step',
-                        ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/HW_S_{img_idx}.png")
+            # visualizing.plot_1d_spikes(spikes=tor_s_list.numpy(), title='PyTorch Spikes', xlabel='simulating step',
+            #             ylabel='neuron index', figsize=figsize, dpi=dpi)
+            # plt.savefig(f"figure/PyTorch_S_{img_idx}.png")
+            # visualizing.plot_1d_spikes(spikes=cri_s_list.numpy(), title='HW Spikes', xlabel='simulating step',
+            #             ylabel='neuron index', figsize=figsize, dpi=dpi)
+            # plt.savefig(f"figure/HW_S_{img_idx}.png")
             
             breakpoint()
             

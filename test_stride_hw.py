@@ -272,7 +272,7 @@ def main():
             
             loss = loss_fun(hw_out, label_onehot)
             hw_loss += loss.item() * label.numel()
-            hw_acc += (hw_out.argmax(0) == label).float().sum().item()      
+            hw_acc += (hw_out.argmax(1) == label).float().sum().item()      
                 
             loss = loss_fun(tor_out, label_onehot)
             tor_loss += loss.item() * label.numel()
@@ -280,7 +280,7 @@ def main():
             
             # reset the membrane potential to zero
             hs_bridge.FPGA_Execution.fpga_controller.clear(
-                len(cn.cnn_neurons), False, 0
+                len(cn.neuron_dict), False, 0
             )
             functional.reset_net(net_quan)
             
