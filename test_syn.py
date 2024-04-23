@@ -75,7 +75,9 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = 6
     
-    synth = synthnet(100,100,-2,6,10)
+    synth = synthnet(10,10,2,-2,6,5)
+    
+    breakpoint()
     
     hardwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
@@ -84,14 +86,14 @@ def main():
                                   outputs = synth.neuronsDict.keys(),
                                   coreID=1,
                                   perturbMag=0,
-                                  leak=2**6)
+                                  leak=2**6-1)
     softwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
                                   config=config, 
                                   outputs = synth.neuronsDict.keys(), 
                                   target='simpleSim',
                                   perturbMag=0,
-                                  leak=2**6)
+                                  leak=2**6-1)
 
     sw_s_list, hw_s_list = [], []
     sw_v_list, hw_v_list = [], []
@@ -131,7 +133,13 @@ def main():
     total = sw_s_list.numel()
     accuracy = num_matches/total * 100 if num_matches != 0 else 0
     print(f"Spikes {accuracy}% matches")
-
+    
+    # compare sw and hw membrane potentials
+    num_matches = (sw_v_list==hw_v_list).sum()
+    total = sw_v_list.numel()
+    accuracy = num_matches/total * 100 if num_matches != 0 else 0
+    print(f"Membrane Potential {accuracy}% matches")
+    
     #compare the pytorch and software firing rate
     sw_r_list = torch.mean(sw_s_list.T, axis=1, keepdims=True)
     hw_r_list = torch.mean(hw_s_list.T, axis=1, keepdims=True)
@@ -164,7 +172,7 @@ def main():
     hs_bridge.FPGA_Execution.fpga_controller.clear(
                 len(synth.neuronsDict), False, 0
             )
-
+    
 
 if __name__ == '__main__':
     main()
