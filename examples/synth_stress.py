@@ -70,7 +70,8 @@ class synthnet:
 
     def gen_outputs(self):
         neurons = random.sample(range(0, self.numNeurons), k=self.numOutputs)
-        self.outputNeurons = neurons
+        neurons_keys = [str(neu) for neu in neurons]
+        self.outputNeurons = neurons_keys
 
     def gen_inputs(self):
         numInputs = random.randrange(1,self.numAxons)

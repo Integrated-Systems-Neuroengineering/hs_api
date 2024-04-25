@@ -75,9 +75,7 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = 6
     
-    synth = synthnet(10,10,2,-2,6,5)
-    
-    breakpoint()
+    synth = synthnet(100,100,10,-2,6,4)
     
     hardwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
@@ -90,11 +88,12 @@ def main():
     softwareNetwork = CRI_network(axons=synth.axonsDict,
                                   connections=synth.neuronsDict,
                                   config=config, 
-                                  outputs = synth.neuronsDict.keys(), 
+                                  outputs = synth.outputNeurons, 
                                   target='simpleSim',
                                   perturbMag=0,
                                   leak=2**6-1)
 
+    # Store the spikes and membrane potentials
     sw_s_list, hw_s_list = [], []
     sw_v_list, hw_v_list = [], []
     
@@ -112,18 +111,20 @@ def main():
         hwSpikeIdx = [int(spike) for spike in hwSpike]   
         hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
-        sw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        sw_spikes = torch.zeros(len(synth.outputNeurons)).flatten()
         sw_spikes[swSpikeIdx] = 1
         sw_s_list.append(sw_spikes.unsqueeze(0))
         
-        hw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        hw_spikes = torch.zeros(len(synth.outputNeurons)).flatten()
         hw_spikes[hwSpikeIdx] = 1
         hw_s_list.append(hw_spikes.unsqueeze(0))
 
     
-    # plot the spikes
+    # convert the list to tensor
     sw_s_list = torch.cat(sw_s_list)
     hw_s_list = torch.cat(hw_s_list)
+    sw_v_list = torch.cat(sw_v_list)
+    hw_v_list = torch.cat(hw_v_list)
     
     figsize = (12, 8)
     dpi = 100
@@ -133,12 +134,16 @@ def main():
     total = sw_s_list.numel()
     accuracy = num_matches/total * 100 if num_matches != 0 else 0
     print(f"Spikes {accuracy}% matches")
+    if accuracy != 100:
+        breakpoint()
     
     # compare sw and hw membrane potentials
     num_matches = (sw_v_list==hw_v_list).sum()
     total = sw_v_list.numel()
     accuracy = num_matches/total * 100 if num_matches != 0 else 0
     print(f"Membrane Potential {accuracy}% matches")
+    if accuracy != 100:
+        breakpoint()
     
     #compare the pytorch and software firing rate
     sw_r_list = torch.mean(sw_s_list.T, axis=1, keepdims=True)
@@ -156,9 +161,6 @@ def main():
     plt.savefig(f"figure/HW_S.png")
     
     # plot the membrane potential 
-    sw_v_list = torch.cat(sw_v_list)
-    hw_v_list = torch.cat(hw_v_list)
-    
     plot_2d_heatmap(array=sw_v_list.numpy(), title='Software membrane potentials', xlabel='simulating step',
                                 ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
     plt.savefig(f"figure/SW_V.png")
@@ -175,4 +177,5 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    for i in range(10):
+        main()
