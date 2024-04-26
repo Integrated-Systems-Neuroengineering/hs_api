@@ -7,7 +7,6 @@ authors = ["Justin Frank & Abhinav Uppal"]
 [tool.poetry.dependencies]
 
 python = ">=3.10,<3.11"
-numba = "^0.58.1"
 numpy = ">=1.18"
 PyYAML = "^6.0"
 matplotlib = "^3.5.1"
