@@ -81,7 +81,7 @@ def main():
                                   connections=synth.neuronsDict,
                                   config=config, 
                                   target='CRI', 
-                                  outputs = synth.neuronsDict.keys(),
+                                  outputs = synth.outputNeurons, 
                                   coreID=1,
                                   perturbMag=0,
                                   leak=2**6-1)
@@ -111,11 +111,11 @@ def main():
         hwSpikeIdx = [int(spike) for spike in hwSpike]   
         hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
-        sw_spikes = torch.zeros(len(synth.outputNeurons)).flatten()
+        sw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
         sw_spikes[swSpikeIdx] = 1
         sw_s_list.append(sw_spikes.unsqueeze(0))
         
-        hw_spikes = torch.zeros(len(synth.outputNeurons)).flatten()
+        hw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
         hw_spikes[hwSpikeIdx] = 1
         hw_s_list.append(hw_spikes.unsqueeze(0))
 
