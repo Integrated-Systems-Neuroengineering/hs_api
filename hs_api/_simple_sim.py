@@ -453,7 +453,8 @@ class simple_sim:
                     pass #do nothing since Fxp doesn't like shifts
                 self.membranePotentials(self.membranePotentials+perturbation)
 
-            spiked_inds = np.nonzero(self.membranePotentials() > self.threshold())
+            # spike when the membrane potential >= self.threshold
+            spiked_inds = np.nonzero(self.membranePotentials() >= self.threshold())
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
             self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
@@ -466,8 +467,11 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             #if self.neuronModel == 2:
                 #Leaky Integrate and fire
-
-            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // (2**self.leak)))
+            
+            leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
+            leakage(leakage >> self.leak)
+            self.membranePotentials(self.membranePotentials() - leakage)
+            
             #now let's try phase two
             a = np.zeros(nAxons)
             a[inputs] = 1
