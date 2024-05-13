@@ -463,14 +463,16 @@ class simple_sim:
 
             if self.perturbMag != None:
                 perturbBits = 17
-                perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons), dtype =  self.formatDict['membrane_potential'] )#upper is exclusive so no need to subtract one
+                perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
                 perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )#set LSB to 1
                 shift = self.perturbMag - (perturbBits - 1)
                 perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs,0))
                 perturbation = rightshiftArr(perturbation, np.absolute(perturbs), np.less(perturbs,0))
                 self.membranePotentials(self.membranePotentials+perturbation)
 
-            spiked_inds = np.nonzero(self.membranePotentials() > threshs)
+            # spike when the membrane potential >= self.threshold
+            spiked_inds = np.nonzero(self.membranePotentials() >= self.threshold())
+
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
             self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
@@ -483,8 +485,11 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             #if self.neuronModel == 2:
                 #Leaky Integrate and fire
-            # you'll have to vectorize this
-            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // np.power(2,leaks)))
+
+            leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
+            leakage(leakage >> self.leak)
+            self.membranePotentials(self.membranePotentials() - leakage)
+
             #now let's try phase two
             a = np.zeros(nAxons)
             a[inputs] = 1

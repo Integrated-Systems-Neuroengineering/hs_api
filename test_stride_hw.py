@@ -15,6 +15,7 @@ from spikingjelly import visualizing
 from matplotlib import pyplot as plt
 import matplotlib
 import numpy as np
+import hs_bridge
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', default=1, type=int, help='stride size')
@@ -27,7 +28,6 @@ parser.add_argument('-T', default=16, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
-parser.add_argument('-figure-dir', default='/Users/keli/Code/CRI/hs_api/figure',type=str, help='path to output figure' )
 
 def norm(x: torch.Tensor):
     s = x.shape
@@ -96,7 +96,7 @@ class Net(nn.Module):
         return x
     
 def main():
-    #python test_stride_sw.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/nmnist/checkpoint_latest_T_16_C_20_lr_0.001_opt_adam.pth -data-dir /Users/keli/Code/CRI/data/NMNIST 
+    #python test_stride_hw.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/nmnist/checkpoint_latest_T_16_C_20_lr_0.001_opt_adam.pth -data-dir /Users/keli/Code/CRI/data/NMNIST 
     args = parser.parse_args()
     print(args)
     
@@ -115,22 +115,18 @@ def main():
     
     checkpoint = torch.load(args.resume_path, map_location=device)
     net.load_state_dict(checkpoint['net'])
-    net_cnn.load_state_dict(checkpoint['net'])
     
     net.eval()
-    net_cnn.eval()
     
     bn = BN_Folder()
     net_bn = bn.fold(net)
-    net_cnn_bn = bn.fold(net_cnn)
     
     qn = Quantize_Network(w_alpha=args.alpha)
     net_quan = qn.quantize(net_bn)
-    net_cnn_quan = qn.quantize(net_cnn_bn)
     
     #Set the parameters for conversion
     input_layer = 0 #first pytorch layer that acts as synapses, indexing begins at 0 
-    output_layer = 0 #last pytorch layer that acts as synapses
+    output_layer = 4 #last pytorch layer that acts as synapses
     input_shape = (2, 34, 34)
     v_threshold = qn.v_threshold
 
@@ -144,8 +140,6 @@ def main():
     
     cn.layer_converter(net_quan)
     
-    breakpoint()
-    
     axons = [ key if '256' in [k for k, v in cn.axon_dict[key]] else '*' for key in cn.axon_dict.keys()]
     
     config = {}
@@ -153,18 +147,25 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = int(qn.v_threshold)
     
-    softwareNetwork = CRI_network(dict(cn.cnn_axons),
-            connections=dict(cn.cnn_neurons),
-            config=config,target='simpleSim', 
-            outputs = cn.cnn_output,
+    hardwareNetwork = CRI_network(dict(cn.axon_dict),
+            connections=dict(cn.neuron_dict),
+            config=config,
+            target='CRI', 
+            outputs = cn.output_neurons,
             simDump=False,
             coreID=1,
-            perturbMag=None, #Zero randomness  
-            leak=2**6) #IF
+            perturbMag=0, #Zero randomness  
+            leak=2**6-1) #IF
     
     encoder = encoding.PoissonEncoder()
     
     writer = SummaryWriter("log")
+    
+    start_time = time.time()
+    hw_loss, hw_acc = 0., 0.
+    tor_loss, tor_acc = 0., 0.
+    test_samples = 0
+    loss_fun = nn.MSELoss()
     
     with torch.no_grad():
         # Testing one image at a time
@@ -174,106 +175,130 @@ def main():
             
             img = img.transpose(0, 1) # [1, T, C, H, W] -> [T, 1, C, H, W]
             
-            cri_v_list, tor_v_list = [], []
-            cri_s_list, tor_s_list = [], []
+            tor_v_list, hw_v_list = [], []
+            tor_s_list, hw_s_list = [], []
             
-            input_axons = []
-            
+            tor_out, hw_out = 0., 0.
             
             for i, t in enumerate(img):
                 
+                # encode the image into spikes
                 encoded_img = encoder(t) #(B, C, H, W)
                 
-                cnn_out = net_cnn_quan.forward_cnn(encoded_img)
+                # Running on PyTorch
+                cnn_out = net_quan(encoded_img)
+                tor_out += cnn_out
                 
+                # Record the spikes and membrane potential 
                 tor_s_list.append(cnn_out.flatten().unsqueeze(0))
-                tor_v_list.append(net_cnn_quan.lif1.v.flatten().unsqueeze(0))
+                tor_v_list.append(torch.cat((net_quan.lif1.v.flatten().unsqueeze(0), net_quan.lif2.v.flatten().unsqueeze(0)),1))
                 
+                # Conver the spikes into axon 
                 cri_input = cn._input_converter_step(encoded_img)
                 
-                axons_w = []
-                for k in cri_input[0]:
-                    if k in axons:
-                        w = cn.axon_dict[k][[key for key,_ in cn.axon_dict[k]].index('256')][1]
-                        axons_w.append((k,w))
-                input_axons.append(axons_w)
+                # Running on Hardware
+                # hwOutput: [(key, potential) for all the neurons in hardwareNetwork] 
+                hwOutput, spikeResult = hardwareNetwork.step(cri_input[0], membranePotential=True)
+                hwSpike, latency, hbmAcc = spikeResult
+                spikeIdx = [int(spike)-int(cn.output_neurons[0]) for spike in hwSpike]
+                hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
                 
-                # swOutput: [(key, potential) for all the neurons in softwareNetwork] 
-                swOutput, swSpike  = softwareNetwork.step(cri_input[0], membranePotential=True)
-                spikeIdx = [int(spike) for spike in swSpike]
-                
-                cri_v_list.append(torch.tensor([v for k,v in swOutput]).unsqueeze(0))
                 if i != 0:
-                    cri_spikes = torch.zeros(cnn_out.shape).flatten()
-                    cri_spikes[spikeIdx] = 1
-                    cri_s_list.append(cri_spikes.unsqueeze(0))
-            
+                    hw_spikes = torch.zeros(cnn_out.shape).flatten()
+                    hw_spikes[spikeIdx] = 1
+                    hw_s_list.append(hw_spikes.unsqueeze(0))
+                    hw_out += hw_spikes.unsqueeze(0)
+                    
             # empty input for phase delay 
-            swOutput, swSpike = softwareNetwork.step([], membranePotential=True)
-            spikeIdx = [int(spike) for spike in swSpike]
-            cri_spikes = torch.zeros(cnn_out.shape).flatten()
-            cri_spikes[spikeIdx] = 1
-            cri_s_list.append(cri_spikes.unsqueeze(0))
+            hwOutput, spikeResult = hardwareNetwork.step([], membranePotential=True)
+            hwSpike, latency, hbmAcc = spikeResult
+            spikeIdx = [int(spike)-int(cn.output_neurons[0]) for spike in hwSpike]
+            hw_spikes = torch.zeros(cnn_out.shape).flatten()
+            hw_spikes[spikeIdx] = 1
+            hw_s_list.append(hw_spikes.unsqueeze(0))
+            hw_out += hw_spikes.unsqueeze(0)
             
             # plot the membrane potential 
             tor_v_list = torch.cat(tor_v_list)
-            cri_v_list = torch.cat(cri_v_list)
-            
+            hw_v_list = torch.cat(hw_v_list)
+           
             figsize = (12, 8)
             dpi = 100
             plot_2d_heatmap(array=tor_v_list.numpy(), title='PyTorch membrane potentials', xlabel='simulating step',
                                         ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"../figure/PyTorch_V_{img_idx}.png")
+            plt.savefig(f"figure/PyTorch_V_{img_idx}.png")
             
-            plot_2d_heatmap(array=cri_v_list.numpy(), title='CRI membrane potentials', xlabel='simulating step',
+            plot_2d_heatmap(array=hw_v_list.numpy(), title='HW membrane potentials', xlabel='simulating step',
                                         ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-            plt.savefig(f"../figure/CRI_V_{img_idx}.png")
-            
+            plt.savefig(f"figure/HW_V_{img_idx}.png")
             
             #plot the spikes
-            cri_s_list = torch.cat(cri_s_list)
+            hw_s_list = torch.cat(hw_s_list)
             tor_s_list = torch.cat(tor_s_list)
             
-            #compare the pytorch and software spike output
-            num_matches = (tor_s_list==cri_s_list).sum()
-            total = tor_s_list.numel()
-            accuracy = num_matches/total * 100 if num_matches != 0 else 0
-            print(f"Spikes {accuracy}% matches")
-            writer.add_scalar('spike_match', accuracy, img_idx)
+            #compare the pytorch and hw spike output
+            num_matches = (tor_s_list==hw_s_list).sum()
+            accuracy = (tor_s_list==hw_s_list).sum()/tor_s_list.numel() * 100 if num_matches != 0 else 0
+            print(f"HW Spikes {accuracy}% matches")
+            writer.add_scalar('hw_spike_match', accuracy, img_idx)
             
-            #compare the pytorch and software membrane potential
-            num_matches = (tor_v_list==cri_v_list).sum()
-            total = tor_v_list.numel()
-            accuracy = num_matches/total * 100 if num_matches != 0 else 0
-            print(f"Membrane potential {accuracy}% matches")
-            writer.add_scalar('potential_match', accuracy, img_idx)
+            #compare the pytorch and hw membrane potential
+            num_matches = (tor_v_list==hw_v_list).sum()
+            accuracy = (tor_v_list==hw_v_list).sum()/tor_v_list.numel() * 100 if num_matches != 0 else 0
+            print(f"HW Membrane potential {accuracy}% matches")
+            writer.add_scalar('hw_potential_match', accuracy, img_idx)
             
-            #compare the pytorch and software firing rate
+            #compare the pytorch and hardware firing rate
             tor_r_list = torch.mean(tor_s_list.T, axis=1, keepdims=True)
-            cri_r_list = torch.mean(cri_s_list.T, axis=1, keepdims=True)
-            num_matches = (tor_r_list==cri_r_list).sum()
-            total = cri_r_list.numel()
-            accuracy = num_matches/total * 100 if num_matches != 0 else 0
-            print(f"Firing rate {accuracy}% matches")
-            writer.add_scalar('firing_rate_match', accuracy, img_idx)
+            hw_r_list = torch.mean(hw_s_list.T, axis=1, keepdims=True)
+            
+            num_matches = (tor_r_list==hw_r_list).sum()
+            accuracy = (tor_r_list==hw_r_list).sum()/tor_r_list.numel() * 100 if num_matches != 0 else 0
+            print(f"HW Firing rate {accuracy}% matches")
+            writer.add_scalar('HW_firing_rate_match', accuracy, img_idx)
             
             visualizing.plot_1d_spikes(spikes=tor_s_list.numpy(), title='PyTorch Spikes', xlabel='simulating step',
                         ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"../figure/PyTorch_S_{img_idx}.png")
-            visualizing.plot_1d_spikes(spikes=cri_s_list.numpy(), title='CRI Spikes', xlabel='simulating step',
+            plt.savefig(f"figure/PyTorch_S_{img_idx}.png")
+            visualizing.plot_1d_spikes(spikes=hw_s_list.numpy(), title='HW Spikes', xlabel='simulating step',
                         ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"../figure/CRI_S_{img_idx}.png")
+            plt.savefig(f"figure/HW_S_{img_idx}.png")
 
+            hw_out /= args.T
+            tor_out /= args.T
+            
+            label_onehot = F.one_hot(label, args.targets).float()
+            test_samples += label.numel()
+            
+            loss = loss_fun(hw_out, label_onehot)
+            hw_loss += loss.item() * label.numel()
+            hw_acc += (hw_out.argmax(1) == label).float().sum().item()      
+                
+            loss = loss_fun(tor_out, label_onehot)
+            tor_loss += loss.item() * label.numel()
+            tor_acc += (tor_out.argmax(1)==label).float().sum().item()
             
             # reset the membrane potential to zero
-            softwareNetwork.simpleSim.initialize_sim_vars(len(cn.cnn_neurons))
-            functional.reset_net(net_cnn_quan)
+            hs_bridge.FPGA_Execution.fpga_controller.clear(
+                len(cn.neuron_dict), False, 0
+            )
+            functional.reset_net(net_quan)
             
             # reset pyplot interface
             plt.close()
-            
-            breakpoint()
+            # breakpoint()
 
+    test_time = time.time()
+    test_speed = test_samples / (test_time - start_time)
+    hw_loss /= test_samples
+    hw_acc /= test_samples
+
+    tor_loss /= test_samples
+    tor_acc /= test_samples   
+    
+    print(f'hw_loss ={hw_loss: .4f}, hw_acc ={hw_acc: .4f}')
+    print(f'tor_loss ={tor_loss: .4f}, tor_acc ={tor_acc: .4f}')
+    print(f'test speed ={test_speed: .4f} images/s')
     
 if __name__ == '__main__':
     main()
