@@ -23,11 +23,11 @@ for i in range(100):
     #else:
     #    inputs[i] = ['alpha', 'beta']
 
-N1 = LIF_neuron(3,2,1)
-N2 = LIF_neuron(6,5,4)
+N1 = LIF_neuron(3,-16,2**5)
+N2 = LIF_neuron(6,-16,2**5)
 
 #Define an axons dictionary
-axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)]}
+axons = {'alpha': [('01', 1.0),('02', 2.0),('03', 3.0)]}
 
 #Define a connections dictionary
 connections = {'01': (N1,[('02',6),('03',8) ]),
@@ -36,7 +36,7 @@ connections = {'01': (N1,[('02',6),('03',8) ]),
 
 #Initialize a CRI_network object for interacting with the hardware and the software
 breakpoint()
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(),perturbMag=30, leak=2**5,simDump = False)
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
 #hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
 
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, target='CRI')
