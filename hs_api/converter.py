@@ -611,7 +611,7 @@ class CRI_Converter:
         self.NULL_INDICIES = (-1,-1)
         
         self.axon_dict = defaultdict(list)
-        self.neuron_dict = defaultdict(list)
+        self.neuron_dict = defaultdict(tuple)
         self.output_neurons = []
         self.input_shape = np.array(input_shape)
         self.num_steps = num_steps
