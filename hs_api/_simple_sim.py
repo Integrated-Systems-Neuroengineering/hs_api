@@ -442,8 +442,6 @@ class simple_sim:
         leaks = [self.connections[key][0].get_leak() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
         return leaks
 
-
-
     def step_run(self,inputs):
         #breakpoint()
         #
@@ -456,22 +454,23 @@ class simple_sim:
             initialize_sim_vars()
             self.stepNum == 0
         else:
-            shifts = self.get_perturbMag()
             #membranePotentials = copy.deepcopy(self.membranePotentials)
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
-
-            if self.perturbMag != None:
-                perturbBits = 17
-                perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
-                perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )#set LSB to 1
-                shift = self.perturbMag - (perturbBits - 1)
-                perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs,0))
-                perturbation = rightshiftArr(perturbation, np.absolute(perturbs), np.less(perturbs,0))
-                self.membranePotentials(self.membranePotentials+perturbation)
+            perturbBits = 17
+            # generate a random number
+            perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
+            # balancing the positive and negative distribution by setting LSB to 1
+            perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )
+            # signed left shift increase the magnitude of the perturbation
+            perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs,0)) 
+            # signed right shift decrease the magnitude of the perturbation
+            perturbation = rightshiftArr(perturbation, np.absolute(perturbs), np.less(perturbs,0)) 
+            # add the noise to the membrane potential
+            self.membranePotentials(self.membranePotentials+perturbation)
 
             # spike when the membrane potential >= self.threshold
-            spiked_inds = np.nonzero(self.membranePotentials() >= self.threshold())
+            spiked_inds = np.nonzero(self.membranePotentials() >= threshs)
 
             self.membranePotentials[spiked_inds] = 0
             #TODO: you may be able to avoid the transpose if you use fortran ordering flatten
@@ -486,9 +485,11 @@ class simple_sim:
             #if self.neuronModel == 2:
                 #Leaky Integrate and fire
 
-            leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
-            leakage(leakage >> self.leak)
-            self.membranePotentials(self.membranePotentials() - leakage)
+            self.membranePotentials(self.membranePotentials() - (self.membranePotentials() // np.power(2,leaks)))
+            
+            # leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
+            # leakage(leakage >> leaks)
+            # self.membranePotentials(self.membranePotentials() - leakage)
 
             #now let's try phase two
             a = np.zeros(nAxons)
@@ -515,9 +516,6 @@ class simple_sim:
             membraneUpdates = Fxp(membraneUpdates,dtype=self.formatDict['membrane_potential'])
 
             #breakpoint()
-
-
-
             combinedUpdates = membraneUpdates + membraneUpdatesAxon
             #breakpoint()
             membranePotentials = self.membranePotentials + combinedUpdates.transpose()
