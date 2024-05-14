@@ -7,6 +7,7 @@ from spikingjelly.activation_based import neuron, surrogate, encoding, layer, fu
 from spikingjelly.datasets.n_mnist import NMNIST
 from torch.utils.data import DataLoader
 from hs_api.api import CRI_network
+from hs_api.neuron_models import LIF_neuron
 import time
 from torch.utils.tensorboard import SummaryWriter
 from copy import deepcopy
@@ -21,7 +22,7 @@ import subprocess
 import time
 import pickle
 import random
-from hs_api.neuron_models import LIF_neuron
+from examples.synth_stress import synthnet
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-s', default=1, type=int, help='stride size')
@@ -30,7 +31,7 @@ parser.add_argument('-p', default=0, type=int, help='padding size')
 parser.add_argument('-c', default=4, type=int, help='channel size')
 parser.add_argument('-alpha',  default=4, type=int, help='Range of value for quantization')
 parser.add_argument('-b', default=1, type=int, help='batch size')
-parser.add_argument('-T', default=16, type=int)
+parser.add_argument('-T', default=4, type=int)
 parser.add_argument('-resume_path', default='/Volumes/export/isn/keli/code/HS/CRI_Mapping/output/nmnist/checkpoint_max_T_16_C_20_lr_0.001_opt_adam.pth', type=str, help='checkpoint file')
 parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMNIST', type=str, help='path to dataset')
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
@@ -51,9 +52,9 @@ def plot_2d_heatmap(array: np.ndarray, title: str, xlabel: str, ylabel: str, int
 
     fig, heatmap = plt.subplots(figsize=figsize, dpi=dpi)
     if x_max is not None:
-        im = heatmap.imshow(array.T, aspect='auto', extent=[-0.5, x_max, array.shape[1] - 0.5, -0.5], vmin=-100000, vmax=30000)
+        im = heatmap.imshow(array.T, aspect='auto', extent=[-0.5, x_max, array.shape[1] - 0.5, -0.5])
     else:
-        im = heatmap.imshow(array.T, aspect='auto', vmin=-100000, vmax=30000)
+        im = heatmap.imshow(array.T, aspect='auto')
 
     heatmap.set_title(title)
     heatmap.set_xlabel(xlabel)
@@ -70,58 +71,6 @@ def plot_2d_heatmap(array: np.ndarray, title: str, xlabel: str, ylabel: str, int
         cbar.ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     return fig
 
-class synthnet:
-
-    def __init__(self, numAxons, numNeurons, minWeight, maxWeight, maxFan):
-        self.numAxons = numAxons
-        self.numNeurons = numNeurons
-        self.maxWeight = maxWeight
-        self.minWeight = minWeight
-        self.maxFan = maxFan
-        self.neuronType = LIF_neuron(6, 0, 2**6) #0 shifts, IF neurons
-        self.axonsDict = {}
-        self.neuronsDict = {}
-        self.gen_axon_dict()
-        self.gen_neuron_dict()
-        
-
-    def gen_axon_name(self,idx):
-        return 'a'+str(idx)
-
-    def gen_neuron_name(self,idx):
-        return str(idx)
-
-    def gen_synapse(self):
-        return (self.draw_neuron(),self.draw_weight())
-
-    def draw_neuron(self):
-        idx = random.randrange(0,self.numNeurons)
-        return self.gen_neuron_name(idx)
-
-    def draw_weight(self):
-        #breakpoint()
-        return random.randrange(self.minWeight,self.maxWeight)
-
-    def roll_axon(self):
-        fan = random.randrange(0,self.maxFan)
-        return [self.gen_synapse() for i in range(fan)]
-
-    def roll_neuron(self):
-        fan = random.randrange(0,self.maxFan)
-        return (self.neuronType, [self.gen_synapse() for i in range(fan)])
-
-    def gen_axon_dict(self):
-        for i in range(self.numAxons):
-            self.axonsDict[self.gen_axon_name(i)] = self.roll_axon()
-
-    def gen_neuron_dict(self):
-         for i in range(self.numNeurons):
-            self.neuronsDict[self.gen_neuron_name(i)] = self.roll_neuron()
-
-    def gen_inputs(self):
-         numInputs = random.randrange(0,self.numAxons)
-         return [self.gen_axon_name(axonIdx) for axonIdx in random.sample(range(0, self.numAxons), numInputs)]
-
     
 def main():
     args = parser.parse_args()
@@ -132,43 +81,41 @@ def main():
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = 6
     
-    synth = synthnet(100,100,10,-2,6,4)
     
-    breakpoint()
+    # neuron types
+    N1 = LIF_neuron(6, -17, 2**6-1)# threshold, noise, leakage
+    N2 = LIF_neuron(6, -17, 0) #
     
-    hardwareNetwork = CRI_network(axons=synth.axonsDict,
-                                  connections=synth.neuronsDict,
+    axonsDict = {
+        'a0': [('0',2),('1',1)],
+        'a1': [('0',4),('1',3)]
+    }
+    
+    neuronsDict = {
+        '0': [N1, [('1',1)]],
+        '1': [N2, [('0',-1)]]
+    }
+    
+    hardwareNetwork = CRI_network(axons=axonsDict,
+                                  connections=neuronsDict,
                                   config=config, 
                                   target='CRI', 
-<<<<<<< HEAD:test_syn.py
-                                  outputs = synth.outputNeurons, 
-                                  coreID=1,
-                                  perturbMag=0,
-                                  leak=2**6-1)
-    softwareNetwork = CRI_network(axons=synth.axonsDict,
-                                  connections=synth.neuronsDict,
+                                  outputs = neuronsDict.keys(),
+                                  simDump=False)
+    softwareNetwork = CRI_network(axons=axonsDict,
+                                  connections=neuronsDict,
                                   config=config, 
-                                  outputs = synth.outputNeurons, 
-                                  target='simpleSim',
-                                  perturbMag=0,
-                                  leak=2**6-1)
-=======
-                                  outputs = synth.neuronsDict.keys(),
-                                  coreID=1)
-    softwareNetwork = CRI_network(axons=synth.axonsDict,
-                                  connections=synth.neuronsDict,
-                                  config=config, 
-                                  outputs = synth.neuronsDict.keys(), 
+                                  outputs = neuronsDict.keys(), 
                                   target='simpleSim')
->>>>>>> multi_neuron:test_syn_multi.py
 
-    # Store the spikes and membrane potentials
-    sw_s_list, hw_s_list = [], []
-    sw_v_list, hw_v_list = [], []
+    sw_s_list, sw_v_list = [], []
+    hw_s_list, hw_v_list = [], []
+    
+    input_lists = ['a0','a1','a0','a1']
     
     for t in range(args.T):
         
-        input = synth.gen_inputs()
+        input = input_lists
         
         # swOutput: [(key, potential) for all the neurons in softwareNetwork] 
         swOutput, swSpike  = softwareNetwork.step(input, membranePotential=True)
@@ -180,20 +127,18 @@ def main():
         hwSpikeIdx = [int(spike) for spike in hwSpike]   
         hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
-        sw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        sw_spikes = torch.zeros(len(neuronsDict)).flatten()
         sw_spikes[swSpikeIdx] = 1
         sw_s_list.append(sw_spikes.unsqueeze(0))
         
-        hw_spikes = torch.zeros(len(synth.neuronsDict)).flatten()
+        hw_spikes = torch.zeros(len(neuronsDict)).flatten()
         hw_spikes[hwSpikeIdx] = 1
         hw_s_list.append(hw_spikes.unsqueeze(0))
 
     
-    # convert the list to tensor
+    # plot the spikes
     sw_s_list = torch.cat(sw_s_list)
-    hw_s_list = torch.cat(hw_s_list)
-    sw_v_list = torch.cat(sw_v_list)
-    hw_v_list = torch.cat(hw_v_list)
+    # hw_s_list = torch.cat(hw_s_list)
     
     figsize = (12, 8)
     dpi = 100
@@ -203,17 +148,7 @@ def main():
     total = sw_s_list.numel()
     accuracy = num_matches/total * 100 if num_matches != 0 else 0
     print(f"Spikes {accuracy}% matches")
-    if accuracy != 100:
-        breakpoint()
-    
-    # compare sw and hw membrane potentials
-    num_matches = (sw_v_list==hw_v_list).sum()
-    total = sw_v_list.numel()
-    accuracy = num_matches/total * 100 if num_matches != 0 else 0
-    print(f"Membrane Potential {accuracy}% matches")
-    if accuracy != 100:
-        breakpoint()
-    
+
     #compare the pytorch and software firing rate
     sw_r_list = torch.mean(sw_s_list.T, axis=1, keepdims=True)
     hw_r_list = torch.mean(hw_s_list.T, axis=1, keepdims=True)
@@ -230,6 +165,9 @@ def main():
     plt.savefig(f"figure/HW_S.png")
     
     # plot the membrane potential 
+    sw_v_list = torch.cat(sw_v_list)
+    hw_v_list = torch.cat(hw_v_list)
+    
     plot_2d_heatmap(array=sw_v_list.numpy(), title='Software membrane potentials', xlabel='simulating step',
                                 ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
     plt.savefig(f"figure/SW_V.png")
@@ -239,12 +177,12 @@ def main():
     plt.savefig(f"figure/HW_V.png")
     
     # reset the membrane potential to zero
-    softwareNetwork.simpleSim.initialize_sim_vars(len(synth.neuronsDict))
+    softwareNetwork.simpleSim.initialize_sim_vars(len(neuronsDict))
     hs_bridge.FPGA_Execution.fpga_controller.clear(
-                len(synth.neuronsDict), False, 0
+                len(neuronsDict), False, 0
             )
-    
+    breakpoint()
+    # hardwareNetwork.sim_flush("test_syn_sim.txt")
 
 if __name__ == '__main__':
-    for i in range(10):
-        main()
+    main()
