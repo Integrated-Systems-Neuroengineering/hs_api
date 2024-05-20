@@ -77,14 +77,14 @@ def main():
     print(args)
     
     config = {}
-    config['neuron_type'] = "I&F"
+    config['neuron_type'] = "LI&F"
     config['global_neuron_params'] = {}
     config['global_neuron_params']['v_thr'] = 6
     
     
-    # neuron types
-    N1 = LIF_neuron(6, -17, 2**6-1)# threshold, noise, leakage
-    N2 = LIF_neuron(6, -17, 0) #
+    # neuron_types(threshold, noise, leakage)
+    N1 = LIF_neuron(6, -17, 2**6-1) # zero pertubation, IF
+    N2 = LIF_neuron(6, -17, 0) # zero pertubation, memoryless
     
     axonsDict = {
         'a0': [('0',2),('1',1)],
@@ -92,8 +92,8 @@ def main():
     }
     
     neuronsDict = {
-        '0': [N1, [('1',1)]],
-        '1': [N2, [('0',-1)]]
+        '0': (N1, [('1',1)]),
+        '1': (N2, [('0',-1)])
     }
     
     hardwareNetwork = CRI_network(axons=axonsDict,
@@ -121,28 +121,50 @@ def main():
         swOutput, swSpike  = softwareNetwork.step(input, membranePotential=True)
         swSpikeIdx = [int(spike) for spike in swSpike]
         sw_v_list.append(torch.tensor([v for k,v in swOutput]).unsqueeze(0))
-
-        hwOutput, spikeResult  = hardwareNetwork.step(input, membranePotential=True)
-        hwSpike, latency, hbmAcc = spikeResult
-        hwSpikeIdx = [int(spike) for spike in hwSpike]   
-        hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
         sw_spikes = torch.zeros(len(neuronsDict)).flatten()
         sw_spikes[swSpikeIdx] = 1
         sw_s_list.append(sw_spikes.unsqueeze(0))
+        
+        hwOutput, spikeResult  = hardwareNetwork.step(input, membranePotential=True)
+        hwSpike, latency, hbmAcc = spikeResult
+        hwSpikeIdx = [int(spike) for spike in hwSpike]   
+        hw_v_list.append(torch.tensor([v for k,v in hwOutput]).unsqueeze(0)) 
         
         hw_spikes = torch.zeros(len(neuronsDict)).flatten()
         hw_spikes[hwSpikeIdx] = 1
         hw_s_list.append(hw_spikes.unsqueeze(0))
 
     
-    # plot the spikes
-    sw_s_list = torch.cat(sw_s_list)
-    # hw_s_list = torch.cat(hw_s_list)
-    
     figsize = (12, 8)
     dpi = 100
-
+    
+    # plot the spikes and membrane potential for sw
+    sw_s_list = torch.cat(sw_s_list)
+    sw_v_list = torch.cat(sw_v_list)
+    visualizing.plot_1d_spikes(spikes=sw_s_list.numpy(), title='Software Spikes', xlabel='simulating step',
+                ylabel='neuron index', figsize=figsize, dpi=dpi)
+    plt.savefig(f"figure/SW_S.png")
+    plot_2d_heatmap(array=sw_v_list.numpy(), title='Software membrane potentials', xlabel='simulating step',
+                                ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
+    plt.savefig(f"figure/SW_V.png")
+    # reset the membrane potential to zero
+    softwareNetwork.simpleSim.initialize_sim_vars(len(neuronsDict))
+    
+    # plot the spikes and membrane potential for hw
+    hw_s_list = torch.cat(hw_s_list)
+    hw_v_list = torch.cat(hw_v_list)
+    visualizing.plot_1d_spikes(spikes=hw_s_list.numpy(), title='Hardware Spikes', xlabel='simulating step',
+                ylabel='neuron index', figsize=figsize, dpi=dpi)
+    plt.savefig(f"figure/HW_S.png")
+    plot_2d_heatmap(array=hw_v_list.numpy(), title='Hardware membrane potentials', xlabel='simulating step',
+                                ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
+    plt.savefig(f"figure/HW_V.png")
+    # reset the membrane potential to zero
+    hs_bridge.FPGA_Execution.fpga_controller.clear(
+                len(neuronsDict), False, 0
+            )
+    
     #compare the software and hardware spike output
     num_matches = (sw_s_list==hw_s_list).sum()
     total = sw_s_list.numel()
@@ -156,33 +178,8 @@ def main():
     total = sw_r_list.numel()
     accuracy = num_matches/total * 100 if num_matches != 0 else 0
     print(f"Firing rate {accuracy}% matches")
-    
-    visualizing.plot_1d_spikes(spikes=sw_s_list.numpy(), title='Software Spikes', xlabel='simulating step',
-                ylabel='neuron index', figsize=figsize, dpi=dpi)
-    plt.savefig(f"figure/SW_S.png")
-    visualizing.plot_1d_spikes(spikes=hw_s_list.numpy(), title='Hardware Spikes', xlabel='simulating step',
-                ylabel='neuron index', figsize=figsize, dpi=dpi)
-    plt.savefig(f"figure/HW_S.png")
-    
-    # plot the membrane potential 
-    sw_v_list = torch.cat(sw_v_list)
-    hw_v_list = torch.cat(hw_v_list)
-    
-    plot_2d_heatmap(array=sw_v_list.numpy(), title='Software membrane potentials', xlabel='simulating step',
-                                ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-    plt.savefig(f"figure/SW_V.png")
-    
-    plot_2d_heatmap(array=hw_v_list.numpy(), title='Hardware membrane potentials', xlabel='simulating step',
-                                ylabel='neuron index', int_x_ticks=True, x_max=args.T, figsize=figsize, dpi=dpi)
-    plt.savefig(f"figure/HW_V.png")
-    
-    # reset the membrane potential to zero
-    softwareNetwork.simpleSim.initialize_sim_vars(len(neuronsDict))
-    hs_bridge.FPGA_Execution.fpga_controller.clear(
-                len(neuronsDict), False, 0
-            )
+
     breakpoint()
-    # hardwareNetwork.sim_flush("test_syn_sim.txt")
 
 if __name__ == '__main__':
     main()
