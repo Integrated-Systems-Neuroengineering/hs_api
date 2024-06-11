@@ -1,4 +1,5 @@
 from hs_api.api import CRI_network
+from hs_api.neuron_models import LIF_neuron
 import sys
 import subprocess
 import time
@@ -22,60 +23,21 @@ for i in range(100):
     #else:
     #    inputs[i] = ['alpha', 'beta']
 
-print(inputs)
+N1 = LIF_neuron(3,-16,2**5)
+N2 = LIF_neuron(6,-16,2**5)
 
 #Define an axons dictionary
-axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)]}
+axons = {'alpha': [('01', 1.0),('02', 2.0),('03', 3.0)]}
 
 #Define a connections dictionary
-connections = {'01': [('02',5)],
-               '02': [],
-               '03': [],
-               '04': [],
-               '05': [],
-               '06': [],
-               '07': [],
-               '08': [],
-               '09': [],
-               '10': [],
-               '11': [],
-               '12': [],
-               '13': [],
-               '14': [],
-               '15': [],
-               '16': [],
-               'a': [],
-               'b': [],
-               'c': [],
-               'd': [],
-               'e': [],
-               'f': [],
-               'g': [],
-               'h': [],
-               'i': [],
-               'j': [],
-               'k': [],
-               'l': [],
-               'm': [],
-               'n': [],
-               'o': [],
-               'p': [],
-               'q': [],
-               'r': [],
-               's': [],
-               't': [],
-               'u': [],
-               'v': [],
-               'w': [],
-               'x': [],
-               'y': [],
-               'z': []}
+connections = {'01': (N1,[('02',6),('03',8) ]),
+               '02': (N1, [('01',2)]),
+               '03': (N2,[])}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-#hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(),perturbMag=30, leak=2**5,simDump = False)
+breakpoint()
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
 #hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
-softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),perturbMag=0, leak=2**5,simDump = False)
-
 
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, target='CRI')
 #softwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs = connections.keys(), target='simpleSim')
@@ -87,11 +49,7 @@ softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,
 #Execute the network stepwise in the hardware and the simulator
 for i in range(20):
     #start = time.time()
-    if i == 10:
-        print('update pertMag')
-        breakpoint()
-        softwareNetwork.set_perturbMag(0)
-    swResult = softwareNetwork.step(['alpha'],membranePotential = True)
+    hwResult = hardwareNetwork.step(['alpha'],membranePotential = True)
     #print(inputs[i])
     #end = time.time()
     #print(end - start)
@@ -103,7 +61,7 @@ for i in range(20):
     print("hardware result: ")
     #print(synthSpike)
     #print(hwSpike)
-    print(swResult)
+    print(hwResult)
     #print("software result: ")
     #print(swSpike)
     #print(swResult)
