@@ -93,7 +93,8 @@ class CRI_network:
         self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                for values in connections[keys][1]: #synapse list is first element in tuple
+                breakpoint()
+                for values in connections[keys][0]: #synapse list is first element in tuple
                     #breakpoint()
                     if not ((type(values) == tuple) and (len(values) == 2)):
                         logging.error(
@@ -209,7 +210,7 @@ class CRI_network:
 
         # add neurons/axons to connectome
         for axonKey in self.userAxons:
-            self.connectome.addNeuron(neuron(axonKey, "axon"))
+            self.connectome.addNeuron(neuron(axonKey, "axon", axonType = "Uaxon"))
         # print("added axons to connectome")
         for neuronKey in self.userConnections:
             neuron_model = self.userConnections[neuronKey][1]
@@ -230,7 +231,7 @@ class CRI_network:
         # print("added axon synpases")
         for neuronKey in self.userConnections:
             #breakpoint()
-            synapses = self.userConnections[neuronKey][1]
+            synapses = self.userConnections[neuronKey][0]
             #breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
@@ -299,13 +300,13 @@ class CRI_network:
 
         for idx in connectionIndexDict:
             #breakpoint()
-            for listIdx in range(len(connectionIndexDict[idx][1])):
-                oldTuple = connectionIndexDict[idx][1][listIdx]
+            for listIdx in range(len(connectionIndexDict[idx][0])):
+                oldTuple = connectionIndexDict[idx][0][listIdx]
                 newTuple = (
                     self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),
                     oldTuple[1],
                 )
-                connectionIndexDict[idx][1][listIdx] = newTuple
+                connectionIndexDict[idx][0][listIdx] = newTuple
         #breakpoint()
         return axonIndexDict, connectionIndexDict
 
