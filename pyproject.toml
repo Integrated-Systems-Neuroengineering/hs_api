@@ -14,8 +14,7 @@ matplotlib = "^3.5.1"
 bidict = "^0.22.0"
 tqdm = "^4.64.1"
 connectome_utils = {path = "../connectome_utils", develop = true}
-fxpmath = "^0.4.8"
-
+fxpmath = {path = "../fxpmath", develop = true}
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
 hs_bridge = {path = "../hs_bridge", develop = true}
