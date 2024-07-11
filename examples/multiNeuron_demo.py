@@ -27,16 +27,41 @@ N1 = LIF_neuron(3,-16,2**5)
 N2 = LIF_neuron(6,-16,2**5)
 
 #Define an axons dictionary
-axons = {'alpha': [('01', 1.0),('02', 2.0),('03', 3.0)]}
+#axons = {'alpha': [('01', 1.0),('02', 1.0),('03',1.0)]}
+axons = {'alpha': [('01', 1.0),('02', 1.0),('18',1.0)]}
 
 #Define a connections dictionary
-connections = {'01': (N1,[('02',6),('03',8) ]),
-               '02': (N1, [('01',2)]),
-               '03': (N2,[])}
+'''
+connections = {'01': ([], N1),
+               '02': ([], N1),
+               '03': ([], N1)}
+'''
+connections = {'01': ([], N1),
+               '02': ([], N1),
+               '03': ([], N1),
+               '04': ([], N1),
+               '05': ([], N1),
+               '06': ([], N1),
+               '07': ([], N1),
+               '08': ([], N1),
+               '09': ([], N1),
+               '10': ([], N1),
+               '11': ([], N1),
+               '12': ([], N1),
+               '13': ([], N1),
+               '14': ([], N1),
+               '15': ([], N1),
+               '16': ([], N1),
+               '17': ([], N2),
+               '18': ([], N2),
+               '19': ([], N2)
+               }
 
 #Initialize a CRI_network object for interacting with the hardware and the software
 breakpoint()
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(), simDump = False)
+#softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
+
 #hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
 
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, target='CRI')
@@ -50,6 +75,7 @@ hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,
 for i in range(20):
     #start = time.time()
     hwResult = hardwareNetwork.step(['alpha'],membranePotential = True)
+    #swResult = softwareNetwork.step(['alpha'],membranePotential = True)
     #print(inputs[i])
     #end = time.time()
     #print(end - start)
@@ -69,6 +95,4 @@ for i in range(20):
     #for idx in range(len(swResult)):
     #    if(swResult[idx][1] != hwResult[idx][1][3]):
     #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
-#hardwareNetwork.sim_flush('jul13.txt')    
-
-    
+hardwareNetwork.sim_flush('jul2_twoModel.txt')
