@@ -367,7 +367,7 @@ class simple_sim:
         nAxons = len(self.axons)
         S = dok_array((nNeurons,nNeurons), dtype=np.float32)
         for key, value in self.connections.items():
-            for synapse in value[1]:
+            for synapse in value[0]:
                 presynapticIdx = key
                 postsynapticIdx,weight = synapse
                 S[presynapticIdx,postsynapticIdx] = weight
@@ -430,16 +430,16 @@ class simple_sim:
         """
 
     def get_perturbMag(self):
-        perturbs = [self.connections[key][0].get_shift() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        perturbs = [self.connections[key][1].get_shift() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
         return perturbs
 
     def get_threshold(self):
-        threshs = [self.connections[key][0].get_threshold() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        threshs = [self.connections[key][1].get_threshold() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
         return threshs
 
     def get_leak(self):
-        breakpoint()
-        leaks = [self.connections[key][0].get_leak() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
+        #breakpoint()
+        leaks = [self.connections[key][1].get_leak() for key in self.connections.keys()] #get the nth element of each tuple which is neuron model
         return leaks
 
     def step_run(self,inputs):
@@ -455,6 +455,7 @@ class simple_sim:
             self.stepNum == 0
         else:
             #membranePotentials = copy.deepcopy(self.membranePotentials)
+            breakpoint()
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
             perturbBits = 17
@@ -467,7 +468,8 @@ class simple_sim:
             # signed right shift decrease the magnitude of the perturbation
             perturbation = rightshiftArr(perturbation, np.absolute(perturbs), np.less(perturbs,0)) 
             # add the noise to the membrane potential
-            self.membranePotentials(self.membranePotentials+perturbation)
+            if any(a != -16 for a in perturbs):
+                self.membranePotentials(self.membranePotentials+perturbation)
 
             # spike when the membrane potential >= self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() >= threshs)
