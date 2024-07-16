@@ -14,6 +14,10 @@ bidict = "^0.22.0"
 tqdm = "^4.64.1"
 connectome_utils = {path = "../connectome_utils", develop = true}
 fxpmath = "^0.4.8"
+spikingjelly = "^0.0.0.0.14"
+jaal = "^0.1.7"
+snntorch = "^0.9.1"
+tensorboard = "^2.17.0"
 
 [tool.poetry.dev-dependencies]
 jupyterlab = "^3.3.3"
