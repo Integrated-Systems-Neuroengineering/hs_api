@@ -459,7 +459,7 @@ class simple_sim:
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
             perturbBits = 17
-            # generate a random number
+            # generate nNueron number of random numbers in [-2^16, 2^16]
             perturbation = Fxp(np.random.randint(-1*2**(perturbBits-1),2**(perturbBits-1),size=nNeurons),dtype=self.formatDict['membrane_potential']) #upper is exclusive so no need to subtract one
             # balancing the positive and negative distribution by setting LSB to 1
             perturbation( perturbation | Fxp(1,dtype='fxp-u35/0') )

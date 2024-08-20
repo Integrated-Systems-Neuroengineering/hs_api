@@ -92,8 +92,8 @@ def main():
     }
     
     neuronsDict = {
-        '0': (N1, [('1',1)]),
-        '1': (N2, [('0',-1)])
+        '0': ([('1',1)], N1),
+        '1': ([('0',-1)], N2)
     }
     
     hardwareNetwork = CRI_network(axons=axonsDict,

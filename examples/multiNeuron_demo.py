@@ -59,9 +59,7 @@ connections = {'01': ([], N1),
 
 #Initialize a CRI_network object for interacting with the hardware and the software
 breakpoint()
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(), simDump = False)
-#softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
-
+hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),simDump = False)
 #hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
 
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, target='CRI')
