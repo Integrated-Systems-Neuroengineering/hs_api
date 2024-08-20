@@ -94,7 +94,7 @@ class CRI_network:
         if type(connections) == dict:
             for keys in connections:
                 breakpoint()
-                for values in connections[keys][0]: #synapse list is first element in tuple
+                for values in connections[keys][1]: #synapse list is first element in tuple
                     #breakpoint()
                     if not ((type(values) == tuple) and (len(values) == 2)):
                         logging.error(
@@ -208,14 +208,14 @@ class CRI_network:
         neuron.reset_count()  # reset static variables for neuron class
         self.connectome = connectome()
 
-        # add neurons/axons to connectome
+        # add axons to connectome
         for axonKey in self.userAxons:
             self.connectome.addNeuron(neuron(axonKey, "axon", axonType = "Uaxon"))
-        # print("added axons to connectome")
+        # add neurons to connectome
         for neuronKey in self.userConnections:
-            neuron_model = self.userConnections[neuronKey][1]
+            neuron_model = self.userConnections[neuronKey][0]
             self.connectome.addNeuron(
-                neuron(neuronKey, "neuron", output=neuronKey in self.outputs,neuronModel=neuron_model)
+                neuron(neuronKey, "neuron", output=neuronKey in self.outputs, neuronModel=neuron_model)
             )
         # print("added neurons to connectome")
 
@@ -231,7 +231,7 @@ class CRI_network:
         # print("added axon synpases")
         for neuronKey in self.userConnections:
             #breakpoint()
-            synapses = self.userConnections[neuronKey][0]
+            synapses = self.userConnections[neuronKey][1]
             #breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
