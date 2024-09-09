@@ -23,12 +23,12 @@ for i in range(100):
     #else:
     #    inputs[i] = ['alpha', 'beta']
 
-N1 = LIF_neuron(3,-16,2**5)
-N2 = LIF_neuron(6,-16,2**5)
+N1 = LIF_neuron(6,0,2**5)
+N2 = LIF_neuron(3,0,2**5)
 
 #Define an axons dictionary
 #axons = {'alpha': [('01', 1.0),('02', 1.0),('03',1.0)]}
-axons = {'alpha': [('01', 1.0),('02', 1.0),('18',1.0)]}
+axons = {'alpha': [('01', 1.0),('33', 1.0)]}
 
 #Define a connections dictionary
 '''
@@ -52,9 +52,23 @@ connections = {'01': ([], N1),
                '14': ([], N1),
                '15': ([], N1),
                '16': ([], N1),
-               '17': ([], N2),
-               '18': ([], N2),
-               '19': ([], N2)
+               '17': ([], N1),
+               '18': ([], N1),
+               '19': ([], N1),
+               '20': ([], N1),
+               '21': ([], N1),
+               '22': ([], N1),
+               '23': ([], N1),
+               '24': ([], N1),
+               '25': ([], N1),
+               '26': ([], N1),
+               '27': ([], N1),
+               '28': ([], N1),
+               '29': ([], N1),
+               '30': ([], N1),
+               '31': ([], N1),
+               '32': ([], N1),
+               '33': ([], N2)
                }
 
 #Initialize a CRI_network object for interacting with the hardware and the software
@@ -95,4 +109,4 @@ for i in range(20):
     #for idx in range(len(swResult)):
     #    if(swResult[idx][1] != hwResult[idx][1][3]):
     #        print("Error: potential mismatch! sim: "+str(swResult[idx])+", hw: "+str(hwResult[idx]))
-hardwareNetwork.sim_flush('jul2_twoModel.txt')
+#hardwareNetwork.sim_flush('aug13_oneModel.txt')
