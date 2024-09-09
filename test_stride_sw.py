@@ -195,7 +195,8 @@ def main():
                 
                 tor_s_list.append(cnn_out.flatten().unsqueeze(0))
                 
-                tor_v_list.append(torch.cat((net_quan.lif1.v.flatten().unsqueeze(0), net_quan.lif2.v.flatten().unsqueeze(0)),1))
+                tor_v_list.append(torch.cat((net_quan.lif1.v.flatten().unsqueeze(0), 
+                                             net_quan.lif2.v.flatten().unsqueeze(0)),1))
                 
                 cri_input = cn._input_converter_step(encoded_img)
                 

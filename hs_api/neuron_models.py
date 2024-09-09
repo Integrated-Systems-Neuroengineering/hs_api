@@ -31,6 +31,13 @@ class neuron_model(ABC):
 
 
 class LIF_neuron(neuron_model):
+    """
+        LIF neuron model.
+        
+        shift: int
+            noise pertubation magnitude
+            
+    """
     def __init__(self, threshold, shift, leak):
         self.threshold = threshold
         self.shift = shift
@@ -49,7 +56,14 @@ class LIF_neuron(neuron_model):
         return 2
 
 class ANN_neuron(neuron_model):
-    def __init__(self, threshold, shift, leak):
+    """
+        Memory-less neuron model.
+        
+        leak : int
+            set to 0 for memory-less neuron
+        
+    """
+    def __init__(self, threshold, shift, leak = 0):
         self.threshold = threshold
         #TODO: to be determined 
         self.shift = shift
