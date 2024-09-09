@@ -8,8 +8,6 @@ from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 from torch.utils.data import DataLoader
 from hs_api.api import CRI_network
 import time
-from torch.utils.tensorboard import SummaryWriter
-from copy import deepcopy
 from matplotlib import pyplot as plt
 import matplotlib
 import numpy as np
