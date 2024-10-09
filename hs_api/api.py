@@ -7,7 +7,9 @@ import os
 import copy
 import logging
 
-
+#handle the ordering of the elements of an entry in the neurons dictionary
+synapseIdx = 0
+modelIdx = 1
 class perturbMagError(ValueError):
     pass
 
@@ -93,8 +95,8 @@ class CRI_network:
         self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                breakpoint()
-                for values in connections[keys][1]: #synapse list is first element in tuple
+                #breakpoint()
+                for values in connections[keys][synapseIdx]: #synapse list is first element in tuple
                     #breakpoint()
                     if not ((type(values) == tuple) and (len(values) == 2)):
                         logging.error(
@@ -213,7 +215,7 @@ class CRI_network:
             self.connectome.addNeuron(neuron(axonKey, "axon", axonType = "Uaxon"))
         # add neurons to connectome
         for neuronKey in self.userConnections:
-            neuron_model = self.userConnections[neuronKey][0]
+            neuron_model = self.userConnections[neuronKey][modelIdx]
             self.connectome.addNeuron(
                 neuron(neuronKey, "neuron", output=neuronKey in self.outputs, neuronModel=neuron_model)
             )
@@ -231,7 +233,7 @@ class CRI_network:
         # print("added axon synpases")
         for neuronKey in self.userConnections:
             #breakpoint()
-            synapses = self.userConnections[neuronKey][1]
+            synapses = self.userConnections[neuronKey][synapseIdx]
             #breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
