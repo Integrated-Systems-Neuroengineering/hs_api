@@ -15,7 +15,7 @@ import os
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
-from neuron_models import LIF_neuron, ANN_neuron
+from hs_api.neuron_models import LIF_neuron, ANN_neuron
 
 def isSNNLayer(layer):
     """
@@ -608,7 +608,9 @@ class CRI_Converter:
         self.NULL_INDICIES = (-1,-1)
         self.PERTUBATION = -17
         self.LEAK_LIF = 2**6-1
+        self.v_threshold = v_threshold
         # neuron model parameters
+        # create all the neuron models??
         self.LIF = LIF_neuron(self.v_threshold, self.PERTUBATION, self.LEAK_LIF)
         self.ANN = ANN_neuron(self.v_threshold, self.PERTUBATION)
         
@@ -625,13 +627,13 @@ class CRI_Converter:
         self.input_layer = input_layer
         self.output_layer = output_layer
         self.snn_layers = 0 
-        self.v_threshold = v_threshold
+       # self.v_threshold = v_threshold
         self.layer_index = 0
         self.total_axonSyn = 0
         self.total_neuronSyn = 0
         self.max_fan = 0
         # mapping snn layer index to its bias axon range (start, end)
-        self.bias_dict = [] 
+        self.bias_dict = []
         self.snn_layer_index = 0
         self.converted_model_pth = converted_model_pth
         # dvs datasets
@@ -641,6 +643,7 @@ class CRI_Converter:
         self.v = None
         self.k = None
         self.embed_dim = embed_dim
+        breakpoint()
             
     def save_model(self):
         """
@@ -756,6 +759,7 @@ class CRI_Converter:
         >>> converter = CRI_Converter()
         >>> converter.layer_converter(some_model)
         """
+        #breakpoint()
         module_names = list(model._modules)
 
         # construct the axon dict keys and set it as curr_input
@@ -778,13 +782,14 @@ class CRI_Converter:
                 else:
                     self.layer_converter(model._modules[name])
             else:
-                self._layer_converter(model._modules[name], name)
+                self._layer_converter(model._modules[name], k, model)
 
-    def _layer_converter(self, layer, name):
+    def _layer_converter(self, layer, k, model):
         if self.layer_index < self.input_layer:
             print("Skipped layer: ", layer)
         elif isinstance(layer, nn.Linear):
-            self._linear_converter(layer)
+            #in this scenario we would need to inspect the next layer to get the v_thresh from the lif layer
+            self._linear_converter(layer, k, model)
             self.snn_layers += 1
         elif isinstance(layer, nn.Conv2d):
             self._conv_converter(layer)
@@ -939,7 +944,7 @@ class CRI_Converter:
             self.output_neurons.append(neuron_id)
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
     
-    def _linear_converter(self, layer):
+    def _linear_converter(self, layer, k, model):
         """
         Takes in a PyTorch linear layer and generate the postsynaptic neurons (numpy array) 
         Call _linear_weight to unroll the connections
@@ -948,6 +953,15 @@ class CRI_Converter:
         ----------
         layer : PyTorch linear layer 
         """
+        #breakpoint()
+        try:
+            nextLayer = model[k+1]
+            if isSNNLayer(nextLayer):
+                v_thresh = nextLayer.v_threshold
+            else:
+                raise Exception("liear layer with no following snn layer")
+        except:
+            raise Exception("liear layer with no following snn layer")
         if self.layer_index == self.input_layer:
             print('Building synapses between axons and neurons with linear Layer')    
         else:
@@ -959,7 +973,7 @@ class CRI_Converter:
         output = np.array(
             [ i for i in range(self.neuron_offset, self.neuron_offset + layer.out_features)]
         )
-        self._linear_weight(self.curr_input.flatten(), output, layer)
+        self._linear_weight(self.curr_input.flatten(), output, layer, v_thresh)
             
         if layer.bias is not None:
             self._cri_bias(layer, output)
@@ -978,7 +992,7 @@ class CRI_Converter:
         self.snn_layer_index += 1
         print(f'Number of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
-    def _linear_weight(self, input, output, layer):
+    def _linear_weight(self, input, output, layer, v_thresh):
         """
         Unroll the linear layer by building the synapses between 
         presynaptic neurons and postsynaptic neurons 
@@ -993,7 +1007,12 @@ class CRI_Converter:
             
         layer : PyTorch linear layer 
         """
-        lifNeuronModel = LIF_neuron(self.v_threshold, -17, 2**6-1) #zero pertubation, IF
+        #this should be okay for multineuron. Each layer should have neurons with a single neuron model
+        #how to get threshold
+        #breakpoint()
+        lifNeuronModel = LIF_neuron(v_thresh, -17, 2**6-1) #zero pertubation, IF
+
+
         weights = layer.weight.detach().cpu().numpy().transpose() # (in, out)
         for preIdx, weight in enumerate(weights):
             if self.layer_index == self.input_layer:
@@ -1195,8 +1214,9 @@ class CRI_Converter:
 
     def _cri_bias(self, layer, outputs, atten_flag=False):
         biases = layer.bias.detach().cpu().numpy()
-        
-        self.bias_dict.extend(self.axon_offset, self.axon_offset + biases.size)
+        #breakpoint()
+        #Gwen: I'm going to assume there was a typo here and I added parentheses to turn the two seperate arguments into a tuple
+        self.bias_dict.extend((self.axon_offset, self.axon_offset + biases.size))
         
         if isinstance(layer, nn.Conv2d):
             for output_chan, bias in enumerate(biases):
@@ -1321,6 +1341,7 @@ class CRI_Converter:
                     hwSpike, _, _ = spikes
                     membranePotential.append([v for k,v in potential])
                 else:
+                    #breakpoint()
                     hwSpike, _, _ = hardwareNetwork.step(
                         slice, membranePotential=False
                     )
