@@ -28,7 +28,7 @@ print(inputs)
 axons = {'alpha': [('a', 1.0),('b', 2.0),('c', 3.0),('d', 4.0),('e',5.0)]}
 
 #Define a connections dictionary
-connections = {'01': [],
+connections = {'01': [('02',5)],
                '02': [],
                '03': [],
                '04': [],
@@ -72,8 +72,10 @@ connections = {'01': [],
                'z': []}
 
 #Initialize a CRI_network object for interacting with the hardware and the software
-hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(),perturbMag=30, leak=2**5,simDump = False)
+#hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys(),perturbMag=30, leak=2**5,simDump = False)
 #hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
+softwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='simpleSim', outputs = connections.keys(),perturbMag=0, leak=2**5,simDump = False)
+
 
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config, target='CRI')
 #softwareNetwork = CRI_network(axons=axons,connections=connections,config=config, outputs = connections.keys(), target='simpleSim')
@@ -88,8 +90,8 @@ for i in range(20):
     if i == 10:
         print('update pertMag')
         breakpoint()
-        hardwareNetwork.set_perturbMag(18)
-    hwResult = hardwareNetwork.step(['alpha'],membranePotential = True)
+        softwareNetwork.set_perturbMag(0)
+    swResult = softwareNetwork.step(['alpha'],membranePotential = True)
     #print(inputs[i])
     #end = time.time()
     #print(end - start)
@@ -101,7 +103,7 @@ for i in range(20):
     print("hardware result: ")
     #print(synthSpike)
     #print(hwSpike)
-    print(hwResult)
+    print(swResult)
     #print("software result: ")
     #print(swSpike)
     #print(swResult)
