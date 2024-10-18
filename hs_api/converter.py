@@ -606,7 +606,7 @@ class CRI_Converter:
         self.HIGH_SYNAPSE_WEIGHT = 1e6
         self.NULL_NEURON = -1
         self.NULL_INDICIES = (-1,-1)
-        self.PERTUBATION = -17
+        self.PERTUBATION = -16
         self.LEAK_LIF = 2**6-1
         self.v_threshold = v_threshold
         # neuron model parameters
@@ -804,7 +804,7 @@ class CRI_Converter:
             self._linear_converter(layer, k, model)
             self.snn_layers += 1
         elif isinstance(layer, nn.Conv2d):
-            self._conv_converter(layer)
+            self._conv_converter(layer, k, model)
             self.snn_layers += 1
         elif isinstance(layer, nn.MaxPool2d):
             self._maxPool_converter(layer)
@@ -952,7 +952,7 @@ class CRI_Converter:
         for output_neuron in range(
             next_neuron_offset, next_neuron_offset + layer.out_features
         ):
-            self.neuron_dict[str(output_neuron)] = []
+            self.neuron_dict[str(output_neuron)] = (self.LIF_Neuron,[]) #TODO: Fix me
             self.output_neurons.append(neuron_id)
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
     
@@ -971,7 +971,7 @@ class CRI_Converter:
             if isSNNLayer(nextLayer):
                 v_thresh = nextLayer.v_threshold
             else:
-                raise Exception("liear layer with no following snn layer")
+                raise Exception("linear layer with no following snn layer")
         except:
             raise Exception("liear layer with no following snn layer")
         if self.layer_index == self.input_layer:
@@ -996,7 +996,7 @@ class CRI_Converter:
             
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from linear layer')
-            lifNeuronModel = LIF_neuron(v_thresh, -17, 2**6-1) #zero pertubation, IF
+            lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
             for postSynNeuron in output:
                 #this needs to add a neuron type
                 self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
@@ -1024,7 +1024,7 @@ class CRI_Converter:
         #this should be okay for multineuron. Each layer should have neurons with a single neuron model
         #how to get threshold
         #breakpoint()
-        lifNeuronModel = LIF_neuron(v_thresh, -17, 2**6-1) #zero pertubation, IF
+        lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
 
 
         weights = layer.weight.detach().cpu().numpy().transpose() # (in, out)
@@ -1041,9 +1041,9 @@ class CRI_Converter:
                     for postIdx, synWeight in enumerate(weight)
                 ]
                 
-                self.neuron_dict[str(input[preIdx])] = (postSynNeurons, self.LIF)
+                self.neuron_dict[str(input[preIdx])] = (postSynNeurons, lifNeuronModel)
             
-    def _conv_converter(self, layer):
+    def _conv_converter(self, layer, k, model):
         """
         Takes in a PyTorch Conv layer and generate the postsynaptic neurons (numpy array) 
         Call _conv_shape and _conv_weight to calculate the 
@@ -1055,6 +1055,14 @@ class CRI_Converter:
             (currently only support Conv2d)
 
         """
+        try:
+            nextLayer = model[k+2]
+            if isSNNLayer(nextLayer):
+                v_thresh = nextLayer.v_threshold
+            else:
+                raise Exception("conv layer with no following identity+snn layer")
+        except:
+            raise Exception("liear layer with no following snn layer")
         print(f'Converting layer: {layer}')
         output = None
         
@@ -1073,7 +1081,7 @@ class CRI_Converter:
         )]
         ).reshape(output_shape)
 
-        self._conv_weight(self.curr_input, output, layer)
+        self._conv_weight(self.curr_input, output, layer, v_thresh)
         
         if layer.bias is not None:
             self._cri_bias(layer, output)
@@ -1085,14 +1093,14 @@ class CRI_Converter:
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from conv layer')
             for postSynNeuron in output:
-                self.neuron_dict[str(postSynNeuron)] = []
+                self.neuron_dict[str(postSynNeuron)] = [] #fix me
                 self.output_neurons.append(str(postSynNeuron))
 
         self.curr_input = output
         self.snn_layer_index += 1
         print(f'Number of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
     
-    def _conv_weight(self, input, output, layer):
+    def _conv_weight(self, input, output, layer, v_thresh):
         """
         Unroll the convolutional layer by building the synapses between 
         presynaptic neurons and postsynaptic neurons 
@@ -1115,6 +1123,8 @@ class CRI_Converter:
         stride = layer.stride
         padding = layer.padding
         weights = layer.weight.detach().cpu().numpy()
+
+        lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
         
         # Check parameters (int or tuple) and convert them all to tuple
         if isinstance(kernel, int):
@@ -1152,6 +1162,8 @@ class CRI_Converter:
                                         )
                                 else:
                                     if pre != self.NULL_NEURON:
+                                        if str(pre) not in self.neuron_dict:
+                                            self.neuron_dict[str(pre)] = ([],lifNeuronModel)
                                         self.neuron_dict[str(pre)][0].append(
                                             (str(postSynNeuron), int(weight[c, i, j]))
                                         )
@@ -1188,7 +1200,7 @@ class CRI_Converter:
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from maxPool layer')
             for postSynNeuron in output:
-                self.neuron_dict[str(postSynNeuron)] = []
+                self.neuron_dict[str(postSynNeuron)] = [] #Fix Me
                 self.output_neurons.append(str(postSynNeuron))
         
         self.bias_dict.append(self.NULL_INDICIES)

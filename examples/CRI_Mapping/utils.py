@@ -574,6 +574,56 @@ def train_DVS_Time(args, net, train_loader, test_loader, device, scaler):
         print(f'epoch = {epoch}, train_loss ={train_loss: .4f}, train_acc ={train_acc: .4f}, test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}, max_test_acc ={max_test_acc: .4f}')
         print(f'train speed ={train_speed: .4f} images/s, test speed ={test_speed: .4f} images/s')
         print(f'escape time = {(datetime.datetime.now() + datetime.timedelta(seconds=(time.time() - start_time) * (args.epochs - epoch))).strftime("%Y-%m-%d %H:%M:%S")}\n')
+
+
+def test_DVS_Time(args, net, test_loader, device, scaler):
+    """ Similar function to train_DVS but using a DVS dataset that has been splitted into frames
+        using fix time duration.
+    """
+    start_epoch = 0
+    max_test_acc = -1
+
+    loss_fun = nn.CrossEntropyLoss()
+
+    encoder = encoding.PoissonEncoder()
+
+    # using two writers to overlay the plot
+    writer = SummaryWriter('log_dvs_time')
+
+    for epoch in range(start_epoch, args.epochs):
+        net.eval()
+        test_loss = 0
+        test_acc = 0
+        test_samples = 0
+
+        with torch.no_grad():
+            for img, label, _ in test_loader:
+                img = img.to(device)
+                img = img.transpose(0, 1)
+                label = label.to(device)
+                label_onehot = F.one_hot(label, args.targets).float()
+                out_fr = 0.
+                T = img.shape[0]
+
+                for t in range(T):
+                    encoded_img = encoder(img[t])
+                    out_fr += net(encoded_img)
+
+                out_fr = out_fr/T
+                loss = loss_fun(out_fr, label_onehot)
+
+                test_samples += label.numel()
+                test_loss += loss.item() * label.numel()
+                test_acc += (out_fr.argmax(1) == label).float().sum().item()
+                functional.reset_net(net)
+
+            test_time = time.time()
+            #test_speed = test_samples / (test_time - train_time)
+            test_loss /= test_samples
+            test_acc /= test_samples
+
+    print("accuracy: "+str(test_acc))
+
         
 def validate(args, net, test_loader, device, converter=None):
     """ Given a net and test_loader, this helper function test the network for on the sepecified 
