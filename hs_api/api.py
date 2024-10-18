@@ -95,13 +95,13 @@ class CRI_network:
         self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                #breakpoint()
-                for values in connections[keys][synapseIdx]: #synapse list is first element in tuple
-                    #breakpoint()
-                    if not ((type(values) == tuple) and (len(values) == 2)):
-                        logging.error(
-                            "Each synapse should only consists of 2 elements: neuron, weight"
-                        )
+                #print(keys)
+                if connections[keys]:
+                    for values in connections[keys][synapseIdx]: #synapse list is first element in tuple
+                        if not ((type(values) == tuple) and (len(values) == 2)):
+                            logging.error(
+                                "Each synapse should only consists of 2 elements: neuron, weight"
+                            )
         else:
             logging.error("Connections should be a dictionary")
         self.userConnections = copy.deepcopy(connections)
@@ -503,15 +503,15 @@ class CRI_network:
         ]  # convert symbols to internal indicies
         if self.target == "simpleSim":
             output, spikeOutput = self.simpleSim.step_run(formated_inputs)
-            output = [
-                (self.connectome.get_neuron_by_idx(idx).get_user_key(), potential)
-                for idx, potential in enumerate(output)
-            ]
             spikeOutput = [
                 self.connectome.get_neuron_by_idx(spike).get_user_key()
                 for spike in spikeOutput
             ]
             if membranePotential == True:
+                output = [
+                    (self.connectome.get_neuron_by_idx(idx).get_user_key(), potential)
+                    for idx, potential in enumerate(output)
+                ]
                 return output, spikeOutput
             else:
                 return spikeOutput

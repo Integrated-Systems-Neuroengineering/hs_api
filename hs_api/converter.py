@@ -643,7 +643,12 @@ class CRI_Converter:
         self.v = None
         self.k = None
         self.embed_dim = embed_dim
-        breakpoint()
+        #print(self.neuron_dict['103622'])
+        #from watchpoints import watch
+        #watch.config(pdb=True)
+        #watch(self.bias_dict)
+        #watch(self.neuron_dict['103622'])
+        #breakpoint()
             
     def save_model(self):
         """
@@ -710,6 +715,7 @@ class CRI_Converter:
         end_layer = self.snn_layers if step + 1 >= self.snn_layers else step + 1
         for layer in range(end_layer):
             # skip layers without bias
+            #breakpoint()
             if self.bias_dict[layer] != self.NULL_INDICIES:
                 bias_axons.extend([
                     "a" + str(idx) for idx in range(self.bias_dict[layer][0], self.bias_dict[layer][1])
@@ -726,22 +732,28 @@ class CRI_Converter:
             current_input = input_data.view(input_data.size(0), input_data.size(1), -1)
         else:
             # Flatten the input data to [B, -1]
-            current_input = input_data.view(input_data.size(0), -1)
+            current_input = input_data.view(input_data.size(1), -1)
             
         axon_batch = []
         for img in current_input:
             axon_steps = []
-            for step in range(self.num_steps):
-                
-                input_image = None
-                if self.dvs:
+            if self.dvs:
+                for step in range(input_data.size(1)):
+
                     input_image = img[step]
-                else:
+
+                    axons = self._input_converter_step(input_image, step)
+
+                    axon_steps.append(axons)
+
+            else:
+                for step in range(self.num_steps):
+
                     input_image = img
-                    
-                axons = self._input_converter_step(input_image, step)
-                
-                axon_steps.append(axons)
+
+                    axons = self._input_converter_step(input_image, step)
+
+                    axon_steps.append(axons)
             axon_batch.append(axon_steps)
         return axon_batch
 
@@ -980,12 +992,14 @@ class CRI_Converter:
             print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons for linear layer')
             self.axon_offset = len(self.axon_dict)
         else:
-            self.bias_dict.extend((self.NULL_INDICIES, self.NULL_INDICIES))
+            self.bias_dict.append(self.NULL_INDICIES)
             
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from linear layer')
+            lifNeuronModel = LIF_neuron(v_thresh, -17, 2**6-1) #zero pertubation, IF
             for postSynNeuron in output:
-                self.neuron_dict[str(postSynNeuron)] = []
+                #this needs to add a neuron type
+                self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
                 self.output_neurons.append(str(postSynNeuron))
         
         self.curr_input = output
@@ -1066,7 +1080,7 @@ class CRI_Converter:
             print(f'Constructing {len(self.axon_dict) - self.axon_offset} bias axons from conv layer.')
             self.axon_offset = len(self.axon_dict)
         else:
-            self.bias_dict.extend((self.NULL_INDICIES, self.NULL_INDICIES))
+            self.bias_dict.append(self.NULL_INDICIES)
         
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from conv layer')
@@ -1177,7 +1191,7 @@ class CRI_Converter:
                 self.neuron_dict[str(postSynNeuron)] = []
                 self.output_neurons.append(str(postSynNeuron))
         
-        self.bias_dict.extend((self.NULL_INDICIES, self.NULL_INDICIES))
+        self.bias_dict.append(self.NULL_INDICIES)
         self.curr_input = output
         self.snn_layer_index += 1
         
@@ -1216,7 +1230,7 @@ class CRI_Converter:
         biases = layer.bias.detach().cpu().numpy()
         #breakpoint()
         #Gwen: I'm going to assume there was a typo here and I added parentheses to turn the two seperate arguments into a tuple
-        self.bias_dict.extend((self.axon_offset, self.axon_offset + biases.size))
+        self.bias_dict.append((self.axon_offset, self.axon_offset + biases.size))
         
         if isinstance(layer, nn.Conv2d):
             for output_chan, bias in enumerate(biases):
@@ -1341,7 +1355,6 @@ class CRI_Converter:
                     hwSpike, _, _ = spikes
                     membranePotential.append([v for k,v in potential])
                 else:
-                    #breakpoint()
                     hwSpike, _, _ = hardwareNetwork.step(
                         slice, membranePotential=False
                     )
@@ -1359,7 +1372,7 @@ class CRI_Converter:
                     if idx not in output_idx:
                         print(f"Error: invalid output spike {idx}")
                     spikeRate[idx] += 1
-            # Empty input for output delay 
+            # Empty input for output delay
             hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
             spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
             for idx in spikeIdx:
