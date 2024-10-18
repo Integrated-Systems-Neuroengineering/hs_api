@@ -455,7 +455,6 @@ class simple_sim:
             self.stepNum == 0
         else:
             #membranePotentials = copy.deepcopy(self.membranePotentials)
-            breakpoint()
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
             perturbBits = 17
