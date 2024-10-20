@@ -1347,6 +1347,7 @@ class CRI_Converter:
         
         outputSpikes = []
         membranePotential = []
+        debugspike = []
         
         output_idx = [i for i in range(len(self.output_neurons))]
         
@@ -1358,39 +1359,47 @@ class CRI_Converter:
             )  ##Num_neurons, simDump, coreOverride
             spikeRate = [0] * len(self.output_neurons)
             # each time step
-            for slice in currInput:
+            phaseDelay = self.snn_layers
+            for sliceIdx, slice in enumerate(currInput):
                 hwSpike = []
                 if outputPotential:
                     potential, spikes = hardwareNetwork.step(
                         slice, membranePotential=True
                     )
                     hwSpike, _, _ = spikes
-                    membranePotential.append([v for k,v in potential])
+                    if sliceIdx >= phaseDelay:
+                        membranePotential.append([v for k,v in potential])
                 else:
                     hwSpike, _, _ = hardwareNetwork.step(
                         slice, membranePotential=False
                     )
-                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
-                for idx in spikeIdx:
+                if sliceIdx >= phaseDelay:
+                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
+                    debugspike.append(spikeIdx)
+                    for idx in spikeIdx:
                     # Checking if the output spike is in the defined output neuron
-                    if idx not in output_idx:
-                        print(f"Error: invalid output spike {idx}")
-                    spikeRate[idx] += 1
-            if self.num_steps == 1:
-                # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
-                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
-                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
-                for idx in spikeIdx:
-                    if idx not in output_idx:
-                        print(f"Error: invalid output spike {idx}")
-                    spikeRate[idx] += 1
+                        if idx not in output_idx:
+                            print(f"Error: invalid output spike {idx}")
+                        spikeRate[idx] += 1
+            breakpoint()
+           # if self.num_steps == 1:
+           #     # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
+           #     hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+           #     spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
+           #     for idx in spikeIdx:
+           #         if idx not in output_idx:
+           #             print(f"Error: invalid output spike {idx}")
+           #         spikeRate[idx] += 1
             # Empty input for output delay
-            hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
-            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
-            for idx in spikeIdx:
-                if idx not in output_idx:
-                    print(f"Error: invalid output spike {idx}")
-                spikeRate[idx] += 1
+            for q in range(phaseDelay):
+                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                if sliceIdx+q >= phaseDelay:
+                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
+                    debugspike.append(spikeIdx)
+                    for idx in spikeIdx:
+                        if idx not in output_idx:
+                            print(f"Error: invalid output spike {idx}")
+                        spikeRate[idx] += 1
             # Append the output spikes of each image to the output list
             outputSpikes.append(spikeRate)
         
@@ -1460,7 +1469,7 @@ class CRI_Converter:
                     debugspike.append(spikeIdx)
                     for idx in spikeIdx:
                         spikeRate[idx] += 1
-            breakpoint()
+
             # empty input for output delay
             #swSpike = softwareNetwork.step([], membranePotential=False)
             #spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
