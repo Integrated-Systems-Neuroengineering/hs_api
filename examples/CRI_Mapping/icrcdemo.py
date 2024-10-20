@@ -6,7 +6,7 @@ from spikingjelly.datasets import pad_sequence_collate
 from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 from spikingjelly.activation_based import surrogate, neuron, functional
 from models import DVSGestureNet
-from utils import train_DVS_Time, validate_DVS
+from utils import train_DVS_Time, sw_comp_DVS, validate_DVS, test_DVS_Time
 from hs_api import CRI_network
 from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder
 
@@ -56,7 +56,7 @@ def main():
         train_set, batch_size=args.b, shuffle=True, drop_last=True, pin_memory = True, collate_fn=pad_sequence_collate
     )
     test_loader = DataLoader(
-        test_set, batch_size=args.b, shuffle=True, drop_last=True, pin_memory = True, collate_fn=pad_sequence_collate
+        test_set, batch_size=args.b, shuffle=False, drop_last=True, pin_memory = True, collate_fn=pad_sequence_collate
     )
     
     # Initialize SnnTorch/SpikingJelly model
@@ -90,15 +90,26 @@ def main():
     qn = Quantize_Network(w_alpha=1)
     net_quan = qn.quantize(net_bn)
 
+    test_DVS_Time(args, net, test_loader, device, scaler)
 
+    #breakpoint()
 
-    converter = CRI_Converter(num_steps=8, input_layer = 0, snn_layers=5, output_layer = 14, v_threshold=1, input_shape = (2,128,128) ,backend = 'spikingjelly', embed_dim = 0, dvs=True, converted_model_pth = converted_model_pth)
+    converter = CRI_Converter(num_steps=10, input_layer = 0, snn_layers=5, output_layer = 14, v_threshold=1, input_shape = (2,128,128) ,backend = 'spikingjelly', embed_dim = 0, dvs=True, converted_model_pth = converted_model_pth)
     converter.layer_converter(net_quan)
     axons = dict(converter.axon_dict)
     neurons = dict(converter.neuron_dict)
     outputs = converter.output_neurons
+
+    #breakpoint()
     hardwareNetwork = CRI_network(axons=axons,connections=neurons,config=config,target='simpleSim', outputs = outputs)
+
+
+
+    sw_comp_DVS(args, hardwareNetwork, test_loader, device, net_quan, converter=converter)
+
+    #breakpoint()
     validate_DVS(args, hardwareNetwork, test_loader, device, converter=converter)
+
 
 
     

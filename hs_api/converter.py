@@ -615,7 +615,7 @@ class CRI_Converter:
         self.ANN = ANN_neuron(self.v_threshold, self.PERTUBATION)
         
         self.axon_dict = defaultdict(list)
-        self.neuron_dict = defaultdict(lambda: ([], self.LIF))
+        self.neuron_dict = {}
         self.output_neurons = []
         self.input_shape = np.array(input_shape)
         self.num_steps = num_steps
@@ -1424,6 +1424,7 @@ class CRI_Converter:
         >>> predictions, outputSpikes = converter.run_CRI_sw(some_inputList, some_softwareNetwork)
         """
         outputSpikes = []
+        debugspike = []
         membranePotential = []
         
         # each image
@@ -1432,27 +1433,40 @@ class CRI_Converter:
             softwareNetwork.simpleSim.initialize_sim_vars(len(self.neuron_dict))
             spikeRate = [0] * len(self.output_neurons)
             # each time step
-            for slice in currInput:
+            # we need to add 5 delays
+            phaseDelay = self.snn_layers #it will take phaseDelay cycles before valid input comes out of the network
+            for sliceIdx, slice in enumerate(currInput):
                 swSpike = []
-                if outputPotential:
+
+                if outputPotential: #TODO: we shouldn't actually bother reading membrane potentials out if <phaseDelay
                     potential, swSpike = softwareNetwork.step(slice, membranePotential=True)
-                    membranePotential.append([v for k,v in potential])
+                    if sliceIdx >= phaseDelay:
+                        membranePotential.append([v for k,v in potential])
                 else:
                     swSpike = softwareNetwork.step(slice, membranePotential=False)
-                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-                for idx in spikeIdx:
-                    spikeRate[idx] += 1
+                if sliceIdx >= phaseDelay:
+                    #breakpoint()
+                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+                    debugspike.append(spikeIdx)
+                    for idx in spikeIdx:
+                        spikeRate[idx] += 1
+                #swSpike = softwareNetwork.step([], membranePotential=False)
             # empty input for phase delay 
-            if self.num_steps == 1:
+            for q in range(phaseDelay):
                 swSpike = softwareNetwork.step([], membranePotential=False)
-                spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-                for idx in spikeIdx:
-                    spikeRate[idx] += 1
-            # empty input for output delay 
-            swSpike = softwareNetwork.step([], membranePotential=False)
-            spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-            for idx in spikeIdx:
-                spikeRate[idx] += 1
+                if sliceIdx+q >= phaseDelay:
+                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+                    #breakpoint()
+                    debugspike.append(spikeIdx)
+                    for idx in spikeIdx:
+                        spikeRate[idx] += 1
+            breakpoint()
+            # empty input for output delay
+            #swSpike = softwareNetwork.step([], membranePotential=False)
+            #spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+            #breakpoint()
+            #for idx in spikeIdx:
+            #    spikeRate[idx] += 1
             # Append the output spikes of each image to the output list
             outputSpikes.append(spikeRate)
             
