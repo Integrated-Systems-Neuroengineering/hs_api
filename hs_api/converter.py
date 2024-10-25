@@ -606,7 +606,7 @@ class CRI_Converter:
         self.HIGH_SYNAPSE_WEIGHT = 1e6
         self.NULL_NEURON = -1
         self.NULL_INDICIES = (-1,-1)
-        self.PERTUBATION = -16
+        self.PERTUBATION = 0
         self.LEAK_LIF = 2**6-1
         self.v_threshold = v_threshold
         # neuron model parameters
@@ -996,7 +996,7 @@ class CRI_Converter:
             
         if self.layer_index == self.output_layer:
             print('Instantiate output neurons from linear layer')
-            lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
+            lifNeuronModel = LIF_neuron(v_thresh, 0, 2**6-1) #zero pertubation, IF
             for postSynNeuron in output:
                 #this needs to add a neuron type
                 self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
@@ -1024,7 +1024,7 @@ class CRI_Converter:
         #this should be okay for multineuron. Each layer should have neurons with a single neuron model
         #how to get threshold
         #breakpoint()
-        lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
+        lifNeuronModel = LIF_neuron(v_thresh, 0, 2**6-1) #zero pertubation, IF
 
 
         weights = layer.weight.detach().cpu().numpy().transpose() # (in, out)
@@ -1124,7 +1124,7 @@ class CRI_Converter:
         padding = layer.padding
         weights = layer.weight.detach().cpu().numpy()
 
-        lifNeuronModel = LIF_neuron(v_thresh, -16, 2**6-1) #zero pertubation, IF
+        lifNeuronModel = LIF_neuron(v_thresh, 0, 2**6-1) #zero pertubation, IF
         
         # Check parameters (int or tuple) and convert them all to tuple
         if isinstance(kernel, int):
@@ -1350,6 +1350,8 @@ class CRI_Converter:
         debugspike = []
         
         output_idx = [i for i in range(len(self.output_neurons))]
+
+        runcount = 0
         
         # each image 
         for currInput in inputList:
@@ -1373,15 +1375,16 @@ class CRI_Converter:
                     hwSpike, _, _ = hardwareNetwork.step(
                         slice, membranePotential=False
                     )
+                    runcount += 1
                 if sliceIdx >= phaseDelay:
                     spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                     debugspike.append(spikeIdx)
+                    #breakpoint()
                     for idx in spikeIdx:
-                    # Checking if the output spike is in the defined output neuron
+                        # Checking if the output spike is in the defined output neuron
                         if idx not in output_idx:
                             print(f"Error: invalid output spike {idx}")
                         spikeRate[idx] += 1
-            breakpoint()
            # if self.num_steps == 1:
            #     # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
            #     hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
@@ -1392,16 +1395,21 @@ class CRI_Converter:
            #         spikeRate[idx] += 1
             # Empty input for output delay
             for q in range(phaseDelay):
-                hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
+                hwSpike, v1, v2 = hardwareNetwork.step([], membranePotential=False)
                 if sliceIdx+q >= phaseDelay:
                     spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in hwSpike]
                     debugspike.append(spikeIdx)
+                    #breakpoint()
                     for idx in spikeIdx:
                         if idx not in output_idx:
                             print(f"Error: invalid output spike {idx}")
                         spikeRate[idx] += 1
             # Append the output spikes of each image to the output list
+            #breakpoint()
+            print(v1,v2)
+            debugspike=[]
             outputSpikes.append(spikeRate)
+        print('runcount: '+str(runcount))
         
         if outputPotential:
             return outputSpikes, membranePotential
@@ -1473,7 +1481,7 @@ class CRI_Converter:
             # empty input for output delay
             #swSpike = softwareNetwork.step([], membranePotential=False)
             #spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-            #breakpoint()
+            breakpoint()
             #for idx in spikeIdx:
             #    spikeRate[idx] += 1
             # Append the output spikes of each image to the output list
