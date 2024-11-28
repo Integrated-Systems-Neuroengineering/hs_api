@@ -495,7 +495,7 @@ class CRI_network:
         >>> network = CRI_network(axons, connections, config, outputs)
         >>> network.step(['input1', 'input2'])
         """
-        breakpoint()
+        #breakpoint()
         # formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
         formated_inputs = [
             self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
@@ -524,7 +524,7 @@ class CRI_network:
                     output, spikeResult = self.CRI.run_step(
                         formated_inputs, membranePotential
                     )
-                    breakpoint()
+                    #breakpoint()
                     spikeList = spikeResult[0]
                     # we currently ignore the run execution counter
                     spikeList = [
@@ -539,7 +539,7 @@ class CRI_network:
                     ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output, (spikeList, spikeResult[1], spikeResult[2])
                 else:
-                    breakpoint()
+                    #breakpoint()
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
                     #breakpoint()
                     spikeList = spikeResult[0]
