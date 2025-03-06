@@ -40,14 +40,12 @@ class synthnet:
         return self.gen_neuron_name(idx)
 
     def draw_weight(self):
-        #breakpoint()
         return random.randrange(self.minWeight,self.maxWeight)
     '''
     def roll_axon(self):
         fan = random.randrange(0,self.maxFan)
         neurons = random.sample(range(0,self.numAxons), k=fan)
         neurons = [str(neuron) for neuron in neurons]
-        breakpoint()
         weights = random.choices(range(self.minWeight,self.maxWeight), k=fan)
         return list(zip(neurons, weights))
 
