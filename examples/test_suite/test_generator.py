@@ -3,8 +3,17 @@ import random as rnd
 import logging
 from l2s.api import CRI_network
 
-def generateNetwork(timeSteps = 100, numAxons = 8, numNeurons = 64, maxWeight = 10, 
-minAxonsActivated = 0, maxAxonsActivated = 3, minNeuronConnections = 0, maxNeuronConnections = 4):
+
+def generateNetwork(
+    timeSteps=100,
+    numAxons=8,
+    numNeurons=64,
+    maxWeight=10,
+    minAxonsActivated=0,
+    maxAxonsActivated=3,
+    minNeuronConnections=0,
+    maxNeuronConnections=4,
+):
     """
     Parameters
     ----------
@@ -23,27 +32,41 @@ minAxonsActivated = 0, maxAxonsActivated = 3, minNeuronConnections = 0, maxNeuro
 
     Returns
     -------
-    
+
     """
-    
-    if (type(timeSteps)==int & timeSteps > 0):
-        if (timeSteps <= 1000):
-            if (type(numAxons)==int & type(numNeurons)==int):
+
+    if type(timeSteps) == int & timeSteps > 0:
+        if timeSteps <= 1000:
+            if type(numAxons) == int & type(numNeurons) == int:
                 axons = {}
                 connections = {}
                 neurons = []
                 digits = len(str(numNeurons))
                 for i in range(numNeurons):
-                    neurons.append(str(i+1).zfill(digits))
+                    neurons.append(str(i + 1).zfill(digits))
 
-                if (minAxonsActivated >= 0 & maxAxonsActivated <= numAxons & type(minAxonsActivated)==int & type(maxAxonsActivated)==int):
-                    numAxonsActivated = [rnd.randint(minAxonsActivated,maxAxonsActivated) for t in range(timeSteps)]
-                    numNeuronsConnected = [rnd.randint(minNeuronConnections,maxNeuronConnections) for t in range(numNeurons)]
+                if (
+                    minAxonsActivated
+                    >= 0 & maxAxonsActivated
+                    <= numAxons & type(minAxonsActivated)
+                    == int & type(maxAxonsActivated)
+                    == int
+                ):
+                    numAxonsActivated = [
+                        rnd.randint(minAxonsActivated, maxAxonsActivated)
+                        for t in range(timeSteps)
+                    ]
+                    numNeuronsConnected = [
+                        rnd.randint(minNeuronConnections, maxNeuronConnections)
+                        for t in range(numNeurons)
+                    ]
                 else:
-                    logging.error('Axons activated per time step should be an integer between 0 and the number of axons.')
+                    logging.error(
+                        "Axons activated per time step should be an integer between 0 and the number of axons."
+                    )
             else:
-                logging.error('The number of axons and neurons should be integers.')
+                logging.error("The number of axons and neurons should be integers.")
         else:
-            logging.error('Let\'s not make this too long.')      
+            logging.error("Let's not make this too long.")
     else:
-        logging.error('The number of time steps should be a positive integer.')
+        logging.error("The number of time steps should be a positive integer.")

@@ -2,6 +2,7 @@
 
 from abc import ABC, abstractmethod
 
+
 class neuron_model(ABC):
     @abstractmethod
     def get_threshold(self):
@@ -20,11 +21,17 @@ class neuron_model(ABC):
         pass
 
     def __hash__(self):
-        return hash( (self.get_threshold(), self.get_neuronModel, self.get_shift(), self.get_leak() ))
+        return hash(
+            (
+                self.get_threshold(),
+                self.get_neuronModel,
+                self.get_shift(),
+                self.get_leak(),
+            )
+        )
 
     def __lt__(self, other):
         return hash(self) < hash(other)
-
 
     def __le__(self, other):
         return hash(self) <= hash(other)
@@ -32,12 +39,13 @@ class neuron_model(ABC):
 
 class LIF_neuron(neuron_model):
     """
-        LIF neuron model.
-        
-        shift: int
-            noise pertubation magnitude
-            
+    LIF neuron model.
+
+    shift: int
+        noise pertubation magnitude
+
     """
+
     def __init__(self, threshold, shift, leak):
         self.threshold = threshold
         self.shift = shift
@@ -55,20 +63,22 @@ class LIF_neuron(neuron_model):
     def get_neuronModel(self):
         return 2
 
+
 class ANN_neuron(neuron_model):
     """
-        Memory-less neuron model.
-        
-        leak : int
-            set to 0 for memory-less neuron
-        
+    Memory-less neuron model.
+
+    leak : int
+        set to 0 for memory-less neuron
+
     """
-    def __init__(self, threshold, shift, leak = 0):
+
+    def __init__(self, threshold, shift, leak=0):
         self.threshold = threshold
-        #TODO: to be determined 
+        # TODO: to be determined
         self.shift = shift
         self.leak = leak
-    
+
     def get_threshold(self):
         return self.threshold
 

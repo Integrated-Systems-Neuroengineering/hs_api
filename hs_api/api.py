@@ -1,15 +1,18 @@
 from hs_api._simple_sim import simple_sim, map_neuron_type_to_int
-#from cri_simulations import network
-#from cri_simulations.utils import *
+
+# from cri_simulations import network
+# from cri_simulations.utils import *
 from connectome_utils.connectome import *
 from bidict import bidict
 import os
 import copy
 import logging
 
-#handle the ordering of the elements of an entry in the neurons dictionary
+# handle the ordering of the elements of an entry in the neurons dictionary
 synapseIdx = 0
 modelIdx = 1
+
+
 class perturbMagError(ValueError):
     pass
 
@@ -57,17 +60,10 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(
-        self,
-        axons,
-        connections,
-        config,
-        outputs,
-        target=None,
-        simDump=False,
-        coreID=0
+            self, axons, connections, outputs, target=None, simDump=False, coreID=0
     ):
         # return
-        #breakpoint()
+        # breakpoint()
         if target:  # check if user provides an override for target
             self.target = target
         else:
@@ -92,12 +88,16 @@ class CRI_network:
                         )
         else:
             logging.error("Axons should be a dictionary")
-        self.userAxons = copy.deepcopy(axons)        # Checking for the connection type and synapse length
+        self.userAxons = copy.deepcopy(
+            axons
+        )  # Checking for the connection type and synapse length
         if type(connections) == dict:
             for keys in connections:
-                #print(keys)
+                # print(keys)
                 if connections[keys]:
-                    for values in connections[keys][synapseIdx]: #synapse list is first element in tuple
+                    for values in connections[keys][
+                        synapseIdx
+                    ]:  # synapse list is first element in tuple
                         if not ((type(values) == tuple) and (len(values) == 2)):
                             logging.error(
                                 "Each synapse should only consists of 2 elements: neuron, weight"
@@ -107,33 +107,23 @@ class CRI_network:
         self.userConnections = copy.deepcopy(connections)
 
         # Checking for config type and keys
-        if type(config) == dict:
-            if ("neuron_type" and "global_neuron_params") in config:
-                self.config = config
-            else:
-                logging.error(
-                    "config does not contain neuron type or global neuron params"
-                )
-        else:
-            logging.error("config should be a dictionary")
-
-        #self.perturb = perturb
-        #if perturbMag > 35 or perturbMag < 0 or not isinstance(perturbMag, int):
+        # self.perturb = perturb
+        # if perturbMag > 35 or perturbMag < 0 or not isinstance(perturbMag, int):
         #    raise perturbMagError('bad perturbMag')
-        #self.perturbMag = perturbMag
-        #if perturbMag:
+        # self.perturbMag = perturbMag
+        # if perturbMag:
         #    if perturbMag > 16:
         #        logging.error("perturbMag must be less than 16")
-        #self.leak = leak
-        #if leak > 2**6:
+        # self.leak = leak
+        # if leak > 2**6:
         #    logging.error("Leak must be less than two to the sixth")
-        #self.perturbMag = perturbMag
+        # self.perturbMag = perturbMag
         self.simpleSim = None
         self.key2index = {}
         self.simDump = simDump
         self.connectome = None
         self.gen_connectome()
-        #breakpoint()
+        # breakpoint()
         self.axons, self.connections = self.__format_input(
             copy.deepcopy(axons), copy.deepcopy(connections)
         )
@@ -148,32 +138,25 @@ class CRI_network:
             self.CRI = network(
                 self.connectome,
                 formatedOutputs,
-                self.config,
                 simDump=simDump,
                 coreOveride=coreID,
             )
-            #breakpoint()
             self.CRI.initalize_network()
         elif self.target == "simpleSim":
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(
-                self.config["global_neuron_params"]["v_thr"],
                 self.axons,
                 self.connections,
-                outputs=formatedOutputs,
-                #perturbMag=self.perturbMag,
-                #leak=self.leak,
+                outputs=formatedOutputs
             )
-        # breakpoint()
-        # print("initialized")
 
-    def set_perturbMag(self,perturbMag):
-        if self.target == 'simpleSim':
-            self.simpleSim .set_perturbMag(perturbMag)
-        elif self.target == 'CRI':
+    def set_perturbMag(self, perturbMag):
+        if self.target == "simpleSim":
+            self.simpleSim.set_perturbMag(perturbMag)
+        elif self.target == "CRI":
             self.CRI.set_perturbMag(perturbMag)
         else:
-            logging.error('invalid target') 
+            logging.error("invalid target")
 
     def checkHw(self):
         """
@@ -212,12 +195,17 @@ class CRI_network:
 
         # add axons to connectome
         for axonKey in self.userAxons:
-            self.connectome.addNeuron(neuron(axonKey, "axon", axonType = "Uaxon"))
+            self.connectome.addNeuron(neuron(axonKey, "axon", axonType="Uaxon"))
         # add neurons to connectome
         for neuronKey in self.userConnections:
             neuron_model = self.userConnections[neuronKey][modelIdx]
             self.connectome.addNeuron(
-                neuron(neuronKey, "neuron", output=neuronKey in self.outputs, neuronModel=neuron_model)
+                neuron(
+                    neuronKey,
+                    "neuron",
+                    output=neuronKey in self.outputs,
+                    neuronModel=neuron_model,
+                )
             )
         # print("added neurons to connectome")
 
@@ -232,9 +220,9 @@ class CRI_network:
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
-            #breakpoint()
+            # breakpoint()
             synapses = self.userConnections[neuronKey][synapseIdx]
-            #breakpoint()
+            # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
@@ -301,7 +289,7 @@ class CRI_network:
                 axonIndexDict[idx][listIdx] = newTuple
 
         for idx in connectionIndexDict:
-            #breakpoint()
+            # breakpoint()
             for listIdx in range(len(connectionIndexDict[idx][0])):
                 oldTuple = connectionIndexDict[idx][0][listIdx]
                 newTuple = (
@@ -309,7 +297,7 @@ class CRI_network:
                     oldTuple[1],
                 )
                 connectionIndexDict[idx][0][listIdx] = newTuple
-        #breakpoint()
+        # breakpoint()
         return axonIndexDict, connectionIndexDict
 
     # wrap with a function to accept list input/output
@@ -495,7 +483,7 @@ class CRI_network:
         >>> network = CRI_network(axons, connections, config, outputs)
         >>> network.step(['input1', 'input2'])
         """
-        #breakpoint()
+        # breakpoint()
         # formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
         formated_inputs = [
             self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
@@ -524,7 +512,7 @@ class CRI_network:
                     output, spikeResult = self.CRI.run_step(
                         formated_inputs, membranePotential
                     )
-                    #breakpoint()
+                    # breakpoint()
                     spikeList = spikeResult[0]
                     # we currently ignore the run execution counter
                     spikeList = [
@@ -539,9 +527,9 @@ class CRI_network:
                     ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output, (spikeList, spikeResult[1], spikeResult[2])
                 else:
-                    #breakpoint()
+                    # breakpoint()
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
-                    #breakpoint()
+                    # breakpoint()
                     spikeList = spikeResult[0]
                     spikeList = [
                         self.connectome.get_neuron_by_idx(spike[1]).get_user_key()
@@ -587,7 +575,7 @@ class CRI_network:
 
         result = self.CRI.run_cont(formated_inputs)
         spikeList = result[0]
-        #breakpoint()
+        # breakpoint()
         if self.simDump == False:
             spikeList = [
                 (spike[0], self.connectome.get_neuron_by_idx(spike[1]).get_user_key())
