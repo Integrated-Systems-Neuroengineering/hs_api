@@ -24,6 +24,14 @@ tensorboard = "^2.18.0"
 [tool.poetry.group.fpga.dependencies]
 hs_bridge = {path = "../hs_bridge", develop = true}
 
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^3.3.4"
+black = "^25.1.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pylint.format]
+max-line-length = "88"
