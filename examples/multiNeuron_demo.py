@@ -78,7 +78,7 @@ breakpoint()
 hardwareNetwork = CRI_network(
     axons=axons,
     connections=connections,
-    target="simpleSim",
+    target="CRI",
     outputs=connections.keys(),
     simDump=False,
 )
