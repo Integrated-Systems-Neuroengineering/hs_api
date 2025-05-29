@@ -436,7 +436,7 @@ class simple_sim:
         if axonFlag:
             return self.axonWeights[postIndex, preIndex]()
         else:
-            return self.neuornWeights[postIndex, preIndex]()
+            return self.neuronWeights[postIndex, preIndex]()
         """
         if axonFlag:
             synapses = self.axons[preIndex]

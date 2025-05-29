@@ -6,7 +6,7 @@ authors = ["Gwenevere Frank <jfrank@ucsd.edu>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10,<3.11"
+python = ">3.11, <3.12"
 numpy = "^2.1.2"
 pyyaml = "^6.0.2"
 tqdm = "^4.66.5"
@@ -14,6 +14,7 @@ connectome_utils = {path = "../connectome_utils", develop = true}
 jaal = "^0.1.7"
 bidict = "^0.22.0"
 fxpmath = {path = "../fxpmath", develop = true}
+sphinxcontrib-bibtex = "^2.6.3"
 
 [tool.poetry.group.apps.dependencies]
 matplotlib = "^3.9.2"
@@ -23,6 +24,13 @@ tensorboard = "^2.18.0"
 
 [tool.poetry.group.fpga.dependencies]
 hs_bridge = {path = "../hs_bridge", develop = true}
+
+[tool.poetry.group.doc.dependencies]
+sphinx = "^8.2.3"
+sphinx-gallery = "^0.19.0"
+pydata-sphinx-theme = "^0.16.1"
+myst-parser = "^4.0.1"
+sphinx-design = "^0.6.1"
 
 
 [tool.poetry.group.dev.dependencies]
