@@ -471,12 +471,21 @@ class simple_sim:
         ]  # get the nth element of each tuple which is neuron model
         return leaks
 
+    def get_model(self):
+        # breakpoint()
+        leaks = [
+            self.connections[key][1].get_neuronModel() for key in self.connections.keys()
+        ]  # get the nth element of each tuple which is neuron model
+        return leaks
+
     def step_run(self, inputs):
         # breakpoint()
         #
-        leaks = self.get_leak()
+        leaks = np.array(self.get_leak())
         threshs = self.get_threshold()
         perturbs = self.get_perturbMag()
+        lifNeurons = np.where(np.array(self.get_model()) == 2)[0]
+        memLessNeurons = np.where(np.array(self.get_model()) == 0)[0]
 
         if False:  # (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -503,8 +512,8 @@ class simple_sim:
                 perturbation, np.absolute(perturbs), np.less(perturbs, 0)
             )
             # add the noise to the membrane potential
-            if any(a != -16 for a in perturbs):
-                self.membranePotentials(self.membranePotentials + perturbation)
+           # if any(a != -16 for a in perturbs):
+           #     self.membranePotentials(self.membranePotentials + perturbation)
 
             # spike when the membrane potential >= self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() >= threshs)
@@ -521,11 +530,14 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             # if self.neuronModel == 2:
             # Leaky Integrate and fire
+            breakpoint()
+            #update LIF neurons
+            self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
 
-            self.membranePotentials(
-                self.membranePotentials()
-                - (self.membranePotentials() // np.power(2, leaks))
-            )
+
+            #update ANN neurons
+            self.membranePotentials[memLessNeurons] = 0
+
 
             # leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
             # leakage(leakage >> leaks)
