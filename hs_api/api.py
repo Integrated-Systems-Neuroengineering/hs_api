@@ -455,6 +455,18 @@ class CRI_network:
         else:
             raise Exception("Invalid Target")
 
+    def read_membrane(self,neuronList):
+        formated_inputs = [
+            self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
+            for symbol in neuronList
+        ]
+
+        results = self.CRI.readMP(formated_inputs)
+        results = [element[3] for element in results] #each membrane potential contains (row, column, membraneIndex, potential)
+        breakpoint()
+        return results
+
+
     def step(self, inputs, target="simpleSim", membranePotential=False):
         """
         Runs a step of the simulation.
