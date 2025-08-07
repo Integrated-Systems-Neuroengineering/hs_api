@@ -214,7 +214,13 @@ class CRI_network:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
+                target_neuron_id = axonSynapse[0]
+                if target_neuron_id not in self.connectome.connectomeDict:
+                    available_keys = list(self.connectome.connectomeDict.keys())
+                    key_sample = f"{available_keys[:5]}...{available_keys[-5:]}" if len(available_keys) > 10 else str(available_keys[:10])
+                    raise KeyError(f"Neuron '{target_neuron_id}' not found in connectome dictionary. Available keys: {key_sample}")
+                
+                postsynapticNeuron = self.connectome.connectomeDict[target_neuron_id]
                 self.connectome.connectomeDict[axonKey].addSynapse(
                     postsynapticNeuron, weight
                 )
@@ -225,7 +231,13 @@ class CRI_network:
             # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
+                target_neuron_id = neuronSynapse[0]
+                if target_neuron_id not in self.connectome.connectomeDict:
+                    available_keys = list(self.connectome.connectomeDict.keys())
+                    key_sample = f"{available_keys[:5]}...{available_keys[-5:]}" if len(available_keys) > 10 else str(available_keys[:10])
+                    raise KeyError(f"Neuron '{target_neuron_id}' not found in connectome dictionary. Available keys: {key_sample}")
+                
+                postsynapticNeuron = self.connectome.connectomeDict[target_neuron_id]
                 self.connectome.connectomeDict[neuronKey].addSynapse(
                     postsynapticNeuron, weight
                 )

@@ -961,11 +961,12 @@ class CRI_Converter:
             ]
             self.axon_dict[neuron_id] = neuron_entry
         # print('Instantiate output neurons')
+        # Instantiate output neurons
         for output_neuron in range(
             next_neuron_offset, next_neuron_offset + layer.out_features
         ):
             self.neuron_dict[str(output_neuron)] = (self.LIF_Neuron, [])  # TODO: Fix me
-            self.output_neurons.append(neuron_id)
+            self.output_neurons.append(str(output_neuron))  # FIXED: Use output_neuron instead of neuron_id
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
     def _linear_converter(self, layer, k, model):
@@ -990,7 +991,8 @@ class CRI_Converter:
             print("Building synapses between axons and neurons with linear Layer")
         else:
             print("Building synapese from neurons to neurons with linear Layer")
-            self.neuron_offset += np.prod(self.curr_input.shape)
+            # NOTE: Do NOT increment neuron_offset here - the curr_input neurons were already 
+            # created and added to connectome in the previous layer conversion
 
         print(
             f"Layer shape(in_feature, out_feature): {layer.in_features} {layer.out_features}"
@@ -1004,6 +1006,7 @@ class CRI_Converter:
                 )
             ]
         )
+        
         self._linear_weight(self.curr_input.flatten(), output, layer, v_thresh)
 
         if layer.bias is not None:
@@ -1020,9 +1023,13 @@ class CRI_Converter:
             lifNeuronModel = LIF_neuron(v_thresh, 0, 2**6 - 1)  # zero pertubation, IF
             for postSynNeuron in output:
                 # this needs to add a neuron type
-                self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
-                self.output_neurons.append(str(postSynNeuron))
+                neuron_id_str = str(postSynNeuron)
+                self.neuron_dict[neuron_id_str] = ([], lifNeuronModel)
+                self.output_neurons.append(neuron_id_str)
 
+        # Update neuron_offset to account for the output neurons we just created
+        self.neuron_offset += layer.out_features
+        
         self.curr_input = output
         self.snn_layer_index += 1
         print(
@@ -1092,7 +1099,8 @@ class CRI_Converter:
             print("Building synapese from axons to neurons with conv Layer")
         else:
             print("Building synapese from neurons to neurons with conv Layer")
-            self.neuron_offset += np.prod(self.curr_input.shape)
+            # NOTE: Do NOT increment neuron_offset here - the curr_input neurons were already 
+            # created and added to connectome in the previous layer conversion
 
         output_shape = self._conv_shape(layer, self.curr_input.shape)
         print(
@@ -1125,6 +1133,9 @@ class CRI_Converter:
                 self.neuron_dict[str(postSynNeuron)] = []  # fix me
                 self.output_neurons.append(str(postSynNeuron))
 
+        # Update neuron_offset to account for the output neurons we just created
+        self.neuron_offset += np.prod(output_shape)
+        
         self.curr_input = output
         self.snn_layer_index += 1
         print(
@@ -1220,7 +1231,8 @@ class CRI_Converter:
             print("Building synapese from axons to neurons with maxPool layer")
         else:
             print("Building synapese from neurons to neurons with maxPool layer")
-            self.neuron_offset += np.prod(self.curr_input.shape)
+            # NOTE: Do NOT increment neuron_offset here - the curr_input neurons were already 
+            # created and added to connectome in the previous layer conversion
 
         output_shape = self._maxPool_shape(layer, self.curr_input.shape)
         print(
@@ -1243,6 +1255,9 @@ class CRI_Converter:
             for postSynNeuron in output:
                 self.neuron_dict[str(postSynNeuron)] = []  # Fix Me
                 self.output_neurons.append(str(postSynNeuron))
+
+        # Update neuron_offset to account for the output neurons we just created
+        self.neuron_offset += np.prod(output_shape)
 
         self.bias_dict.append(self.NULL_INDICIES)
         self.curr_input = output
