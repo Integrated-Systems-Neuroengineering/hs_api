@@ -969,6 +969,28 @@ class CRI_Converter:
             self.output_neurons.append(str(output_neuron))  # FIXED: Use output_neuron instead of neuron_id
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
+    def _verify_neuron_generation(self, generated_neurons, layer_type):
+        """
+        Verify that all generated neurons were properly added to neuron_dict
+        
+        Parameters
+        ----------
+        generated_neurons : numpy.ndarray
+            Array of neuron IDs that were generated
+        layer_type : str
+            Type of layer for error reporting
+        """
+        missing_neurons = []
+        for neuron_id in generated_neurons:
+            neuron_str = str(neuron_id)
+            if neuron_str not in self.neuron_dict:
+                missing_neurons.append(neuron_str)
+        
+        if missing_neurons:
+            print(f"WARNING [_verify_neuron_generation]: {layer_type} - {len(missing_neurons)} neurons not added to neuron_dict: {missing_neurons[:5]}{'...' if len(missing_neurons) > 5 else ''}")
+        else:
+            print(f"INFO [_verify_neuron_generation]: {layer_type} - All {len(generated_neurons)} neurons properly added")
+
     def _linear_converter(self, layer, k, model):
         """
         Takes in a PyTorch linear layer and generate the postsynaptic neurons (numpy array)
@@ -1029,6 +1051,9 @@ class CRI_Converter:
 
         # Update neuron_offset to account for the output neurons we just created
         self.neuron_offset += layer.out_features
+        
+        # Bounds checking: Verify all generated neurons were properly added
+        self._verify_neuron_generation(output, "linear layer")
         
         self.curr_input = output
         self.snn_layer_index += 1
@@ -1135,6 +1160,12 @@ class CRI_Converter:
 
         # Update neuron_offset to account for the output neurons we just created
         self.neuron_offset += np.prod(output_shape)
+        
+        # Bounds checking: For conv layers, only verify output layer neurons are added
+        if self.layer_index == self.output_layer:
+            self._verify_neuron_generation(output.flatten(), "conv layer (output)")
+        else:
+            print(f"INFO [_verify_neuron_generation]: conv layer - Generated {len(output.flatten())} intermediate neurons (not stored individually)")
         
         self.curr_input = output
         self.snn_layer_index += 1
@@ -1258,6 +1289,12 @@ class CRI_Converter:
 
         # Update neuron_offset to account for the output neurons we just created
         self.neuron_offset += np.prod(output_shape)
+        
+        # Bounds checking: For maxPool layers, only verify output layer neurons are added  
+        if self.layer_index == self.output_layer:
+            self._verify_neuron_generation(output.flatten(), "maxPool layer (output)")
+        else:
+            print(f"INFO [_verify_neuron_generation]: maxPool layer - Generated {len(output.flatten())} intermediate neurons (not stored individually)")
 
         self.bias_dict.append(self.NULL_INDICIES)
         self.curr_input = output

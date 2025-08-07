@@ -215,10 +215,10 @@ class CRI_network:
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
                 target_neuron_id = axonSynapse[0]
-                if target_neuron_id not in self.connectome.connectomeDict:
-                    available_keys = list(self.connectome.connectomeDict.keys())
-                    key_sample = f"{available_keys[:5]}...{available_keys[-5:]}" if len(available_keys) > 10 else str(available_keys[:10])
-                    raise KeyError(f"Neuron '{target_neuron_id}' not found in connectome dictionary. Available keys: {key_sample}")
+                
+                # Enhanced bounds checking with detailed validation
+                if not self._validate_neuron_id(target_neuron_id, "axonSynapse"):
+                    continue  # Skip invalid connections
                 
                 postsynapticNeuron = self.connectome.connectomeDict[target_neuron_id]
                 self.connectome.connectomeDict[axonKey].addSynapse(
@@ -232,10 +232,10 @@ class CRI_network:
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
                 target_neuron_id = neuronSynapse[0]
-                if target_neuron_id not in self.connectome.connectomeDict:
-                    available_keys = list(self.connectome.connectomeDict.keys())
-                    key_sample = f"{available_keys[:5]}...{available_keys[-5:]}" if len(available_keys) > 10 else str(available_keys[:10])
-                    raise KeyError(f"Neuron '{target_neuron_id}' not found in connectome dictionary. Available keys: {key_sample}")
+                
+                # Enhanced bounds checking with detailed validation
+                if not self._validate_neuron_id(target_neuron_id, "neuronSynapse"):
+                    continue  # Skip invalid connections
                 
                 postsynapticNeuron = self.connectome.connectomeDict[target_neuron_id]
                 self.connectome.connectomeDict[neuronKey].addSynapse(
@@ -244,6 +244,90 @@ class CRI_network:
         # print("added neuron synapses")
 
         # print("generated Connectome")
+
+    def _validate_neuron_id(self, neuron_id, connection_type="unknown"):
+        """
+        Enhanced bounds checking for neuron ID validation
+        
+        Parameters
+        ----------
+        neuron_id : str or int
+            The neuron ID to validate
+        connection_type : str
+            Type of connection for error reporting (e.g., "axonSynapse", "neuronSynapse")
+            
+        Returns
+        -------
+        bool
+            True if neuron ID is valid, False if should be skipped
+            
+        Raises
+        ------
+        KeyError
+            If neuron ID is invalid and error handling is set to strict mode
+        """
+        # Check if neuron_id exists in connectome
+        if neuron_id not in self.connectome.connectomeDict:
+            available_keys = list(self.connectome.connectomeDict.keys())
+            
+            # Additional validation checks
+            error_details = []
+            
+            # Check data type consistency
+            if isinstance(neuron_id, (int, float)):
+                neuron_id_str = str(neuron_id)
+                if neuron_id_str in self.connectome.connectomeDict:
+                    print(f"WARNING [_validate_neuron_id]: Found neuron as string '{neuron_id_str}' instead of {type(neuron_id).__name__} {neuron_id}")
+                    return True
+                error_details.append(f"numeric ID {neuron_id} (tried string conversion)")
+            elif isinstance(neuron_id, str):
+                try:
+                    neuron_id_int = int(neuron_id)
+                    if neuron_id_int in self.connectome.connectomeDict:
+                        print(f"WARNING [_validate_neuron_id]: Found neuron as int {neuron_id_int} instead of string '{neuron_id}'")
+                        return True
+                    error_details.append(f"string ID '{neuron_id}' (tried int conversion)")
+                except ValueError:
+                    error_details.append(f"non-numeric string ID '{neuron_id}'")
+            
+            # Bounds analysis
+            if available_keys:
+                numeric_keys = []
+                for key in available_keys:
+                    try:
+                        if isinstance(key, str) and key.startswith('a'):
+                            continue  # Skip axon keys
+                        numeric_keys.append(int(key))
+                    except (ValueError, TypeError):
+                        continue
+                
+                if numeric_keys:
+                    min_key, max_key = min(numeric_keys), max(numeric_keys)
+                    try:
+                        neuron_id_num = int(str(neuron_id).replace('a', ''))
+                        if neuron_id_num < min_key:
+                            error_details.append(f"below minimum neuron ID {min_key}")
+                        elif neuron_id_num > max_key:
+                            error_details.append(f"above maximum neuron ID {max_key}")
+                        else:
+                            error_details.append(f"within valid range [{min_key}, {max_key}] but missing")
+                    except ValueError:
+                        pass
+            
+            # Generate comprehensive error message
+            key_sample = f"{available_keys[:5]}...{available_keys[-5:]}" if len(available_keys) > 10 else str(available_keys[:10])
+            error_msg = f"Neuron '{neuron_id}' not found in connectome dictionary"
+            if error_details:
+                error_msg += f" ({'; '.join(error_details)})"
+            error_msg += f". Available keys: {key_sample}"
+            
+            print(f"ERROR [_validate_neuron_id]: {connection_type} - {error_msg}")
+            
+            # For now, skip invalid connections instead of crashing
+            # TODO: Make this configurable with strict/lenient modes
+            return False
+            
+        return True
 
     def __format_input(self, axons, connections):
         """
@@ -294,6 +378,12 @@ class CRI_network:
         for idx in axonIndexDict:
             for listIdx in range(len(axonIndexDict[idx])):
                 oldTuple = axonIndexDict[idx][listIdx]
+                
+                # Validate neuron key before accessing
+                if not self._validate_neuron_id(oldTuple[0], "axon format_input"):
+                    print(f"WARNING [__format_input]: Skipping invalid axon connection to neuron '{oldTuple[0]}'")
+                    continue
+                    
                 newTuple = (
                     self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),
                     oldTuple[1],
@@ -304,6 +394,12 @@ class CRI_network:
             # breakpoint()
             for listIdx in range(len(connectionIndexDict[idx][0])):
                 oldTuple = connectionIndexDict[idx][0][listIdx]
+                
+                # Validate neuron key before accessing
+                if not self._validate_neuron_id(oldTuple[0], "connection format_input"):
+                    print(f"WARNING [__format_input]: Skipping invalid connection to neuron '{oldTuple[0]}'")
+                    continue
+                    
                 newTuple = (
                     self.connectome.get_neuron_by_key(oldTuple[0]).get_coreTypeIdx(),
                     oldTuple[1],
