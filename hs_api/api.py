@@ -245,6 +245,27 @@ class CRI_network:
 
         # print("generated Connectome")
 
+    def _standardize_neuron_id(self, neuron_id):
+        """
+        Standardize neuron ID format to string
+        
+        Parameters
+        ----------
+        neuron_id : str, int, or other
+            The neuron ID to standardize
+            
+        Returns
+        -------
+        str
+            Standardized neuron ID as string
+        """
+        if isinstance(neuron_id, str):
+            return neuron_id
+        elif isinstance(neuron_id, (int, float)):
+            return str(int(neuron_id))  # Convert to int first to remove decimals
+        else:
+            return str(neuron_id)
+
     def _validate_neuron_id(self, neuron_id, connection_type="unknown"):
         """
         Enhanced bounds checking for neuron ID validation
@@ -266,6 +287,9 @@ class CRI_network:
         KeyError
             If neuron ID is invalid and error handling is set to strict mode
         """
+        # Standardize neuron ID format first
+        neuron_id = self._standardize_neuron_id(neuron_id)
+        
         # Check if neuron_id exists in connectome
         if neuron_id not in self.connectome.connectomeDict:
             available_keys = list(self.connectome.connectomeDict.keys())

@@ -969,6 +969,27 @@ class CRI_Converter:
             self.output_neurons.append(str(output_neuron))  # FIXED: Use output_neuron instead of neuron_id
         # print(f'Numer of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}')
 
+    def _standardize_neuron_id(self, neuron_id):
+        """
+        Standardize neuron ID format to string
+        
+        Parameters
+        ----------
+        neuron_id : str, int, or other
+            The neuron ID to standardize
+            
+        Returns
+        -------
+        str
+            Standardized neuron ID as string
+        """
+        if isinstance(neuron_id, str):
+            return neuron_id
+        elif isinstance(neuron_id, (int, float, np.integer)):
+            return str(int(neuron_id))  # Convert to int first to remove decimals
+        else:
+            return str(neuron_id)
+
     def _verify_neuron_generation(self, generated_neurons, layer_type):
         """
         Verify that all generated neurons were properly added to neuron_dict
@@ -982,7 +1003,7 @@ class CRI_Converter:
         """
         missing_neurons = []
         for neuron_id in generated_neurons:
-            neuron_str = str(neuron_id)
+            neuron_str = self._standardize_neuron_id(neuron_id)
             if neuron_str not in self.neuron_dict:
                 missing_neurons.append(neuron_str)
         
