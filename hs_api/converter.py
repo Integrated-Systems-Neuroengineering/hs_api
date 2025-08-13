@@ -1028,8 +1028,15 @@ class CRI_Converter:
                 v_thresh = nextLayer.v_threshold
             else:
                 raise Exception("linear layer with no following snn layer")
+        except IndexError:
+            # This is the last layer - allow ANN neurons for membrane potential output
+            if k == self.output_layer:
+                print("Final linear layer detected - using ANN neurons for membrane potential output")
+                v_thresh = 1.0  # Default threshold for ANN neurons
+            else:
+                raise Exception("linear layer with no following snn layer")
         except:
-            raise Exception("liear layer with no following snn layer")
+            raise Exception("linear layer with no following snn layer")
         if self.layer_index == self.input_layer:
             print("Building synapses between axons and neurons with linear Layer")
         else:

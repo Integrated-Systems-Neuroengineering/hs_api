@@ -650,7 +650,7 @@ class CRI_network:
 
         elif self.target == "CRI":
             if self.simDump:
-                return self.CRI.run_step(formated_inputs, membranePotential)
+                return self.CRI.run_step(formated_inputs)
             else:
                 if membranePotential == True:
                     output, spikeResult = self.CRI.run_step(
