@@ -486,6 +486,10 @@ class simple_sim:
         perturbs = self.get_perturbMag()
         lifNeurons = np.where(np.array(self.get_model()) == 2)[0]
         memLessNeurons = np.where(np.array(self.get_model()) == 0)[0]
+        
+        # Reset ANN neurons at the BEGINNING of the step (moved from line 539)
+        # This allows them to accumulate weighted sum during the step
+        self.membranePotentials[memLessNeurons] = 0
 
         if False:  # (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
@@ -530,13 +534,12 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             # if self.neuronModel == 2:
             # Leaky Integrate and fire
-            breakpoint()
+            # breakpoint()
             #update LIF neurons
             self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
 
-
-            #update ANN neurons
-            self.membranePotentials[memLessNeurons] = 0
+            # ANN neurons reset moved to beginning of step (line 492)
+            # This preserves the weighted sum for membrane potential reading
 
 
             # leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])

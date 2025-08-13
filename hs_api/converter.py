@@ -1618,7 +1618,7 @@ class CRI_Converter:
             # empty input for output delay
             # swSpike = softwareNetwork.step([], membranePotential=False)
             # spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-            breakpoint()
+            # breakpoint()
             # for idx in spikeIdx:
             #    spikeRate[idx] += 1
             # Append the output spikes of each image to the output list

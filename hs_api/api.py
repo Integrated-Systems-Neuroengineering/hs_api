@@ -595,7 +595,7 @@ class CRI_network:
 
         results = self.CRI.readMP(formated_inputs)
         results = [element[3] for element in results] #each membrane potential contains (row, column, membraneIndex, potential)
-        breakpoint()
+        # breakpoint()
         return results
 
 
