@@ -457,14 +457,12 @@ class CRI_network:
 
     def read_membrane(self,neuronList):
         formated_inputs = [
-            self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
+            self.connectome.get_neuron_by_key(symbol).get_hbmIdx()
             for symbol in neuronList
         ]
-
         results = self.CRI.readMP(formated_inputs)
-        results = [element[3] for element in results] #each membrane potential contains (row, column, membraneIndex, potential)
-        breakpoint()
-        return results
+        formatedResults = [(self.connectome.get_neuron_by_idx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+        return formatedResults
 
 
     def step(self, inputs, target="simpleSim", membranePotential=False):
