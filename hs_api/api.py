@@ -461,7 +461,7 @@ class CRI_network:
             for symbol in neuronList
         ]
         results = self.CRI.readMP(formated_inputs)
-        formatedResults = [(self.connectome.get_neuron_by_idx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+        formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
         return formatedResults
 
 
@@ -506,6 +506,7 @@ class CRI_network:
                 for spike in spikeOutput
             ]
             if membranePotential == True:
+                breakpoint()
                 output = [
                     (self.connectome.get_neuron_by_idx(idx).get_user_key(), potential)
                     for idx, potential in enumerate(output)
@@ -526,13 +527,13 @@ class CRI_network:
                     spikeList = spikeResult[0]
                     # we currently ignore the run execution counter
                     spikeList = [
-                        self.connectome.get_neuron_by_idx(spike[1]).get_user_key()
+                        self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
                     ]
                     numNeurons = len(self.connections)
                     # we currently only print the membrane potential, not the other contents of the spike packet
                     output = [
-                        (self.connectome.get_neuron_by_idx(idx).get_user_key(), data[3])
+                        (self.connectome.get_neuron_by_hbmIdx(idx).get_user_key(), data[3])
                         for idx, data in enumerate(output)
                     ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
                     return output, (spikeList, spikeResult[1], spikeResult[2])
@@ -542,7 +543,7 @@ class CRI_network:
                     # breakpoint()
                     spikeList = spikeResult[0]
                     spikeList = [
-                        self.connectome.get_neuron_by_idx(spike[1]).get_user_key()
+                        self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
                     ]
                     return (spikeList, spikeResult[1], spikeResult[2])
