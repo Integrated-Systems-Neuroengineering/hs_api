@@ -530,13 +530,16 @@ class simple_sim:
             #    self.membranePotentials.fill(0)
             # if self.neuronModel == 2:
             # Leaky Integrate and fire
-            breakpoint()
+            #breakpoint()
             #update LIF neurons
-            self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
+            #
+            if lifNeurons.size > 0:
+                self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
 
 
             #update ANN neurons
-            self.membranePotentials[memLessNeurons] = 0
+            if memLessNeurons.size > 0:
+                self.membranePotentials[memLessNeurons] = 0
 
 
             # leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
