@@ -515,8 +515,8 @@ class simple_sim:
            # if any(a != -16 for a in perturbs):
            #     self.membranePotentials(self.membranePotentials + perturbation)
 
-            # spike when the membrane potential >= self.threshold
-            spiked_inds = np.nonzero(self.membranePotentials() >= threshs)
+            # spike when the membrane potential > self.threshold
+            spiked_inds = np.nonzero(self.membranePotentials() > threshs)
 
             self.membranePotentials[spiked_inds] = 0
             # TODO: you may be able to avoid the transpose if you use fortran ordering flatten
