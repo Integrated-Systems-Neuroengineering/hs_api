@@ -459,7 +459,7 @@ class CRI_network:
 
 
         if self.target == "simpleSim":
-            mebranePotentials = self.simpleSim.get_membranePotentials()
+            membranePotentials = self.simpleSim.get_membranePotentials()
             #get the indicies of the potentials we want by key
             #
             #Slice the membrane potential array
