@@ -456,13 +456,32 @@ class CRI_network:
             raise Exception("Invalid Target")
 
     def read_membrane(self,neuronList):
-        formated_inputs = [
-            self.connectome.get_neuron_by_key(symbol).get_hbmIdx()
-            for symbol in neuronList
-        ]
-        results = self.CRI.readMP(formated_inputs)
-        formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
-        return formatedResults
+
+
+        if self.target == "simpleSim":
+            mebranePotentials = self.simpleSim.get_membranePotentials()
+            #get the indicies of the potentials we want by key
+            #
+            #Slice the membrane potential array
+            #
+            formated_neurons = [
+                self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
+                for symbol in neuronList
+            ]
+
+            selectedPotentials = membranePotentials[formated_neurons]
+            return selectedPotentials
+
+
+
+        if self.target == "CRI":
+            formated_inputs = [
+                self.connectome.get_neuron_by_key(symbol).get_hbmIdx()
+                for symbol in neuronList
+            ]
+            results = self.CRI.readMP(formated_inputs)
+            formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+            return formatedResults
 
 
     def step(self, inputs, target="simpleSim", membranePotential=False):

@@ -355,6 +355,10 @@ class simple_sim:
 
         self.initialize_sim_vars(self.numNeurons)
 
+
+    def get_membranePotentials(self):
+        return self.membranePotentials
+
     def set_perturbMag(self, perturbMag):
         self.perturbMag = perturbMag
 
