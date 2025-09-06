@@ -1,5 +1,8 @@
+from icrcdemo_krish_hardware_09_02_25 import DVSGestureNetNoBias
+from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
+from torch.utils.data import DataLoader, Subset
+
 from hs_api.api import CRI_network
-import QAT_LeNet5_Stride2_2Channels
 import torch
 import torchvision
 import torchvision.transforms as transforms
@@ -8,11 +11,9 @@ from hs_api.neuron_models import ANN_neuron, LIF_neuron
 import torch.nn.functional as F
 import numpy as np
 import os
+from hs_api.custom_neurons import Custom_LIFNode, Custom_IFNode
+from spikingjelly.activation_based import neuron, functional, surrogate, layer
 
-
-#Spikingjelly neurons
-from spikingjelly.clock_driven.neuron import MultiStepLIFNode
-from spikingjelly.activation_based.neuron import IFNode, LIFNode
 
 '''
 Adapted from /LeNet5/LeNet5_Converter.py
@@ -25,13 +26,14 @@ threshold = 1
 pertubation = 0
 leak_lif = 63
 N = LIF_neuron(threshold, pertubation, leak_lif)
-kernel_size = 5      #kernel size of convolutional layers
+kernel_size = 3      #kernel size of convolutional layers
 stride = 2           #stride of convolutional layers
 input_res = 90       #resolution of input MNIST image
-conv1_output_res = 43     #resolution of output feature maps from conv1
-conv2_output_res = 20     #resolution of output feature maps from conv2
+conv1_output_res = 44     #resolution of output feature maps from conv1
+conv2_output_res = 21     #resolution of output feature maps from conv2
 
-PATH = "/home/k7arora/hs_api/examples/CRI_Mapping/chris_code/converter_testing/2Channel_MNIST/QAT_LeNet5_weights_Stride2_2Channels" #path for loading weights
+data_dir = "/home/k7arora/hs_api/examples/CRI_Mapping/DVS128Gesture"
+PATH = "/home/k7arora/hs_api/examples/CRI_Mapping/chris_code/converter_testing/IFNeuron/checkpoint_max_T_10_C_4_lr_0.001.pth" #path for loading weights
 
 
 class Binarize(object):
@@ -90,104 +92,141 @@ def max_membrane_potential2(outputs: list):
     
     return max_label  #return output neuron with greatest membrane potential
 
-#Loading the dataset and preprocessing
-#krish: changed size to 90x90, added two channels(duplicates except for diff thresholds) to mimic DVSGesture dataset
-#first channel has 0.5 threshold
-full_train_dataset1 = torchvision.datasets.MNIST(root = './data',
-                                                train = True,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)), 
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.5)]),
-                                                download = True)
 
-#second channel has 0.25 threshold
-full_train_dataset2 = torchvision.datasets.MNIST(root = './data',
-                                                train = True,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)), 
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.25)]),
-                                                download = True)
+# #Loading the dataset and preprocessing
+# # resize transform that iterates over the temporal dimension
+# class DVSResize:
+#     def __init__(self, size):
+#         self.size = size
+        
+#     def __call__(self, data):
+#         # case where data is a tuple (frames, label)
+#         if isinstance(data, tuple):
+#             frames, label = data
+            
+#             # Convert numpy array to tensor if needed
+#             if isinstance(frames, np.ndarray):
+#                 frames = torch.from_numpy(frames)
+            
+#             # Get dimensions
+#             T, C, H, W = frames.shape
+            
+#             # Create a tensor to hold resized frames
+#             resized = torch.zeros((T, C, self.size[0], self.size[1]), dtype=frames.dtype, device=frames.device)
+            
+#             # Iterate over the temporal dimension and resize each frame
+#             for t in range(T):
+#                 frame = frames[t]  # Shape: [C, H, W]
+#                 # Use F.interpolate to resize
+#                 resized_frame = torch.nn.functional.interpolate(
+#                     frame.unsqueeze(0),  # Add batch dimension
+#                     size=self.size,
+#                     mode='bilinear',
+#                     align_corners=False
+#                 ).squeeze(0)  # Remove batch dimension
+#                 resized[t] = resized_frame
+                
+#             return resized, label
+#         else:
+#             # Handle case where only frames are provided
+#             frames = data
+#             if isinstance(frames, np.ndarray):
+#                 frames = torch.from_numpy(frames)
+            
+#             T, C, H, W = frames.shape
+#             resized = torch.zeros((T, C, self.size[0], self.size[1]), dtype=frames.dtype, device=frames.device)
+            
+#             for t in range(T):
+#                 frame = frames[t]
+#                 resized_frame = torch.nn.functional.interpolate(
+#                     frame.unsqueeze(0),
+#                     size=self.size,
+#                     mode='bilinear',
+#                     align_corners=False
+#                 ).squeeze(0)
+#                 resized[t] = resized_frame
+                
+#             return resized
+
+# # Use our simple resize transform for all datasets
+# resize_transform = DVSResize(size=(90, 90))  # resize from 128x128 to 90x90
+
+# # Load training dataset
+# full_train_set = DVS128Gesture(
+#     root=data_dir, 
+#     frames_number=10, 
+#     split_by="number", 
+#     train=True, 
+#     data_type="frame", 
+#     duration=1600000,
+#     #transform=resize_transform
+# )
+
+# # Create 85%-15% train-validation split
+# full_train_size = len(full_train_set)
+# val_size = int(0.15 * full_train_size)
+# train_size = full_train_size - val_size
+
+# torch.manual_seed(1)  # ensure same split every time
+# indices = torch.randperm(full_train_size)
+# train_indices = indices[:train_size]
+# val_indices = indices[train_size:]
+
+# # Create training dataset with train augments if wanted
+# train_set_aug = DVS128Gesture(
+#     root=data_dir, 
+#     frames_number=10, 
+#     split_by="number", 
+#     train=True, 
+#     data_type="frame", 
+#     duration=1600000,
+#     transform=resize_transform
+# )
+
+# # Create subsets
+# train_set = Subset(train_set_aug, train_indices)
+# val_set = Subset(full_train_set, val_indices)  # No augmentation
+
+# test_set = DVS128Gesture(
+#     root=data_dir, 
+#     frames_number=10, 
+#     split_by="number", 
+#     train=False, 
+#     data_type="frame", 
+#     duration=1600000,
+#     transform=resize_transform
+# )
+
+# print(f"Training samples: {len(train_set)} ({len(train_set)/full_train_size*100:.1f}%)")
+# print(f"Validation samples: {len(val_set)} ({len(val_set)/full_train_size*100:.1f}%)")
+# print(f"Test samples: {len(test_set)}")
+
+# T, C, H, W = full_train_set[0][0].shape
+# print(f"Input shape: {(T, C, H, W)}")
+# print(f"Number of training samples: {len(train_set)}")
+# print(f"Number of validation samples: {len(val_set)}")
+# print(f"Number of testing samples: {len(test_set)}")
+        
 
 
-
-#split full_train_dataset into training set and validation set
-train_size = int(0.83 * len(full_train_dataset1)) #50k for training
-val_size = len(full_train_dataset1) - train_size #10k for validation
-train_dataset1, _ = torch.utils.data.random_split(full_train_dataset1, [train_size, val_size])
-train_dataset2, _ = torch.utils.data.random_split(full_train_dataset2, [train_size, val_size])
-
-#create a separate validation dataset with the test transforms
-#first channel has 0.5 threshold
-val_dataset1 = torchvision.datasets.MNIST(root = './data',
-                                                train = True,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)),
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.5)]),
-                                                download = True)
-
-#second channel has 0.25 threshold
-val_dataset2 = torchvision.datasets.MNIST(root = './data',
-                                                train = True,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)),
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.25)]),
-                                                download = True)
-
-#subset only the remaining 10% of the data for validation
-_, val_dataset1 = torch.utils.data.random_split(val_dataset1, [train_size, val_size])
-_, val_dataset2 = torch.utils.data.random_split(val_dataset2, [train_size, val_size])
-
-#first channel has 0.5 threshold
-test_dataset1 = torchvision.datasets.MNIST(root = './data',
-                                                train = False,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)),
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.5)]),
-                                                download=True)
-
-#second channel has 0.25 threshold
-test_dataset2 = torchvision.datasets.MNIST(root = './data',
-                                                train = False,
-                                                transform = transforms.Compose([
-                                                        transforms.Resize((90,90)),
-                                                        transforms.ToTensor(),
-                                                        Binarize(0.25)]),
-                                                download=True)
-
-
-# Helper function to stack two Subset datasets along channel dimension
-def stack_subsets(subset1, subset2):
-    # Both subsets have the same indices and length
-    stacked_images = []
-    stacked_labels = []
-    for i in range(len(subset1)):
-        img1, label1 = subset1[i]
-        img2, label2 = subset2[i]
-        # Stack along channel dimension
-        stacked_img = torch.cat([img1, img2], dim=0)  # [2, H, W]
-        stacked_images.append(stacked_img)
-        stacked_labels.append(label1)  # labels should be the same
-    images_tensor = torch.stack(stacked_images)
-    labels_tensor = torch.tensor(stacked_labels)
-    return torch.utils.data.TensorDataset(images_tensor, labels_tensor)
-
-train_dataset = stack_subsets(train_dataset1, train_dataset2)
-val_dataset = stack_subsets(val_dataset1, val_dataset2)
-test_dataset = stack_subsets(test_dataset1, test_dataset2)
-
-#print info about datasets, shape should be [2, 90, 90]
-print("Training dataset size: ", len(train_dataset), ", shape: ", train_dataset[0][0].shape)
-print("Validation dataset size: ", len(val_dataset), ", shape: ", val_dataset[0][0].shape)
-print("Test dataset size: ", len(test_dataset), ", shape: ", test_dataset[0][0].shape)
 
 #load model architecture and model weights
-model = QAT_LeNet5_Stride2_2Channels.LeNet5(10)
-model.load_state_dict(torch.load(PATH))
+model = DVSGestureNetNoBias(
+        channels=4,
+        encoder=2,
+        spiking_neuron=Custom_IFNode,
+        surrogate_function=surrogate.ATan(),
+        input_shape=(64, 2, 90, 90),  # input shape for the model(B,C,H,W)
+        detach_reset=True,
+    )
+
+print(model)
+checkpoint = torch.load(
+        PATH,
+        weights_only=False,
+    )
+model.load_state_dict(checkpoint["net"])
+print(checkpoint["net"])
 
 #convert FP32 weights to INT16
 int16_sd, scales = fp32_to_int16_state_dict(model)
@@ -210,8 +249,8 @@ patch_rows = patchTensor.transpose(1, 2).squeeze(0)  # shape: [num_patches, kern
 patch_rows = patch_rows.to(torch.int16)
 
 # iterate through every weight kernel in first convolutional layer and map axons → (neuron, weight)
-print("conv1 weight: ", int16_sd["conv1.weight"].shape)  # Should be (6, 2, 5, 5)
-for feature_map, kernel in enumerate(int16_sd["conv1.weight"]):  # kernel shape: [2, 5, 5]
+print("conv1 weight: ", int16_sd["conv_fc.0.weight"].shape)  # Should be (6, 2, 5, 5)
+for feature_map, kernel in enumerate(int16_sd["conv_fc.0.weight"]):  # kernel shape: [2, 5, 5]
     flat_kernel = kernel.flatten()  # shape: [50]
     for index, row in enumerate(patch_rows):  # row shape: [50]
         neuronName = f"C1.{feature_map}.{index}"
@@ -234,8 +273,8 @@ patch_rows = patch_rows.to(torch.int16)   #convert patch_rows from FP32 tensor t
 
 #connecting C1 neurons in conv1 to C2 neurons in conv2
 #outer loop: iterate over output channels in conv2
-print("weight shape for conv2: ", int16_sd["conv2.weight"].shape) 
-for output_idx, output_channel in enumerate(int16_sd["conv2.weight"]): 
+print("weight shape for conv2: ", int16_sd["conv_fc.3.weight"].shape) 
+for output_idx, output_channel in enumerate(int16_sd["conv_fc.3.weight"]): 
     #print(output_idx, output_channel.shape)
     #inner loop: iterate over input-channel kernels with index for this output channel
     for feature_map, kernel in enumerate(output_channel):  
@@ -258,35 +297,31 @@ for output_idx, output_channel in enumerate(int16_sd["conv2.weight"]):
 
 #connecting conv2 to fc1
 feature_map = 0
-print("fc1 shape: ", int16_sd["fc1.weight"].shape)
-print(int16_sd["fc1.weight"].shape[1])
-for col in range(int16_sd["fc1.weight"].shape[1]):  #x.shape[1] == number of col
+print("fc1 shape: ", int16_sd["conv_fc.8.weight"].shape)
+print(int16_sd["conv_fc.8.weight"].shape[1])
+for col in range(int16_sd["conv_fc.8.weight"].shape[1]):  #x.shape[1] == number of col
     if col % (conv2_output_res ** 2) == 0 and col != 0:  #determines the feature_map of the C2 neuron for C2 --> FC1
         feature_map += 1
     #print("feature map: ", feature_map)
-    for i, elem in enumerate(int16_sd["fc1.weight"][:, col]):     #iterate over element in a col
+    for i, elem in enumerate(int16_sd["conv_fc.8.weight"][:, col]):     #iterate over element in a col
         connectingNeuron = (f"FC1.{i}", elem.item())
         connections[f"C2.{feature_map}.{col % (conv2_output_res ** 2)}"][0].append(connectingNeuron)
 
 #connecting fc1 to fc2
-for col in range(int16_sd["fc2.weight"].shape[1]):  #x.shape[1] == number of col
+print(int16_sd["conv_fc.11.weight"])
+for col in range(int16_sd["conv_fc.11.weight"].shape[1]):  #x.shape[1] == number of col
     allConnections = []
-    for i, elem in enumerate(int16_sd["fc2.weight"][:, col]):     #iterate over element in a col
+    for i, elem in enumerate(int16_sd["conv_fc.11.weight"][:, col]):     #iterate over element in a col
+        print(i)
         connectingNeuron = (f"FC2.{i}", elem.item())
         allConnections.append(connectingNeuron)
     connections[f"FC1.{col}"] = (allConnections, N)
 
-#connecting fc2 to fc3
-for col in range(int16_sd["fc3.weight"].shape[1]):  #x.shape[1] == number of col
-    allConnections = []
-    for i, elem in enumerate(int16_sd["fc3.weight"][:, col]):     #iterate over element in a col
-        connectingNeuron = (i, elem.item())
-        allConnections.append(connectingNeuron)
-    connections[f"FC2.{col}"] = (allConnections, N)
+
 
 #creating output neurons
 outputs = []
-for x in range(10):
+for x in range(11):
     connections[x] = ([], N)
     outputs.append(x)
 
@@ -302,80 +337,82 @@ print(f"Number of ANNs: {len(connections)}")
 print(f"Number of axons: {len(axons)}")
 print(f"Number of synapses: {number_synapses}")
 
+print(f"Outputs: {outputs}")
+
 #create network
 network = CRI_network(axons=axons,connections=connections,outputs=outputs,target="CRI")
 
-#used to save clock cycles and hbm accesses
-spikes = []
+# #used to save clock cycles and hbm accesses
+# spikes = []
 
-#run testing
-correct = 0
-total = 0
-images = 0    #used if want to end inferencing on test dataset early
+# #run testing
+# correct = 0
+# total = 0
+# images = 0    #used if want to end inferencing on test dataset early
 
 
-for img, labels in test_dataset:
-    input = img.reshape(img.size(0), -1) #flatten input to [1, 36]
-    input = input.to(torch.int16)        #change input from FP32 to INT16
+# for img, labels in test_dataset:
+#     input = img.reshape(img.size(0), -1) #flatten input to [1, 36]
+#     input = input.to(torch.int16)        #change input from FP32 to INT16
 
-    #create input list
-    inputs = []
-    for i, elem in enumerate(input[0, :]):
-        if elem.item() == 1:
-            inputs.append(f"A{i}")
+#     #create input list
+#     inputs = []
+#     for i, elem in enumerate(input[0, :]):
+#         if elem.item() == 1:
+#             inputs.append(f"A{i}")
     
 
-    #running for 5 timsteps
-    currSpikes = network.step(inputs) #1st time step through Conv1
-    currSpikes = network.step([])     #2nd time step through Conv2
-    currSpikes = network.step([])     #3rd time step through fc1
-    currSpikes = network.step([])     #4th time step through fc2
-    currSpikes = network.step([])     #5th time step through fc3
-    results = network.read_membrane(outputs)
+#     #running for 5 timsteps
+#     currSpikes = network.step(inputs) #1st time step through Conv1
+#     currSpikes = network.step([])     #2nd time step through Conv2
+#     currSpikes = network.step([])     #3rd time step through fc1
+#     currSpikes = network.step([])     #4th time step through fc2
+#     currSpikes = network.step([])     #5th time step through fc3
+#     results = network.read_membrane(outputs)
 
-    #record clock cycles and hbm accesses
-    spikes.append(currSpikes)
+#     #record clock cycles and hbm accesses
+#     spikes.append(currSpikes)
 
-    #compare predicted with ground truth
-    #predicted_1, _ = max_membrane_potential(currSpikes, outputs)
-    predicted_1 = max_membrane_potential2(results) #index of max membrane potential == predicted
+#     #compare predicted with ground truth
+#     #predicted_1, _ = max_membrane_potential(currSpikes, outputs)
+#     predicted_1 = max_membrane_potential2(results) #index of max membrane potential == predicted
     
-    total += 1
-    if predicted_1 == labels:
-        correct += 1
+#     total += 1
+#     if predicted_1 == labels:
+#         correct += 1
 
-    running_accuracy = 100 * correct / total
-    print(f"Running accuracy : {running_accuracy:.2f} %")
+#     running_accuracy = 100 * correct / total
+#     print(f"Running accuracy : {running_accuracy:.2f} %")
     
-    #images += 1  
-    #if images >= 10:
-        #break
+#     #images += 1  
+#     #if images >= 10:
+#         #break
 
-accuracy = 100 * correct / total
-print(f'Accuracy of the network on the 10000 test images: {accuracy:.2f} %')
+# accuracy = 100 * correct / total
+# print(f'Accuracy of the network on the 10000 test images: {accuracy:.2f} %')
 
-#record (clockcyles, hbmaccess) as ordered pairs in numpy arr
-data = []
-for item in spikes:
-    # Unpack the tuple
-    _, clock_cycles, hbm_accesses= item
-    # Append the pair to the list
-    data.append((clock_cycles, hbm_accesses))
+# #record (clockcyles, hbmaccess) as ordered pairs in numpy arr
+# data = []
+# for item in spikes:
+#     # Unpack the tuple
+#     _, clock_cycles, hbm_accesses= item
+#     # Append the pair to the list
+#     data.append((clock_cycles, hbm_accesses))
 
-arr = np.asarray(data)              
+# arr = np.asarray(data)              
 
 
 
-#Save converter FPGA accuracy to txt file and clock cycles to npy file
-parent_directory = os.path.dirname(PATH)
+# #Save converter FPGA accuracy to txt file and clock cycles to npy file
+# parent_directory = os.path.dirname(PATH)
 
-#if accuracies.txt file already exists, just append converted accuracy to it, otherwise, create new file
-if os.path.exists(os.path.join(parent_directory, "accuracies.txt")):
-    mode = "a"
-else:
-    mode = "w"
+# #if accuracies.txt file already exists, just append converted accuracy to it, otherwise, create new file
+# if os.path.exists(os.path.join(parent_directory, "accuracies.txt")):
+#     mode = "a"
+# else:
+#     mode = "w"
 
-with open(os.path.join(parent_directory, "accuracies.txt"), mode) as f:
-    f.write(f"FPGA Converted Accuracy: {accuracy:.2f}%\n")
+# with open(os.path.join(parent_directory, "accuracies.txt"), mode) as f:
+#     f.write(f"FPGA Converted Accuracy: {accuracy:.2f}%\n")
 
-np.save(os.path.join(parent_directory, "clock_cycles_LeNet5_Stride2.npy"), arr)
+# np.save(os.path.join(parent_directory, "clock_cycles_LeNet5_Stride2.npy"), arr)
