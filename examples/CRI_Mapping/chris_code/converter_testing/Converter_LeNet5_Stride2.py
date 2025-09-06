@@ -212,13 +212,6 @@ for col in range(int16_sd["fc2.weight"].shape[1]):  #x.shape[1] == number of col
         allConnections.append(connectingNeuron)
     connections[f"FC1.{col}"] = (allConnections, N)
 
-#connecting fc2 to fc3
-for col in range(int16_sd["fc3.weight"].shape[1]):  #x.shape[1] == number of col
-    allConnections = []
-    for i, elem in enumerate(int16_sd["fc3.weight"][:, col]):     #iterate over element in a col
-        connectingNeuron = (i, elem.item())
-        allConnections.append(connectingNeuron)
-    connections[f"FC2.{col}"] = (allConnections, N)
 
 #creating output neurons
 outputs = []
