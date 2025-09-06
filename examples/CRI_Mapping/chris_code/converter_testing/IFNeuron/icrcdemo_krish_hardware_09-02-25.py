@@ -16,7 +16,7 @@ from spikingjelly.datasets import pad_sequence_collate
 from utils_krish import train_DVS_Time, train_DVS_Time_with_plot, sw_comp_DVS, validate_DVS, validate_DVS_HW, test_DVS_Time, infer_cri_params
 from hs_api import CRI_network
 #from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder #initially just hs_api.converter
-from hs_api.converter_krish_avgpool_copy import CRI_Converter, Quantize_Network, BN_Folder #initially just hs_api.converter
+from hs_api.quantizer import Quantize_Network, BN_Folder #initially just hs_api.converter
 import os
 import matplotlib.pyplot as plt
 from hs_api.custom_neurons import Custom_IFNode, Custom_LIFNode
@@ -175,7 +175,6 @@ def main():
     # Train
     # python cnn_train.py -data-dir /Users/keli/Code/CRI/data/DVS128Gesture -out-dir /Users/keli/Code/CRI/CRI_Mapping/runs/dvs_gesture
 
-    encoder = encoding.PoissonEncoder()
 
     # Print all arguments individually
     print("=" * 50)
@@ -190,17 +189,6 @@ def main():
 
     scaler = amp.GradScaler()
 
-    # Prepare the dataset with gradual augmentations
-    # Create gradual augmentation for training
-    train_augmentation = SimpleDVSAugmentation(
-        flip_prob=0.3,          # Reduced from 0.5
-        event_drop_prob=0.05,   # Reduced from 0.1
-        rotation_prob=0.2,      # Reduced from 0.3
-        max_rotation=3,         # Reduced from 5 degrees
-        temporal_shift_prob=0.1 # Reduced from 0.2
-    )
-    #print("Using gradual data augmentation: horizontal flip (30%) + light rotation (±3°, 20%) + temporal shift (10%) + event dropout (5%)")
-    
     # resize transform that iterates over the temporal dimension
     class DVSResize:
         def __init__(self, size):
