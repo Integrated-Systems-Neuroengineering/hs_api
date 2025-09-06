@@ -13,13 +13,13 @@ import torchvision.transforms as transforms
 import numpy as np
 import random
 from spikingjelly.datasets import pad_sequence_collate
+from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 from utils_krish import train_DVS_Time, train_DVS_Time_with_plot, sw_comp_DVS, validate_DVS, validate_DVS_HW, test_DVS_Time, infer_cri_params
 from hs_api import CRI_network
 #from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder #initially just hs_api.converter
 from hs_api.quantizer import Quantize_Network, BN_Folder #initially just hs_api.converter
 import os
 import matplotlib.pyplot as plt
-from hs_api.custom_neurons import Custom_IFNode, Custom_LIFNode
 import torch
 import torch.nn as nn
 import torchvision
@@ -28,6 +28,7 @@ import torch.ao.quantization as tq
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
 import os
+from hs_api.custom_neurons import Custom_LIFNode, Custom_IFNode
 
 from spikingjelly.activation_based import neuron, functional, surrogate, layer
 from copy import deepcopy
@@ -47,7 +48,7 @@ parser.add_argument(
 parser.add_argument("-b", default=32, type=int, help="batch size")
 parser.add_argument(
     "-data-dir",
-    default="/home/k7arora/hs_api/examples/DVS128Gesture",
+    default="/home/k7arora/hs_api/examples/CRI_Mapping/DVS128Gesture",
     type=str,
     help="path to dataset",
 )
@@ -358,7 +359,7 @@ def main():
     net = DVSGestureNetNoBias(
         channels=4,
         encoder=2,
-        spiking_neuron=neuron.IFNode,
+        spiking_neuron=Custom_IFNode,
         surrogate_function=surrogate.ATan(),
         input_shape=(args.b, 2, 90, 90),  # input shape for the model(B,C,H,W)
         detach_reset=True,
