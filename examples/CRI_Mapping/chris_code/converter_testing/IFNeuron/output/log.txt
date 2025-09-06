@@ -1,0 +1,11 @@
+nohup: ignoring input
+/home/k7arora/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+The dash_html_components package is deprecated. Please replace
+`import dash_html_components as html` with `from dash import html`
+  import dash_html_components as html
+Traceback (most recent call last):
+  File "/home/k7arora/hs_api/examples/CRI_Mapping/chris_code/converter_testing/IFNeuron/icrcdemo_krish_hardware_09-02-25.py", line 20, in <module>
+    from hs_api.quantizer import Quantize_Network, BN_Folder #initially just hs_api.converter
+  File "/home/k7arora/hs_api/hs_api/quantizer.py", line 19, in <module>
+    from hs_api.custom_neurons import Custom_LIFNode
+ModuleNotFoundError: No module named 'hs_api.custom_neurons'
