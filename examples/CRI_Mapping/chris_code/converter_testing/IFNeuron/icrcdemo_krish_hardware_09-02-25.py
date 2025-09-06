@@ -17,7 +17,7 @@ from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 from utils_krish import train_DVS_Time, train_DVS_Time_with_plot, sw_comp_DVS, validate_DVS, validate_DVS_HW, test_DVS_Time, infer_cri_params
 from hs_api import CRI_network
 #from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder #initially just hs_api.converter
-from hs_api.quantizer import Quantize_Network, BN_Folder #initially just hs_api.converter
+from hs_api.quantizer import Quantize_Network #initially just hs_api.converter
 import os
 import matplotlib.pyplot as plt
 import torch
