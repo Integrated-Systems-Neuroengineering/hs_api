@@ -1,0 +1,63 @@
+# Step-based Nature CNN DQN config for DVS encoding without static channel
+# Uses 2-channel DVS: OFF events, ON events (no static channel)
+# 33% more efficient with 14,112 axons vs 21,168 axons
+
+model:
+  architecture: "NoBias63"  # 63x63 input size for DVS (no static)
+  input_channels: 2  # DVS No Static: OFF events, ON events only
+  n_actions: 6
+
+training:
+  # Step-based parameters (CleanRL-inspired but balanced)
+  total_steps: 5000000          # 5M steps for reasonable training time
+  learning_starts: 100000        # 100k warmup steps
+  train_frequency: 8            # Train every 4 steps
+  target_update_frequency: 1500 # Update target every 1.5k steps
+  
+  # Buffer and batch settings
+  buffer_size: 800000           # 600k buffer (balanced for memory and performance)
+  batch_size: 64
+  
+  # Learning parameters
+  optimizer: "adam"
+  lr: 0.0001
+  gamma: 0.99
+  gradient_clip_norm: 10.0 
+  weight_decay: 1e-6
+  
+  # Epsilon schedule
+  epsilon_start: 1.0
+  epsilon_end: 0.01
+  exploration_fraction: 0.3
+  
+  # Logging intervals (balanced)
+  log_interval: 5000            # Log every 5k steps
+  diagnostic_interval: 100000    # Comprehensive diagnostics every 50k steps
+
+env:
+  game: "PongNoFrameskip-v4"  # Use NoFrameskip for DVS (critical!)
+  grayscale: true
+  
+  # DVS-specific environment settings
+  noop_max: 20
+  # Note: frame_skip removed from config - DVS requires frame_skip=4 in AtariPreprocessing
+  clip_rewards: true
+  episodic_life: true
+
+# DVS-specific configuration (No Static channel)
+dvs:
+  change_threshold: 8     # Pixel change sensitivity for motion detection
+  # static_threshold removed - no static channel
+  visualization: false     # Enable for debugging (creates sample images)
+  vis_interval: 1000      # Visualization frequency when enabled
+
+save:
+  log_dir: "logs"
+  checkpoint_interval: 250000   # Save every 250k steps
+  best_model_path: "checkpoints/step_no_bias_best.pth"
+
+# Efficiency notes:
+# - 2-channel DVS uses 14,112 axons (vs 21,168 for 3-channel)
+# - 33% reduction in input size and memory usage
+# - Focus on temporal changes (OFF/ON events) without static noise
+# - Better for motion detection and SNN conversion
