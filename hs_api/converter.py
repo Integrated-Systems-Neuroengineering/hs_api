@@ -16,6 +16,7 @@ import snntorch as snn
 import multiprocessing as mp
 import numpy as np
 from hs_api.neuron_models import LIF_neuron, ANN_neuron
+from spikingjelly.activation_based import neuron, surrogate
 
 
 def isSNNLayer(layer):
@@ -136,6 +137,7 @@ class weight_quantize_fn(nn.Module):
         return weight_q
 
 
+
 class Quantize_Network:
     """
     A class to perform quantization on a neural network.
@@ -168,13 +170,14 @@ class Quantize_Network:
     >>> q_net.quantize(some_model)
     """
 
-    def __init__(self, w_alpha, dynamic_alpha=False):
+    def __init__(self, w_alpha, dynamic_alpha=False, dynamic_alpha_method='keli'):
         self.w_alpha = w_alpha  # Range of the parameter (CSNN:4, Spikeformer: 5)
         self.dynamic_alpha = dynamic_alpha
         self.v_threshold = None
         self.w_bits = 16
         self.w_delta = self.w_alpha / (2 ** (self.w_bits - 1) - 1)
         self.weight_quant = weight_quantize_fn(self.w_bits, self.w_alpha)
+        self.dynamic_alpha_method = dynamic_alpha_method
 
     def quantize(self, model):
         """
@@ -296,19 +299,69 @@ class Quantize_Network:
     def _quantize_layer(self, layer):
         quantized_layer = copy.deepcopy(layer)
 
-        if self.dynamic_alpha:
+        # calculate and print original weight statistics
+        original_weights = layer.weight.flatten()
+        print(f"\nLayer: {layer.__class__.__name__}")
+        print(f"ORIGINAL WEIGHT STATISTICS:")
+        print(f"  Max:    {torch.max(original_weights).item()}")
+        print(f"  Min:    {torch.min(original_weights).item()}")
+        print(f"  Mean:   {torch.mean(original_weights).item()}")
+        print(f"  Median: {torch.median(original_weights).item()}")
+        print(f"  Std:    {torch.std(original_weights).item()}")
+
+        if self.dynamic_alpha != "False":
             # weight_range = abs(max(layer.weight.flatten()) - min(layer.weight.flatten()))
-            self.w_alpha = abs(
-                max(layer.weight.flatten()) - min(layer.weight.flatten())
-            )
+            
+            [-5, -2, 1, 3]
+            if self.dynamic_alpha_method == 'keli':
+                #default dynamic_alpha:
+                print("keli's dynamic alpha")
+                self.w_alpha = abs(
+                    max(layer.weight.flatten()) - min(layer.weight.flatten()) 
+                )
+            elif self.dynamic_alpha_method == 'krish':
+                #krish dynamic alpha
+                print("krish's dynamic alpha: max(abs(layer.weight.flatten()))")
+                self.w_alpha = max(abs(layer.weight.flatten()))
+
+            else:
+                print("Dynamic alpha method not recognized, using default w_alpha.")
+
+            print(f"Dynamic w_alpha: {self.w_alpha}")
+
+            #w_alpha = 1,w_bits = 2
+            #w_delta = 1/3:
             self.w_delta = self.w_alpha / (2 ** (self.w_bits - 1) - 1)
             self.weight_quant = weight_quantize_fn(
-                self.w_bits
+                self.w_bits,
+                self.w_alpha
             )  # reinitialize the weight_quan
             self.weight_quant.wgt_alpha = self.w_alpha
 
+        # store original weights for comparison
+        original_weights_copy = original_weights.clone()
+        
         layer.weight = nn.Parameter(self.weight_quant(layer.weight))
         quantized_layer.weight = nn.Parameter(layer.weight / self.w_delta)
+        #quantized_layer.weight = nn.Parameter(layer.weight) #krish: testing a change
+
+        # calculate and print quantized weight statistics
+        quantized_weights = quantized_layer.weight.flatten()
+        print(f"QUANTIZED WEIGHT STATISTICS:")
+        print(f"  Max:    {torch.max(quantized_weights).item()}")
+        print(f"  Min:    {torch.min(quantized_weights).item()}")
+        print(f"  Mean:   {torch.mean(quantized_weights).item()}")
+        print(f"  Median: {torch.median(quantized_weights).item()}")
+        print(f"  Std:    {torch.std(quantized_weights).item()}")
+        
+        # calculate change due to quantization
+        weight_change = torch.abs(quantized_weights - original_weights_copy)
+        print(f"QUANTIZATION IMPACT:")
+        print(f"  Mean Abs Error: {torch.mean(weight_change).item()}")
+        print(f"  Max Abs Error:  {torch.max(weight_change).item()}")
+        if torch.mean(torch.abs(original_weights_copy)) > 0:
+            print(f"  Relative Error: {(torch.mean(weight_change) / torch.mean(torch.abs(original_weights_copy))).item()}")
+        print("-" * 60)
 
         if layer.bias is not None:  # check if the layer has bias
             layer.bias = nn.Parameter(self.weight_quant(layer.bias))
@@ -340,6 +393,8 @@ class Quantize_Network:
         self.v_threshold = layer.v_threshold
 
         return layer
+
+
 
 
 class BN_Folder:
@@ -985,7 +1040,7 @@ class CRI_Converter:
             else:
                 raise Exception("linear layer with no following snn layer")
         except:
-            raise Exception("liear layer with no following snn layer")
+            raise Exception("linear layer with no following snn layer")
         if self.layer_index == self.input_layer:
             print("Building synapses between axons and neurons with linear Layer")
         else:
@@ -1397,6 +1452,7 @@ class CRI_Converter:
         output_idx = [i for i in range(len(self.output_neurons))]
 
         runcount = 0
+        debug_output_neuron = self.output_neurons[0]
 
         # each image
         for currInput in inputList:
@@ -1413,9 +1469,14 @@ class CRI_Converter:
                     potential, spikes = hardwareNetwork.step(
                         slice, membranePotential=True
                     )
+                    v_dict = dict(potential) #dict of (key, v)
+                    print("Membrane potential for sample output neuron " + str(debug_output_neuron) + ": " + str(v_dict[str(debug_output_neuron)]))
                     hwSpike, _, _ = spikes
                     if sliceIdx >= phaseDelay:
                         membranePotential.append([v for k, v in potential])
+                    
+                    print("DEBUG: membrane potential list size: " + str(len(membranePotential)))
+                    
                 else:
                     hwSpike, _, _ = hardwareNetwork.step(slice, membranePotential=False)
                     runcount += 1
@@ -1430,6 +1491,7 @@ class CRI_Converter:
                         if idx not in output_idx:
                             print(f"Error: invalid output spike {idx}")
                         spikeRate[idx] += 1
+                
             # if self.num_steps == 1:
             #     # Empty input for output delay since HiAER spike only get spikes after the spikes have occurred
             #     hwSpike, _, _ = hardwareNetwork.step([], membranePotential=False)
@@ -1456,6 +1518,10 @@ class CRI_Converter:
             print(v1, v2)
             debugspike = []
             outputSpikes.append(spikeRate)
+
+            if outputPotential:
+                print("DEBUG: membrane potential list size once done: " + str(len(membranePotential)))
+                print("Membrane potential for sample output neuron " + str(debug_output_neuron) + ": " + str(membranePotential[debug_output_neuron]))
         print("runcount: " + str(runcount))
 
         if outputPotential:
@@ -1538,7 +1604,7 @@ class CRI_Converter:
             # empty input for output delay
             # swSpike = softwareNetwork.step([], membranePotential=False)
             # spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
-            breakpoint()
+            #breakpoint()
             # for idx in spikeIdx:
             #    spikeRate[idx] += 1
             # Append the output spikes of each image to the output list
