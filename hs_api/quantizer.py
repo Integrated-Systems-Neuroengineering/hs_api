@@ -16,7 +16,7 @@ import snntorch as snn
 import multiprocessing as mp
 import numpy as np
 from hs_api.neuron_models import LIF_neuron, ANN_neuron
-from hs_api.custom_neurons import Custom_LIFNode #, Custom_IFNode
+from hs_api.Krish_custom_neurons import Custom_LIFNode, Custom_IFNode
 from spikingjelly.activation_based import neuron, surrogate
 
 def isSNNLayer(layer):
@@ -45,13 +45,13 @@ def isSNNLayer(layer):
     if (isinstance(layer, MultiStepLIFNode)
         or isinstance(layer, LIFNode)
         or isinstance(layer, IFNode)
-        or isinstance(layer, Custom_LIFNode)):
+        or isinstance(layer, Custom_LIFNode),
+        or isinstance(layer, Custom_IFNode)):
         return True
 
     # Check by class name for dynamically imported modules
     class_name = layer.__class__.__name__
     return class_name in ['Custom_LIFNode', 'Custom_IFNode', 'MultiStepLIFNode', 'LIFNode', 'IFNode']
-
 
 def weight_quantization(b):
     """
@@ -408,4 +408,3 @@ class Quantize_Network:
         self.v_threshold = layer.v_threshold
 
         return layer
-
