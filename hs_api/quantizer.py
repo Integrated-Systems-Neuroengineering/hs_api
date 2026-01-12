@@ -172,11 +172,11 @@ class Quantize_Network:
     >>> q_net.quantize(some_model)
     """
 
-    def __init__(self, w_alpha, dynamic_alpha=False):
+    def __init__(self, w_alpha, dynamic_alpha=False, w_bits=16):
         self.w_alpha = w_alpha  # Range of the parameter (CSNN:4, Spikeformer: 5)
         self.dynamic_alpha = dynamic_alpha
         self.v_threshold = None
-        self.w_bits = 16
+        self.w_bits = w_bits
         self.w_delta = self.w_alpha / (2 ** (self.w_bits - 1) - 1)
         self.weight_quant = weight_quantize_fn(self.w_bits, self.w_alpha)
 
@@ -316,15 +316,15 @@ class Quantize_Network:
             # weight_range = abs(max(layer.weight.flatten()) - min(layer.weight.flatten()))
             
             [-5, -2, 1, 3]
-            # #default dynamic_alpha:
-            # print("keli's dynamic alpha")
-            # self.w_alpha = abs(
-            #     max(layer.weight.flatten()) - min(layer.weight.flatten()) 
-            # )
+            #default dynamic_alpha:
+            print("keli's dynamic alpha")
+            self.w_alpha = abs(
+                max(layer.weight.flatten()) - min(layer.weight.flatten()) 
+            )
 
-            #krish dynamic alpha
-            print("krish's dynamic alpha: max(abs(layer.weight.flatten()))")
-            self.w_alpha = max(abs(layer.weight.flatten()))
+            # #krish dynamic alpha
+            # print("krish's dynamic alpha: max(abs(layer.weight.flatten()))")
+            # self.w_alpha = max(abs(layer.weight.flatten()))
 
             # # krish mean std dynamic alpha (k=2)
             # k = 2
