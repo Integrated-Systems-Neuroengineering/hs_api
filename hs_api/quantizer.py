@@ -16,7 +16,7 @@ import snntorch as snn
 import multiprocessing as mp
 import numpy as np
 from hs_api.neuron_models import LIF_neuron, ANN_neuron
-from hs_api.Krish_custom_neurons import Custom_LIFNode, Custom_IFNode
+from hs_api.custom_neurons import Custom_LIFNode, Custom_IFNode
 from spikingjelly.activation_based import neuron, surrogate
 
 def isSNNLayer(layer):
@@ -175,11 +175,19 @@ class Quantize_Network:
     >>> q_net.quantize(some_model)
     """
 
+<<<<<<< HEAD
     def __init__(self, w_alpha, dynamic_alpha=False):
         self.w_alpha = w_alpha  # Range of the parameter (CSNN:4, Spikeformer: 5)
         self.dynamic_alpha = dynamic_alpha
         self.v_threshold = None
         self.w_bits = 16
+=======
+    def __init__(self, w_alpha, dynamic_alpha=False, w_bits=16):
+        self.w_alpha = w_alpha  # Range of the parameter (CSNN:4, Spikeformer: 5)
+        self.dynamic_alpha = dynamic_alpha
+        self.v_threshold = None
+        self.w_bits = w_bits
+>>>>>>> origin/krish_crisdsc0
         self.w_delta = self.w_alpha / (2 ** (self.w_bits - 1) - 1)
         self.weight_quant = weight_quantize_fn(self.w_bits, self.w_alpha)
 
