@@ -831,7 +831,6 @@ class Custom_LIFNode(neuron.BaseNode):
                                                                                                        self.v_threshold,
                                                                                                        self.v_reset,
                                                                                                        self.tau)
-
             return spike_seq
 
 

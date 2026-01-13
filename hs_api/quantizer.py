@@ -16,7 +16,7 @@ import snntorch as snn
 import multiprocessing as mp
 import numpy as np
 from hs_api.neuron_models import LIF_neuron, ANN_neuron
-from hs_api.Krish_custom_neurons import Custom_LIFNode, Custom_IFNode
+from hs_api.custom_neurons import Custom_LIFNode, Custom_IFNode
 from spikingjelly.activation_based import neuron, surrogate
 
 def isSNNLayer(layer):
