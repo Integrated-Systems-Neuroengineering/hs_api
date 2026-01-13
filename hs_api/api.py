@@ -612,3 +612,4 @@ class CRI_network:
                 for spike in spikeList
             ]
             return (spikeList, result[1], result[2])
+        
