@@ -23,7 +23,7 @@ except BaseException as e:
 
 #Defualt IFNode but with > thresholding instead of >= thresholding, and order of operations for the neuron is changed to match the converter's order
 class Custom_IFNode(neuron.BaseNode):
-    def __init__(self, v_threshold: float = 1., v_reset: Optional[float] = 0.,
+    def __init__(self, v_threshold: float = 1., v_reset: Optional[float] = 0.,tau: float = 63.0,
                  surrogate_function: Callable = surrogate.Sigmoid(), detach_reset: bool = False, step_mode='s',
                  backend='torch', store_v_seq: bool = False):
         """
@@ -100,7 +100,7 @@ class Custom_IFNode(neuron.BaseNode):
 
         """
         super().__init__(v_threshold, v_reset, surrogate_function, detach_reset, step_mode, backend, store_v_seq)
-
+        self.tau = tau
     @property
     def supported_backends(self):
         if self.step_mode == 's':
@@ -115,34 +115,37 @@ class Custom_IFNode(neuron.BaseNode):
 
     @staticmethod
     @torch.jit.script
-    def jit_eval_single_step_forward_hard_reset(x: torch.Tensor, v: torch.Tensor, v_threshold: float, v_reset: float):
+    def jit_eval_single_step_forward_hard_reset(x: torch.Tensor, v: torch.Tensor, v_threshold: float, v_reset: float, tau: float):
         # v = v + x
         # spike = (v > v_threshold).to(x)
         # v = v_reset * spike + (1. - spike) * v
 
         spike = (v > v_threshold).to(x) #1. spike
         v = v_reset * spike + (1. - spike) * v #2. reset
-        v = v + x #3. input
+        v = v - (v - v_reset) / tau     # 3) leak toward v_reset
+        v = v + x #4. input
         return spike, v
 
 
 
     @staticmethod
     @torch.jit.script
-    def jit_eval_single_step_forward_soft_reset(x: torch.Tensor, v: torch.Tensor, v_threshold: float):
+    def jit_eval_single_step_forward_soft_reset(x: torch.Tensor, v: torch.Tensor, v_threshold: float, tau: float):
         spike = (v > v_threshold).to(x) #1. spike
         v = v - spike * v_threshold #2. reset
+        v = v * (1. - 1. / tau)     # 3) leak toward 0
         v = v + x #3. input
         return spike, v
 
     @staticmethod
     @torch.jit.script
     def jit_eval_multi_step_forward_hard_reset(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float,
-                                               v_reset: float):
+                                               v_reset: float, tau: float):
         spike_seq = torch.zeros_like(x_seq)
         for t in range(x_seq.shape[0]):
             spike = (v > v_threshold).to(x_seq) #1. spike
             v = v_reset * spike + (1. - spike) * v #2. reset
+            v = v - (v - v_reset) / tau           # leak
             v = v + x_seq[t] #3. input
             spike_seq[t] = spike
         return spike_seq, v
@@ -150,12 +153,13 @@ class Custom_IFNode(neuron.BaseNode):
     @staticmethod
     @torch.jit.script
     def jit_eval_multi_step_forward_hard_reset_with_v_seq(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float,
-                                                          v_reset: float):
+                                                          v_reset: float, tau: float):
         spike_seq = torch.zeros_like(x_seq)
         v_seq = torch.zeros_like(x_seq)
         for t in range(x_seq.shape[0]):
             spike = (v > v_threshold).to(x_seq) #1. spike
             v = v_reset * spike + (1. - spike) * v #2. reset
+            v = v - (v - v_reset) / tau           # leak
             v = v + x_seq[t] #3. input
             spike_seq[t] = spike
             v_seq[t] = v
@@ -163,11 +167,12 @@ class Custom_IFNode(neuron.BaseNode):
 
     @staticmethod
     @torch.jit.script
-    def jit_eval_multi_step_forward_soft_reset(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float):
+    def jit_eval_multi_step_forward_soft_reset(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float, tau: float):
         spike_seq = torch.zeros_like(x_seq)
         for t in range(x_seq.shape[0]):
             spike = (v > v_threshold).to(x_seq[t]) #1. spike
             v = v - spike * v_threshold #2. reset
+            v = v * (1. - 1. / tau)               # leak
             v = v + x_seq[t] #3. input
 
             spike_seq[t] = spike
@@ -175,12 +180,13 @@ class Custom_IFNode(neuron.BaseNode):
 
     @staticmethod
     @torch.jit.script
-    def jit_eval_multi_step_forward_soft_reset_with_v_seq(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float):
+    def jit_eval_multi_step_forward_soft_reset_with_v_seq(x_seq: torch.Tensor, v: torch.Tensor, v_threshold: float, tau: float):
         spike_seq = torch.zeros_like(x_seq)
         v_seq = torch.zeros_like(x_seq)
         for t in range(x_seq.shape[0]):
             spike = (v > v_threshold).to(x_seq) #1. spike
             v = v - spike * v_threshold #2. reset
+            v = v * (1. - 1. / tau)               # leak
             v = v + x_seq[t] #3. input
             spike_seq[t] = spike
             v_seq[t] = v
@@ -236,18 +242,18 @@ class Custom_IFNode(neuron.BaseNode):
                 if self.store_v_seq:
                     spike_seq, self.v, self.v_seq = self.jit_eval_multi_step_forward_soft_reset_with_v_seq(x_seq,
                                                                                                            self.v,
-                                                                                                           self.v_threshold)
+                                                                                                           self.v_threshold, self.tau)
                 else:
-                    spike_seq, self.v = self.jit_eval_multi_step_forward_soft_reset(x_seq, self.v, self.v_threshold)
+                    spike_seq, self.v = self.jit_eval_multi_step_forward_soft_reset(x_seq, self.v, self.v_threshold, self.tau)
             else:
                 if self.store_v_seq:
                     spike_seq, self.v, self.v_seq = self.jit_eval_multi_step_forward_hard_reset_with_v_seq(x_seq,
                                                                                                            self.v,
                                                                                                            self.v_threshold,
-                                                                                                           self.v_reset)
+                                                                                                           self.v_reset, self.tau)
                 else:
                     spike_seq, self.v = self.jit_eval_multi_step_forward_hard_reset(x_seq, self.v, self.v_threshold,
-                                                                                    self.v_reset)
+                                                                                    self.v_reset, self.tau)
             return spike_seq
 
     def single_step_forward(self, x: torch.Tensor):
@@ -294,9 +300,9 @@ class Custom_IFNode(neuron.BaseNode):
         else:
             self.v_float_to_tensor(x)
             if self.v_reset is None:
-                spike, self.v = self.jit_eval_single_step_forward_soft_reset(x, self.v, self.v_threshold)
+                spike, self.v = self.jit_eval_single_step_forward_soft_reset(x, self.v, self.v_threshold, self.tau)
             else:
-                spike, self.v = self.jit_eval_single_step_forward_hard_reset(x, self.v, self.v_threshold, self.v_reset)
+                spike, self.v = self.jit_eval_single_step_forward_hard_reset(x, self.v, self.v_threshold, self.v_reset, self.tau)
             
             return spike
 
@@ -831,7 +837,6 @@ class Custom_LIFNode(neuron.BaseNode):
                                                                                                        self.v_threshold,
                                                                                                        self.v_reset,
                                                                                                        self.tau)
-            return spike_seq
 
 
 
