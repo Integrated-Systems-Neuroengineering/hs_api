@@ -28,6 +28,7 @@ hs_bridge = {path = "../hs_bridge", develop = true}
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.3.4"
 black = "^25.1.0"
+scalene = "^2.0.1"
 
 [build-system]
 requires = ["poetry-core"]
