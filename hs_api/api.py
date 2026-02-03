@@ -143,12 +143,7 @@ class CRI_network:
             )
             self.CRI.initalize_network()
         elif self.target == "simpleSim":
-            formatedOutputs = self.connectome.get_outputs_idx()
-            self.simpleSim = simple_sim(
-                self.axons,
-                self.connections,
-                outputs=formatedOutputs
-            )
+            self.simpleSim = simple_sim(self.connectome)
 
     def set_perturbMag(self, perturbMag):
         if self.target == "simpleSim":
@@ -214,19 +209,17 @@ class CRI_network:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
-                self.connectome.connectomeDict[axonKey].addSynapse(
+                postsynapticNeuron = self.connectome.get_neuron_by_key(axonSynapse[0])
+                self.connectome.get_neuron_by_key(axonKey).addSynapse(
                     postsynapticNeuron, weight
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
-            # breakpoint()
             synapses = self.userConnections[neuronKey][synapseIdx]
-            # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
-                self.connectome.connectomeDict[neuronKey].addSynapse(
+                postsynapticNeuron = self.connectome.get_neuron_by_key(neuronSynapse[0])
+                self.connectome.get_neuron_by_key(neuronKey).addSynapse(
                     postsynapticNeuron, weight
                 )
         # print("added neuron synapses")
@@ -513,11 +506,18 @@ class CRI_network:
         >>> network.step(['input1', 'input2'])
         """
         # breakpoint()
-        # formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
-        formated_inputs = [
-            self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
-            for symbol in inputs
-        ]  # convert symbols to internal indicies
+        if self.target == "simpleSim":
+            # Use neuronArr indices for simpleSim
+            formated_inputs = [
+                self.connectome.connectomeDict[symbol]
+                for symbol in inputs
+            ]
+        else:
+            # Use coreTypeIdx for CRI hardware
+            formated_inputs = [
+                self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
+                for symbol in inputs
+            ]
         if self.target == "simpleSim":
             output, spikeOutput = self.simpleSim.step_run(formated_inputs)
             spikeOutput = [
@@ -525,7 +525,7 @@ class CRI_network:
                 for spike in spikeOutput
             ]
             if membranePotential == True:
-                breakpoint()
+                #breakpoint()
                 output = [
                     (self.connectome.get_neuron_by_idx(idx).get_user_key(), potential)
                     for idx, potential in enumerate(output)
@@ -549,7 +549,7 @@ class CRI_network:
                         self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
                     ]
-                    numNeurons = len(self.connections)
+                    numNeurons = len(self.connectome.get_neurons())
                     # we currently only print the membrane potential, not the other contents of the spike packet
                     output = [
                         (self.connectome.get_neuron_by_hbmIdx(idx).get_user_key(), data[3])
