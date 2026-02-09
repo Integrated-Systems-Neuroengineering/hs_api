@@ -1,8 +1,55 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+
+# pytest
+.pytest_cache/
+
+# Profiling
+scalene-profile.*
+
+# Vivado
+vivado.jou
+vivado.log
+vivado_*.backup.jou
+vivado_*.backup.log
+
+# Data / output artifacts
 *.p
 *Data/
-result/
 *data/
-*/__pycache__*/
+*.npy
+result/
 figure/
 test_figure/
 log/
+logs/
+output/
+converted_model/
+quantout
+
+# Archives
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
