@@ -8,8 +8,6 @@ import numpy as np
 import logging
 
 from spikingjelly.activation_based import surrogate, base, neuron
-#from spikingjelly.activation_based.auto_cuda import neuron_kernel as ac_neuron_kernel
-#from spikingjelly.activation_based.auto_cuda import ss_neuron_kernel as ss_ac_neuron_kernel
 
 try:
     import cupy
@@ -125,7 +123,6 @@ class Custom_IFNode(neuron.BaseNode):
         v = v - (v - v_reset) / tau     # 3) leak toward v_reset
         v = v + x #4. input
         return spike, v
-
 
 
     @staticmethod
@@ -307,8 +304,6 @@ class Custom_IFNode(neuron.BaseNode):
             return spike
 
 
-
-
 #Same as LIFNode, but order of operations for the neuron is changed to match the converter's order, > thresholding is used
 
 class Custom_LIFNode(neuron.BaseNode):
@@ -472,15 +467,6 @@ class Custom_LIFNode(neuron.BaseNode):
         v = v - (v - v_reset) / tau + x
         return v
 
-    #Krish: example of one of the step functions of original LIFNode for reference
-    # @staticmethod
-    # @torch.jit.script
-    # def jit_eval_single_step_forward_hard_reset_no_decay_input(x: torch.Tensor, v: torch.Tensor, v_threshold: float,
-    #                                                            v_reset: float, tau: float):
-    #     v = v - (v - v_reset) / tau + x
-    #     spike = (v >= v_threshold).to(x)
-    #     v = v_reset * spike + (1. - spike) * v
-    #     return spike, v
 
     @staticmethod
     @torch.jit.script

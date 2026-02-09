@@ -28,7 +28,6 @@ def read_conn_file(conn_file_path, print_to_screen=False):
     with open(conn_file_path, "r") as f:
         lines = f.readlines()
         for line in lines:
-            # print(line)
 
             # determine which section is beginning
             if "Axons" in line:  # parse for external inputs to the network
@@ -42,9 +41,7 @@ def read_conn_file(conn_file_path, print_to_screen=False):
             else:  # parse out axons and neurons
                 # Remove all delimiters
                 line = re.split(regexPattern, line)
-                # print(line)
                 anw = [s for s in line if s != ""]  # is it an address?
-                # print(anw)
 
                 if parse_axons:
                     a_i = int(anw[0])  # get the axon (input) ndx
@@ -100,11 +97,9 @@ def read_input_file(input_file_path, B, print_to_screen=False):
         Iext = np.zeros(shape=(M, num_steps))
 
         for line in lines:
-            # print(line)
 
             # Remove all delimiters
             line = re.split(regexPattern, line)
-            # print(line)
             active_axons = [int(s) for s in line if s != ""]  # is it an address?
             t = active_axons[0]
             for spiking_axon in active_axons[1:]:
@@ -142,7 +137,6 @@ def conn_to_numpy(axons, neurons):
         ai = int(ax[0])
         nj = int(ax[1])
         B[ai][nj] = ax[2]  # synaptic weight
-        # print(B)
 
     # Get the weight matrix
     W = np.zeros(shape=(N, N))
@@ -150,7 +144,6 @@ def conn_to_numpy(axons, neurons):
         i = int(n[0])
         j = int(n[1])
         W[i][j] = n[2]  # synaptic weight
-        # print(W)
 
     return B, W
 
@@ -243,12 +236,9 @@ def write_input_file(Iext, opath="./test_inputs.txt", print_to_screen=True):
     buffer = []
     for n in range(num_steps):
         out = "{}: ".format(n)
-        # print(Iext[:, n])
 
         spiking_axons = np.where(Iext[:, n] == 1)[0]
-        # print(spiking_axons)
 
-        # if len(spiking_axons) > 0:
         spiking_axons = [str(x) for x in spiking_axons]
         out += "[" + ", ".join(spiking_axons) + "]"
         buffer.append(out)

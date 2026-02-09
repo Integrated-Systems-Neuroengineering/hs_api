@@ -15,9 +15,7 @@ import os
 import snntorch as snn
 import multiprocessing as mp
 import numpy as np
-from hs_api.neuron_models import LIF_neuron, ANN_neuron
-from hs_api.custom_neurons import Custom_LIFNode
-from spikingjelly.activation_based import neuron, surrogate
+from hs_api.neuron_models import ANN_neuron
 
 def isSNNLayer(layer):
     """
@@ -45,7 +43,6 @@ def isSNNLayer(layer):
         isinstance(layer, MultiStepLIFNode)
         or isinstance(layer, LIFNode)
         or isinstance(layer, IFNode)
-        or isinstance(layer, Custom_LIFNode)
     )
 
 
@@ -255,6 +252,7 @@ class Quantize_Network:
                     continue
                 else:
                     new_model._modules[name] = self._quantize(new_model._modules[name])
+
         return new_model
 
     def _quantize(self, layer):
@@ -277,10 +275,7 @@ class Quantize_Network:
         >>> q_net._quantize(some_layer)
         """
 
-        if isSNNLayer(layer):
-            return self._quantize_LIF(layer)
-
-        elif isinstance(layer, nn.Linear) or isinstance(layer, nn.Conv2d):
+        if isinstance(layer, nn.Linear) or isinstance(layer, nn.Conv2d):
             return self._quantize_layer(layer)
 
         else:
@@ -289,100 +284,24 @@ class Quantize_Network:
     def _quantize_layer(self, layer):
         quantized_layer = copy.deepcopy(layer)
 
-        # calculate and print original weight statistics
-        original_weights = layer.weight.flatten()
-        print(f"\nLayer: {layer.__class__.__name__}")
-        print(f"w_alpha: {self.w_alpha}")
-        print(f"w_delta: {self.w_delta}")
-        print(f"ORIGINAL WEIGHT STATISTICS:")
-        print(f"  Max:    {torch.max(original_weights).item()}")
-        print(f"  Min:    {torch.min(original_weights).item()}")
-        print(f"  Mean:   {torch.mean(original_weights).item()}")
-        print(f"  Median: {torch.median(original_weights).item()}")
-        print(f"  Std:    {torch.std(original_weights).item()}")
-
         if self.dynamic_alpha:
             # weight_range = abs(max(layer.weight.flatten()) - min(layer.weight.flatten()))
-            
-            [-5, -2, 1, 3]
-
-            print("krish's dynamic alpha: max(abs(layer.weight.flatten()))")
             self.w_alpha = max(abs(layer.weight.flatten()))
+            if self.w_alpha == 0:
+                self.w_alpha = 1  #avoid divide-by-zero
 
-
-            print(f"Dynamic w_alpha: {self.w_alpha}")
             self.w_delta = self.w_alpha / (2 ** (self.w_bits - 1) - 1)
-            print(f"Dynamic w_delta: {self.w_delta}")
-            self.weight_quant = weight_quantize_fn(
-                self.w_bits,
-                self.w_alpha
-            )  # reinitialize the weight_quan
+            self.weight_quant = weight_quantize_fn(self.w_bits, self.w_alpha)  # reinitialize the weight_quan
             self.weight_quant.wgt_alpha = self.w_alpha
 
-        # store original weights for comparison
-        original_weights_copy = original_weights.clone()
-        
         layer.weight = nn.Parameter(self.weight_quant(layer.weight))
-        # FIX: Use the already-quantized weights directly, don't divide by w_delta again!
-        quantized_layer.weight = nn.Parameter(layer.weight)  # Already quantized by weight_quant()
-
-        # calculate and print quantized weight statistics
-        quantized_weights = quantized_layer.weight.flatten()
-        print(f"QUANTIZED WEIGHT STATISTICS:")
-        print(f"  Max:    {torch.max(quantized_weights).item()}")
-        print(f"  Min:    {torch.min(quantized_weights).item()}")
-        print(f"  Mean:   {torch.mean(quantized_weights).item()}")
-        print(f"  Median: {torch.median(quantized_weights).item()}")
-        print(f"  Std:    {torch.std(quantized_weights).item()}")
-        
-        # calculate change due to quantization
-        weight_change = torch.abs(quantized_weights - original_weights_copy)
-        print(f"QUANTIZATION IMPACT:")
-        print(f"  Mean Abs Error: {torch.mean(weight_change).item()}")
-        print(f"  Max Abs Error:  {torch.max(weight_change).item()}")
-        if torch.mean(torch.abs(original_weights_copy)) > 0:
-            print(f"  Relative Error: {(torch.mean(weight_change) / torch.mean(torch.abs(original_weights_copy))).item()}")
-        print("-" * 60)
+        quantized_layer.weight = nn.Parameter(layer.weight / self.w_delta)
 
         if layer.bias is not None:  # check if the layer has bias
             layer.bias = nn.Parameter(self.weight_quant(layer.bias))
-            # FIX: Use the already-quantized bias directly, don't divide by w_delta again!
-            quantized_layer.bias = nn.Parameter(layer.bias)  # Already quantized by weight_quant()
+            quantized_layer.bias = nn.Parameter(layer.bias / self.w_delta)
 
         return quantized_layer
-
-    def _quantize_LIF(self, layer):
-        """
-        Helper function to performs quantization on a LIF layer.
-
-        Parameters
-        ----------
-        layer : torch.nn.Module
-            The input layer.
-
-        Returns
-        -------
-        torch.nn.Module
-            The quantized layer.
-
-        Examples
-        --------
-        >>> q_net = Quantize_Network(w_alpha=1, dynamic_alpha=True)
-        >>> q_net._quantize_LIF(some_layer)
-        """
-
-        original_thresh = layer.v_threshold
-        # FIX: Scale threshold proportionally to weight quantization, not by tiny w_delta
-        # Since weights are quantized to 16-bit range, scale threshold similarly
-        quantized_thresh = int(original_thresh * (2 ** (self.w_bits - 1) - 1) / self.w_alpha)
-        print(f"\nTHRESHOLD QUANTIZATION:")
-        print(f"  Original threshold: {original_thresh}")
-        print(f"  Weight scale factor: {(2 ** (self.w_bits - 1) - 1) / self.w_alpha:.0f}")
-        print(f"  Quantized threshold: {quantized_thresh}")
-        layer.v_threshold = quantized_thresh
-        self.v_threshold = layer.v_threshold
-
-        return layer
 
 
 class BN_Folder:
@@ -550,22 +469,6 @@ class BN_Folder:
 
 
 class CRI_Converter:
-    def print_output_connectivity_chain(self, max_depth=2):
-        print("\n[DIAGNOSE] Output neuron connectivity chain:")
-        for nidx in self.output_neurons:
-            print(f"[DIAGNOSE] Output neuron {nidx}:")
-            # Scan all presynaptic neurons for connections to this output neuron
-            incoming = []
-            for pre, entry in self.neuron_dict.items():
-                conns = entry[0] if isinstance(entry, tuple) else entry
-                for post, w in conns:
-                    if str(post) == str(nidx):
-                        incoming.append((pre, w))
-            if not incoming:
-                print("  [DIAGNOSE]   No input connections.")
-                continue
-            print(f"  [DIAGNOSE]   Connected to {len(incoming)} presynaptic neurons:")
-        print("[DIAGNOSE] End of output neuron connectivity chain.\n")
     """
     A class to convert a neural network model into an equivalent model compatible
     with the CRI (Capacitive ReRAM Inverter) hardware.
@@ -586,8 +489,6 @@ class CRI_Converter:
     v_threshold : float
         The voltage threshold for the neurons.
         It should be set to the v_threshold of Quantize Network.
-    embed_dim : int
-        The embedding dimension. Only used for spikeformer.
     converted_model_pth: str, optional
         Save the converted network into a .pkl file at converted_model_pth.
         Default is "./converted_model"
@@ -638,14 +539,6 @@ class CRI_Converter:
         The current layer offset for snn layers indexing
     converted_model_pth : str
         The path to the converted network file.
-    q : np.ndarray or None
-        The q matrix for attention conversion.
-    v : np.ndarray or None
-        The v matrix for attention conversion.
-    k : np.ndarray or None
-        The k matrix for attention conversion.
-    embed_dim : int
-        The embedding dimension.
     dvs: bool
         Whether using dvs datasets.
 
@@ -661,39 +554,20 @@ class CRI_Converter:
         num_steps,
         input_layer,
         output_layer,
-        snn_layers,
         input_shape,
         v_threshold,
-        embed_dim,
         backend="spikingjelly",
         dvs=False,
         converted_model_pth="./converted_model",
-        threshold_scale=1,
-        spiking_neuron=None,
     ):
         self.HIGH_SYNAPSE_WEIGHT = 1e6
         self.NULL_NEURON = -1
         self.NULL_INDICIES = (-1, -1)
         self.PERTUBATION = 0
-        self.LEAK_LIF = 2**6 - 1
         self.v_threshold = v_threshold
-        self.threshold_scale = threshold_scale #krish
-        print("threshhold_scale: " + str(self.threshold_scale))
         # neuron model parameters
-        if spiking_neuron is None:
-            from spikingjelly.activation_based import neuron
-            spiking_neuron = neuron.LIFNode
-        self.spiking_neuron = spiking_neuron
-        # Set leaky based on neuron type: krish
-        if spiking_neuron.__name__ == "LIFNode":
-            self.LEAK_LIF = 1
-        elif spiking_neuron.__name__ == "IFNode":
-            self.LEAK_LIF = 63
-        else:
-            self.LEAK_LIF = 2**6 - 1  # default
-        print("leak_lif: " + str(self.LEAK_LIF))
-        self.LIF = LIF_neuron(int(self.threshold_scale * self.v_threshold), self.PERTUBATION, self.LEAK_LIF)
-        self.ANN = ANN_neuron(self.v_threshold, self.PERTUBATION)  # original threshold
+        # create all the neuron models??
+        self.ANN = ANN_neuron(self.v_threshold, self.PERTUBATION)
 
         self.axon_dict = defaultdict(list)
         self.neuron_dict = {}
@@ -719,18 +593,6 @@ class CRI_Converter:
         self.converted_model_pth = converted_model_pth
         # dvs datasets
         self.dvs = dvs
-        # For spikformer only
-        self.q = None
-        self.v = None
-        self.k = None
-        self.embed_dim = embed_dim
-        self.layer_neuron_indices = [] # krish: Store 9 neuron indices: first, middle, last for first conv, first fc, output (or for linear-only: first/mid/last of first, mid, last linear)
-        self.thresholds = [] #krish
-
-    #krish
-    def set_no_conv_mode(self, no_conv):
-        """Set a flag to indicate if the model has no conv layer (for special layer_neuron_indices logic)."""
-        self._no_conv_mode = no_conv
 
     def save_model(self):
         """
@@ -758,7 +620,7 @@ class CRI_Converter:
         Parameters
         ----------
         input_data : torch.Tensor
-            The input data of the shape (B, -1).
+            The input data of the shape (B, -1). (batch size, num features)
 
         Returns
         -------
@@ -860,7 +722,6 @@ class CRI_Converter:
         module_names = list(model._modules)
 
         # construct the axon dict keys and set it as curr_input
-        print("Input shape: ", self.input_shape)
         axons = np.array([i for i in range(np.prod(self.input_shape))]).reshape(
             self.input_shape
         )
@@ -872,43 +733,21 @@ class CRI_Converter:
         self.bias_start_idx = self.axon_offset
 
         for k, name in enumerate(module_names):
-            if len(list(model._modules[name]._modules)) > 0 and not isSNNLayer(
-                model._modules[name]
-            ):
-                if name == "attn":
-                    self._attention_converter(model._modules[name])
-                else:
-                    self.layer_converter(model._modules[name])
+            if len(list(model._modules[name]._modules)) > 0:
+                self.layer_converter(model._modules[name])
             else:
                 self._layer_converter(model._modules[name], k, model)
-
-        print("Total axon synapses: ", self.total_axonSyn)
 
     def _layer_converter(self, layer, k, model):
         if self.layer_index < self.input_layer:
             print("Skipped layer: ", layer)
         elif isinstance(layer, nn.Linear):
+            # in this scenario we would need to inspect the next layer to get the v_thresh from the lif layer
             self._linear_converter(layer, k, model)
             self.snn_layers += 1
         elif isinstance(layer, nn.Conv2d):
-            # krish: ook ahead for Conv2d -> BatchNorm2d -> SpikingNeuron or AvgPool2d -> SpikingNeuron
-            module_names = list(model._modules)
-            num_layers = len(module_names)
-            # Only check ahead if enough layers remain
-            if k + 2 < num_layers:
-                next_layer = model[k + 2]
-                # Conv2d -> BatchNorm2d -> SpikingNeuron
-                if isSNNLayer(next_layer):
-                    self._conv_converter(layer, k, model)
-                    self.snn_layers += 1
-                # Conv2d -> BatchNorm2d -> AvgPool2d -> SpikingNeuron
-                elif isinstance(next_layer, nn.AvgPool2d):
-                    self._conv_converter_avgpooled(layer, next_layer, k, model)
-                    self.snn_layers += 1
-                else:
-                    print("Unsupported Conv2d block: missing BatchNorm2d or SpikingNeuron.")
-            else:
-                print("Conv2d block: not enough layers ahead for pattern detection.")
+            self._conv_converter(layer, k, model)
+            self.snn_layers += 1
         elif isinstance(layer, nn.MaxPool2d):
             self._maxPool_converter(layer)
             self.snn_layers += 1
@@ -916,58 +755,6 @@ class CRI_Converter:
             print("Unsupported layer: ", layer)
 
         self.layer_index += 1
-
-    def _attention_converter(self, model):
-        # Flatten the current_input matrix to N*D (D = self.embed_dim, N = H*W)
-        self.curr_input = np.transpose(
-            self.curr_input.reshape(
-                self.curr_input.shape[-2] * self.curr_input.shape[-1], self.embed_dim
-            )
-        )  # Hardcode for now
-
-        module_names = list(model._modules)
-        for k, name in enumerate(module_names):
-            if not isSNNLayer(model._modules[name]):
-                if name == "q_linear":
-                    self.q = self._attention_linear_converter(model._modules[name])
-                elif name == "k_linear":
-                    self.k = self._attention_linear_converter(model._modules[name])
-                elif name == "v_linear":
-                    self.v = self._attention_linear_converter(model._modules[name])
-                elif name == "proj_linear":
-                    self.curr_input = self._attention_linear_converter(
-                        model._modules[name]
-                    )
-            elif name == "attn_lif":
-                self._matrix_mul_cri(self.q, self.v)
-                self._matrix_mul_cri(self.curr_input, self.k)
-            self.layer_index += 1
-        self.curr_input = np.transpose(self.curr_input)
-
-    def _attention_linear_converter(self, layer):
-        output_shape = self.curr_input.shape
-        output = np.array(
-            [
-                str(i)
-                for i in range(
-                    self.neuron_offset, self.neuron_offset + np.prod(output_shape)
-                )
-            ]
-        ).reshape(output_shape)
-        weights = layer.weight.detach().cpu().numpy()
-        for n in range(self.curr_input.shape[0]):
-            for neuron_idx, neuron in enumerate(self.curr_input[n, :]):
-                self.neuron_dict[neuron].extend(
-                    [
-                        (output[n, neuron_idx], int(weight))
-                        for idx, weight in enumerate(weights[n])
-                    ]
-                )
-        self.neuron_offset += np.prod(output_shape)
-        if layer.bias is not None and self.layer_index != self.output_layer:
-            self._cri_bias(layer, output, atten_flag=True)
-            self.axon_offset = len(self.axon_dict)
-        return output.transpose(-2, -1)
 
     def _matrix_mul_cri(self, x, y):
         """
@@ -1021,27 +808,6 @@ class CRI_Converter:
         second_layer = second_layer.reshape(h, d)
         self.curr_input = second_layer
 
-    def _sparse_converter(self, layer):
-        input_shape = layer.in_features
-        output_shape = layer.out_features
-        axons = np.array([str(i) for i in range(0, input_shape)])
-        output = np.array([str(i) for i in range(0, output_shape)])
-        weight = layer.weight.detach().cpu().to_dense().numpy()
-        curr_neuron_offset, next_neuron_offset = 0, input_shape
-        for neuron_idx, neuron in enumerate(weight.T):
-            neuron_id = str(neuron_idx)
-            neuron_entry = [
-                (str(base_postsyn_id + next_neuron_offset), int(syn_weight))
-                for base_postsyn_id, syn_weight in enumerate(neuron)
-                if syn_weight != 0
-            ]
-            self.axon_dict[neuron_id] = neuron_entry
-        for output_neuron in range(
-            next_neuron_offset, next_neuron_offset + layer.out_features
-        ):
-            self.neuron_dict[str(output_neuron)] = (self.LIF_Neuron, [])  # TODO: Fix me
-            self.output_neurons.append(neuron_id)
-
     def _linear_converter(self, layer, k, model):
         """
         Takes in a PyTorch linear layer and generate the postsynaptic neurons (numpy array)
@@ -1051,41 +817,11 @@ class CRI_Converter:
         ----------
         layer : PyTorch linear layer
         """
-        
-
-        # Check if this is the output layer (for ANN neurons)
-        is_output_layer = (k == self.output_layer)
-        
-        # For output layers, we don't need a following SNN layer
-        if is_output_layer:
-            v_thresh = self.v_threshold  # Use default threshold for ANN neurons
-        else:
-            # For hidden layers, require a following SNN layer or activation layer
-            try:
-                nextLayer = model[k + 1]
-                if isSNNLayer(nextLayer):
-                    v_thresh = nextLayer.v_threshold
-                elif isinstance(nextLayer, (nn.Sigmoid, nn.ReLU, nn.Tanh)):
-                    # For activation layers, use default threshold
-                    v_thresh = self.v_threshold
-                else:
-                    raise Exception("linear layer with no following snn layer")
-            except:
-                raise Exception("linear layer with no following snn layer")
-
-        # Debug: print the neuron indices used as inputs to the linear layer
-        # curr_input_flat = self.curr_input.flatten()
-
-        # Optionally, check if these indices match the output of the previous layer
-        # (e.g., after avgpool)
-        # If you want to check, you can print the shape and range of self.curr_input right after avgpool
-
         if self.layer_index == self.input_layer:
             print("Building synapses between axons and neurons with linear Layer")
         else:
             print("Building synapese from neurons to neurons with linear Layer")
-            #krish: don't increment neuron_offset here; only increment after allocating new output neurons below
-            #self.neuron_offset += np.prod(self.curr_input.shape)
+            self.neuron_offset += np.prod(self.curr_input.shape)
 
         print(
             f"Layer shape(in_feature, out_feature): {layer.in_features} {layer.out_features}"
@@ -1099,40 +835,7 @@ class CRI_Converter:
                 )
             ]
         )
-        output_flat = output.flatten()
-        print(f"Output length: {len(output_flat)}, first val: {output_flat[0]}, last val: {output_flat[-1]}")
-        # update thresholds list
-        for i in range(len(output_flat)):
-            self.thresholds.append(int(self.threshold_scale * v_thresh))
-        # Special handling: if no conv layer, fill layer_neuron_indices with 9 indices from first, middle, last linear layers
-        # Otherwise, keep old behavior
-        if hasattr(self, '_no_conv_mode') and self._no_conv_mode:
-            # Track which linear layer this is
-            if not hasattr(self, '_linear_layer_indices'): self._linear_layer_indices = []
-            n = len(output_flat)
-            indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-            self._linear_layer_indices.append(indices)
-            # After all linear layers, fill layer_neuron_indices with first/mid/last from first, middle, last linear
-            # This will be called for each linear layer, so only fill at the last one
-            # (Assume output_layer is the last linear layer)
-            if self.layer_index == self.output_layer:
-                total = len(self._linear_layer_indices)
-                if total >= 3:
-                    self.layer_neuron_indices = self._linear_layer_indices[0] + self._linear_layer_indices[total//2] + self._linear_layer_indices[-1]
-                else:
-                    # Fallback: just concatenate all
-                    self.layer_neuron_indices = sum(self._linear_layer_indices, [])
-        else:
-            # krish: add first 3 neurons if this is the first linear layer for membrane potential tracking
-            if len(self.layer_neuron_indices) < 6:
-                n = len(output_flat)
-                indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-                self.layer_neuron_indices.extend(indices)
-
-
-        # Now increment neuron_offset by the number of output neurons created
-        self.neuron_offset += layer.out_features
-        self._linear_weight(self.curr_input.flatten(), output, layer, v_thresh)
+        self._linear_weight(self.curr_input.flatten(), output, layer, self.v_threshold)
 
         if layer.bias is not None:
             self._cri_bias(layer, output)
@@ -1143,46 +846,21 @@ class CRI_Converter:
         else:
             self.bias_dict.append(self.NULL_INDICIES)
 
-        print("number of neurons before output: ", len(self.neuron_dict))
-
         if self.layer_index == self.output_layer:
             print("Instantiate output neurons from linear layer")
-            # krish: instantiate neuron model with LEAK_LIF based on spikingjelly neuron type
-            lifNeuronModel = LIF_neuron(int(self.threshold_scale * v_thresh), 0, self.LEAK_LIF)  # scaled threshold
-            # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-            # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-            # lifNeuronModel = IF_neuron(int(self.threshold_scale * v_thresh), 0)  # IF neuron, scaled threshold
+            lifNeuronModel = ANN_neuron(self.v_threshold, 0)  # zero pertubation, IF
             for postSynNeuron in output:
                 # this needs to add a neuron type
                 self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
                 self.output_neurons.append(str(postSynNeuron))
-            # After output neurons are created, add final 3 output neuron indices
-            output_flat = output.flatten()
-            if len(self.layer_neuron_indices) < 9:
-                n = len(output_flat)
-                indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-                self.layer_neuron_indices.extend(indices)
-
-            #krish: fix, sometimes the neuron_dict contains -1 as a key which messes its length, for now just removing
-            if "-1" in list(self.neuron_dict.keys()):
-                print("neuron dict contains -1, removing")
-                self.neuron_dict.pop("-1")
-
-            # print info about neuron dict
-            neuron_dict_keys_sorted = list(self.neuron_dict.keys())
-            print(f"Neuron dict keys (sorted): {neuron_dict_keys_sorted[:30]}...")
-            print(f"First key: {neuron_dict_keys_sorted[0]}, Last key: {neuron_dict_keys_sorted[-1]}")
 
         self.curr_input = output
         self.snn_layer_index += 1
         print(
             f"Number of neurons: {len(self.neuron_dict)}, number of axons: {len(self.axon_dict)}"
         )
-        print("Number of neurons: ", len(self.neuron_dict))
-        print("Threshold length: ", len(self.thresholds))
-        # print neuron index range after linear layer ---
 
-    def _linear_weight(self, input, output, layer, v_thresh):
+    def _linear_weight(self, input, output, layer, v_threshold):
         """
         Unroll the linear layer by building the synapses between
         presynaptic neurons and postsynaptic neurons
@@ -1199,10 +877,7 @@ class CRI_Converter:
         """
         # this should be okay for multineuron. Each layer should have neurons with a single neuron model
         # how to get threshold
-        lifNeuronModel = LIF_neuron(int(self.threshold_scale * v_thresh), 0, self.LEAK_LIF)  # scaled threshold
-        # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-        # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-        # lifNeuronModel = IF_neuron(int(self.threshold_scale * v_thresh), 0)  # IF neuron, scaled threshold
+        lifNeuronModel = ANN_neuron(v_threshold, 0)  # zero pertubation, IF
 
         weights = layer.weight.detach().cpu().numpy().transpose()  # (in, out)
         for preIdx, weight in enumerate(weights):
@@ -1219,7 +894,6 @@ class CRI_Converter:
                 ]
 
                 self.neuron_dict[str(input[preIdx])] = (postSynNeurons, lifNeuronModel)
-
 
     def _conv_converter(self, layer, k, model):
         """
@@ -1248,7 +922,7 @@ class CRI_Converter:
             print("Building synapese from axons to neurons with conv Layer")
         else:
             print("Building synapese from neurons to neurons with conv Layer")
-            #krish: don't increment neuron_offset here; only increment after allocating new output neurons below
+            self.neuron_offset += np.prod(self.curr_input.shape)
 
         output_shape = self._conv_shape(layer, self.curr_input.shape)
         print(
@@ -1263,18 +937,6 @@ class CRI_Converter:
                 )
             ]
         ).reshape(output_shape)
-        # update thresholds list
-        output_flat = output.flatten()
-        for i in range(len(output_flat)):
-            self.thresholds.append(int(self.threshold_scale * v_thresh))
-        # Add first 3 neurons if this is the first conv layer
-        if len(self.layer_neuron_indices) < 3:
-            n = len(output_flat)
-            indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-            self.layer_neuron_indices.extend(indices)
-
-        # Now increment neuron_offset by the number of output neurons created
-        self.neuron_offset += np.prod(output_shape)
 
         self._conv_weight(self.curr_input, output, layer, v_thresh)
 
@@ -1289,20 +951,9 @@ class CRI_Converter:
 
         if self.layer_index == self.output_layer:
             print("Instantiate output neurons from conv layer")
-
-            lifNeuronModel = LIF_neuron(self.threshold_scale * v_thresh, 0, self.LEAK_LIF)  # scaled threshold
-            # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-            # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-            # lifNeuronModel = IF_neuron(self.threshold_scale * v_thresh, 0)  # IF neuron, scaled threshold
-            for postSynNeuron in output.flatten():
-                self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
+            for postSynNeuron in output:
+                self.neuron_dict[str(postSynNeuron)] = []  # fix me
                 self.output_neurons.append(str(postSynNeuron))
-            # After output neurons are created, add final 3 output neuron indices
-            output_flat = output.flatten()
-            if len(self.layer_neuron_indices) < 9:
-                n = len(output_flat)
-                indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-                self.layer_neuron_indices.extend(indices)
 
         self.curr_input = output
         self.snn_layer_index += 1
@@ -1334,11 +985,7 @@ class CRI_Converter:
         padding = layer.padding
         weights = layer.weight.detach().cpu().numpy()
 
-        # Uncomment and set leak to self.LEAK_LIF
-        lifNeuronModel = LIF_neuron(int(self.threshold_scale * v_thresh), 0, self.LEAK_LIF)  # scaled threshold
-        # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-        # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-        # lifNeuronModel = IF_neuron(int(self.threshold_scale * v_thresh), 0)  # IF neuron, scaled threshold
+        lifNeuronModel = ANN_neuron(v_thresh, 0)  # zero pertubation, IF
 
         # Check parameters (int or tuple) and convert them all to tuple
         if isinstance(kernel, int):
@@ -1386,153 +1033,6 @@ class CRI_Converter:
                                         self.neuron_dict[str(pre)][0].append(
                                             (str(postSynNeuron), int(weight[c, i, j]))
                                         )
-
-    #krish: added AvgPool2d support for Conv2d + AvgPool2d -> SpikingNeuron
-    def _conv_converter_avgpooled(self, conv_layer, pool_layer, k, model):
-        # Copy _conv_converter logic, then add pooling
-        try:
-            nextLayer = model[k + 3]
-            if nextLayer is not None and isSNNLayer(nextLayer):
-                v_thresh = nextLayer.v_threshold
-            else:
-                v_thresh = self.v_threshold
-        except:
-            v_thresh = self.v_threshold
-        print(f"[DEBUG] Converting Conv2d + AvgPool2d block: {conv_layer} + {pool_layer}")
-        output = None
-        if self.layer_index == self.input_layer:
-            print("Building synapese from axons to neurons with Conv+AvgPool Layer")
-        else:
-            print("Building synapese from neurons to neurons with Conv+AvgPool Layer")
-            #self.neuron_offset += np.prod(self.curr_input.shape)
-        # Get conv output shape
-        # Use Conv2d's out_channels for correct neuron indexing
-        conv_output_shape = self._conv_shape(conv_layer, self.curr_input.shape)
-        pool_kernel = pool_layer.kernel_size
-        pool_stride = pool_layer.stride
-        pool_padding = pool_layer.padding if hasattr(pool_layer, 'padding') else 0
-        if isinstance(pool_kernel, int): pool_kernel = (pool_kernel, pool_kernel)
-        if isinstance(pool_stride, int): pool_stride = (pool_stride, pool_stride)
-        if isinstance(pool_padding, int): pool_padding = (pool_padding, pool_padding)
-        # Use out_channels from conv_layer, not input channels
-        C = conv_layer.out_channels
-        print("Out channels from conv layer:", C)
-        H_in, W_in = conv_output_shape[-2], conv_output_shape[-1]
-        H_out = (H_in + 2*pool_padding[0] - pool_kernel[0]) // pool_stride[0] + 1
-        W_out = (W_in + 2*pool_padding[1] - pool_kernel[1]) // pool_stride[1] + 1
-        output = np.array([
-            i for i in range(self.neuron_offset, self.neuron_offset + C * H_out * W_out)
-        ]).reshape((C, H_out, W_out))
-
-        output_flat = output.flatten()
-        # update thresholds list
-        for i in range(len(output_flat)):
-            self.thresholds.append(int(self.threshold_scale * v_thresh))
-        output_flat = output.flatten()
-        # Add first 3 neurons if this is the f
-        # Add first 3 neurons if this is the first conv layer
-        if len(self.layer_neuron_indices) < 3:
-            n = len(output_flat)
-            indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-            self.layer_neuron_indices.extend(indices)
-
-        print(f"Layer shape(in_feature, out_feature): {self.curr_input.shape} {output.shape}")
-        self._conv_weight_avgpooled(self.curr_input, output, conv_layer, pool_layer, v_thresh, pool_kernel, pool_stride, pool_padding)
-        if self.layer_index == self.output_layer:
-            print("Instantiate output neurons from Conv+AvgPool layer")
-            # Uncomment and set leak to self.LEAK_LIF
-            lifNeuronModel = LIF_neuron(self.threshold_scale * v_thresh, 0, self.LEAK_LIF)  # scaled threshold
-            # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-            # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-            for postSynNeuron in output.flatten():
-                self.neuron_dict[str(postSynNeuron)] = ([], lifNeuronModel)
-                self.output_neurons.append(str(postSynNeuron))
-            # After output neurons are created, add final 3 output neuron indices
-            output_flat = output.flatten()
-            if len(self.layer_neuron_indices) < 9:
-                n = len(output_flat)
-                indices = [output_flat[0], output_flat[n//2], output_flat[-1]] if n >= 3 else list(output_flat)
-                self.layer_neuron_indices.extend(indices)
-        self.curr_input = output
-        self.neuron_offset += C * H_out * W_out
-        self.snn_layer_index += 1
-        self.bias_dict.append(self.NULL_INDICIES)
-        print("Number of neurons: ", len(self.neuron_dict))
-        print("Threshold length: ", len(self.thresholds))
-
-    def _conv_weight_avgpooled(self, input, output, conv_layer, pool_layer, v_thresh, pool_kernel, pool_stride, pool_padding):
-        # Copy _conv_weight logic, then add pooling
-        kernel = conv_layer.kernel_size
-        stride = conv_layer.stride
-        padding = conv_layer.padding
-        weights = conv_layer.weight.detach().cpu().numpy()
-        # Uncomment and set leak to self.LEAK_LIF
-        lifNeuronModel = LIF_neuron(int(self.threshold_scale * v_thresh), 0, self.LEAK_LIF)  # scaled threshold
-        # lifNeuronModel = LIF_neuron(v_thresh // 2, 0, self.LEAK_LIF)  # threshold halved
-        # lifNeuronModel = LIF_neuron(v_thresh // 3, 0, self.LEAK_LIF)  # threshold one-third
-        # lifNeuronModel = IF_neuron(int(self.threshold_scale * v_thresh), 0)  # IF neuron, scaled threshold
-        if isinstance(kernel, int): kernel = (kernel, kernel)
-        if isinstance(stride, int): stride = (stride, stride)
-        if isinstance(padding, int): padding = (padding, padding)
-        # Pad the input if padding is not zero
-        if sum(padding) != 0:
-            dim = 2
-            pad = padding * dim
-            input = F.pad(torch.from_numpy(input), pad, value=self.NULL_NEURON).numpy()
-        h, w = input.shape[-2], input.shape[-1]
-        C_in = input.shape[0]
-        C_out = output.shape[0]
-        H_out, W_out = output.shape[-2], output.shape[-1]
-        debug_indices = []
-        if C_out > 0 and H_out > 0 and W_out > 0:
-            debug_indices.append((0, 0, 0))
-            debug_indices.append((C_out//2, H_out//2, W_out//2))
-            debug_indices.append((C_out-1, H_out-1, W_out-1))
-        count_include_pad = getattr(pool_layer, 'count_include_pad', True)
-        if count_include_pad:
-            scale = 1.0 / (pool_kernel[0] * pool_kernel[1])
-        print(f"C_in: {C_in}, C_out: {C_out}, H_out: {H_out}, W_out: {W_out}, kernel: {kernel}, stride: {stride}, padding: {padding}, pool_kernel: {pool_kernel}, pool_stride: {pool_stride}, count_include_pad: {count_include_pad}")
-        for c_out in range(C_out):
-            for i in range(H_out):
-                for j in range(W_out):
-                    pooled_presyn = []
-                    valid_count = 0
-                    for c_in in range(C_in):
-                        for pi in range(pool_kernel[0]):
-                            for pj in range(pool_kernel[1]):
-                                row = i * pool_stride[0] + pi
-                                col = j * pool_stride[1] + pj
-                                if 0 <= row < h - kernel[0] + 1 and 0 <= col < w - kernel[1] + 1:
-                                    for k_i in range(kernel[0]):
-                                        for k_j in range(kernel[1]):
-                                            in_row = row + k_i
-                                            in_col = col + k_j
-                                            pre = input[c_in, in_row, in_col]
-                                            w_val = int(weights[c_out, c_in, k_i, k_j])
-                                            if pre != self.NULL_NEURON:
-                                                pooled_presyn.append((pre, w_val))
-                                                valid_count += 1
-                                            elif count_include_pad:
-                                                pooled_presyn.append((pre, w_val))
-                    # Determine scaling factor
-                    if not count_include_pad:
-                        scale = 1.0 / max(valid_count, 1)
-                    postSynNeuron = output[c_out, i, j]
-                    if (c_out, i, j) in debug_indices:
-                        print(f"  Output neuron {postSynNeuron} receives from:")
-                        for pre, w_val in pooled_presyn[:8]:
-                            scaled_w = int(round(w_val * scale))
-                            print(f"    {pre} --({w_val} * {scale:.3f} = {scaled_w})--> {postSynNeuron}")
-                        print(f"  Scaling factor: {scale}")
-                        print(f"  Total presynaptic: {len(pooled_presyn)}\n")
-                    for pre, w_val in pooled_presyn:
-                        scaled_w = int(round(w_val * scale))
-                        if self.layer_index == self.input_layer:
-                            self.axon_dict["a" + str(pre)].append((str(postSynNeuron), scaled_w))
-                        else:
-                            if str(pre) not in self.neuron_dict:
-                                self.neuron_dict[str(pre)] = ([], lifNeuronModel)
-                            self.neuron_dict[str(pre)][0].append((str(postSynNeuron), scaled_w))
 
     def _maxPool_converter(self, layer):
         """
@@ -1779,9 +1279,7 @@ class CRI_Converter:
         else:
             return outputSpikes
 
-
-    #krish: added extra debugging and membrane potential tracking for specific neurons
-    def run_CRI_sw(self, inputList, softwareNetwork, outputPotential=False, one_batch_only=False, potential_neuron_indices=None):
+    def run_CRI_sw(self, inputList, softwareNetwork, outputPotential=False):
         """
         Runs a batch of inputs through the software simulation of the network,
         returns the output predictions and output spikes
@@ -1809,122 +1307,55 @@ class CRI_Converter:
         debugspike = []
         membranePotential = []
 
-        # Only print avgpool debug for the first avgpool layer encountered
-        avgpool_debug_printed = False
         # each image
-        for batch_idx, currInput in enumerate(tqdm(inputList)):
+        for currInput in tqdm(inputList):
+            # reset the membrane potential to zero
             softwareNetwork.simpleSim.initialize_sim_vars(len(self.neuron_dict))
             spikeRate = [0] * len(self.output_neurons)
-            phaseDelay = self.snn_layers
-            #phaseDelay = 0 # normally remove
-            # track avgpool neuron activity ---
-            # Find three representative avgpool neurons (first, middle, last)
-            avgpool_neuron_indices = []
-            # Find all neuron indices up to the start of the linear layer (assuming contiguous allocation)
-            all_neuron_indices = sorted([int(k) for k in self.neuron_dict.keys() if k.isdigit()])
-            if all_neuron_indices:
-                first = all_neuron_indices[0]
-                last = all_neuron_indices[len(all_neuron_indices)//2]
-                end = all_neuron_indices[-1]
-                avgpool_neuron_indices = [first, last, end]
-            avgpool_debug = {idx: [] for idx in avgpool_neuron_indices}
-            sample_membrane = []
-            print("length of currInput:", len(currInput))
-            print("phaseDelay:", phaseDelay)
-            n_timesteps = max(0, len(currInput) - phaseDelay)
+            # each time step
+            # we need to add 5 delays
+            phaseDelay = (
+                self.snn_layers
+            )  # it will take phaseDelay cycles before valid input comes out of the network
             for sliceIdx, slice in enumerate(currInput):
                 swSpike = []
-                if outputPotential:
-                    if potential_neuron_indices is not None:
-                        # neuron_dict keys are user keys (str), ensure idx is a Python int or str
-                        def to_str_key(idx):
-                            if hasattr(idx, 'item'):
-                                return str(idx.item())
-                            elif hasattr(idx, 'astype'):
-                                return str(int(idx))
-                            else:
-                                return str(idx)
-                        neuron_keys = [to_str_key(idx) for idx in potential_neuron_indices]
-                        print("neuron_keys:", neuron_keys)
-                        potential, swSpike = softwareNetwork.step(slice, membranePotential=True, potential_neuron_keys=neuron_keys, thresholds=self.thresholds) #krish: api.py network step function now takes in a thresholds list
-                        # potential: list of (key, v)
-                        v_dict = dict(potential)
-                        sample_membrane.append([v_dict.get(str(idx), 0.0) for idx in neuron_keys])
-                    else:
-                        potential, swSpike = softwareNetwork.step(slice, membranePotential=True, thresholds=self.thresholds)
-                        if sliceIdx >= phaseDelay:
-                            sample_membrane.append([v for k, v in potential])
+
+                if (
+                    outputPotential
+                ):  # TODO: we shouldn't actually bother reading membrane potentials out if <phaseDelay
+                    potential, swSpike = softwareNetwork.step(
+                        slice, membranePotential=True
+                    )
+                    if sliceIdx >= phaseDelay:
+                        membranePotential.append([v for k, v in potential])
                 else:
-                    swSpike = softwareNetwork.step(slice, membranePotential=False, thresholds=self.thresholds)
+                    swSpike = softwareNetwork.step(slice, membranePotential=False)
                 if sliceIdx >= phaseDelay:
-                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+                    spikeIdx = [
+                        int(spike) - int(self.output_neurons[0]) for spike in swSpike
+                    ]
                     debugspike.append(spikeIdx)
                     for idx in spikeIdx:
                         spikeRate[idx] += 1
-            if outputPotential:
-                membranePotential.extend(sample_membrane)
-
-
-                # debug: record for one output neuron
-            output_neuron_idx = None
-            if self.output_neurons:
-                output_neuron_idx = int(self.output_neurons[0])
-            if output_neuron_idx is not None:
-                if 'output_neuron_debug' not in locals():
-                    output_neuron_debug = []
-                v = None
-                threshold = None
-                spiked = False
-                neuron_attrs = {}
-                # get neuron model attributes if present
-                if hasattr(self, 'neuron_dict') and str(output_neuron_idx) in self.neuron_dict:
-                    entry = self.neuron_dict[str(output_neuron_idx)]
-                    if isinstance(entry, tuple):
-                        neuron_model = entry[1]
-                        neuron_attrs = {k: getattr(neuron_model, k) for k in dir(neuron_model) if not k.startswith('__') and not callable(getattr(neuron_model, k))}
-                        threshold = neuron_attrs.get('threshold', None)
-                # try to get membrane potential from simulation state if available
-                if hasattr(softwareNetwork, 'simpleSim') and hasattr(softwareNetwork.simpleSim, 'membrane_potential'):
-                    mp = softwareNetwork.simpleSim.membrane_potential
-                    # Print all available keys for diagnosis
-                    print(f"DEBUGGING: membrane_potential keys at t={sliceIdx}: {list(mp.keys())}")
-                    # Try both str and int keys
-                    v = mp.get(str(output_neuron_idx), None)
-                    if v is None:
-                        v = mp.get(output_neuron_idx, None)
-                if swSpike and str(output_neuron_idx) in [str(s) for s in swSpike]:
-                    spiked = True
-                output_neuron_debug.append({'t': sliceIdx, 'v': v, 'threshold': threshold, 'spiked': spiked, 'attrs': neuron_attrs})
-
+            # empty input for phase delay
             for q in range(phaseDelay):
-                swSpike = softwareNetwork.step([], membranePotential=False, thresholds=self.thresholds)
+                swSpike = softwareNetwork.step([], membranePotential=False)
                 if sliceIdx + q >= phaseDelay:
-                    spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+                    spikeIdx = [
+                        int(spike) - int(self.output_neurons[0]) for spike in swSpike
+                    ]
                     debugspike.append(spikeIdx)
                     for idx in spikeIdx:
                         spikeRate[idx] += 1
+
+            # empty input for output delay
+            # spikeIdx = [int(spike) - int(self.output_neurons[0]) for spike in swSpike]
+            # for idx in spikeIdx:
+            #    spikeRate[idx] += 1
+            # Append the output spikes of each image to the output list
             outputSpikes.append(spikeRate)
 
-    
-            # --- DEBUG: Print output neuron activity for this sample ---
-            if 'output_neuron_debug' in locals() and output_neuron_idx is not None:
-                print(f"[DEBUG] Output neuron activity for neuron {output_neuron_idx}:")
-                for entry in output_neuron_debug:
-                    v_disp = entry['v'] if entry['v'] is not None else '(not present)'
-                    print(f"    t={entry['t']}: v={v_disp} threshold={entry['threshold']} spiked={entry['spiked']}")
-                # Print all available neuron model attributes for this neuron (once)
-                if output_neuron_debug:
-                    print(f"    [DEBUG] Neuron model attributes: {output_neuron_debug[0]['attrs']}")
-                print()
-            print()
-            if one_batch_only:
-                break
-
-
         if outputPotential:
-            membranePotential = np.array(membranePotential)
-            if membranePotential.ndim == 1:
-                membranePotential = membranePotential.reshape(-1, 1)
             return outputSpikes, membranePotential
         else:
             return outputSpikes

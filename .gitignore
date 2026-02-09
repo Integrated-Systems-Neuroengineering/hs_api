@@ -20,6 +20,7 @@ env/
 .idea/
 .vscode/
 *.code-workspace
+.ipynb_checkpoints/
 
 # pytest
 .pytest_cache/
@@ -27,22 +28,27 @@ env/
 # Profiling
 scalene-profile.*
 
-# Vivado
+# Vivado / Xilinx
 vivado.jou
 vivado.log
 vivado_*.backup.jou
 vivado_*.backup.log
+.Xil/
 
 # Data / output artifacts
 *.p
 *Data/
 *data/
 *.npy
+*.npz
+*.tar.gz
+DVS128Gesture/
 result/
 figure/
 test_figure/
 log/
 logs/
+log_*/
 output/
 converted_model/
 quantout
