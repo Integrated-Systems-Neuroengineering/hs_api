@@ -8,7 +8,7 @@ from spikingjelly.activation_based import surrogate, neuron, functional
 from models import DVSGestureNet
 from utils import train_DVS_Time, sw_comp_DVS, validate_DVS, test_DVS_Time
 from hs_api import CRI_network
-from hs_api.converter import CRI_Converter, Quantize_Network, BN_Folder
+from hs_api.converters import CRI_Converter, Quantize_Network, BN_Folder
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-resume_path", default="", type=str, help="checkpoint file")

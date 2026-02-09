@@ -1,4 +1,4 @@
-from hs_api.converter import CRI_Converter, Quantize_Network
+from hs_api.converters import CRI_Converter, Quantize_Network
 from hs_api.api import CRI_network
 import QAT_LeNet5_Stride2
 import torch
