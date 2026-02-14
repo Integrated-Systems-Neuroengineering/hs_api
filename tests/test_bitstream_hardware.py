@@ -1,6 +1,7 @@
 import pytest
 from hs_api.api import CRI_network
 from hs_api.neuron_models import ANN_neuron, LIF_neuron
+import pytest
 
 class TestBitStream:
     """Test suite using pytest framework"""
@@ -10,7 +11,7 @@ class TestBitStream:
         """Factory fixture that creates network configurations"""
         created_networks = []
         
-        def _setup(numberAxons, numberNeurons, weight, neuron_model):
+        def _setup(numberAxons, numberNeurons, weight, neuron_model, fully_connect_axons_to_neurons=True):
             """creates the axon and connection dictionaries before tests involving 1 layer of neurons"""
             
             #define dictionaries
@@ -23,24 +24,37 @@ class TestBitStream:
             else:
                 weight = [weight] * numberAxons  # converts weight to a list by repeating that weight for every axon
 
-            #creating axonal connections to neuron
-            for i in range(numberAxons): #connect each axon with each neuron
-                axonToNeuron = []
-                for j in range(numberNeurons):  
-                    connectingNeuron = (f"N{j}", weight[i])
-                    axonToNeuron.append(connectingNeuron)
-                axons[f"A{i}"] = axonToNeuron
+            if fully_connect_axons_to_neurons:
+                #creating inputs, axons, and N1 neurons
+                inputs = []
 
+                #create N1 neurons
+                for i in range(numberNeurons):
+                    connections[f"N1.{i}"] = ([], neuron_model)
+
+                #creating axonal connections to neuron
+                for i in range(numberAxons): #connect each axon with each neuron
+                    axonToNeuron = []
+                    for j in range(numberNeurons):  
+                        connectingNeuron = (f"N1.{j}", weight[i])
+                        axonToNeuron.append(connectingNeuron)
+                    axons[f"A{i}"] = axonToNeuron
+                    inputs.append(f"A{i}")
+
+            else:
+                #creating inputs, axons, and N1 neurons (each axon connects to only one N1 neuron)
+                inputs = []
+                for i in range(numberAxons): #connect each axon with each neuron
+                    connections[f"N1.{i}"] = ([], neuron_model)  #create N1 neuron
+                    connectingNeuron = (f"N1.{i}", weight[i]) 
+                    axons[f"A{i}"] = [connectingNeuron]
+                    inputs.append(f"A{i}")
+
+                
             #creating output neurons
             outputs = []
             for i in range(numberNeurons):    #add each neuron to the connections dictionary
-                connections[f"N{i}"] = ([], neuron_model)
-                outputs.append(f"N{i}")
-
-            #create inputs list
-            inputs = []
-            for i in range(numberAxons):
-                inputs.append(f"A{i}")
+                outputs.append(f"N1.{i}")
 
             network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
             created_networks.append(network)
@@ -58,32 +72,48 @@ class TestBitStream:
         """Factory fixture that creates network configurations with 2 layers of neurons"""
         created_networks = []
 
-        def _setup(numberAxons, numberN1, numberN2, weightAxon_N1, weightN1_N2, neuron_model1, neuron_model2):
+        def _setup(numberAxons, numberN1, numberN2, weightAxon_N1, weightN1_N2, neuron_model1, neuron_model2, fully_connect_A1_to_N1=True):
             """creates the axon and connection dictionaries before tests involving 2 layers of neurons"""
             axons = {}
             connections = {}
 
-            #creating inputs, axons, and N1 neurons
-            inputs = []
-            for i in range(numberAxons): #connect each axon with each neuron
-                axonToNeuron = []
-                for j in range (numberN1):  
-                    connections[f"N1.{j}"] = ([], neuron_model1)  #create N1 neuron
-                    connectingNeuron = (f"N1.{j}", weightAxon_N1) 
-                    axonToNeuron.append(connectingNeuron)
-                axons[f"A{i}"] = axonToNeuron
-                inputs.append(f"A{i}")
+            if fully_connect_A1_to_N1:
+                #creating inputs, axons, and N1 neurons
+                inputs = []
+
+                #create N1 neurons
+                for i in range(numberN1):
+                    connections[f"N1.{i}"] = ([], neuron_model1)  
+
+                #connect each axon with each N1 neuron
+                for i in range(numberAxons): 
+                    axonToNeuron = []
+                    for j in range (numberN1):  
+                        connectingNeuron = (f"N1.{j}", weightAxon_N1) 
+                        axonToNeuron.append(connectingNeuron)
+                    axons[f"A{i}"] = axonToNeuron
+                    inputs.append(f"A{i}")
+            
+            else:
+                #creating inputs, axons, and N1 neurons (each axon connects to only one N1 neuron)
+                inputs = []
+                for i in range(numberAxons): #connect each axon with each neuron
+                    connections[f"N1.{i}"] = ([], neuron_model1)  #create N1 neuron
+                    connectingNeuron = (f"N1.{i}", weightAxon_N1) 
+                    axons[f"A{i}"] = [connectingNeuron]
+                    inputs.append(f"A{i}")
+
+            #create all N2 neurons
+            for j in range(numberN2):
+                connections[f"N2.{j}"] = ([], neuron_model2)  #create N2 neuron
 
             #creating all N1 neurons and connect to N2 neurons
             for i in range(numberN1):
                 for j in range(numberN2):
-                    connections[f"N2.{j}"] = ([], neuron_model2)  #create N2 neuron
                     connections[f"N1.{i}"][0].append((f"N2.{j}", weightN1_N2)) #connect N1 --> N2
 
             #creating output neurons (can only read spikes from output neurons)
             outputs = []
-            for i in range(numberN1):    #add N1 neurons to the output list
-                outputs.append(f"N1.{i}")
             for i in range(numberN2):    #add N2 neurons to the output list
                 outputs.append(f"N2.{i}")
 
@@ -97,6 +127,57 @@ class TestBitStream:
         # Cleanup code runs here after test
         for network in created_networks:
             pass  # Add cleanup if needed (e.g., network.cleanup())
+
+    @pytest.mark.parametrize("numberAxons", [1000, 5000, 10000, 16000, 16382, 16383, 16384])
+    def test_max_number_axons(self, setup_dictionaries, numberAxons):
+        """Test maximum number of axons (16383) each axon connects to 1 neuron
+
+        Test Description:
+            Verifies that the network can handle the maximum number of axons (16383)
+            with each axon connecting to a single neuron.
+
+        Network Configuration:
+            - 16383 axons (A0-A16382), all with weight=1
+            - 16383 ANN neuron (N0-N16382) with threshold=0, shift=0
+            - Each axon connects to a unique neuron (A0->N0, A1->N1, ..., A16382->N16382)
+            
+        Test Procedure:
+            1. Time step 0: Activate all 16383 axons
+            2. Time step 1: No input
+            
+        Expected Behavior:
+            - Time step 0: No spikes (neuron accumulates input from axons, MP=1 for each neuron)
+            - Time step 1: Neuron spikes (MP > threshold), then resets to MP=0
+            
+        Explanation:
+            ANN neurons with threshold=0 spike immediately when MP > 0. At time step 0,
+            each neuron receives input from one of 16383 axons but doesn't spike until the next time step
+            due to the one-cycle delay in the CRI architecture.
+        """
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=numberAxons, 
+            numberNeurons=numberAxons, 
+            weight=1, 
+            neuron_model=ANN_neuron(0, shift=0),
+            fully_connect_axons_to_neurons=False  #each axon connects to only one neuron
+        )
+        
+        currSpikes1 = network.step(inputs) #0th time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #1st time step
+        mp2 = network.read_membrane(outputs)
+
+        #convert mp1, mp2 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+
+        assert len(currSpikes1[0]) == 0
+        assert len(currSpikes2[0]) != 0
+
+        for i in range(numberAxons):
+             neuron_name = f"N1.{i}"
+             assert mp1_dict[neuron_name] == 1, f"Membrane potential of {neuron_name} after 0th timestep does not match expected value"
+             assert mp2_dict[neuron_name] == 0, f"Membrane potential of {neuron_name} after 1st timestep does not match expected value"
 
     def test_number_axons_multiple_256(self, setup_dictionaries):
         """Test number of axons is multiple of 256
@@ -224,6 +305,9 @@ class TestBitStream:
             neuron_model1=ANN_neuron(-1, shift=0), 
             neuron_model2=ANN_neuron(0, shift=0)
         )
+
+        for i in range(1):    #add N1 neurons to the output list
+            outputs.append(f"N1.{i}")
 
         _ = network.step([]) #0th time step
         results1 = network.read_membrane(outputs)
@@ -535,5 +619,150 @@ class TestBitStream:
         assert mp1_network2_t0[0][1] == 1, f"Unexpected membrane potential at time step 0. Expected 1. Output was {mp1_network2_t0[0][1]}"
         assert mp1_network2_t1[0][1] == 0, f"Unexpected membrane potential at time step 1. Expected 0. Output was {mp1_network2_t1[0][1]}"
 
+    @pytest.mark.parametrize("numberN1_neurons", [4000, 4050, 4095, 4096, 4097])
+    def test_max_axonal_fanout(self, setup_dictionaries_2layers, numberN1_neurons):
+        """Test maximum axonal fanout to neuron with detailed membrane potential checks."""
+        neuron_model = ANN_neuron(0, shift=0)
+        network, inputs, outputs = setup_dictionaries_2layers(
+                numberAxons=1, 
+                numberN1=numberN1_neurons, 
+                numberN2=1, 
+                weightAxon_N1=1, 
+                weightN1_N2=1, 
+                neuron_model1=neuron_model, 
+                neuron_model2=neuron_model
+            )
+        
+        for i in range(numberN1_neurons):    #add N1 neurons to the output list
+            outputs.append(f"N1.{i}")
+        
+        currSpikes1 = network.step(inputs) #0th time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #1st time step
+        mp2 = network.read_membrane(outputs)
+        currSpikes3 = network.step([]) #2nd time step
+        mp3 = network.read_membrane(outputs)
+
+        #convert mp1, mp2, mp3 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+        mp3_dict = dict(mp3)
+
+        assert len(currSpikes1[0]) == 0    #no spikes at time step 0
+        assert len(currSpikes3[0]) == 1, f"N2 did not spike as expected at time step 2. Expected 1 spike, got {len(currSpikes3[0])}"
+
+        #check membrane potentials of all N1 neurons and N2 neuron after time steps 0
+        for i in range(numberN1_neurons):
+            assert mp1_dict[f"N1.{i}"] == 1, f"N1.{i} membrane potential did not match expected value at time step 0. Expected 1, got {mp1_dict[f'N1.{i}']}"
+
+        assert mp1_dict[f"N2.0"] == 0, f"N2.0 membrane potential did not match expected value at time step 0. Expected 0, got {mp1_dict[f'N2.0']}"
+
+        #check membrane potentials of all N1 neurons and N2 Neuron after time step 1
+        for i in range(numberN1_neurons):
+            assert mp2_dict[f"N1.{i}"] == 0, f"N1.{i} membrane potential did not match expected value at time step 1. Expected 0, got {mp2_dict[f'N1.{i}']}"
+
+        assert mp2_dict["N2.0"] == numberN1_neurons, f"N2.0 membrane potential did not match expected value at time step 1. Expected {numberN1_neurons}, got {mp2_dict['N2.0']}"
+    
+        #check membrane potentials of all N1 neurons and N2 Neuron after time step 2
+        for i in range(numberN1_neurons):
+            assert mp3_dict[f"N1.{i}"] == 0, f"N1.{i} membrane potential did not match expected value at time step 2. Expected 0, got {mp3_dict[f'N1.{i}']}"
+        
+        assert mp3_dict["N2.0"] == 0, f"N2.0 membrane potential did not match expected value at time step 2. Expected 0, got {mp3_dict['N2.0']}"
+    
+    @pytest.mark.parametrize("number_axons", [8190, 8191, 8193])
+    def test_max_axonal_fan_in(self, setup_dictionaries, number_axons):
+        """Test maximum axonal fan-in to a single neuron from different numbers of axons."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=number_axons, 
+            numberNeurons=1, 
+            weight=1, 
+            neuron_model=ANN_neuron(1, shift=0)
+        )
+        
+        currSpikes1 = network.step(inputs) #0th time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #1st time step
+        mp2 = network.read_membrane(outputs)
+
+        #convert mp1, mp2 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+
+        assert len(currSpikes1[0]) == 0    #no spikes at time step 0
+        assert len(currSpikes2[0]) == 1, "Neuron did not spike as expected at time step 1"
+
+        #check membrane potentials after time steps 0 and 1
+        assert mp1_dict["N0"] == number_axons, f"N0 membrane potential did not match expected value at time step 0. Expected {number_axons}, got {mp1_dict['N0']}"
+        assert mp2_dict["N0"] == 0, f"N0 membrane potential did not match expected value at time step 1. Expected 0, got {mp2_dict['N0']}"
+
+    @pytest.mark.parametrize("numberN2_neurons", [4094, 4095, 4096, 4097])
+    def test_max_neuronal_fanout(self, setup_dictionaries_2layers, numberN2_neurons):
+        """Test maximum neuronal fanout from one neuron to neurons in the next layer."""
+        neuron_model = ANN_neuron(0, shift=0)
+        network, inputs, outputs = setup_dictionaries_2layers(
+                numberAxons=1, 
+                numberN1=1, 
+                numberN2=numberN2_neurons, 
+                weightAxon_N1=1, 
+                weightN1_N2=1, 
+                neuron_model1=neuron_model, 
+                neuron_model2=neuron_model
+            )
+        
+        for i in range(1):    #add N1 neurons to the output list
+            outputs.append(f"N1.{i}")
+        
+        currSpikes1 = network.step(inputs) #0th time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #1st time step
+        mp2 = network.read_membrane(outputs)
+        currSpikes3 = network.step([]) #2nd time step
+        mp3 = network.read_membrane(outputs)
+
+        #convert mp1, mp2, mp3 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+        mp3_dict = dict(mp3)
+
+        #check membrane potentials of N1 neuron and all N2 neurons after time steps 0
+        assert mp1_dict["N1.0"] == 1, f"N1.0 membrane potential did not match expected value at time step 0. Expected 1, got {mp1_dict['N1.0']}"
+        
+        for i in range(numberN2_neurons):
+            assert mp1_dict[f"N2.{i}"] == 0, f"N2.{i} membrane potential did not match expected value at time step 0. Expected 0, got {mp1_dict[f'N2.{i}']}"
+
+        #check membrane potentials of N1 neuron and all N2 neurons after time step 1
+        assert mp2_dict["N1.0"] == 0, f"N1.0 membrane potential did not match expected value at time step 1. Expected 0, got {mp2_dict['N1.0']}"
+        
+        for i in range(numberN2_neurons):
+            assert mp2_dict[f"N2.{i}"] == 1, f"N2.{i} membrane potential did not match expected value at time step 1. Expected 1, got {mp2_dict[f'N2.{i}']}"
+
+        #check membrane potentials of N1 neuron and all N2 neurons after time step 2
+        assert mp3_dict["N1.0"] == 0, f"N1.0 membrane potential did not match expected value at time step 2. Expected 0, got {mp3_dict['N1.0']}"
+
+        for i in range(numberN2_neurons):
+            assert mp3_dict[f"N2.{i}"] == 0, f"N2.{i} membrane potential did not match expected value at time step 2. Expected 0, got {mp3_dict[f'N2.{i}']}"
+    
+    @pytest.mark.parametrize("numberN1_neurons", [10, 1000, 5000, 8158, 8159, 8160])
+    def test_neuronal_fan_in(self, setup_dictionaries_2layers, numberN1_neurons):
+        """Test neuronal fan-in to a single second-layer neuron from different numbers of first-layer neurons."""
+        #neuron_model = ANN_neuron(0, shift=0)
+        network, inputs, outputs = setup_dictionaries_2layers(
+                numberAxons=numberN1_neurons, 
+                numberN1=numberN1_neurons, 
+                numberN2=1, 
+                weightAxon_N1=1, 
+                weightN1_N2=1, 
+                neuron_model1=ANN_neuron(0, shift=0), 
+                neuron_model2=ANN_neuron(0, shift=0),
+                fully_connect_A1_to_N1=False
+            )
+        
+        _ = network.step(inputs) #0th time step
+        _ = network.step([]) #1st time step
+        results2 = network.read_membrane(outputs)
+        
+        assert results2[0] == ("N2.0", numberN1_neurons), f"N2.0 membrane potential did not match expected value at time step 1. Expected {numberN1_neurons}, got {results2[0][1]}"
+
+    
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
