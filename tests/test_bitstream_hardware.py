@@ -117,7 +117,7 @@ class TestBitStream:
                 outputs = []
                 for i in range(numberN2):    #add N2 neurons to the output list
                     outputs.append(f"N2.{i}")
-            
+
             else:
                 #creating output neurons (can only read spikes from output neurons)
                 outputs = []
@@ -762,12 +762,12 @@ class TestBitStream:
         """Test neuronal fan-in to a single second-layer neuron from different numbers of first-layer neurons."""
         neuron_model = ANN_neuron(0, shift=0)
         network, inputs, outputs = setup_dictionaries_2layers(
-                numberAxons=numberN1_neurons, 
-                numberN1=numberN1_neurons, 
-                numberN2=1, 
-                weightAxon_N1=1, 
-                weightN1_N2=1, 
-                neuron_model1=neuron_model, 
+                numberAxons=numberN1_neurons,
+                numberN1=numberN1_neurons,
+                numberN2=1,
+                weightAxon_N1=1,
+                weightN1_N2=1,
+                neuron_model1=neuron_model,
                 neuron_model2=neuron_model,
                 fully_connect_A1_to_N1=False
             )
