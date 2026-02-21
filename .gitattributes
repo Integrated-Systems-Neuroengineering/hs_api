@@ -1,0 +1,2 @@
+tests/fixtures/*.pkl filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/CIFAR10_model_config.pkl filter=lfs diff=lfs merge=lfs -text
