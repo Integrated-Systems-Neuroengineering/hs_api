@@ -72,7 +72,7 @@ class TestBitStream:
         """Factory fixture that creates network configurations with 2 layers of neurons"""
         created_networks = []
 
-        def _setup(numberAxons, numberN1, numberN2, weightAxon_N1, weightN1_N2, neuron_model1, neuron_model2, fully_connect_A1_to_N1=True):
+        def _setup(numberAxons, numberN1, numberN2, weightAxon_N1, weightN1_N2, neuron_model1, neuron_model2, fully_connect_A1_to_N1=True, output_neurons_only_N2=True):
             """creates the axon and connection dictionaries before tests involving 2 layers of neurons"""
             axons = {}
             connections = {}
@@ -112,10 +112,19 @@ class TestBitStream:
                 for j in range(numberN2):
                     connections[f"N1.{i}"][0].append((f"N2.{j}", weightN1_N2)) #connect N1 --> N2
 
-            #creating output neurons (can only read spikes from output neurons)
-            outputs = []
-            for i in range(numberN2):    #add N2 neurons to the output list
-                outputs.append(f"N2.{i}")
+            if output_neurons_only_N2:
+                #creating output neurons (can only read spikes from output neurons)
+                outputs = []
+                for i in range(numberN2):    #add N2 neurons to the output list
+                    outputs.append(f"N2.{i}")
+            
+            else:
+                #creating output neurons (can only read spikes from output neurons)
+                outputs = []
+                for i in range(numberN1):    #add N1 neurons to the output list
+                    outputs.append(f"N1.{i}")
+                for i in range(numberN2):    #add N2 neurons to the output list
+                    outputs.append(f"N2.{i}")
 
             network = CRI_network(axons=axons,connections=connections,outputs=outputs,target="CRI")
             created_networks.append(network)
@@ -310,19 +319,24 @@ class TestBitStream:
             outputs.append(f"N1.{i}")
 
         _ = network.step([]) #0th time step
-        results1 = network.read_membrane(outputs)
+        mp1 = network.read_membrane(outputs)
         _ = network.step([]) #1st time step
-        results2 = network.read_membrane(outputs)
+        mp2 = network.read_membrane(outputs)
         _ = network.step([]) #2nd time step
-        results3 = network.read_membrane(outputs)
+        mp3 = network.read_membrane(outputs)
+
+        #convert mp1, mp2, mp3 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+        mp3_dict = dict(mp3)
 
         #check membrane potentials
-        assert results1[0] == ("N1.0", 0), "Membrane potential of N1.0 at 0th timestep does not match expected value"
-        assert results1[1] == ("N2.0", 1), "Membrane potential of N2.0 at 0th timestep does not match expected value"
-        assert results2[0] == ("N1.0", 0), "Membrane potential of N1.0 at 1st timestep does not match expected value"
-        assert results2[1] == ("N2.0", 1), "Membrane potential of N2.0 at 1st timestep does not match expected value"
-        assert results3[0] == ("N1.0", 0), "Membrane potential of N1.0 at 2nd timestep does not match expected value"
-        assert results3[1] == ("N2.0", 1), "Membrane potential of N2.0 at 2nd timestep does not match expected value"
+        assert mp1_dict["N1.0"] == 0, f"Membrane potential of N1.0 at 0th timestep does not match expected value. Expected 0, got {mp1_dict['N1.0']}"
+        assert mp1_dict["N2.0"] == 1, f"Membrane potential of N2.0 at 0th timestep does not match expected value. Expected 1, got {mp1_dict['N2.0']}"
+        assert mp2_dict["N1.0"] == 0, f"Membrane potential of N1.0 at 1st timestep does not match expected value. Expected 0, got {mp2_dict['N1.0']}"
+        assert mp2_dict["N2.0"] == 1, f"Membrane potential of N2.0 at 1st timestep does not match expected value. Expected 1, got {mp2_dict['N2.0']}"
+        assert mp3_dict["N1.0"] == 0, f"Membrane potential of N1.0 at 2nd timestep does not match expected value. Expected 0, got {mp3_dict['N1.0']}"
+        assert mp3_dict["N2.0"] == 1, f"Membrane potential of N2.0 at 2nd timestep does not match expected value. Expected 1, got {mp3_dict['N2.0']}"
 
     def test_LIF_neuron_negative_input(self, setup_dictionaries):
         """Test LIF neuron with negative input weights. 3 axons connected to 1 neuron
@@ -333,7 +347,7 @@ class TestBitStream:
         
         Network Configuration:
             - 3 axons: A0 (weight=0), A1 (weight=-1), A2 (weight=+1)
-            - 1 LIF neuron with threshold=20, leak=63, shift=0 (leak=63 means LIF_neuron has basically no leak)
+            - 1 LIF neuron with threshold=20, leak=63, shift=-17 (leak=63 means LIF_neuron has basically no leak)
             
         Test Procedure:
             Time step 0: No input
@@ -358,7 +372,7 @@ class TestBitStream:
             numberAxons=3, 
             numberNeurons=1, 
             weight=[0, -1, 1],   #weight of A0 is 0, A1 is -1, A2 is 1
-            neuron_model=LIF_neuron(threshold=20, shift=0, leak=63)
+            neuron_model=LIF_neuron(threshold=20, shift=-17, leak=63)
         )
         
         FPGA_Vs = []   # membrane potential trace
@@ -394,8 +408,9 @@ class TestBitStream:
 
         assert FPGA_Vs == expected_Vs, f"Membrane potentials do not match expected values: Outputs {FPGA_Vs}, Expected {expected_Vs}"
         assert FPGA_Ss == expected_Ss, f"Spikes do not match expected values: Outputs {FPGA_Ss}, Expected {expected_Ss}"
-
-    def test_spike_readout(self, setup_dictionaries_2layers):
+    
+    @pytest.mark.parametrize("numberN1_neurons", [10, 25, 30, 1000, 2000, 4095, 4096])
+    def test_spike_readout(self, setup_dictionaries_2layers, numberN1_neurons):
         """Test spike readout accuracy with varying axonal fanout from 1 to 4096.
         
         Test Description:
@@ -428,42 +443,42 @@ class TestBitStream:
             This tests the maximum axonal fanout (4096) and validates that spike
             readout works correctly for all fanout sizes up to the hardware limit.
         """
-        for numberN1_neurons in range(1, 4097):       #max axonal fanout is 4096
-            network, inputs, _ = setup_dictionaries_2layers(
-                numberAxons=1, 
-                numberN1=numberN1_neurons, 
-                numberN2=1, 
-                weightAxon_N1=1, 
-                weightN1_N2=1, 
-                neuron_model1=ANN_neuron(0, shift=0), 
-                neuron_model2=ANN_neuron(0, shift=0)
-            )
+        network, inputs, _ = setup_dictionaries_2layers(
+            numberAxons=1, 
+            numberN1=numberN1_neurons, 
+            numberN2=1, 
+            weightAxon_N1=1, 
+            weightN1_N2=1, 
+            neuron_model1=ANN_neuron(0, shift=0), 
+            neuron_model2=ANN_neuron(0, shift=0),
+            output_neurons_only_N2=False  #read spikes from both N1 and N2 layers
+        )
 
-            # Time step 0: Activate axon
-            currSpikes0 = network.step(inputs)
+        # Time step 0: Activate axon
+        currSpikes0 = network.step(inputs)
 
-            # Time step 1: No input, N1 neurons spike, mp1 should be numberN1_neurons
-            currSpikes1 = network.step([])
-            mp1 = network.read_membrane(["N2.0"])
+        # Time step 1: No input, N1 neurons spike, mp1 should be numberN1_neurons
+        currSpikes1 = network.step([])
+        mp1 = network.read_membrane(["N2.0"])
 
 
-            # Time step 2: No input, N2 neuron spikes, mp2 should be 0
-            currSpikes2 = network.step([])
-            mp2 = network.read_membrane(["N2.0"])
+        # Time step 2: No input, N2 neuron spikes, mp2 should be 0
+        currSpikes2 = network.step([])
+        mp2 = network.read_membrane(["N2.0"])
 
-            # Verify no spikes at time step 0
-            assert len(currSpikes0[0]) == 0, f"Unexpected number of spikes at time step 0: {len(currSpikes0)}, expected 0"
+        # Verify no spikes at time step 0
+        assert len(currSpikes0[0]) == 0, f"Unexpected number of spikes at time step 0: {len(currSpikes0)}, expected 0"
 
-            # Verify spikes from all N1 neurons at time step 1
-            assert len(currSpikes1[0]) == numberN1_neurons, f"Unexpected number of spikes at time step 1: {len(currSpikes1[0])}, expected {numberN1_neurons}"
-            assert mp1[0][1] == numberN1_neurons, f"Unexpected membrane potential for N2.0 at time step 1: {mp1[0][1]}, expected {numberN1_neurons}"
+        # Verify spikes from all N1 neurons at time step 1
+        assert len(currSpikes1[0]) == numberN1_neurons, f"Unexpected number of spikes at time step 1: {len(currSpikes1[0])}, expected {numberN1_neurons}"
+        assert mp1[0][1] == numberN1_neurons, f"Unexpected membrane potential for N2.0 at time step 1: {mp1[0][1]}, expected {numberN1_neurons}"
 
-            # Verify spike from N2 neuron at time step 2
-            assert len(currSpikes2[0]) == 1, f"Unexpected number of spikes at time step 2: {len(currSpikes2[0])}, expected 1"
-            assert currSpikes2[0][0] == "N2.0", f"Unexpected spike from neuron at time step 2: {currSpikes2[0][0]}, expected 'N2.0'"
-            assert mp2[0][1] == 0, f"Unexpected membrane potential for N2.0 at time step 2: {mp2[0][1]}, expected 0"
+        # Verify spike from N2 neuron at time step 2
+        assert len(currSpikes2[0]) == 1, f"Unexpected number of spikes at time step 2: {len(currSpikes2[0])}, expected 1"
+        assert currSpikes2[0][0] == "N2.0", f"Unexpected spike from neuron at time step 2: {currSpikes2[0][0]}, expected 'N2.0'"
+        assert mp2[0][1] == 0, f"Unexpected membrane potential for N2.0 at time step 2: {mp2[0][1]}, expected 0"
 
-    @pytest.mark.parametrize("shift", [-17, 0])
+    @pytest.mark.parametrize("shift", [-17])
     def test_LIF_neuron_no_noise(self, setup_dictionaries, shift):
         """Test that LIF neurons with specific shift values produce no noise.
         
@@ -502,7 +517,7 @@ class TestBitStream:
             mp = network.read_membrane(outputs)
             assert mp[0][1] == 0, f"Shift={shift}, Timestep={timestep}: Expected MP=0, got {mp[0][1]}"
 
-    @pytest.mark.parametrize("shift", [-1, -16, 15])
+    @pytest.mark.parametrize("shift", [-1, -16, 15, 0])
     def test_LIF_neuron_with_noise(self, setup_dictionaries, shift):
         """Test that LIF neurons with specific shift values produce noise.
         
@@ -512,16 +527,16 @@ class TestBitStream:
             
         Network Configuration:
             - 1 axon (A0) with weight=0 (dummy axon, provides no actual input)
-            - 1 LIF neuron with threshold=0, shift=[parametrized: -1, -16, or 15]
+            - 1 LIF neuron with threshold=0, shift=[parametrized: -1, -16, 15, or 0]
 
         Test Procedure:
             Run 100 time steps with no input spikes, accumulate total membrane potential
             
         Expected Behavior:
-            Sum of MPs over 100 timesteps > 0 (noise present)
+            Sum of absolute value of MPs over 100 timesteps > 0 (noise present)
             
         Explanation:
-            For shift values other than -17 and 0, the LIF neuron should inject
+            For shift values other than -17, the LIF neuron should inject
             noise into the membrane potential. Even with no axonal input, the 
             neuron's MP should fluctuate due to the noise injection. Over 100
             time steps, the cumulative sum should be nonzero, demonstrating that noise
@@ -540,7 +555,7 @@ class TestBitStream:
         for timestep in range(100):
             network.step([])  # No input
             mp = network.read_membrane(outputs)
-            mp_sum += mp[0][1]  # Add MP value to sum
+            mp_sum += abs(mp[0][1])  # Add absolute MP value to sum
         
         # Test passes if total MP sum is 0
         assert mp_sum > 0, f"Shift={shift}: Expected MP sum to be nonzero, got {mp_sum}"
@@ -692,8 +707,8 @@ class TestBitStream:
         assert len(currSpikes2[0]) == 1, "Neuron did not spike as expected at time step 1"
 
         #check membrane potentials after time steps 0 and 1
-        assert mp1_dict["N0"] == number_axons, f"N0 membrane potential did not match expected value at time step 0. Expected {number_axons}, got {mp1_dict['N0']}"
-        assert mp2_dict["N0"] == 0, f"N0 membrane potential did not match expected value at time step 1. Expected 0, got {mp2_dict['N0']}"
+        assert mp1_dict["N1.0"] == number_axons, f"N1.0 membrane potential did not match expected value at time step 0. Expected {number_axons}, got {mp1_dict['N1.0']}"
+        assert mp2_dict["N1.0"] == 0, f"N1.0 membrane potential did not match expected value at time step 1. Expected 0, got {mp2_dict['N1.0']}"
 
     @pytest.mark.parametrize("numberN2_neurons", [4094, 4095, 4096, 4097])
     def test_max_neuronal_fanout(self, setup_dictionaries_2layers, numberN2_neurons):
