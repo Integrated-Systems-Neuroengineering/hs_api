@@ -11,11 +11,11 @@ numpy = "^2.1.2"
 pyyaml = "^6.0.2"
 tqdm = "^4.66.5"
 connectome_utils = {path = "../connectome_utils", develop = true}
-jaal = "^0.1.7"
 bidict = "^0.22.0"
 fxpmath = {path = "../fxpmath", develop = true}
 
 [tool.poetry.group.apps.dependencies]
+jaal = "^0.1.7"
 matplotlib = "^3.9.2"
 spikingjelly = "^0.0.0.0.14"
 snntorch = "^0.9.1"
