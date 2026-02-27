@@ -1,8 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE / Editor
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.code-workspace
+.ipynb_checkpoints/
+
+# pytest
+.pytest_cache/
+
+# Profiling
+scalene-profile.*
+
+# Vivado / Xilinx
+vivado.jou
+vivado.log
+vivado_*.backup.jou
+vivado_*.backup.log
+.Xil/
+
+# Data / output artifacts
 *.p
 *Data/
-result/
 *data/
-*/__pycache__*/
+*.npy
+*.npz
+*.tar.gz
+DVS128Gesture/
+result/
 figure/
 test_figure/
 log/
+logs/
+log_*/
+output/
+converted_model/
+quantout
+
+# Archives
+*.zip
+
+# OS
+.DS_Store
+Thumbs.db
