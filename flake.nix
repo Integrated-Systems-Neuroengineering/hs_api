@@ -14,7 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     fxpmath = {
-      url = "github:jfrank8/fxpmath?ref=dev";
+      url = "github:jfrank8/fxpmath?ref=master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hs-bridge = {

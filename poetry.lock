@@ -334,11 +334,13 @@ optional = false
 python-versions = "^3.10"
 groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.source]
-type = "directory"
-url = "../connectome_utils"
+type = "git"
+url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git"
+reference = "dev"
+resolved_reference = "9b59e3af2c777160e7cc462f35f8c163a4cf947d"
 
 [[package]]
 name = "contourpy"
@@ -777,15 +779,17 @@ optional = false
 python-versions = "^3.10,<3.11"
 groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 numpy = "^2.2.4"
 scipy = "^1.15.2"
 
 [package.source]
-type = "directory"
-url = "../fxpmath"
+type = "git"
+url = "https://github.com/jfrank8/fxpmath.git"
+reference = "master"
+resolved_reference = "6ac619bebfbf972aaa34bc3dad4555d68d60acd4"
 
 [[package]]
 name = "grpcio"
@@ -872,7 +876,7 @@ optional = false
 python-versions = ">=3.10,<3.11"
 groups = ["fpga"]
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 bidict = "^0.22.0"
@@ -890,8 +894,10 @@ scipy = "^1.8.1"
 tqdm = "^4.64.1"
 
 [package.source]
-type = "directory"
-url = "../hs_bridge"
+type = "git"
+url = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git"
+reference = "dev"
+resolved_reference = "267899c61e8418d6ca97b83dc3c0f3f704ec0b9e"
 
 [[package]]
 name = "identify"
@@ -3404,4 +3410,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10,<3.11"
-content-hash = "378d0953b98834fbec14fb6ca8af8b6f642e8a2a097aada850f15fd05cf6336b"
+content-hash = "f26cfbe429880c0db7da108af68999c3d08257215d816e91c2df9c65c4f38f78"

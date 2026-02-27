@@ -10,9 +10,9 @@ python = "^3.10,<3.11"
 numpy = "^2.1.2"
 pyyaml = "^6.0.2"
 tqdm = "^4.66.5"
-connectome_utils = {path = "../connectome_utils", develop = true}
+connectome_utils = {git = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git", branch = "dev"}
 bidict = "^0.22.0"
-fxpmath = {path = "../fxpmath", develop = true}
+fxpmath = {git = "https://github.com/jfrank8/fxpmath.git", branch = "master"}
 
 [tool.poetry.group.apps.dependencies]
 jaal = "^0.1.7"
@@ -22,7 +22,7 @@ snntorch = "^0.9.1"
 tensorboard = "^2.18.0"
 
 [tool.poetry.group.fpga.dependencies]
-hs_bridge = {path = "../hs_bridge", develop = true}
+hs_bridge = {git = "git@github.com:Integrated-Systems-Neuroengineering/hs_bridge.git", branch = "dev"}
 
 
 [tool.poetry.group.dev.dependencies]
