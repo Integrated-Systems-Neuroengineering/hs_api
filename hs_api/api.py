@@ -572,7 +572,7 @@ class CRI_network:
         spikeList = result[0]
         if self.simDump == False:
             spikeList = [
-                (spike[0], self.connectome.get_neuron_by_idx(spike[1]).get_user_key())
+                (spike[0], self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key())
                 for spike in spikeList
             ]
             return (spikeList, result[1], result[2])

@@ -217,7 +217,7 @@ class TestBitStream:
             numberAxons=512, 
             numberNeurons=1, 
             weight=1, 
-            neuron_model=ANN_neuron(0, shift=0)
+            neuron_model=ANN_neuron(0, shift=-17)
         )
         
         currSpikes1 = network.step(inputs) #0th time step

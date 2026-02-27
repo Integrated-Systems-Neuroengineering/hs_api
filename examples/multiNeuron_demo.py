@@ -24,8 +24,8 @@ for i in range(100):
     # else:
     #    inputs[i] = ['alpha', 'beta']
 
-N1 = LIF_neuron(6, 0, 2**5)
-N2 = LIF_neuron(3, 0, 2**5)
+N1 = LIF_neuron(6, -17, 2**5)
+N2 = LIF_neuron(3, -17, 2**5)
 
 # Define an axons dictionary
 # axons = {'alpha': [('01', 1.0),('02', 1.0),('03',1.0)]}
@@ -81,6 +81,7 @@ hardwareNetwork = CRI_network(
     target="CRI",
     outputs=connections.keys(),
     simDump=False,
+    coreID = 0
 )
 # hardwareNetwork = CRI_network(axons=axons,connections=connections,config=config,target='CRI', outputs = connections.keys())
 
