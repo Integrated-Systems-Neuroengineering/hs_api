@@ -8,6 +8,12 @@ dist/
 build/
 *.whl
 
+# Sphinx / sphinx-gallery build artifacts
+*.codeobj.json
+
+# pyenv
+.python-version
+
 # Virtual environments
 .venv/
 venv/
