@@ -2,3 +2,5 @@ tests/fixtures/*.pkl filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/CIFAR10_model_config.pkl filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/DVS_model_config.pkl filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/DVS_test_batch.pkl filter=lfs diff=lfs merge=lfs -text
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+webexamples/*.pkl filter=lfs diff=lfs merge=lfs -text
