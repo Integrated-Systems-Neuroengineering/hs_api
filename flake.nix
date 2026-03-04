@@ -44,10 +44,10 @@
       in {
         packages.default = p2n.mkPoetryApplication {
           projectDir = ./.;
-          python = pkgs.python310;
+          python = pkgs.python311;
           inherit overrides;
           # To include optional dependency groups, e.g.:
-          #   groups = [ "main" "apps" ];
+          #   groups = [ "main" "apps" "fpga" ];
           # The "fpga" group pulls in hs-bridge (already overridden above).
         };
 
@@ -55,7 +55,8 @@
           packages = [
             (p2n.mkPoetryEnv {
               projectDir = ./.;
-              python = pkgs.python310;
+              python = pkgs.python311;
+              groups = [ "main" "apps" "dev" "docs" ];
               inherit overrides;
             })
           ];
