@@ -409,7 +409,7 @@ class TestBitStream:
         assert FPGA_Vs == expected_Vs, f"Membrane potentials do not match expected values: Outputs {FPGA_Vs}, Expected {expected_Vs}"
         assert FPGA_Ss == expected_Ss, f"Spikes do not match expected values: Outputs {FPGA_Ss}, Expected {expected_Ss}"
     
-    @pytest.mark.parametrize("numberN1_neurons", [10, 25, 30, 1000, 2000, 4095, 4096])
+    @pytest.mark.parametrize("numberN1_neurons", [10, 25, 30, 1000, 2000, 4095, 4096, 5000, 10000])
     def test_spike_readout(self, setup_dictionaries_2layers, numberN1_neurons):
         """Test spike readout accuracy with varying axonal fanout from 1 to 4096.
         
