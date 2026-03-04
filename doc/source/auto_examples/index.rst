@@ -47,6 +47,40 @@ Below is a gallery of examples
     </div>
 
 
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates running inference on the DVS128 Gesture dataset using a pre-converted spiking convolutional network (stride-2, 100 channels, 3-layer conv) deployed on HiAER-Spike neuromorphic hardware.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_plot_dvs_gesture_inference_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_plot_dvs_gesture_inference.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">DVS128 Gesture Inference on HiAER-Spike Hardware</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates running inference on the CIFAR-10 test set using a fully-connected spiking neural network (16-100-100) deployed on HiAER-Spike neuromorphic hardware.">
+
+.. only:: html
+
+  .. image:: /auto_examples/images/thumb/sphx_glr_CIFAR10_model_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_auto_examples_CIFAR10_model.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">CIFAR-10 Inference with Bit-Sliced Inputs on HiAER-Spike Hardware</div>
+    </div>
+
+
 .. thumbnail-parent-div-close
 
 .. raw:: html
@@ -59,6 +93,8 @@ Below is a gallery of examples
 
    /auto_examples/create_network
    /auto_examples/dvs_gesture_inference
+   /auto_examples/plot_dvs_gesture_inference
+   /auto_examples/CIFAR10_model
 
 
 .. only:: html

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.000** total execution time for 1 file **from all galleries**:
+**00:12.217** total execution time for 4 files **from all galleries**:
 
 .. container::
 
@@ -32,6 +32,15 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_plot_dvs_gesture_inference.py` (``../../webexamples/plot_dvs_gesture_inference.py``)
+     - 00:12.217
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_CIFAR10_model.py` (``../../webexamples/CIFAR10_model.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_create_network.py` (``../../webexamples/create_network.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dvs_gesture_inference.py` (``../../webexamples/dvs_gesture_inference.py``)
      - 00:00.000
      - 0.0

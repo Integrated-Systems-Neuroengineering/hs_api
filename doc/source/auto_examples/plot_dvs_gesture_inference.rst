@@ -36,6 +36,12 @@ being fed to the hardware timestep-by-timestep.
     # sphinx_gallery_thumbnail_path = '_static/dvs_gesture_thumb.png'
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 16-53
 
 The DVS128 Gesture Dataset
@@ -102,6 +108,12 @@ membrane potentials between samples on the FPGA.
     from spikingjelly.datasets import pad_sequence_collate
 
 
+
+
+
+
+
+
 .. GENERATED FROM PYTHON SOURCE LINES 74-78
 
 Configuration
@@ -129,6 +141,18 @@ The model configuration is downloaded from Dropbox if not already cached.
         print(f"  Saved to {model_config_path}")
     else:
         print(f"  {model_config_path} already cached.")
+
+
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+ .. code-block:: none
+
+      DVS_model_config.pkl already cached.
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 96-101
@@ -159,6 +183,23 @@ inference.
         data_type="frame",
         duration=1600000,
     )
+
+
+
+.. rst-class:: sphx-glr-script-out
+
+.. code-block:: pytb
+
+    Traceback (most recent call last):
+      File "/Users/gweneverefrank/code/hs_api/webexamples/plot_dvs_gesture_inference.py", line 109, in <module>
+        raw_test_set = DVS128Gesture(
+      File "/Users/gweneverefrank/code/hs_api/.venv/lib/python3.10/site-packages/spikingjelly/datasets/dvs128_gesture.py", line 141, in __init__
+        super().__init__(root, train, data_type, frames_number, split_by, duration, custom_integrate_function, custom_integrated_frames_dir_name, transform, target_transform)
+      File "/Users/gweneverefrank/code/hs_api/.venv/lib/python3.10/site-packages/spikingjelly/datasets/__init__.py", line 680, in __init__
+        os.mkdir(download_root)
+    FileNotFoundError: [Errno 2] No such file or directory: '/home/ckdeng/myprojects/DVS_Gesture/download'
+
+
 
 
 .. GENERATED FROM PYTHON SOURCE LINES 119-124
@@ -424,6 +465,11 @@ Print the final accuracy and average loss over the test set.
     avg_loss = test_loss / total
     print(f"Test accuracy: {accuracy:.2f}%")
     print(f"Test loss:     {avg_loss:.4f}")
+
+
+.. rst-class:: sphx-glr-timing
+
+   **Total running time of the script:** (0 minutes 12.217 seconds)
 
 
 .. _sphx_glr_download_auto_examples_plot_dvs_gesture_inference.py:

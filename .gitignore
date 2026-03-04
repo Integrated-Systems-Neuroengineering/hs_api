@@ -10,6 +10,7 @@ build/
 
 # Sphinx / sphinx-gallery build artifacts
 *.codeobj.json
+_build/
 
 # pyenv
 .python-version
