@@ -39,7 +39,7 @@ pydata-sphinx-theme = "^0.16"
 [tool.poetry.group.dev.dependencies]
 pylint = "^3.3.4"
 black = "^25.1.0"
-scalene = "^2.0.1"
+scalene = {version = "^2.0.1", python = ">3.11.0,<3.12"}
 pytest = "^9.0.2"
 pre-commit = "^4.0.0"
 
