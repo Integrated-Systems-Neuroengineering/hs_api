@@ -45,7 +45,7 @@ def isSNNLayer(layer):
     if (isinstance(layer, MultiStepLIFNode)
         or isinstance(layer, LIFNode)
         or isinstance(layer, IFNode)
-        or isinstance(layer, Custom_LIFNode),
+        or isinstance(layer, Custom_LIFNode)
         or isinstance(layer, Custom_IFNode)):
         return True
 
