@@ -66,9 +66,9 @@ class simple_sim:
         """
         self.stepNum = 0
         self.formatDict = {
-            "membrane_potential": "fxp-s35/0",
+            "membrane_potential": "fxp-s32/0",
             "synapse_weights": "fxp-s16/0",
-            "voltage_threshold": "fxp-s35/0",
+            "voltage_threshold": "fxp-s32/0",
             "perturbation": "fxp-s17/0",
             "shift": "fxp-s6/0",
         }
@@ -98,6 +98,10 @@ class simple_sim:
         """
         self.membranePotentials = Fxp(
             np.zeros(numNeurons), dtype=self.formatDict["membrane_potential"]
+        )
+        self.refractoryCounters = np.zeros(numNeurons, dtype=np.int8)
+        self.refractory_maxes = np.array(
+            [n.get_neuronModel().get_refractory_max() for n in self.connectome.get_neurons()]
         )
         self.firedNeurons = []
 
@@ -213,16 +217,28 @@ class simple_sim:
             ),
             dtype=self.formatDict["membrane_potential"],
         )
-        perturbation(perturbation | Fxp(1, dtype="fxp-u35/0"))
+        perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
         perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs, 0))
         perturbation = rightshiftArr(
             perturbation, np.absolute(perturbs), np.less(perturbs, 0)
         )
 
-        # Spike detection
-        spiked_inds = np.nonzero(self.membranePotentials() > threshs)
+        # Spike detection — neurons with refractory counter > 0 cannot spike.
+        # Spiked neurons have their counter loaded with refractory_max this step
+        # and are not decremented until the next step, so they are blocked for
+        # exactly refractory_max timesteps.
+        eligible = self.refractoryCounters == 0
+        spiked_inds = np.nonzero((self.membranePotentials() > threshs) & eligible)
         self.membranePotentials[spiked_inds] = 0
         self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
+
+        # Load counter for spiked neurons; decrement all others that are active
+        spiked_mask = np.zeros(self.numNeurons, dtype=bool)
+        spiked_mask[spiked_inds] = True
+        self.refractoryCounters[spiked_mask] = self.refractory_maxes[spiked_mask]
+        self.refractoryCounters[~spiked_mask] = np.maximum(
+            0, self.refractoryCounters[~spiked_mask] - 1
+        )
 
         # Update LIF neurons
         if lifNeurons.size > 0:
