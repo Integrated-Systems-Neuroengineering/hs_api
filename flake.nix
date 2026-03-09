@@ -42,6 +42,10 @@
           fxpmath = fxpmath.packages.${system}.default;
           hs-bridge = hs-bridge.packages.${system}.default;
 
+          absl-py = prev.absl-py.overridePythonAttrs (old: {
+            nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.hatchling ];
+          });
+
           # jaal is not in nixpkgs; if it fails to build add an override here,
           # e.g. fetching it from PyPI with buildPythonPackage / fetchPypi.
         });
