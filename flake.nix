@@ -36,9 +36,12 @@
           overlays = [
             devshell.overlays.default
             (final: prev: {
-              python311Packages = prev.python311Packages // {
-                sphinx = prev.python311Packages.sphinx.overridePythonAttrs (_: { disabled = false; });
+              python311 = prev.python311.override {
+                packageOverrides = pyFinal: pyPrev: {
+                  sphinx = pyPrev.sphinx.overridePythonAttrs (_: { disabled = false; });
+                };
               };
+              python311Packages = final.python311.pkgs;
             })
           ];
         };
