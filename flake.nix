@@ -46,6 +46,10 @@
             nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.hatchling ];
           });
 
+          click = prev.click.overridePythonAttrs (_: {
+            preferWheel = true;
+          });
+
           # jaal is not in nixpkgs; if it fails to build add an override here,
           # e.g. fetching it from PyPI with buildPythonPackage / fetchPypi.
         });
