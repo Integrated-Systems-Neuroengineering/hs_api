@@ -50,6 +50,10 @@
             preferWheel = true;
           });
 
+          nvidia-cufile-cu12 = prev.nvidia-cufile-cu12.overridePythonAttrs (old: {
+            autoPatchelfIgnoreNotFound = [ "libmlx5.so.1" "librdmacm.so.1" "libibverbs.so.1" ];
+          });
+
           # jaal is not in nixpkgs; if it fails to build add an override here,
           # e.g. fetching it from PyPI with buildPythonPackage / fetchPypi.
         });
