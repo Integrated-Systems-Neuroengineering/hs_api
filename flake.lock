@@ -10,11 +10,11 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1773081992,
-        "narHash": "sha256-xLhs+GjyNdPSTv/260T3Aq3IPfRyVs1zzoeLH+cfAeE=",
+        "lastModified": 1773083353,
+        "narHash": "sha256-I0Yv9qjkjUWdxx4ebX7XFsXjheleI+MztZdvhQICnaA=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "connectome_utils",
-        "rev": "65f7c224831960c91ad8dbe83619efe00a13978d",
+        "rev": "85414e226d65ad55809e19b7cd5cb0461b9c36eb",
         "type": "github"
       },
       "original": {
@@ -263,11 +263,11 @@
         "poetry2nix": "poetry2nix_3"
       },
       "locked": {
-        "lastModified": 1773081197,
-        "narHash": "sha256-1OGZoF4rFKi0uA6ya3e8bsF/9s5CFPIqteFflNT8jNs=",
+        "lastModified": 1773083358,
+        "narHash": "sha256-QzW/ZEszU7Zq9Yax33ceZACPnLrOfgKW6upNnOBn72w=",
         "ref": "dev",
-        "rev": "827aeb20e1b2ae89a58953e23c1628aa24dbf97b",
-        "revCount": 310,
+        "rev": "5e524a1807430f43b876b8f82954886c7c94471e",
+        "revCount": 311,
         "type": "git",
         "url": "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge"
       },
