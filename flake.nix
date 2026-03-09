@@ -2,7 +2,7 @@
   description = "hs_api - HiAER-Spike API";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     flake-utils.url = "github:numtide/flake-utils";
     devshell = {
       url = "github:numtide/devshell";
@@ -31,20 +31,7 @@
               connectome-utils, fxpmath, hs-bridge }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs {
-          inherit system;
-          overlays = [
-            devshell.overlays.default
-            (final: prev: {
-              python311 = prev.python311.override {
-                packageOverrides = pyFinal: pyPrev: {
-                  sphinx = pyPrev.sphinx.overridePythonAttrs (_: { disabled = false; });
-                };
-              };
-              python311Packages = final.python311.pkgs;
-            })
-          ];
-        };
+        pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
         p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
 
         overrides = p2n.defaultPoetryOverrides.extend (final: prev: {
