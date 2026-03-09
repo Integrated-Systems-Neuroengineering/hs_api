@@ -31,7 +31,19 @@
               connectome-utils, fxpmath, hs-bridge }:
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            devshell.overlays.default
+            (final: prev: {
+              python311 = prev.python311.override {
+                packageOverrides = pyFinal: pyPrev: {
+                  sphinx = pyPrev.sphinx.overridePythonAttrs (_: { disabled = false; });
+                };
+              };
+            })
+          ];
+        };
         p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
 
         overrides = p2n.defaultPoetryOverrides.extend (final: prev: {
