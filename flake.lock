@@ -240,11 +240,11 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1773082044,
-        "narHash": "sha256-OYmyirdOHaqMKyKGBpkMkEnb4EBwfzorne8lNwUwuEE=",
+        "lastModified": 1773083480,
+        "narHash": "sha256-VEbMZ8/gFbLZiubZSfEWb3TdDsg5gd7UNV6q0Jk64eE=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "fxpmath",
-        "rev": "6b0f37c5355e27e59bcc2453293018b9d32b784c",
+        "rev": "3bda26f7a6a8f6e5af6e0e5169bfe1143f008da5",
         "type": "github"
       },
       "original": {
