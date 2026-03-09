@@ -60,7 +60,7 @@
             (p2n.mkPoetryEnv {
               projectDir = ./.;
               python = pkgs.python311;
-              groups = [ "main" "apps" "dev" "docs" ];
+              groups = [ "main" "apps" "dev" ];
               inherit overrides;
             })
           ];
