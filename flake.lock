@@ -2,6 +2,7 @@
   "nodes": {
     "connectome-utils": {
       "inputs": {
+        "devshell": "devshell",
         "flake-utils": "flake-utils",
         "nixpkgs": [
           "nixpkgs"
@@ -9,11 +10,11 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1772670717,
-        "narHash": "sha256-gthuFx3Yh4fHALX5artJ90Azz24y62HeUb3PCOKNJf0=",
+        "lastModified": 1773081992,
+        "narHash": "sha256-xLhs+GjyNdPSTv/260T3Aq3IPfRyVs1zzoeLH+cfAeE=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "connectome_utils",
-        "rev": "3cb99beae91150beb898750066b7ef11c9b8ad4c",
+        "rev": "65f7c224831960c91ad8dbe83619efe00a13978d",
         "type": "github"
       },
       "original": {
@@ -26,6 +27,48 @@
     "devshell": {
       "inputs": {
         "nixpkgs": [
+          "connectome-utils",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768818222,
+        "narHash": "sha256-460jc0+CZfyaO8+w8JNtlClB2n4ui1RbHfPTLkpwhU8=",
+        "owner": "numtide",
+        "repo": "devshell",
+        "rev": "255a2b1725a20d060f566e4755dbf571bbbb5f76",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "devshell",
+        "type": "github"
+      }
+    },
+    "devshell_2": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1768818222,
+        "narHash": "sha256-460jc0+CZfyaO8+w8JNtlClB2n4ui1RbHfPTLkpwhU8=",
+        "owner": "numtide",
+        "repo": "devshell",
+        "rev": "255a2b1725a20d060f566e4755dbf571bbbb5f76",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "devshell",
+        "type": "github"
+      }
+    },
+    "devshell_3": {
+      "inputs": {
+        "nixpkgs": [
+          "fxpmath",
           "nixpkgs"
         ]
       },
@@ -189,6 +232,7 @@
     },
     "fxpmath": {
       "inputs": {
+        "devshell": "devshell_3",
         "flake-utils": "flake-utils_4",
         "nixpkgs": [
           "nixpkgs"
@@ -196,11 +240,11 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1772670714,
-        "narHash": "sha256-Vfu7ZjlA7q3KtGwzYK0xusa1cOmuInfzfHSCWpq9y7w=",
+        "lastModified": 1773082044,
+        "narHash": "sha256-OYmyirdOHaqMKyKGBpkMkEnb4EBwfzorne8lNwUwuEE=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "fxpmath",
-        "rev": "fcba6e31139ffbee3f099237f0e3ea23d5e65ddc",
+        "rev": "6b0f37c5355e27e59bcc2453293018b9d32b784c",
         "type": "github"
       },
       "original": {
@@ -438,7 +482,7 @@
     "root": {
       "inputs": {
         "connectome-utils": "connectome-utils",
-        "devshell": "devshell",
+        "devshell": "devshell_2",
         "flake-utils": "flake-utils_3",
         "fxpmath": "fxpmath",
         "hs-bridge": "hs-bridge",
