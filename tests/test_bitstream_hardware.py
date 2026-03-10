@@ -1,6 +1,6 @@
 import pytest
 from hs_api.api import CRI_network
-from hs_api.neuron_models import ANN_neuron, LIF_neuron
+from hs_api.neuron_models import ANN_neuron, LIF_neuron, neuron_model
 import pytest
 
 class TestBitStream:
@@ -517,7 +517,7 @@ class TestBitStream:
             mp = network.read_membrane(outputs)
             assert mp[0][1] == 0, f"Shift={shift}, Timestep={timestep}: Expected MP=0, got {mp[0][1]}"
 
-    @pytest.mark.parametrize("shift", [-1, -16, 15, 0])
+    @pytest.mark.parametrize("shift", [-1, -16, 15, 16, 0])
     def test_LIF_neuron_with_noise(self, setup_dictionaries, shift):
         """Test that LIF neurons with specific shift values produce noise.
         
@@ -559,6 +559,34 @@ class TestBitStream:
         
         # Test passes if total MP sum is 0
         assert mp_sum > 0, f"Shift={shift}: Expected MP sum to be nonzero, got {mp_sum}"
+
+    def test_LIF_neuron_with_noise_magnitude(self):
+        """Test that LIF neurons with shift=-16 produce less noise than shift=0, and shift=16 produces more noise than shift=0."""
+        axons = {}
+        connections = {}
+
+        neuron_model0 = LIF_neuron(threshold=0, shift=0, leak=63)
+        neuron_model1 = LIF_neuron(threshold=0, shift=-16, leak=63)
+        neuron_model2 = LIF_neuron(threshold=0, shift=16, leak=63)
+        axons["A0"] = [("N1.0", 0), ("N1.1", 0), ("N1.2", 0)]  # Dummy axon with weight=0 to all neurons
+        connections[f"N1.0"] = ([], neuron_model0)
+        connections[f"N1.1"] = ([], neuron_model1)
+        connections[f"N1.2"] = ([], neuron_model2)
+
+        outputs = ["N1.0", "N1.1", "N1.2"]
+        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+
+        mp_sums = [0, 0, 0]  # To accumulate absolute MP values for each neuron
+        for timestep in range(100):
+            network.step([])  # No input
+            mp = network.read_membrane(outputs)
+            mp_dict = dict(mp)
+            mp_sums[0] += abs(mp_dict["N1.0"])
+            mp_sums[1] += abs(mp_dict["N1.1"])
+            mp_sums[2] += abs(mp_dict["N1.2"])
+
+        assert mp_sums[0] > mp_sums[1], f"Sum of absolute MPs for shift=0 should be greater than shift=-16. Got {mp_sums[0]} vs {mp_sums[1]}"
+        assert mp_sums[2] > mp_sums[0], f"Sum of absolute MPs for shift=16 should be greater than shift=0. Got {mp_sums[2]} vs {mp_sums[0]}"
 
     def test_network_reset(self, setup_dictionaries):
         """Test network reset without running flash.sh by running two different networks back-to-back
