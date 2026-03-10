@@ -585,6 +585,8 @@ class TestBitStream:
             mp_sums[1] += abs(mp_dict["N1.1"])
             mp_sums[2] += abs(mp_dict["N1.2"])
 
+        print(f"Shift=0 MP sum: {mp_sums[0]}, Shift=-16 MP sum: {mp_sums[1]}, Shift=16 MP sum: {mp_sums[2]}")
+
         assert mp_sums[0] > mp_sums[1], f"Sum of absolute MPs for shift=0 should be greater than shift=-16. Got {mp_sums[0]} vs {mp_sums[1]}"
         assert mp_sums[2] > mp_sums[0], f"Sum of absolute MPs for shift=16 should be greater than shift=0. Got {mp_sums[2]} vs {mp_sums[0]}"
 
