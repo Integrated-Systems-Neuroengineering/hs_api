@@ -72,7 +72,7 @@
             (p2n.mkPoetryEnv {
               projectDir = ./.;
               python = pkgs.python311;
-              groups = [ "main" "apps" "dev" ];
+              groups = [ "main" "apps" "dev" "fpga" ];
               preferWheels = true;
               inherit overrides;
             })
