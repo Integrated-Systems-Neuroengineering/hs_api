@@ -22,7 +22,7 @@ class TestDVSInference:
         """Load saved test batch"""
         fixture_path = Path(__file__).parent / "fixtures" / "DVS_test_batch.pkl"
         with open(fixture_path, "rb") as f:
-	    return pickle.load(f)
+            return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
         """Test that DVS model achieves expected accuracy on hardware.
