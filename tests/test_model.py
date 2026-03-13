@@ -2,6 +2,7 @@
 import hs_bridge
 import pytest
 import pickle
+from pathlib import Path
 from hs_api.api import CRI_network
 import hs_bridge
 import torch
@@ -12,14 +13,16 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('./fixtures/DVS_model_config.pkl', 'rb') as f:
+        fixture_path = Path(__file__).parent / "fixtures" / "DVS_model_config.pkl"
+        with open(fixture_path, "rb") as f:
             return pickle.load(f)
     
     @pytest.fixture
     def test_batch(self):
         """Load saved test batch"""
-        with open('./fixtures/DVS_test_batch.pkl', 'rb') as f:
-            return pickle.load(f)
+        fixture_path = Path(__file__).parent / "fixtures" / "DVS_test_batch.pkl"
+        with open(fixture_path, "rb") as f:
+	    return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
         """Test that DVS model achieves expected accuracy on hardware.
