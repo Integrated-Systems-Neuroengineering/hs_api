@@ -13,7 +13,7 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        fixture_path = Path(__file__).parent / "fixtures" / "DVS_model_config.pkl"
+        fixture_path = Path(__file__).parent / "fixtures" / "DVS_model_config_shift=-17.pkl"
         with open(fixture_path, "rb") as f:
             return pickle.load(f)
     
