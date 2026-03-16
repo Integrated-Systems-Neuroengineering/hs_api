@@ -83,6 +83,74 @@ poetry run pip install -e ../hs_bridge   # if co-developing
 nix develop --override-input hs-bridge path:../hs_bridge
 ```
 
+## Using nix-portable on RHEL8
+
+If you don't have Nix installed system-wide, [nix-portable](https://github.com/DavHau/nix-portable)
+lets you run Nix as a regular user. Download it and place the binary somewhere on your `PATH`
+(e.g. `~/nix-portable`).
+
+### Runtime selection
+
+nix-portable auto-detects a container runtime. On RHEL8 it may fall back to the **nix** runtime,
+which tries to create a private mount namespace directly — this fails because RHEL8 does not allow
+unprivileged mount namespaces without a user namespace. **bwrap** (bubblewrap) handles this
+correctly by creating a user + mount namespace together, and is available on RHEL8 by default.
+
+Force bwrap by exporting `NP_RUNTIME=bwrap` in your shell profile:
+
+```bash
+echo 'export NP_RUNTIME=bwrap' >> ~/.bashrc
+source ~/.bashrc
+```
+
+### Private dependency (hs_bridge)
+
+`hs_bridge` is a private GitHub repository. The flake fetches it over SSH, so you need a GitHub
+SSH key configured. Nix does not read your normal SSH config in all environments, so pass
+`GIT_SSH_COMMAND` explicitly if needed:
+
+```bash
+GIT_SSH_COMMAND="ssh -F /dev/null" nix-portable nix develop
+```
+
+(`-F /dev/null` bypasses `/etc/ssh/ssh_config.d/05-redhat.conf` which may have permission
+warnings that confuse git inside Nix's environment.)
+
+### Full invocation on RHEL8
+
+The `fpga` group requires `hs_bridge`, which links against `libadxdma` — the userspace
+interface to the FPGA PCIe DMA kernel driver. Because the flake reads this library
+directly from the host (`/usr/lib64/libadxdma.so.0.12.2`), `--impure` is required:
+
+```bash
+NP_RUNTIME=bwrap GIT_SSH_COMMAND="ssh -F /dev/null" ~/nix-portable nix develop --impure
+```
+
+Without `--impure`, nix will refuse to access paths outside the store. If the adxdma
+driver is not installed on the host, `hs_bridge` will still import but DMA operations
+will fail at runtime.
+
+### Flake design notes
+
+A few decisions in `flake.nix` exist specifically to work around build issues on this nixpkgs
+version and toolchain:
+
+- **`nixpkgs` pinned to `nixos-24.11`** — `nixos-unstable` has `sphinx 9.1.0` incorrectly
+  marked incompatible with Python 3.11 in its package metadata, breaking the pip build hook.
+- **`preferWheels = true`** — `flit-core 3.9.0` (shipped with nixos-24.11) does not support
+  the PEP 639 string license format used by `click 8.3.1`. Using pre-built wheels from the
+  poetry.lock bypasses the source build entirely.
+- **`docs` group excluded from devShell** — sphinx and its dependencies pull in packages
+  with the above incompatibility. Docs can still be built via Poetry.
+- **`nvidia-cufile-cu12` override** — disables `autoPatchelf` for this CUDA package since
+  the InfiniBand RDMA libraries it links against (`libmlx5`, `librdmacm`, `libibverbs`) are
+  not present on non-RDMA machines.
+- **`adxdma` stub derivation** — `hs_bridge` links against `libadxdma`, a proprietary
+  vendor library for the FPGA PCIe DMA interface that is not in nixpkgs. The flake
+  copies it from the host (`/usr/lib64/libadxdma.so.0.12.2`) into the nix store at
+  evaluation time. This is an intentionally impure operation — the flake requires
+  `--impure` and the adxdma kernel driver to be installed on the host.
+
 ## Tracking `master` Instead of `dev`
 
 The Nix flake and `pyproject.toml` both default to the `dev` branch of each

@@ -25,7 +25,7 @@ tensorboard = "^2.18.0"
 optional = true
 
 [tool.poetry.group.fpga.dependencies]
-hs_bridge = {git = "git@github.com:Integrated-Systems-Neuroengineering/hs_bridge.git", branch = "dev", python = ">3.11,<3.12"}
+hs_bridge = {git = "git@github.com:Integrated-Systems-Neuroengineering/hs_bridge.git", branch = "dev", python = ">=3.11,<3.12"}
 
 
 [tool.poetry.group.docs.dependencies]
