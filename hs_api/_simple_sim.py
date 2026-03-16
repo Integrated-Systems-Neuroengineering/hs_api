@@ -212,9 +212,7 @@ class simple_sim:
         nNeurons = self.numNeurons
         perturbBits = 17
         perturbation = Fxp(
-            np.random.randint(
-                -1 * 2 ** (perturbBits - 1), 2 ** (perturbBits - 1), size=nNeurons
-            ),
+            np.random.randint(0, 2 ** perturbBits, size=nNeurons),
             dtype=self.formatDict["membrane_potential"],
         )
         perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
@@ -222,6 +220,7 @@ class simple_sim:
         perturbation = rightshiftArr(
             perturbation, np.absolute(perturbs), np.less(perturbs, 0)
         )
+        perturbation[np.equal(perturbs, 0)] = 0
 
         # Spike detection — neurons with refractory counter > 0 cannot spike.
         # Spiked neurons have their counter loaded with refractory_max this step
@@ -265,6 +264,10 @@ class simple_sim:
         membranePotentials = self.membranePotentials + membraneUpdates.transpose()
         membranePotentials = membranePotentials.flatten()
         self.membranePotentials(membranePotentials)
+
+        # Apply perturbation noise to LIF neurons
+        if lifNeurons.size > 0:
+            self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] + perturbation[lifNeurons]
 
         self.stepNum = self.stepNum + 1
         outputSpikes = [i for i in self.firedNeurons if i in self.outputs]
