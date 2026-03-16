@@ -78,9 +78,10 @@ class CRI_network:
         if type(axons) == dict:
             for keys in axons:
                 for values in axons[keys]:
-                    if not ((type(values) == tuple) and (len(values) == 2)):
+                    if not ((type(values) == tuple) and (len(values) in (2, 3))):
                         logging.error(
-                            "Each synapse should only consists of 2 elements: neuron, weight"
+                            "Each synapse should be a 2-tuple (neuron, weight) or "
+                            "3-tuple (neuron, weight, delayed)"
                         )
         else:
             logging.error("Axons should be a dictionary")
@@ -93,9 +94,10 @@ class CRI_network:
                     for values in connections[keys][
                         synapseIdx
                     ]:  # synapse list is first element in tuple
-                        if not ((type(values) == tuple) and (len(values) == 2)):
+                        if not ((type(values) == tuple) and (len(values) in (2, 3))):
                             logging.error(
-                                "Each synapse should only consists of 2 elements: neuron, weight"
+                                "Each synapse should be a 2-tuple (neuron, weight) or "
+                                "3-tuple (neuron, weight, delayed)"
                             )
         else:
             logging.error("Connections should be a dictionary")
@@ -189,17 +191,19 @@ class CRI_network:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
+                delayed = axonSynapse[2] if len(axonSynapse) == 3 else False
                 postsynapticNeuron = self.connectome.get_neuron_by_key(axonSynapse[0])
                 self.connectome.get_neuron_by_key(axonKey).addSynapse(
-                    postsynapticNeuron, weight
+                    postsynapticNeuron, weight, delayed=delayed
                 )
         for neuronKey in self.userConnections:
             synapses = self.userConnections[neuronKey][synapseIdx]
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
+                delayed = neuronSynapse[2] if len(neuronSynapse) == 3 else False
                 postsynapticNeuron = self.connectome.get_neuron_by_key(neuronSynapse[0])
                 self.connectome.get_neuron_by_key(neuronKey).addSynapse(
-                    postsynapticNeuron, weight
+                    postsynapticNeuron, weight, delayed=delayed
                 )
     def __format_input(self, axons, connections):
         """
