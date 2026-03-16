@@ -27,9 +27,9 @@
     };
   };
 
-  outputs = { self, nixpkgs, flake-utils, devshell, poetry2nix,
-              connectome-utils, fxpmath, hs-bridge }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs = { nixpkgs, flake-utils, devshell, poetry2nix,
+              connectome-utils, fxpmath, hs-bridge, ... }:
+    flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
         p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
@@ -66,7 +66,7 @@
             nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.hatchling ];
           });
 
-          nvidia-cufile-cu12 = prev.nvidia-cufile-cu12.overridePythonAttrs (old: {
+          nvidia-cufile-cu12 = prev.nvidia-cufile-cu12.overridePythonAttrs (_: {
             dontAutoPatchelf = true;
           });
 
@@ -78,9 +78,6 @@
           projectDir = ./.;
           python = pkgs.python311;
           inherit overrides;
-          # To include optional dependency groups, e.g.:
-          #   groups = [ "main" "apps" "fpga" ];
-          # The "fpga" group pulls in hs-bridge (already overridden above).
         };
 
         devShells.default = pkgs.devshell.mkShell {
