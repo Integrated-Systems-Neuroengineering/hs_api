@@ -118,9 +118,17 @@ warnings that confuse git inside Nix's environment.)
 
 ### Full invocation on RHEL8
 
+The `fpga` group requires `hs_bridge`, which links against `libadxdma` — the userspace
+interface to the FPGA PCIe DMA kernel driver. Because the flake reads this library
+directly from the host (`/usr/lib64/libadxdma.so.0.12.2`), `--impure` is required:
+
 ```bash
-NP_RUNTIME=bwrap GIT_SSH_COMMAND="ssh -F /dev/null" ~/nix-portable nix develop
+NP_RUNTIME=bwrap GIT_SSH_COMMAND="ssh -F /dev/null" ~/nix-portable nix develop --impure
 ```
+
+Without `--impure`, nix will refuse to access paths outside the store. If the adxdma
+driver is not installed on the host, `hs_bridge` will still import but DMA operations
+will fail at runtime.
 
 ### Flake design notes
 
@@ -137,6 +145,11 @@ version and toolchain:
 - **`nvidia-cufile-cu12` override** — disables `autoPatchelf` for this CUDA package since
   the InfiniBand RDMA libraries it links against (`libmlx5`, `librdmacm`, `libibverbs`) are
   not present on non-RDMA machines.
+- **`adxdma` stub derivation** — `hs_bridge` links against `libadxdma`, a proprietary
+  vendor library for the FPGA PCIe DMA interface that is not in nixpkgs. The flake
+  copies it from the host (`/usr/lib64/libadxdma.so.0.12.2`) into the nix store at
+  evaluation time. This is an intentionally impure operation — the flake requires
+  `--impure` and the adxdma kernel driver to be installed on the host.
 
 ## Tracking `master` Instead of `dev`
 
