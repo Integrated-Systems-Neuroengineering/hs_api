@@ -123,7 +123,6 @@ class CRI_network:
                 coreOveride=coreID,
             )
             self.CRI.initalize_network()
-            self.set_timeout()
         elif self.target == "simpleSim":
             self.simpleSim = simple_sim(self.connectome)
 
@@ -444,14 +443,7 @@ class CRI_network:
                 for symbol in neuronList
             ]
             results = self.CRI.readMP(formated_inputs)
-            # element[3] is the raw 36-bit URAM half-word value; MP is in [31:0].
-            # Mask to 32 bits and sign-extend.
-            def _parse_mp(raw):
-                mp = int(raw) & 0xFFFFFFFF
-                if mp & 0x80000000:
-                    mp -= 0x100000000
-                return mp
-            formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(), _parse_mp(element[3])) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+            formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
             return formatedResults
 
 
@@ -584,46 +576,4 @@ class CRI_network:
                 for spike in spikeList
             ]
             return (spikeList, result[1], result[2])
-
-    def set_timeout(self, cycles=2_500_000):
-        """Send CMD_SET_TIMEOUT (0x09) to the hardware.
-
-        Configures how long the hardware waits when spk2ciFIFO is full before
-        flushing and setting error_status bit [5]. Called automatically during
-        CRI init with the default 10 ms value (2,500,000 cycles at 250 MHz).
-        Set cycles=0 to disable the timeout.
-
-        Parameters
-        ----------
-        cycles : int
-            Timeout duration in clock cycles (22-bit, max 4,194,303).
-        """
-        if self.target == "CRI":
-            self.CRI.set_timeout(cycles)
-
-    def read_status(self):
-        """Send CMD_READ_STATUS (0x0A) and return the hardware error status.
-
-        Returns
-        -------
-        tuple
-            (error_status, execRun_ctr) parsed from the 0xFACE_FACE response
-            packet. error_status is a 32-bit int; check individual bits against
-            the error status register definition.
-        """
-        if self.target == "CRI":
-            return self.CRI.read_status()
-        raise Exception("read_status only available for CRI target")
-
-    def clear_status(self, mask=0xFFFFFFFF):
-        """Send CMD_CLEAR_STATUS (0x0B) to clear error status bits.
-
-        Parameters
-        ----------
-        mask : int
-            Bitmask of bits to clear. Default clears all bits.
-            Example: 0x00000021 clears bits 0 and 5.
-        """
-        if self.target == "CRI":
-            self.CRI.clear_status(mask)
-
+        
