@@ -62,6 +62,20 @@ class TestDVSInference:
         )
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+        # Build mapping from output spike user_key -> spike_counts index
+        output_key_to_idx = {}
+        for idx, out_key in enumerate(outputs):
+            try:
+                neuron = network.connectome.get_neuron_by_key(out_key)
+                user_key = neuron.get_user_key()
+                output_key_to_idx[user_key] = idx
+                output_key_to_idx[out_key] = idx
+            except Exception:
+                output_key_to_idx[out_key] = idx
+        print(f"Output key mapping: {output_key_to_idx}")
+
+        TRAILING_TIMESTEPS = 20
+
         #test model
         correct = 0
         total = len(test_batch['images'])
@@ -98,22 +112,23 @@ class TestDVSInference:
                 print(f"Output spikes: {hardwareSpikes}")
 
                 for spike in hardwareSpikes:
-                    if spike in outputs:
-                        spike_counts[spike] += 1
+                    if spike in output_key_to_idx:
+                        spike_counts[output_key_to_idx[spike]] += 1
                     else:
-                        print(f"Error: invalid output spike {spike}")
+                        print(f"Non-output spike (hidden layer): {spike}")
 
-            #add 6 extra timesteps after lastinput frame to allow it to propogate through network
-            for i in range(6):
+            #add trailing empty timesteps for multi-layer spike propagation
+            for i in range(TRAILING_TIMESTEPS):
                 inputs = []  #no input spikes
                 hardwareSpikes, _, _ = network.step(inputs)
-                print(f"Output spikes: {hardwareSpikes}")
+                if hardwareSpikes:
+                    print(f"Output spikes (trailing t={i}): {hardwareSpikes}")
 
                 for spike in hardwareSpikes:
-                    if spike in outputs:
-                        spike_counts[spike] += 1
+                    if spike in output_key_to_idx:
+                        spike_counts[output_key_to_idx[spike]] += 1
                     else:
-                        print(f"Error: invalid output spike {spike}")
+                        print(f"Non-output spike (trailing, hidden layer): {spike}")
             
 
             spike_counts = spike_counts / img.size(0)  #average spike counts(spike rate)
