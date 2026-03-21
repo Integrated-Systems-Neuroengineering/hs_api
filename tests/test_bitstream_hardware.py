@@ -1,3 +1,5 @@
+from pyexpat import model
+
 import pytest
 from hs_api.api import CRI_network
 from hs_api.neuron_models import ANN_neuron, LIF_neuron
@@ -778,6 +780,101 @@ class TestBitStream:
         
         assert results2[0] == ("N2.0", numberN1_neurons), f"N2.0 membrane potential did not match expected value at time step 1. Expected {numberN1_neurons}, got {results2[0][1]}"
 
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
     
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):    
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+                assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+                assert mp_dict["N1.0"] == 0, f"Unexpected membrane potential during refractory period at time step {i+3}. Expected 0, got {mp_dict['N1.0']}"
+
+            currSpikes_before_endOfRefractory = network.step(inputs) #time step before end of refractory period
+            mp_before_endOfRefractory = network.read_membrane(outputs)
+            assert len(currSpikes_before_endOfRefractory[0]) == 0, "Neuron spiked unexpectedly before end of refractory period"
+            mp_before_endOfRefractory_dict = dict(mp_before_endOfRefractory)
+            assert mp_before_endOfRefractory_dict["N1.0"] == 1, f"Unexpected membrane potential before end of refractory period. Expected 1, got {mp_before_endOfRefractory_dict['N1.0']}"
+
+            currSpikes_after_endOfRefractory = network.step(inputs) #time step after refractory period
+            mp_after_endOfRefractory = network.read_membrane(outputs)
+            assert len(currSpikes_after_endOfRefractory[0]) == 1, "Neuron did not spike as expected after end of refractory period"
+            mp_after_endOfRefractory_dict = dict(mp_after_endOfRefractory)
+            assert mp_after_endOfRefractory_dict["N1.0"] == 0, f"Unexpected membrane potential after end of refractory period. Expected 0, got {mp_after_endOfRefractory_dict['N1.0']}"
+
+        else:
+            currSpikes3 = network.step(inputs)
+            mp3 = network.read_membrane(outputs)
+            assert len(currSpikes3[0]) == 1, "Neuron did not spike as expected at time step 3 with refractory period of 0"
+            mp3_dict = dict(mp3)
+            assert mp3_dict["N1.0"] == 1, f"Unexpected membrane potential at time step 3 with refractory period of 0. Expected 0, got {mp3_dict['N1.0']}"
+
+    '''
+    def test_synaptic_delay(self):
+        """Test that synaptic delay is correctly implemented in the network."""
+
+        synaptic_delay = 5
+        model1 = LIF_neuron(threshold=0, shift=-17, leak=63, dual_synapse_en=True, delay_value=synaptic_delay)
+        model2 = LIF_neuron(threshold=2, shift=-17, leak=63)
+
+        axons = {"A0": [("N1.0", 1)]}
+        connections = {
+            "N1.0": ([("N2.0", 5), ("N2.1", 5, True)], model1),
+            "N2.0": ([], model2),
+            "N2.1": ([], model2)
+        }
+        outputs = ["N1.0", "N2.0", "N2.1"]
+        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+
+        #time step 0: Activate axon
+        _ = network.step(["A0"])
+
+        #time step 1: No input, N1.0 should spike
+        currSpikes2 = network.step([])
+        mp2 = network.read_membrane(outputs)
+        mp2_dict = dict(mp2)
+        assert mp2_dict["N1.0"] == 0, f"N1.0 membrane potential did not match expected value at time step 1. Expected 0 after spike, got {mp2_dict['N1.0']}"
+        assert mp2_dict["N2.0"] == 5, f"N2.0 membrane potential did not match expected value at time step 1. Expected 5 due to spike from N1.0, got {mp2_dict['N2.0']}"
+        assert mp2_dict["N2.1"] == 5, f"N2.1 membrane potential did not match expected value at time step 1. Expected 5 due to spike from N1.0, got {mp2_dict['N2.1']}"
+        assert len(currSpikes2[0]) == 1, f"Unexpected number of spikes at time step 1: {len(currSpikes2[0])}, expected 1"
+        assert currSpikes2[0][0] == "N1.0", f"N1.0 did not spike as expected at time step 1. Expected 1 spike, got {len(currSpikes2[0])}"
+
+        #time step 2: N2.0 and N2.1 should spike immediately with no synaptic delay
+        currSpikes3 = network.step([])
+        mp3 = network.read_membrane(outputs)
+        mp3_dict = dict(mp3)
+        assert mp3_dict["N1.0"] == 0, f"N1.0 membrane potential did not match expected value at time step 2. Expected 0, got {mp3_dict['N1.0']}"
+        assert mp3_dict["N2.0"] == 0, f"N2.0 membrane potential did not match expected value at time step 2. Expected 0 after spike, got {mp3_dict['N2.0']}"
+        assert mp3_dict["N2.1"] == 0, f"N2.1 membrane potential did not match expected value at time step 2. Expected 0 after spike, got {mp3_dict['N2.1']}"
+        assert len(currSpikes3[0]) == 2, f"Unexpected number of spikes at time step 2 with synaptic delay of 0: {len(currSpikes3[0])}, expected 2"
+        assert currSpikes3[0][0] in ["N2.0", "N2.1"], f"Unexpected spike from neuron at time step 2 with synaptic delay of 0: {currSpikes3[0][0]}, expected 'N2.0' or 'N2.1'"
+        assert currSpikes3[0][1] in ["N2.0", "N2.1"], f"Unexpected spike from neuron at time step 2 with synaptic delay of 0: {currSpikes3[0][1]}, expected 'N2.0' or 'N2.1'"
+
+
+        else: 
+            #time step 2: N2.0 should spike, N2.1 should not spike yet due to synaptic delay
+            currSpikes3 = network.step([])
+            assert currSpikes3[0][0] == "N2.0", f"N2.0 did not spike as expected at time step 2. Expected spike from N2.0, got {currSpikes3[0][0] if len(currSpikes3[0]) > 0 else 'no spikes'}"
+            assert len(currSpikes3[0]) == 1, f"Unexpected number of spikes at time step 2: {len(currSpikes3[0])}, expected 1"
+
+            for i in range(synaptic_delay - 1):
+                #time steps during synaptic delay: N2.0 and N2.1 should not spike
+                currSpikes = network.step([])
+                assert len(currSpikes[0]) == 0, f"Unexpected number of spikes during synaptic delay"
+
+            currSpikes_after_delay = network.step([])
+            assert currSpikes_after_delay[0][0] == "N2.1", f"N2.1 did not spike as expected after synaptic delay. Expected spike from N2.1, got {currSpikes_after_delay[0][0] if len(currSpikes_after_delay[0]) > 0 else 'no spikes'}"
+    '''
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
