@@ -66,9 +66,15 @@
             nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.hatchling ];
           });
 
-          nvidia-cufile-cu12 = prev.nvidia-cufile-cu12.overridePythonAttrs (_: {
-            dontAutoPatchelf = true;
+          # The pytorch-cpu index redirects to download-r2.pytorch.org which returns 403
+          # from within the Nix sandbox; fetch the wheel directly via CloudFront instead.
+          torchvision = prev.torchvision.overridePythonAttrs (_: {
+            src = pkgs.fetchurl {
+              url = "https://download.pytorch.org/whl/cpu/torchvision-0.22.1%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl";
+              hash = "sha256-Tgy8FlpHJgXQwT2miuIuhLF6a4FdXmAINHd4I+G8tlg=";
+            };
           });
+
 
           # jaal is not in nixpkgs; if it fails to build add an override here,
           # e.g. fetching it from PyPI with buildPythonPackage / fetchPypi.

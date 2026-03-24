@@ -20,6 +20,7 @@ matplotlib = "^3.9.2"
 spikingjelly = "^0.0.0.0.14"
 snntorch = "^0.9.1"
 tensorboard = "^2.18.0"
+torch = {version = "2.7.1+cpu", source = "pytorch-cpu"}
 
 [tool.poetry.group.fpga]
 optional = true
@@ -42,6 +43,11 @@ black = "^25.1.0"
 scalene = {version = "^2.0.1", python = ">3.11.0,<3.12"}
 pytest = "^9.0.2"
 pre-commit = "^4.0.0"
+
+[[tool.poetry.source]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+priority = "supplemental"
 
 [build-system]
 requires = ["poetry-core"]
