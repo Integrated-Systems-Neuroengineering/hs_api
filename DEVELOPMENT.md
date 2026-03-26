@@ -113,6 +113,37 @@ version and toolchain:
   evaluation time. This is an intentionally impure operation — the flake requires
   `--impure` and the adxdma kernel driver to be installed on the host.
 
+## Updating the Lock File After Pushing to a Dependency
+
+Nix pins exact git revisions in `flake.lock`. Pushing new commits to a dependency branch
+(e.g. `hs_bridge`) does **not** automatically update what Nix uses — the lock file must be
+refreshed manually:
+
+```bash
+nix flake update hs-bridge
+```
+
+On RHEL8 with nix-portable, `nix flake update` makes HTTPS calls to the GitHub API which
+will fail with an SSL error unless nix is pointed at the system cert bundle. Create
+`~/.config/nix/nix.conf` with:
+
+```
+ssl-cert-file = /etc/ssl/certs/ca-bundle.crt
+extra-experimental-features = nix-command flakes
+```
+
+After that, `nix flake update` works without any extra flags.
+
+This re-resolves the `hs-bridge` input to the latest commit on its configured branch and
+writes the new revision into `flake.lock`. Commit the updated lock file so others get the
+same version.
+
+To update all inputs at once:
+
+```bash
+nix flake update
+```
+
 ## Tracking `master` Instead of `dev`
 
 The Nix flake defaults to the `dev` branch of each dependency. To use `master`:
