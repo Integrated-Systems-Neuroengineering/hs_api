@@ -32,6 +32,10 @@ class neuron_model(ABC):
     def get_dual_synapse_en(self):
         pass
 
+    @abstractmethod
+    def get_soft_reset_en(self):
+        pass
+
     def __hash__(self):
         return hash(
             (
@@ -58,13 +62,14 @@ class LIF_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak, refractory_max=0, delay_value=0, dual_synapse_en=False):
+    def __init__(self, threshold, shift, leak, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset_en=False):
         self.threshold = threshold
         self.shift = shift
         self.leak = leak
         self.refractory_max = refractory_max
         self.delay_value = delay_value
         self.dual_synapse_en = dual_synapse_en
+        self.soft_reset_en = soft_reset_en
 
     def get_threshold(self):
         return self.threshold
@@ -83,6 +88,9 @@ class LIF_neuron(neuron_model):
 
     def get_dual_synapse_en(self):
         return int(self.dual_synapse_en)
+
+    def get_soft_reset_en(self):
+        return int(self.soft_reset_en)
 
     def get_neuronModel(self):
         return 2
@@ -97,7 +105,7 @@ class ANN_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak=0, refractory_max=0, delay_value=0, dual_synapse_en=False):
+    def __init__(self, threshold, shift, leak=0, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset_en=False):
         self.threshold = threshold
         # TODO: to be determined
         self.shift = shift
@@ -105,6 +113,7 @@ class ANN_neuron(neuron_model):
         self.refractory_max = refractory_max
         self.delay_value = delay_value
         self.dual_synapse_en = dual_synapse_en
+        self.soft_reset_en = soft_reset_en
 
     def get_threshold(self):
         return self.threshold
@@ -123,6 +132,9 @@ class ANN_neuron(neuron_model):
 
     def get_dual_synapse_en(self):
         return int(self.dual_synapse_en)
+
+    def get_soft_reset_en(self):
+        return int(self.soft_reset_en)
 
     def get_neuronModel(self):
         return 0

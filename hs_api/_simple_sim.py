@@ -103,6 +103,9 @@ class simple_sim:
         self.refractory_maxes = np.array(
             [n.get_neuronModel().get_refractory_max() for n in self.connectome.get_neurons()]
         )
+        self.soft_reset_ens = np.array(
+            [n.get_neuronModel().get_soft_reset_en() for n in self.connectome.get_neurons()]
+        )
         self.firedNeurons = []
 
     def gen_weights(self):
@@ -228,12 +231,24 @@ class simple_sim:
         # exactly refractory_max timesteps.
         eligible = self.refractoryCounters == 0
         spiked_inds = np.nonzero((self.membranePotentials() > threshs) & eligible)
-        self.membranePotentials[spiked_inds] = 0
         self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
 
-        # Load counter for spiked neurons; decrement all others that are active
         spiked_mask = np.zeros(self.numNeurons, dtype=bool)
         spiked_mask[spiked_inds] = True
+
+        # Apply reset: hard (MP=0) or soft (MP=MP-threshold) per neuron
+        threshs_arr = np.array(threshs)
+        hard_reset_mask = spiked_mask & (self.soft_reset_ens == 0)
+        soft_reset_mask = spiked_mask & (self.soft_reset_ens == 1)
+        self.membranePotentials[hard_reset_mask] = 0
+        if soft_reset_mask.any():
+            mp = self.membranePotentials()
+            self.membranePotentials[soft_reset_mask] = Fxp(
+                mp[soft_reset_mask] - threshs_arr[soft_reset_mask],
+                dtype=self.formatDict["membrane_potential"],
+            )
+
+        # Load counter for spiked neurons; decrement all others that are active
         self.refractoryCounters[spiked_mask] = self.refractory_maxes[spiked_mask]
         self.refractoryCounters[~spiked_mask] = np.maximum(
             0, self.refractoryCounters[~spiked_mask] - 1
