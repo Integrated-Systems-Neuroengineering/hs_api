@@ -577,7 +577,7 @@ class TestBitStream:
         network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
 
         mp_sums = [0, 0, 0]  # To accumulate absolute MP values for each neuron
-        for timestep in range(100):
+        for timestep in range(1000):
             network.step([])  # No input
             mp = network.read_membrane(outputs)
             mp_dict = dict(mp)
