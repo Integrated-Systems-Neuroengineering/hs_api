@@ -820,6 +820,128 @@ class TestBitStream:
             mp3_dict = dict(mp3)
             assert mp3_dict["N1.0"] == 1, f"Unexpected membrane potential at time step 3 with refractory period of 0. Expected 0, got {mp3_dict['N1.0']}"
 
+    def test_soft_reset(self, setup_dictionaries):
+        """Test that soft reset functionality works correctly."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=15,
+            neuron_model=LIF_neuron(threshold=10, shift=-17, leak=63, soft_reset_en=True)
+        )
+        
+        currSpikes1 = network.step(inputs) #1st time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #2nd time step
+        mp2 = network.read_membrane(outputs)
+
+        assert len(currSpikes1[0]) == 0, "Neuron spiked at time step 1"
+        assert mp1[0][1] == 15, f"Unexpected membrane potential at time step 1. Expected 15, got {mp1[0][1]}"
+
+        assert len(currSpikes2[0]) == 1, "Neuron did not spike as expected at time step 2"
+        assert mp2[0][1] == 5, f"Unexpected membrane potential at time step 2 after soft reset. Expected 5 after spike, got {mp2[0][1]}"
+       
+    def test_soft_reset_with_refractory1(self, setup_dictionaries):
+        """Test that soft reset and refractory period work together correctly.
+        
+        Expected Behavior:
+        Time step 1: Neuron receives input, MP increases to 15, no spike (threshold=10)
+        Time step 2: Neuron spikes, MP resets to 5 (soft reset)
+        Time step 3-7: No input, in refactory period, MP remains at 5
+        Time step 8: Neuron receives input, but still in refractory period, MP remains at 5
+        Timestep 9 (timestep just before end of refractory period): No input, in refactory period, MP remains at 5
+        Time step 10: Refractory period ends, no input, MP remains at 5
+        Time step 11: No input, MP remains at 5
+        Time step 12: No input, MP remains at 5
+        """
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=15,
+            neuron_model=LIF_neuron(threshold=10, shift=-17, leak=63, soft_reset_en=True, refractory_max=7)
+        )
+        
+        currSpikes1 = network.step(inputs) #1st time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #2nd time step
+        mp2 = network.read_membrane(outputs)
+
+        assert len(currSpikes1[0]) == 0, "Neuron spiked at time step 1"
+        assert mp1[0][1] == 15, f"Unexpected membrane potential at time step 1. Expected 15, got {mp1[0][1]}"
+
+        assert len(currSpikes2[0]) == 1, "Neuron did not spike as expected at time step 2"
+        assert mp2[0][1] == 5, f"Unexpected membrane potential at time step 2 after soft reset. Expected 5 after spike, got {mp2[0][1]}"
+
+        for i in range(9):    #time steps during and after refractory period
+            if i == 5:   #time step 8 when input is applied during refractory period
+                currSpikes_before_endOfRefractory = network.step(inputs) #2 time steps before end of refractory period
+                mp_before_endOfRefractory = network.read_membrane(outputs)
+                assert len(currSpikes_before_endOfRefractory[0]) == 0, "Neuron spiked unexpectedly before end of refractory period"
+                mp_before_endOfRefractory_dict = dict(mp_before_endOfRefractory)
+                assert mp_before_endOfRefractory_dict["N1.0"] == 5, f"Unexpected membrane potential before end of refractory period. Expected 5, got {mp_before_endOfRefractory_dict['N1.0']}"
+            else:
+                currSpikes = network.step([])
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+                assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly at time step {i+3}"
+                assert mp_dict["N1.0"] == 5, f"Unexpected membrane potential at time step {i+3}. Expected 5 after spike, got {mp_dict['N1.0']}"
+
+    def test_soft_reset_with_refractory2(self, setup_dictionaries):
+        """Test that soft reset and refractory period work together correctly.
+        
+        Expected Behavior:
+        Time step 1: Neuron receives input, MP increases to 15, no spike (threshold=10)
+        Time step 2: Neuron spikes, MP resets to 5 (soft reset)
+        Time step 3-8: No input, in refactory period, MP remains at 5
+        Timestep 9 (timestep just before end of refractory period): 
+        Neuron receives input, but still in refractory period, MP increases to 20
+        Time step 10: Refractory period ends, neuron resets to 10 due to soft reset, MP remains at 10
+        Time step 11: No input, MP remains at 10
+        Time step 12: No input, MP remains at 10
+        """
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=15,
+            neuron_model=LIF_neuron(threshold=10, shift=-17, leak=63, soft_reset_en=True, refractory_max=7)
+        )
+        
+        currSpikes1 = network.step(inputs) #1st time step
+        mp1 = network.read_membrane(outputs)
+        currSpikes2 = network.step([]) #2nd time step
+        mp2 = network.read_membrane(outputs)
+
+        assert len(currSpikes1[0]) == 0, "Neuron spiked at time step 1"
+        assert mp1[0][1] == 15, f"Unexpected membrane potential at time step 1. Expected 15, got {mp1[0][1]}"
+
+        assert len(currSpikes2[0]) == 1, "Neuron did not spike as expected at time step 2"
+        assert mp2[0][1] == 5, f"Unexpected membrane potential at time step 2 after soft reset. Expected 5 after spike, got {mp2[0][1]}"
+
+        for i in range(6):    #time steps during refractory period
+            currSpikes = network.step([])
+            mp = network.read_membrane(outputs)
+            mp_dict = dict(mp)
+            assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly at time step {i+3}"
+            assert mp_dict["N1.0"] == 5, f"Unexpected membrane potential at time step {i+3}. Expected 5 after spike, got {mp_dict['N1.0']}"
+
+        currSpikes_before_endOfRefractory = network.step(inputs) #time step 9 before end of refractory period with input
+        mp_before_endOfRefractory = network.read_membrane(outputs)
+        assert len(currSpikes_before_endOfRefractory[0]) == 0, "Neuron spiked unexpectedly before end of refractory period"
+        mp_before_endOfRefractory_dict = dict(mp_before_endOfRefractory)
+        assert mp_before_endOfRefractory_dict["N1.0"] == 20, f"Unexpected membrane potential before end of refractory period with input. Expected 20, got {mp_before_endOfRefractory_dict['N1.0']}"
+
+        currSpikes_after_endOfRefractory = network.step([]) #time step 10 after refractory period
+        mp_after_endOfRefractory = network.read_membrane(outputs)
+        assert len(currSpikes_after_endOfRefractory[0]) == 1, "Neuron did not spike as expected after end of refractory period"
+        mp_after_endOfRefractory_dict = dict(mp_after_endOfRefractory)
+        assert mp_after_endOfRefractory_dict["N1.0"] == 10, f"Unexpected membrane potential after end of refractory period with soft reset. Expected 10, got {mp_after_endOfRefractory_dict['N1.0']}"
+
+        for i in range(2):    #time steps after refractory period
+            currSpikes = network.step([])
+            mp = network.read_membrane(outputs)
+            mp_dict = dict(mp)
+            assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly at time step {i+11}"
+            assert mp_dict["N1.0"] == 10, f"Unexpected membrane potential at time step {i+11}. Expected 10 after end of refractory period with soft reset, got {mp_dict['N1.0']}"
+
     '''
     def test_synaptic_delay(self):
         """Test that synaptic delay is correctly implemented in the network."""
