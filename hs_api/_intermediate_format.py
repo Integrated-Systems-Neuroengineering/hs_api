@@ -92,8 +92,6 @@ def read_input_file(input_file_path, B, print_to_screen=False):
         num_steps = (
             int(lines[-1].split(":")[0]) + 1
         )  # get number of time steps from last row
-        print("#axons (M) = {}, #time steps = {}".format(M, num_steps))
-
         Iext = np.zeros(shape=(M, num_steps))
 
         for line in lines:
@@ -129,8 +127,6 @@ def conn_to_numpy(axons, neurons):
     # Get the number of axons and neurons used
     M = int(max(axons[:, 0])) + 1  # also count 0th axon
     N = int(np.amax(neurons[:, :2])) + 1  # amax finds the max element in an array
-    print("M (#axons) = {}, N (#neurons) = {}".format(M, N))
-
     # Get the axon inputs
     B = np.zeros(shape=(M, N))
     for ax in axons:
@@ -210,8 +206,6 @@ def write_conn_file(B, W, opath="./test_connectivity.txt", print_to_screen=True)
         with open(opath, "w") as f:
             for line in buffer:
                 f.write(line + "\n")
-        print("Wrote connectivity file to:", opath)
-
         # Optionally write contents to console
         if print_to_screen:
             print("-" * 5, "Wrote", "-" * 5)
@@ -247,8 +241,6 @@ def write_input_file(Iext, opath="./test_inputs.txt", print_to_screen=True):
     with open(opath, "w") as f:
         for line in buffer:
             f.write(line + "\n")
-    print("Wrote input file to:", opath)
-
     # Optionally write contents to console
     if print_to_screen:
         print("-" * 5, "Wrote", "-" * 5)

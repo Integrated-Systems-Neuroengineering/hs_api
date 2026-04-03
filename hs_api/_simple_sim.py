@@ -2,6 +2,7 @@ import numpy as np
 from scipy.sparse import dok_array, csr_matrix
 from fxpmath import Fxp
 from fxpmath.functions import leftshiftArr, rightshiftArr
+from tqdm import tqdm
 
 
 def map_neuron_type_to_int(neuron_type):
@@ -120,7 +121,7 @@ class simple_sim:
         nTotal = len(self.connectome.neuronArr)
 
         W = dok_array((nTotal, self.numNeurons), dtype=np.float32)
-        for preNeuron in self.connectome.neuronArr:
+        for preNeuron in tqdm(self.connectome.neuronArr, desc="Building weight matrix", unit="neuron"):
             preIdx = self.connectome.connectomeDict[preNeuron.get_user_key()]
             for synapse in preNeuron.get_synapses():
                 postKey = synapse.get_postsynapticNeuron().get_user_key()

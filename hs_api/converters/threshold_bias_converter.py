@@ -1178,7 +1178,7 @@ class CRI_Converter:
 
         h, w = input.shape[-2], input.shape[-1]
         # iterate throught the input array based on the kernel ans stride size
-        for c in tqdm(range(input.shape[0])):
+        for c in tqdm(range(input.shape[0]), desc="Conv wiring", unit="channel"):
             for row in range(0, h - kernel[0] + 1, stride[0]):
                 for col in range(0, w - kernel[1] + 1, stride[1]):
                     # (row, col) : local index of the top left corner of the input patch
@@ -1269,7 +1269,7 @@ class CRI_Converter:
             for pre in input.flatten():
                 self.neuron_dict[pre][1] = self.ANN
 
-        for c in tqdm(range(input.shape[0])):
+        for c in tqdm(range(input.shape[0]), desc="MaxPool wiring", unit="channel"):
             for row in range(0, h_i, 2):
                 for col in range(0, w_i, 2):
                     preSynNeurons = input[
@@ -1551,7 +1551,7 @@ class CRI_Converter:
         membranePotential = []
 
         # each image
-        for currInput in tqdm(inputList):
+        for currInput in tqdm(inputList, desc="Running SW sim", unit="sample"):
             # reset the membrane potential to zero
             softwareNetwork.simpleSim.initialize_sim_vars(len(self.neuron_dict))
             spikeRate = [0] * len(self.output_neurons)

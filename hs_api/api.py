@@ -2,6 +2,7 @@ from hs_api._simple_sim import simple_sim, map_neuron_type_to_int
 
 from connectome_utils.connectome import *
 from bidict import bidict
+from tqdm import tqdm
 import os
 import copy
 import logging
@@ -117,7 +118,6 @@ class CRI_network:
             self.connectome.pad_models()
             ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
             formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
-            print("formatedOutputs:", formatedOutputs)
             self.CRI = network(
                 self.connectome,
                 formatedOutputs,
@@ -173,10 +173,10 @@ class CRI_network:
         self.connectome = connectome()
 
         # add axons to connectome
-        for axonKey in self.userAxons:
+        for axonKey in tqdm(self.userAxons, desc="Adding axons", unit="axon"):
             self.connectome.addNeuron(neuron(axonKey, "axon", axonType="Uaxon"))
         # add neurons to connectome
-        for neuronKey in self.userConnections:
+        for neuronKey in tqdm(self.userConnections, desc="Adding neurons", unit="neuron"):
             neuron_model = self.userConnections[neuronKey][modelIdx]
             self.connectome.addNeuron(
                 neuron(
@@ -187,7 +187,7 @@ class CRI_network:
                 )
             )
         # assign synapses to neurons in connectome
-        for axonKey in self.userAxons:
+        for axonKey in tqdm(self.userAxons, desc="Wiring axon synapses", unit="axon"):
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
@@ -196,7 +196,7 @@ class CRI_network:
                 self.connectome.get_neuron_by_key(axonKey).addSynapse(
                     postsynapticNeuron, weight, delayed=delayed
                 )
-        for neuronKey in self.userConnections:
+        for neuronKey in tqdm(self.userConnections, desc="Wiring neuron synapses", unit="neuron"):
             synapses = self.userConnections[neuronKey][synapseIdx]
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
