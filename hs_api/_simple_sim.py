@@ -103,8 +103,8 @@ class simple_sim:
         self.refractory_maxes = np.array(
             [n.get_neuronModel().get_refractory_max() for n in self.connectome.get_neurons()]
         )
-        self.soft_reset_ens = np.array(
-            [n.get_neuronModel().get_soft_reset_en() for n in self.connectome.get_neurons()]
+        self.soft_resets = np.array(
+            [n.get_neuronModel().get_soft_reset() for n in self.connectome.get_neurons()]
         )
         self.firedNeurons = []
 
@@ -224,6 +224,7 @@ class simple_sim:
             perturbation, np.absolute(perturbs), np.less(perturbs, 0)
         )
         perturbation[np.equal(perturbs, 0)] = 0
+        self.perturbation = perturbation
 
         # Spike detection — neurons with refractory counter > 0 cannot spike.
         # Spiked neurons have their counter loaded with refractory_max this step
@@ -238,8 +239,8 @@ class simple_sim:
 
         # Apply reset: hard (MP=0) or soft (MP=MP-threshold) per neuron
         threshs_arr = np.array(threshs)
-        hard_reset_mask = spiked_mask & (self.soft_reset_ens == 0)
-        soft_reset_mask = spiked_mask & (self.soft_reset_ens == 1)
+        hard_reset_mask = spiked_mask & (self.soft_resets == 0)
+        soft_reset_mask = spiked_mask & (self.soft_resets == 1)
         self.membranePotentials[hard_reset_mask] = 0
         if soft_reset_mask.any():
             mp = self.membranePotentials()

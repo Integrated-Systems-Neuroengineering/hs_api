@@ -387,8 +387,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git"
-reference = "dev"
-resolved_reference = "9b59e3af2c777160e7cc462f35f8c163a4cf947d"
+reference = "marchChange"
+resolved_reference = "0c49ba23288b1627307da915f5285c2366141d0f"
 
 [[package]]
 name = "contourpy"
@@ -936,8 +936,8 @@ tqdm = "^4.64.1"
 [package.source]
 type = "git"
 url = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git"
-reference = "dev"
-resolved_reference = "50041a350aaa7ba6400d9b287301defa81bd0b86"
+reference = "marchChange"
+resolved_reference = "15957fe1732b47477ec8eea4316d788f98dd8345"
 
 [[package]]
 name = "identify"
@@ -3452,4 +3452,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.10,<3.12"
-content-hash = "f20d86033d45924557c2be3bb228a5268709050808ea5893146a1b774b228c17"
+content-hash = "da141b3ccf9a037f4cd5bd016f80fb5260f62dec7e9dce1b5146d9a46e2a2b48"

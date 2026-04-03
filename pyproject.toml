@@ -10,7 +10,7 @@ python = ">=3.10,<3.12"
 numpy = "^2.1.2"
 pyyaml = "^6.0.2"
 tqdm = "^4.66.5"
-connectome_utils = {git = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git", branch = "dev"}
+connectome_utils = {git = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git", branch = "marchChange"}
 bidict = "^0.22.0"
 fxpmath = {git = "https://github.com/jfrank8/fxpmath.git", branch = "master"}
 
@@ -26,7 +26,7 @@ torch = {version = "2.7.1+cpu", source = "pytorch-cpu"}
 optional = true
 
 [tool.poetry.group.fpga.dependencies]
-hs_bridge = {git = "git@github.com:Integrated-Systems-Neuroengineering/hs_bridge.git", branch = "dev", python = ">=3.11,<3.12"}
+hs_bridge = {git = "git@github.com:Integrated-Systems-Neuroengineering/hs_bridge.git", branch = "marchChange", python = ">=3.11,<3.12"}
 
 
 [tool.poetry.group.docs.dependencies]

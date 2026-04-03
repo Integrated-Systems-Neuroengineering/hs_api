@@ -33,7 +33,7 @@ class neuron_model(ABC):
         pass
 
     @abstractmethod
-    def get_soft_reset_en(self):
+    def get_soft_reset(self):
         pass
 
     def __hash__(self):
@@ -62,14 +62,14 @@ class LIF_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset_en=False):
+    def __init__(self, threshold, shift, leak, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset=False):
         self.threshold = threshold
         self.shift = shift
         self.leak = leak
         self.refractory_max = refractory_max
         self.delay_value = delay_value
         self.dual_synapse_en = dual_synapse_en
-        self.soft_reset_en = soft_reset_en
+        self.soft_reset = soft_reset
 
     def get_threshold(self):
         return self.threshold
@@ -89,8 +89,8 @@ class LIF_neuron(neuron_model):
     def get_dual_synapse_en(self):
         return int(self.dual_synapse_en)
 
-    def get_soft_reset_en(self):
-        return int(self.soft_reset_en)
+    def get_soft_reset(self):
+        return int(self.soft_reset)
 
     def get_neuronModel(self):
         return 2
@@ -105,7 +105,7 @@ class ANN_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak=0, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset_en=False):
+    def __init__(self, threshold, shift, leak=0, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset=False):
         self.threshold = threshold
         # TODO: to be determined
         self.shift = shift
@@ -113,7 +113,7 @@ class ANN_neuron(neuron_model):
         self.refractory_max = refractory_max
         self.delay_value = delay_value
         self.dual_synapse_en = dual_synapse_en
-        self.soft_reset_en = soft_reset_en
+        self.soft_reset = soft_reset
 
     def get_threshold(self):
         return self.threshold
@@ -133,8 +133,49 @@ class ANN_neuron(neuron_model):
     def get_dual_synapse_en(self):
         return int(self.dual_synapse_en)
 
-    def get_soft_reset_en(self):
-        return int(self.soft_reset_en)
+    def get_soft_reset(self):
+        return int(self.soft_reset)
 
     def get_neuronModel(self):
         return 0
+
+
+class IF_neuron(neuron_model):
+    """
+    IF (Integrate-and-Fire) neuron model.
+
+    True non-leaky integrate-and-fire. MP only changes via synaptic weight
+    accumulation. No leak, no noise. Use with soft_reset=True to approximate
+    ReLU activation (residual MP preserved after spike).
+    """
+
+    def __init__(self, threshold, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset=False):
+        self.threshold = threshold
+        self.refractory_max = refractory_max
+        self.delay_value = delay_value
+        self.dual_synapse_en = dual_synapse_en
+        self.soft_reset = soft_reset
+
+    def get_threshold(self):
+        return self.threshold
+
+    def get_shift(self):
+        return 0
+
+    def get_leak(self):
+        return 0
+
+    def get_refractory_max(self):
+        return self.refractory_max
+
+    def get_delay_value(self):
+        return self.delay_value
+
+    def get_dual_synapse_en(self):
+        return int(self.dual_synapse_en)
+
+    def get_soft_reset(self):
+        return int(self.soft_reset)
+
+    def get_neuronModel(self):
+        return 3
