@@ -576,19 +576,27 @@ class TestBitStream:
         outputs = ["N1.0", "N1.1", "N1.2"]
         network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
 
-        mp_sums = [0, 0, 0]  # To accumulate absolute MP values for each neuron
-        for timestep in range(1000):
+        mp_diff_sums = [0, 0, 0]  # To accumulate absolute MP differences for each neuron
+
+        # Read the first membrane potential after the first step
+        network.step([])  # No input
+        prev_mp = dict(network.read_membrane(outputs))
+
+        # remaining 999 steps and accumulate differences
+        for _ in range(1, 1000):
             network.step([])  # No input
-            mp = network.read_membrane(outputs)
-            mp_dict = dict(mp)
-            mp_sums[0] += abs(mp_dict["N1.0"])
-            mp_sums[1] += abs(mp_dict["N1.1"])
-            mp_sums[2] += abs(mp_dict["N1.2"])
+            curr_mp = dict(network.read_membrane(outputs))
 
-        print(f"Shift=0 MP sum: {mp_sums[0]}, Shift=-16 MP sum: {mp_sums[1]}, Shift=16 MP sum: {mp_sums[2]}")
+            mp_diff_sums[0] += abs(curr_mp["N1.0"] - prev_mp["N1.0"])
+            mp_diff_sums[1] += abs(curr_mp["N1.1"] - prev_mp["N1.1"])
+            mp_diff_sums[2] += abs(curr_mp["N1.2"] - prev_mp["N1.2"])
 
-        assert mp_sums[0] > mp_sums[1], f"Sum of absolute MPs for shift=0 should be greater than shift=-16. Got {mp_sums[0]} vs {mp_sums[1]}"
-        assert mp_sums[2] > mp_sums[0], f"Sum of absolute MPs for shift=16 should be greater than shift=0. Got {mp_sums[2]} vs {mp_sums[0]}"
+            prev_mp = curr_mp
+
+        print(f"Shift=0 MP sum: {mp_diff_sums[0]}, Shift=-16 MP sum: {mp_diff_sums[1]}, Shift=16 MP sum: {mp_diff_sums[2]}")
+
+        assert mp_diff_sums[0] > mp_diff_sums[1], f"Sum of absolute MPs for shift=0 should be greater than shift=-16. Got {mp_diff_sums[0]} vs {mp_diff_sums[1]}"
+        assert mp_diff_sums[2] > mp_diff_sums[0], f"Sum of absolute MPs for shift=16 should be greater than shift=0. Got {mp_diff_sums[2]} vs {mp_diff_sums[0]}"
 
     def test_network_reset(self, setup_dictionaries):
         """Test network reset without running flash.sh by running two different networks back-to-back
