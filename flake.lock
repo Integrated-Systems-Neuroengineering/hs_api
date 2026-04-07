@@ -10,11 +10,11 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1773688971,
-        "narHash": "sha256-BnIw2mSWSeqFYPuNmmL4uN9NE4ixP7C8N7X2Ui5NQmo=",
+        "lastModified": 1774640983,
+        "narHash": "sha256-E5kQWGaFkVw51gKuwoUEujs5MjreXEo+NDWjbryZ7I8=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "connectome_utils",
-        "rev": "f6508e0a3561f623a8756e81aae3bd51c35ccd39",
+        "rev": "0c49ba23288b1627307da915f5285c2366141d0f",
         "type": "github"
       },
       "original": {
@@ -240,11 +240,11 @@
         "poetry2nix": "poetry2nix_2"
       },
       "locked": {
-        "lastModified": 1773083480,
-        "narHash": "sha256-VEbMZ8/gFbLZiubZSfEWb3TdDsg5gd7UNV6q0Jk64eE=",
+        "lastModified": 1774640983,
+        "narHash": "sha256-rg+bZ65HY0QtDJidD6L+fOni6AUakAEniUyKuRCqUUs=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "fxpmath",
-        "rev": "3bda26f7a6a8f6e5af6e0e5169bfe1143f008da5",
+        "rev": "1b4e4772a9d87b875a333136e33000af69f1e1ea",
         "type": "github"
       },
       "original": {

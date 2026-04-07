@@ -220,6 +220,7 @@ class simple_sim:
             dtype=self.formatDict["membrane_potential"],
         )
         perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
+        self.perturbation_preshift = perturbation
         perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs, 0))
         perturbation = rightshiftArr(
             perturbation, np.absolute(perturbs), np.less(perturbs, 0)
