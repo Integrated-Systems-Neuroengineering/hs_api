@@ -228,6 +228,7 @@ class simple_sim:
         perturbs = self.get_perturbMag()
         lifNeurons = np.where(np.array(self.get_model()) == 2)[0]
         memLessNeurons = np.where(np.array(self.get_model()) == 0)[0]
+        counterNeurons = np.where(np.array(self.get_model()) == 1)[0]
 
         nNeurons = self.numNeurons
         perturbBits = 17
@@ -273,6 +274,10 @@ class simple_sim:
             0, self.refractoryCounters[~spiked_mask] - 1
         )
 
+        # Neurons with counter > 0 after Phase 0 are in refractory — no weight
+        # accumulation (Phase 2) and no model updates for them this timestep.
+        weight_blocked = self.refractoryCounters > 0
+
         # Update LIF neurons
         if lifNeurons.size > 0:
             self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
@@ -280,6 +285,12 @@ class simple_sim:
         # Update ANN neurons
         if memLessNeurons.size > 0:
             self.membranePotentials[memLessNeurons] = 0
+
+        # Update Counter neurons: MP += 1 per timestep (non-refractory, non-spiked only)
+        if counterNeurons.size > 0:
+            active_counters = counterNeurons[eligible[counterNeurons] & ~spiked_mask[counterNeurons]]
+            if active_counters.size > 0:
+                self.membranePotentials[active_counters] = self.membranePotentials[active_counters] + 1
 
         # Build combined spike vector (neuronArr indices)
         nTotal = len(self.connectome.neuronArr)
@@ -291,6 +302,8 @@ class simple_sim:
         spikeVec = csr_matrix(np.atleast_2d(spikeVec).T)
 
         # Apply immediate weight updates
+        if weight_blocked.any():
+            blocked_mp_snapshot = self.membranePotentials()[weight_blocked]
         membraneUpdates = self.weights.get_val() @ spikeVec
         membraneUpdates = Fxp(
             membraneUpdates, dtype=self.formatDict["membrane_potential"]
@@ -298,6 +311,9 @@ class simple_sim:
         membranePotentials = self.membranePotentials + membraneUpdates.transpose()
         membranePotentials = membranePotentials.flatten()
         self.membranePotentials(membranePotentials)
+        # Restore refractory neurons — no weight accumulation during refractory
+        if weight_blocked.any():
+            self.membranePotentials[weight_blocked] = blocked_mp_snapshot
 
         # Queue delayed contributions into the circular buffer (matches hardware Phase 2 DELAYED_LOCAL recording)
         if self.weights_delayed.get_val().nnz > 0:
@@ -311,9 +327,13 @@ class simple_sim:
         pending_slot = self.stepNum % 16
         pending_arr = self.delay_buffer[pending_slot]
         if pending_arr.any():
-            self.membranePotentials(
-                Fxp(self.membranePotentials() + pending_arr, dtype=self.formatDict["membrane_potential"])
-            )
+            if weight_blocked.any():
+                pending_arr = pending_arr.copy()
+                pending_arr[weight_blocked] = 0
+            if pending_arr.any():
+                self.membranePotentials(
+                    Fxp(self.membranePotentials() + pending_arr, dtype=self.formatDict["membrane_potential"])
+                )
         self.delay_buffer[pending_slot] = 0
 
         # Apply perturbation noise to LIF neurons

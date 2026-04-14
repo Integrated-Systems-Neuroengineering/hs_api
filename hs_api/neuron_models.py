@@ -140,6 +140,47 @@ class ANN_neuron(neuron_model):
         return 0
 
 
+class Counter_neuron(neuron_model):
+    """
+    Counter neuron model (model 1).
+
+    MP increments by 1 each timestep regardless of synaptic input. No leak,
+    no noise. Fires when MP exceeds threshold. Historically mislabeled "LIF"
+    in parts of the codebase.
+    """
+
+    def __init__(self, threshold, refractory_max=0, delay_value=0, dual_synapse_en=False, soft_reset=False):
+        self.threshold = threshold
+        self.refractory_max = refractory_max
+        self.delay_value = delay_value
+        self.dual_synapse_en = dual_synapse_en
+        self.soft_reset = soft_reset
+
+    def get_threshold(self):
+        return self.threshold
+
+    def get_shift(self):
+        return 0
+
+    def get_leak(self):
+        return 0
+
+    def get_refractory_max(self):
+        return self.refractory_max
+
+    def get_delay_value(self):
+        return self.delay_value
+
+    def get_dual_synapse_en(self):
+        return int(self.dual_synapse_en)
+
+    def get_soft_reset(self):
+        return int(self.soft_reset)
+
+    def get_neuronModel(self):
+        return 1
+
+
 class IF_neuron(neuron_model):
     """
     IF (Integrate-and-Fire) neuron model.
