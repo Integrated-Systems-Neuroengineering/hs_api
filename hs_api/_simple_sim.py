@@ -107,29 +107,45 @@ class simple_sim:
         self.soft_resets = np.array(
             [n.get_neuronModel().get_soft_reset() for n in self.connectome.get_neurons()]
         )
+        # 16-slot circular buffer for delayed synapse delivery (matches hardware delay_value range 0-15)
+        self.delay_buffer = np.zeros((16, numNeurons), dtype=np.float64)
+        self.delay_values = np.array(
+            [n.get_neuronModel().get_delay_value() for n in self.connectome.get_neurons()],
+            dtype=np.int32,
+        )
         self.firedNeurons = []
 
     def gen_weights(self):
-        """Build the sparse weight matrix from the connectome.
+        """Build the sparse weight matrices from the connectome.
 
-        Constructs a single weight matrix W where W[post, pre] contains the
-        synaptic weight from presynaptic neuron/axon to postsynaptic neuron.
+        Constructs two weight matrices:
+        - weights: immediate synapses (LOCAL, opcode 0)
+        - weights_delayed: delayed synapses (DELAYED_LOCAL, opcode 3) where the
+          postsynaptic layer has dual_synapse_en=True
 
-        The presynaptic index is in neuronArr space (all axons and neurons),
-        while the postsynaptic index is in pureNeuronArr space (neurons only).
+        Both matrices are W[post, pre] shaped (post in pureNeuronArr space,
+        pre in neuronArr space).
         """
         nTotal = len(self.connectome.neuronArr)
 
-        W = dok_array((nTotal, self.numNeurons), dtype=np.float32)
+        W_imm = dok_array((nTotal, self.numNeurons), dtype=np.float32)
+        W_del = dok_array((nTotal, self.numNeurons), dtype=np.float32)
         for preNeuron in tqdm(self.connectome.neuronArr, desc="Building weight matrix", unit="neuron"):
             preIdx = self.connectome.connectomeDict[preNeuron.get_user_key()]
             for synapse in preNeuron.get_synapses():
                 postKey = synapse.get_postsynapticNeuron().get_user_key()
                 postIdx = self.connectome.get_pureNeuron_idx(postKey)
-                W[preIdx, postIdx] = synapse.get_weight()
+                post_dual_en = synapse.get_postsynapticNeuron().get_neuronModel().get_dual_synapse_en()
+                if synapse.is_delayed() and post_dual_en:
+                    W_del[preIdx, postIdx] = synapse.get_weight()
+                else:
+                    W_imm[preIdx, postIdx] = synapse.get_weight()
 
         self.weights = Fxp(
-            csr_matrix(W.transpose()), dtype=self.formatDict["synapse_weights"]
+            csr_matrix(W_imm.transpose()), dtype=self.formatDict["synapse_weights"]
+        )
+        self.weights_delayed = Fxp(
+            csr_matrix(W_del.transpose()), dtype=self.formatDict["synapse_weights"]
         )
 
     def write_synapse(self, preIndex, postIndex, weight):
@@ -274,7 +290,7 @@ class simple_sim:
             spikeVec[neuronArrIdx] = 1
         spikeVec = csr_matrix(np.atleast_2d(spikeVec).T)
 
-        # Update membrane potentials
+        # Apply immediate weight updates
         membraneUpdates = self.weights.get_val() @ spikeVec
         membraneUpdates = Fxp(
             membraneUpdates, dtype=self.formatDict["membrane_potential"]
@@ -282,6 +298,23 @@ class simple_sim:
         membranePotentials = self.membranePotentials + membraneUpdates.transpose()
         membranePotentials = membranePotentials.flatten()
         self.membranePotentials(membranePotentials)
+
+        # Queue delayed contributions into the circular buffer (matches hardware Phase 2 DELAYED_LOCAL recording)
+        if self.weights_delayed.get_val().nnz > 0:
+            del_updates = self.weights_delayed.get_val() @ spikeVec
+            del_updates_arr = np.asarray(del_updates.todense()).flatten()
+            if del_updates_arr.any():
+                target_slots = (self.stepNum + self.delay_values) % 16
+                np.add.at(self.delay_buffer, (target_slots, np.arange(self.numNeurons)), del_updates_arr)
+
+        # Delay Delivery: apply this timestep's pending delayed contributions and clear the slot
+        pending_slot = self.stepNum % 16
+        pending_arr = self.delay_buffer[pending_slot]
+        if pending_arr.any():
+            self.membranePotentials(
+                Fxp(self.membranePotentials() + pending_arr, dtype=self.formatDict["membrane_potential"])
+            )
+        self.delay_buffer[pending_slot] = 0
 
         # Apply perturbation noise to LIF neurons
         if lifNeurons.size > 0:
