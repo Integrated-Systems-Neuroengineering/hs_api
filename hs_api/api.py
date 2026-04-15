@@ -134,15 +134,21 @@ class CRI_network:
         if self.target == "CRI":
             logging.info("Initilizing to run on hardware")
             self.connectome.pad_models()
-            ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
-            # formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
-            formatedOutputs = self.connectome.get_outputs_idx()
-            print("formatedOutputs:", formatedOutputs)
+            # In multi-core mode (coreID=None) collect outputs from all cores;
+            # in single-core mode collect only from the specified core.
+            if coreID is None:
+                formatedOutputs = [
+                    idx
+                    for c in range(len(self.connectome.coreArrHbm) or 1)
+                    for idx in self.connectome.get_core_outputs_idx(c)
+                ]
+            else:
+                formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
             self.CRI = network(
                 self.connectome,
                 formatedOutputs,
                 simDump=simDump,
-                coreOveride=coreID,
+                coreOverride=coreID,
             )
             self.CRI.initalize_network()
         elif self.target == "simpleSim":
