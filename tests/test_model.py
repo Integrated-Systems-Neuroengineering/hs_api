@@ -12,41 +12,33 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('/home/ckdeng/GitHub_repo/hs_api/tests/fixtures/DVS_model_config.pkl', 'rb') as f:
+        with open('fixtures/DVS_model_config.pkl', 'rb') as f:
             return pickle.load(f)
     
     @pytest.fixture
     def test_batch(self):
         """Load saved test batch"""
-        with open('/home/ckdeng/GitHub_repo/hs_api/tests/fixtures/DVS_test_batch.pkl', 'rb') as f:
+        with open('fixtures/DVS_test_batch.pkl', 'rb') as f:
             return pickle.load(f)
     
-    def test_dvs_accuracy(self, model_config, test_batch):
-        """Test that DVS model achieves expected accuracy on hardware.
+    def test_dvs_accuracy(self, model_config, test_batch,shuffle_mode):
+        '''
+        Validates that the DVS classification model achieves the required accuracy on CRI hardware.
         
-        Test Description:
-            Validates that the full DVS classification model runs correctly
-            on the CRI hardware and achieves the expected accuracy threshold.
-            
-        Network Configuration:
-            - Full DVS model loaded from saved configuration
-            - Model architecture: 3 convolutional layers with stride 2, 100 channels each
-            - Weights initialized from saved configuration
-            
-        Test Procedure:
-            1. Load model configuration (axons, connections, outputs)
-            2. Create CRI network
-            3. Run inference on 9 test images with different labels
-            4. Calculate accuracy
-            
-        Expected Behavior:
-            Accuracy >= expected threshold
-            
-        Rationale:
-            This end-to-end test ensures the hardware correctly executes a
-            real-world model. If accuracy drops below threshold, it indicates
-            hardware malfunction, weight corruption, or spike readout issues.
-        """
+        This test performs an end-to-end inference run by:
+        1. Configuring the CRI_network with axons, connections, and output mappings.
+        2. Iterating through test images and injecting spike inputs into the FPGA.
+        3. Reading membrane potentials and aggregating spike counts for classification.
+        4. Calculating accuracy against ground truth labels.
+        
+        Args:
+            model_config (dict): Configuration data for network topology.
+            test_batch (dict): Input images and corresponding ground truth labels.
+            shuffle_mode (bool): If True, enables random shuffling of neuron-to-HBM mapping.
+        
+        Raises:
+            AssertionError: If the calculated accuracy falls below the 55% threshold.
+        '''
         axons = model_config['axons']
         connections = model_config['connections']
         outputs = model_config['outputs']
@@ -55,8 +47,17 @@ class TestDVSInference:
             axons=axons,
             connections=connections,
             outputs=outputs,
-            target="CRI"
+            target="CRI",
+            random_shuffle=shuffle_mode #shuffle mode is --shuffle
         )
+        print("\n" + "="*30)
+        print("VERIFYING NEURON GROUP MAPPING")
+        neuron_keys = list(connections.keys())
+        for symbol in neuron_keys[:10]: # Check first 10 neurons
+            hw_idx = network.key2idx_map[symbol]
+            core_group = hw_idx // 16 
+            print(f"Neuron: {symbol:<10} | HBM Address: {hw_idx:>5} | Core: {core_group}")
+        print("="*30 + "\n")
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         #test model
