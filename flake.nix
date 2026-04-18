@@ -68,6 +68,13 @@
 
           # The pytorch-cpu index redirects to download-r2.pytorch.org which returns 403
           # from within the Nix sandbox; fetch the wheel directly via CloudFront instead.
+          torch = prev.torch.overridePythonAttrs (_: {
+            src = pkgs.fetchurl {
+              url = "https://download.pytorch.org/whl/cpu/torch-2.7.1%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl";
+              hash = "sha256-oWhHk+NS8D+hT3iFflXWXeStqEBd7R2iv09FIXnEt3k=";
+            };
+          });
+
           torchvision = prev.torchvision.overridePythonAttrs (_: {
             src = pkgs.fetchurl {
               url = "https://download.pytorch.org/whl/cpu/torchvision-0.22.1%2Bcpu-cp311-cp311-manylinux_2_28_x86_64.whl";
@@ -94,6 +101,9 @@
               groups = [ "main" "apps" "dev" "fpga" "docs" ];
               preferWheels = true;
               inherit overrides;
+              editablePackageSources = {
+                hs_api = ./.;
+              };
             })
             pkgs.metis
             adxdma
