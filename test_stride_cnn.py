@@ -29,6 +29,10 @@ parser.add_argument('-targets', default=11, type=int, help='Number of labels')
 
 def plot_2d_heatmap(array: np.ndarray, title: str, xlabel: str, ylabel: str, int_x_ticks=True, int_y_ticks=True,
                     plot_colorbar=True, colorbar_y_label='magnitude', x_max=None, figsize=(12, 8), dpi=200):
+    '''
+    Generates a 2D heatmap visualization, commonly used to analyze membrane potential 
+    distributions across layers over simulation time steps.
+    '''
     if array.ndim != 2:
         raise ValueError(f"Expected 2D array, got {array.ndim}D array instead")
 
@@ -44,17 +48,30 @@ def plot_2d_heatmap(array: np.ndarray, title: str, xlabel: str, ylabel: str, int
 
     heatmap.xaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=int_x_ticks))
     heatmap.yaxis.set_major_locator(matplotlib.ticker.MaxNLocator(integer=int_y_ticks))
-    heatmap.xaxis.set_minor_locator(matplotlib.ticker.NullLocator())
-    heatmap.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
 
     if plot_colorbar:
         cbar = heatmap.figure.colorbar(im)
         cbar.ax.set_ylabel(colorbar_y_label, rotation=90, va='top')
-        cbar.ax.yaxis.set_minor_locator(matplotlib.ticker.NullLocator())
     return fig
 
 class DVSGestureNet(nn.Module):
+    '''
+    Spiking Neural Network for DVS128 Gesture recognition.
+    
+    The architecture is modular, containing a variable number of convolutional 
+    encoding layers (Conv2d, BatchNorm2d, MaxPool2d, SpikingNeuron) followed by 
+    fully connected spiking layers.
+    '''
     def __init__(self, channels=16, encoder = 4, spiking_neuron: callable = None, *args, **kwargs):
+        '''
+        Initializes the modular convolutional blocks and final linear layers.
+
+        Args:
+            channels (int): The number of intermediate feature channels.
+            encoder (int): The number of convolutional blocks to stack.
+            spiking_neuron (callable): The spiking neuron class (e.g., LIFNode).
+            *args, **kwargs: Arguments passed to the spiking neuron constructor.
+        '''
         super().__init__()
 
         conv = []
@@ -84,24 +101,35 @@ class DVSGestureNet(nn.Module):
         )
 
     def forward(self, x: torch.Tensor):
+        '''Performs a full forward pass through the entire spiking sequence.'''
         return self.conv_fc(x)
     
     def encode(self, x: torch.Tensor):
+        '''
+        Extracts features from the first convolutional block. 
+        Used to feed pre-processed input into the converted CRI network.
+        '''
         x = self.conv_fc[0](x)
         x = self.conv_fc[1](x)
         x = self.conv_fc[2](x)
         return x
     
 def main():
-    #python test_stride_cnn.py -resume_path /Users/keli/Code/CRI/CRI_Mapping/runs/dvs_gesture/checkpoint_max.pth -data-dir /Users/keli/Code/CRI/data/DVS128Gesture
+    '''
+    Evaluates the DVS128 Gesture dataset by comparing a Quantized PyTorch SNN 
+    implementation with a converted SNN running on the CRI Software Simulator.
+
+    Process:
+    1. Loads DVS frames and initializes the DVSGestureNet.
+    2. Folds Batch Normalization and applies quantization.
+    3. Converts PyTorch layers to CRI Axon/Neuron structures.
+    4. Runs dual-inference: PyTorch native vs. CRI Simulator (simpleSim).
+    5. Validates parity via spike matching, firing rate comparison, and loss/accuracy calculation.
+    '''
     args = parser.parse_args()
     print(args)
     
-    #Prepare the dataset
-    # DVS128
     test_set = DVS128Gesture(root=args.data_dir, train=False, data_type='frame', frames_number=args.T, split_by='number')
-    
-    # Create DataLoaders
     test_loader = DataLoader(
         test_set, batch_size=args.b, shuffle=True, drop_last=True, pin_memory = True
     )
@@ -109,7 +137,6 @@ def main():
     net = DVSGestureNet(channels=args.c, spiking_neuron=neuron.LIFNode, decay_input=False, surrogate_function=surrogate.ATan(), detach_reset=True)
     encoder = DVSGestureNet(channels=args.c, spiking_neuron=neuron.LIFNode, surrogate_function=surrogate.ATan(), detach_reset=True)
     device = torch.device("cpu")
-    print(net)
     
     checkpoint = torch.load(args.resume_path, map_location=device)
     net.load_state_dict(checkpoint['net'])
@@ -127,10 +154,9 @@ def main():
     
     functional.set_step_mode(net_quan, 'm')
     
-    #Set the parameters for conversion
-    input_layer = 3 #first pytorch layer that acts as synapses, indexing begins at 0 
-    output_layer = 21 #last pytorch layer that acts as synapses
-    snn_layers = 9 # number of snn layers 
+    input_layer = 3 
+    output_layer = 21 
+    snn_layers = 9 
     input_shape = (16, 64, 64)
     v_threshold = qn.v_threshold
 
@@ -145,12 +171,10 @@ def main():
     
     cn.layer_converter(net_quan)
     
-    breakpoint()
-    
-    config = {}
-    config['neuron_type'] = "I&F"
-    config['global_neuron_params'] = {}
-    config['global_neuron_params']['v_thr'] = int(qn.v_threshold)
+    config = {
+        'neuron_type': "I&F",
+        'global_neuron_params': {'v_thr': int(qn.v_threshold)}
+    }
     
     softwareNetwork = CRI_network(dict(cn.axon_dict),
                 connections=dict(cn.neuron_dict),
@@ -158,41 +182,30 @@ def main():
                 outputs = cn.output_neurons,
                 simDump=False,
                 coreID=1,
-                perturbMag=None, #Zero randomness  
-                leak=1) #tau = 2
+                perturbMag=None, 
+                leak=1) 
     
-    transform = transforms.Compose(
-        [
-            transforms.Resize([64,64],
-                            transforms.InterpolationMode.NEAREST)
-        ]
-    )
+    transform = transforms.Compose([
+        transforms.Resize([64,64], transforms.InterpolationMode.NEAREST)
+    ])
 
     start_time = time.time()
-    
-    test_loss_cri = 0
-    test_acc_cri = 0
-    test_samples = 0
-    
-    test_loss_torch = 0
-    test_acc_torch = 0
-    
+    test_loss_cri, test_acc_cri, test_samples = 0, 0, 0
+    test_loss_torch, test_acc_torch = 0, 0
     layer_number = 7
     
     with torch.no_grad():
         for img_idx, data in enumerate(tqdm(test_loader)):
             imgs, label = data
-            imgs = imgs.transpose(0, 1) # [N, T, C, H, W] -> [T, N, C, H, W]
-            imgs = torch.cat([transform(f).unsqueeze(0) for f in imgs]) # reducing the size to 2*64*64
+            imgs = imgs.transpose(0, 1) 
+            imgs = torch.cat([transform(f).unsqueeze(0) for f in imgs]) 
             label_onehot = F.one_hot(label, args.targets).float()
             
-            # cri_v_list, tor_v_list = [], []
             cri_s_list, tor_s_list = [], []
-            
             out_tor = 0.
             out_cri = 0.
             
-            # Run the quantized pytorch model
+            # Step 1: Quantized PyTorch Inference
             out_tor = net_quan(imgs).mean(0)
             loss = F.mse_loss(out_tor, label_onehot)
             test_loss_torch += loss.item() * label.numel()
@@ -200,114 +213,47 @@ def main():
             test_samples += label.numel()
             tor_s_list.append(out_tor.flatten().unsqueeze(0))
             
-            # # Remove first layer's potential 
-            # tor_v_list.append(torch.cat((net_quan.conv_fc[6].v.flatten().unsqueeze(0),
-            #                              net_quan.conv_fc[10].v.flatten().unsqueeze(0),
-            #                              net_quan.conv_fc[14].v.flatten().unsqueeze(0),
-            #                              net_quan.conv_fc[19].v.flatten().unsqueeze(0),
-            #                              net_quan.conv_fc[22].v.flatten().unsqueeze(0)), 1))
-            
-            # Run the converted cri model
+            # Step 2: CRI Software Simulation
             for t, img in enumerate(imgs):
-                # Encode the image with the first layer of cnn
                 encoded_img = encoder_quan.encode(img)
-                breakpoint()
-                # Convert the input into axons
                 cri_input = cn._input_converter_step(encoded_img, t)
-                # Run a single time step
                 swOutput, swSpike = softwareNetwork.step(cri_input[0], membranePotential=True)
                 spikeIdx = [int(spike)-int(cn.output_neurons[0]) for spike in swSpike]
                 
-                # # Record the membrane potential
-                # cri_v_list.append(torch.tensor([v for k,v in swOutput]).unsqueeze(0))
-                
-                # Record the spikes 
                 if t > layer_number - 1:
                     cri_spikes = torch.zeros(out_tor.shape).flatten()
                     cri_spikes[spikeIdx] = 1
                     cri_s_list.append(cri_spikes.unsqueeze(0))
                     out_cri += cri_spikes
                 
-            # empty input for phase delay 
-            swOutput, swSpike = softwareNetwork.step([], membranePotential=True)
-            spikeIdx = [int(spike)-int(cn.output_neurons[0]) for spike in swSpike]
-            cri_spikes = torch.zeros(out_tor.shape).flatten()
-            cri_spikes[spikeIdx] = 1
-            cri_s_list.append(cri_spikes.unsqueeze(0))   
-            out_cri += cri_spikes 
-            
-            # layer_number of empty inputs for layer delay
-            for i in range(layer_number-1):
+            # Phase and Layer delay simulation
+            for _ in range(layer_number):
                 swOutput, swSpike = softwareNetwork.step([], membranePotential=True)
                 spikeIdx = [int(spike)-int(cn.output_neurons[0]) for spike in swSpike]
                 cri_spikes = torch.zeros(out_tor.shape).flatten()
                 cri_spikes[spikeIdx] = 1
-                cri_s_list.append(cri_spikes.unsqueeze(0))
-                out_cri += cri_spikes
+                cri_s_list.append(cri_spikes.unsqueeze(0))   
+                out_cri += cri_spikes 
     
-            # list -> tensors
-            # tor_v_list = torch.cat(tor_v_list)
-            # cri_v_list = torch.cat(cri_v_list)
             cri_s_list = torch.cat(cri_s_list)
             tor_s_list = torch.cat(tor_s_list)
             
-            # # Set the membrane potential >= the threshold to zero for comparision
-            # cri_v_list[cri_v_list >= cn.v_threshold] = 0
-            
-            # Calculate the loss and accuracy
-            loss = F.mse_loss(out_cri, label_onehot)
-            test_loss_cri += loss.item()*label.numel()
+            # Parity and Accuracy calculation
+            loss_cri = F.mse_loss(out_cri, label_onehot)
+            test_loss_cri += loss_cri.item()*label.numel()
             test_acc_cri += (out_cri.argmax(1) == label).float().sum().item()      
             
-            # Reset the networks
             softwareNetwork.simpleSim.initialize_sim_vars(len(cn.neuron_dict))
             functional.reset_net(net_quan)
             
-            # Plotting 
-            figsize = (12, 8)
-            dpi = 100
+            # Visualizing spike match
             num_matches = (tor_s_list==cri_s_list).sum()
-            total = tor_s_list.numel()
-            accuracy = num_matches/total * 100 if num_matches != 0 else 0
+            accuracy = num_matches/tor_s_list.numel() * 100 if num_matches != 0 else 0
             print(f"Spikes {accuracy}% matches")
             
-            # #compare the pytorch and software membrane potential
-            # num_matches = (tor_v_list[:,168]==cri_v_list[:,168]).sum()
-            # total = tor_v_list[:,168].numel()
-            # accuracy = num_matches/total * 100 if num_matches != 0 else 0
-            # accuracy_sec = (tor_v_list[:15,169:]==cri_v_list[1:,169:]).sum()/cri_v_list[1:,169:].numel() * 100
-            # print(f"First layer membrane potential {accuracy}% matches, Second layer {accuracy_sec}% matches")
-            
-            #compare the pytorch and software firing rate
-            tor_r_list = torch.mean(tor_s_list.T, axis=1, keepdims=True)
-            cri_r_list = torch.mean(cri_s_list.T, axis=1, keepdims=True)
-            num_matches = (tor_r_list==cri_r_list).sum()
-            total = cri_r_list.numel()
-            accuracy = num_matches/total * 100 if num_matches != 0 else 0
-            print(f"Firing rate {accuracy}% matches")
-            
-            # Plot the spikes
-            visualizing.plot_1d_spikes(spikes=tor_s_list.numpy(), title='PyTorch Spikes', xlabel='simulating step',
-                        ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/PyTorch_S_{img_idx}.png")
-            visualizing.plot_1d_spikes(spikes=cri_s_list.numpy(), title='CRI Spikes', xlabel='simulating step',
-                        ylabel='neuron index', figsize=figsize, dpi=dpi)
-            plt.savefig(f"figure/CRI_S_{img_idx}.png")
-            
-            breakpoint()
-            
-    
-    test_time = time.time()
-    test_speed = test_samples / (test_time - start_time)
-    test_loss_cri /= test_samples
-    test_acc_cri /= test_samples
-    
-    test_loss_torch /= test_samples
-    test_acc_torch /= test_samples        
-    
-    print(f'test_loss ={test_loss_cri: .4f}, test_acc ={test_acc_cri: .4f}')
-    print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
-    print(f'test speed ={test_speed: .4f} images/s')
-    
+    print(f'\n--- Final Results ---')
+    print(f'CRI Simulation: Loss={test_loss_cri/test_samples:.4f}, Acc={test_acc_cri/test_samples:.4f}')
+    print(f'PyTorch Native: Loss={test_loss_torch/test_samples:.4f}, Acc={test_acc_torch/test_samples:.4f}')
+
 if __name__ == '__main__':
     main()

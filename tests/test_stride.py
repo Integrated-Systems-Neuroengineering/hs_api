@@ -24,7 +24,23 @@ parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/NMN
 parser.add_argument('-targets', default=10, type=int, help='Number of labels')
 
 class Net(nn.Module):
+    '''
+    Spiking Neural Network for NMNIST classification.
+    
+    Includes a convolutional layer followed by Batch Normalization and 
+    Leaky Integrate-and-Fire (LIF) neurons, terminating in a linear layer 
+    for class prediction.
+    '''
     def __init__(self, in_channels = 2, channels=8, spiking_neuron: callable = None, **kwargs):
+        '''
+        Initialize network layers and spiking neurons.
+
+        Args:
+            in_channels (int): Input channels, typically 2 for NMNIST DVS data.
+            channels (int): Intermediate feature map channels.
+            spiking_neuron (callable): The neuron class to use (e.g., IFNode).
+            **kwargs: Parameters passed to the spiking neuron constructor.
+        '''
         super().__init__()
             
         self.conv = layer.Conv2d(in_channels, channels, kernel_size=3, stride=2, padding=0, bias=False)
@@ -35,6 +51,7 @@ class Net(nn.Module):
         self.lif2 = spiking_neuron(**deepcopy(kwargs))
 
     def forward(self, x: torch.Tensor):
+        '''Performs a full forward pass through the spiking layers.'''
         x = self.conv(x)
         x = self.bn(x)
         x = self.lif1(x)
@@ -44,13 +61,19 @@ class Net(nn.Module):
         return x
 
     def forward_cnn(self, x:torch.Tensor):
+        '''Performs a partial forward pass through the convolutional frontend.'''
         x = self.conv(x)
         x = self.bn(x)
         x = self.lif1(x)
         return x
     
 def main():
-    
+    '''
+    Evaluates the accuracy and loss of the NMNIST model across three backends:
+    1. PyTorch (Quantized SpikingJelly)
+    2. CRI Software Simulator (simpleSim)
+    3. CRI Hardware Accelerator (FPGA)
+    '''
     args = parser.parse_args()
     print(args)
     
@@ -63,23 +86,23 @@ def main():
     )
     
     net = Net(spiking_neuron=neuron.IFNode, surrogate_function=surrogate.ATan(), detach_reset=True)
-    
     device = torch.device("cpu")
     
     checkpoint = torch.load(args.resume_path, map_location=device)
     net.load_state_dict(checkpoint['net'])
-    
     net.eval()
     
+    # Fold Batch Normalization into preceding convolutional layers
     bn = BN_Folder()
     net_bn = bn.fold(net)
     
+    # Apply quantization for hardware compatibility
     qn = Quantize_Network(w_alpha=args.alpha)
     net_quan = qn.quantize(net_bn)
     
-    #Set the parameters for conversion
-    input_layer = 0 #first pytorch layer that acts as synapses, indexing begins at 0 
-    output_layer = 4 #last pytorch layer that acts as synapses
+    # Conversion parameters
+    input_layer = 0 
+    output_layer = 4 
     input_shape = (2, 34, 34)
     v_threshold = qn.v_threshold
 
@@ -93,99 +116,91 @@ def main():
     
     cn.layer_converter(net_quan)
     
-    config = {}
-    config['neuron_type'] = "I&F"
-    config['global_neuron_params'] = {}
-    config['global_neuron_params']['v_thr'] = int(qn.v_threshold)
+    config = {
+        'neuron_type': "I&F",
+        'global_neuron_params': {'v_thr': int(qn.v_threshold)}
+    }
     
+    # Initialize Software Simulation Network
     softwareNetwork = CRI_network(dict(cn.axon_dict),
             connections=dict(cn.neuron_dict),
-            config=config,target='simpleSim', 
+            config=config, target='simpleSim', 
             outputs = cn.output_neurons,
             simDump=False,
             coreID=1,
-            perturbMag=8, #Zero randomness  
+            perturbMag=8, 
             leak=2**6)
+
+    # Initialize Hardware FPGA Network
     hardwareNetwork = CRI_network(dict(cn.axon_dict),
             connections=dict(cn.neuron_dict),
-            config=config,target='CRI', 
+            config=config, target='CRI', 
             outputs = cn.output_neurons,
             simDump=False,
             coreID=1,
-            perturbMag=8, #Zero randomness  
+            perturbMag=8, 
             leak=2**6)
     
     start_time = time.time()
     
-    test_loss = 0
-    test_acc = 0
-    test_samples = 0
-    
-    test_loss_torch = 0
-    test_acc_torch = 0
-    
-    test_loss_hard = 0
-    test_acc_hard = 0
+    test_loss, test_acc, test_samples = 0, 0, 0
+    test_loss_torch, test_acc_torch = 0, 0
+    test_loss_hard, test_acc_hard = 0, 0
     
     encoder = encoding.PoissonEncoder()
-    
     loss_fun = nn.MSELoss()
     
     with torch.no_grad():
         for img, label in test_loader:
-            img = img.transpose(0, 1) # [B, T, C, H, W] -> [T, B, C, H, W]
+            img = img.transpose(0, 1) # [T, B, C, H, W]
             label_onehot = F.one_hot(label, args.targets).float()
             out_tor = 0.
             
-            cri_input = []
+            cri_input_batch = []
             
             for t in img:
                 encoded_img = encoder(t)
-                cri_input.append(encoded_img)
+                cri_input_batch.append(encoded_img)
                 out_tor += net_quan(encoded_img)
                 
             out_tor = out_tor/args.T
             
-            cri_input = torch.stack(cri_input)
-            cri_input = cri_input.transpose(0, 1) # [T, N, C, H, W] -> [N, T, C, H, W]
-            cri_input = cn.input_converter(cri_input)
-            out_hard = torch.tensor(cn.run_CRI_hw(cri_input,hardwareNetwork), dtype=float).to(device)    
-            out_fr = torch.tensor(cn.run_CRI_sw(cri_input,softwareNetwork), dtype=float).to(device)    
+            # Prepare inputs for CRI backends
+            cri_input_batch = torch.stack(cri_input_batch).transpose(0, 1) # [N, T, C, H, W]
+            cri_input_final = cn.input_converter(cri_input_batch)
             
-            print(f'Label : {label} Soft: {out_fr} Hard: {out_hard} Torch_Pred: {out_tor}')
+            # Run inference on CRI Hardware and Software backends
+            out_hard = torch.tensor(cn.run_CRI_hw(cri_input_final, hardwareNetwork), dtype=float).to(device)    
+            out_fr = torch.tensor(cn.run_CRI_sw(cri_input_final, softwareNetwork), dtype=float).to(device)    
             
-            loss = loss_fun(out_fr, label)
+            print(f'Label: {label} Soft: {out_fr} Hard: {out_hard} Torch_Pred: {out_tor.argmax(1)}')
+            
+            # Update metrics
             test_samples += label.numel()
+            
+            loss = loss_fun(out_fr, label.float())
             test_loss += loss.item() * label.numel()
             test_acc += (out_fr == label).float().sum().item()      
             
             loss_torch = loss_fun(out_tor, label_onehot)
             test_loss_torch += loss_torch.item() * label.numel()
-            test_acc_torch += (out_tor.argmax(1)==label).float().sum().item()
+            test_acc_torch += (out_tor.argmax(1) == label).float().sum().item()
             
-            loss_hard = loss_fun(out_hard, label)
+            loss_hard = loss_fun(out_hard, label.float())
             test_loss_hard += loss_hard.item() * label.numel()
-            test_acc_hard += (out_hard==label).float().sum().item()
+            test_acc_hard += (out_hard == label).float().sum().item()
             
             functional.reset_net(net_quan)
     
+    # Final Reporting
     test_time = time.time()
     test_speed = test_samples / (test_time - start_time)
-    test_loss /= test_samples
-    test_acc /= test_samples
     
-    test_loss_torch /= test_samples
-    test_acc_torch /= test_samples        
-    
-    test_loss_hard /= test_samples
-    test_acc_hard /= test_samples  
-    
-    print(f'test_loss ={test_loss: .4f}, test_acc ={test_acc: .4f}')
-    print(f'test_loss_torch ={test_loss_torch: .4f}, test_acc_torch ={test_acc_torch: .4f}')
-    print(f'test_loss_hard ={test_loss_hard: .4f}, test_acc_hard ={test_acc_hard: .4f}')
-    print(f'test speed ={test_speed: .4f} images/s')
-    
+    print(f'\n--- Evaluation Results ---')
+    print(f'Software CRI: Loss={test_loss/test_samples: .4f}, Acc={test_acc/test_samples: .4f}')
+    print(f'PyTorch (Quant): Loss={test_loss_torch/test_samples: .4f}, Acc={test_acc_torch/test_samples: .4f}')
+    print(f'Hardware CRI: Loss={test_loss_hard/test_samples: .4f}, Acc={test_acc_hard/test_samples: .4f}')
+    print(f'Throughput: {test_speed: .4f} images/s')
 
-    
 if __name__ == '__main__':
     main()

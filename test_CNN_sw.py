@@ -30,7 +30,24 @@ parser.add_argument('-data-dir', default='/Volumes/export/isn/keli/code/data/DVS
 parser.add_argument('-targets', default=11, type=int, help='Number of labels')
 
 class Net(nn.Module):
+    '''
+    A Spiking Convolutional Neural Network designed for MNIST classification.
+
+    The architecture consists of a 2D convolutional layer, batch normalization, 
+    LIF neurons, max pooling, and a final linear classification layer.
+    '''
     def __init__(self, in_channels = 1, out_channels = 1, w = 28, h = 28, spiking_neuron: callable = None, **kwargs):
+        '''
+        Initializes the network layers and spiking neurons.
+
+        Args:
+            in_channels (int): Number of input channels (1 for MNIST).
+            out_channels (int): Number of output channels for the convolutional layer.
+            w (int): Input image width.
+            h (int): Input image height.
+            spiking_neuron (callable): The spiking neuron class (e.g., LIFNode).
+            **kwargs: Additional parameters for the spiking neurons.
+        '''
         super().__init__()
         self.conv = layer.Conv2d(in_channels, out_channels, kernel_size=3, stride=2, bias = False)
         self.bn = layer.BatchNorm2d(out_channels)
@@ -41,6 +58,15 @@ class Net(nn.Module):
         self.lif2 = spiking_neuron(**deepcopy(kwargs))
     
     def forward(self, x: torch.Tensor):
+        '''
+        Defines the forward pass of the spiking network.
+
+        Args:
+            x (torch.Tensor): Input image tensor.
+
+        Returns:
+            torch.Tensor: Output spikes or membrane potentials from the final layer.
+        '''
         x = self.conv(x)
         x = self.bn(x)
         x = self.lif1(x)
@@ -51,6 +77,11 @@ class Net(nn.Module):
         return x
     
 def main():
+    '''
+    Main execution script to load a pre-trained MNIST spiking model, 
+    apply Batch Normalization folding and quantization, and convert the 
+    PyTorch model into a format compatible with the CRI hardware API.
+    '''
     # python test_CNN_sw.py -data-dir /Users/keli/Code/CRI/data 
     args = parser.parse_args()
     print(args)
@@ -90,37 +121,4 @@ def main():
     
     # Set the parameters for conversion
     input_layer = 0 #first pytorch layer that acts as synapses, indexing begins at 0 
-    output_layer = 5 #last pytorch layer that acts as synapses
-    input_shape = (1, 28, 28)
-    v_threshold = qn.v_threshold
-    
-    cn = CRI_Converter(num_steps=args.T,
-                       input_layer = input_layer,
-                       output_layer = output_layer,
-                       input_shape = input_shape,
-                       v_threshold = v_threshold,
-                       )
-    
-    
-    
-    
-
-    
-    
-if __name__ == '__main__':
-    main()
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-
-    
-    
-    
-    
+    output_layer = 5 #last pytorch
