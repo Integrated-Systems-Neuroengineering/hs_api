@@ -102,7 +102,7 @@
               preferWheels = true;
               inherit overrides;
               editablePackageSources = {
-                hs_api = ./.;
+                hs-api = ./.;
               };
             })
             pkgs.metis
