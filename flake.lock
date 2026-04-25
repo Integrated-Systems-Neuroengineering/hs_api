@@ -263,11 +263,11 @@
         "poetry2nix": "poetry2nix_3"
       },
       "locked": {
-        "lastModified": 1776991706,
-        "narHash": "sha256-pFOekkua31ZuN66TOt7IqfQtNGUpj9A5UypP1K15dmQ=",
+        "lastModified": 1777080599,
+        "narHash": "sha256-3T878Z0isL4ukyoiG5m6mMz7p+iN7LHT1gqecbOR+Bk=",
         "ref": "marchChange",
-        "rev": "b8c5732244ed0dc665beeed80d09b180225c434a",
-        "revCount": 337,
+        "rev": "fac9c3a29710d562fcdcd13790c18d46688de1e0",
+        "revCount": 338,
         "type": "git",
         "url": "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge"
       },
