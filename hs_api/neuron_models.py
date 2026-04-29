@@ -46,6 +46,14 @@ class neuron_model(ABC):
             )
         )
 
+    def __setstate__(self, state):
+        # Backfill attributes added after old pickles were created
+        state.setdefault('refractory_max', 0)
+        state.setdefault('delay_value', 0)
+        state.setdefault('dual_synapse_en', False)
+        state.setdefault('soft_reset', False)
+        self.__dict__.update(state)
+
     def __lt__(self, other):
         return hash(self) < hash(other)
 
