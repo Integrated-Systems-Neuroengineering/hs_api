@@ -12,7 +12,7 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('./fixtures/DVS_model_config.pkl', 'rb') as f:
+        with open('./fixtures/DVS_model_config_shift=-17.pkl', 'rb') as f:
             return pickle.load(f)
     
     @pytest.fixture
