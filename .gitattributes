@@ -3,3 +3,4 @@ tests/fixtures/CIFAR10_model_config.pkl filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/DVS_model_config_shift=-17.pkl filter=lfs diff=lfs merge=lfs -text
 tests/fixtures/DVS_model_small_config.pkl filter=lfs diff=lfs merge=lfs -text
 webexamples/*.pkl filter=lfs diff=lfs merge=lfs -text
+tests/fixtures/archive/*.pkl filter=lfs diff=lfs merge=lfs -text
