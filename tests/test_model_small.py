@@ -12,13 +12,13 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('/home/ckdeng/GitHub_repo/hs_api/tests/fixtures/DVS_model_small_config.pkl', 'rb') as f:
+        with open('./fixtures/DVS_model_config_shift=-17.pkl', 'rb') as f:
             return pickle.load(f)
     
     @pytest.fixture
     def test_batch(self):
         """Load saved test batch"""
-        with open('/home/ckdeng/GitHub_repo/hs_api/tests/fixtures/DVS_test_batch.pkl', 'rb') as f:
+        with open('./fixtures/DVS_test_batch.pkl', 'rb') as f:
             return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
@@ -50,6 +50,7 @@ class TestDVSInference:
         axons = model_config['axons']
         connections = model_config['connections']
         outputs = model_config['outputs']
+
         # Create network
         network = CRI_network(
             axons=axons,
