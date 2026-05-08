@@ -53,5 +53,8 @@ priority = "supplemental"
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
 
+[tool.pytest.ini_options]
+norecursedirs = ["result"]
+
 [tool.pylint.format]
 max-line-length = "88"

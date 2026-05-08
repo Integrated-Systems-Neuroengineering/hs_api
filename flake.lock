@@ -10,16 +10,16 @@
         "poetry2nix": "poetry2nix"
       },
       "locked": {
-        "lastModified": 1774640983,
-        "narHash": "sha256-E5kQWGaFkVw51gKuwoUEujs5MjreXEo+NDWjbryZ7I8=",
+        "lastModified": 1777519078,
+        "narHash": "sha256-qgSP2hdpLIVY0ajOBE2GsQjVBaeJHYDlrvJ0EUwkR24=",
         "owner": "Integrated-Systems-Neuroengineering",
         "repo": "connectome_utils",
-        "rev": "0c49ba23288b1627307da915f5285c2366141d0f",
+        "rev": "5bb0f77a00cace8ec4f68482a65f678f45bb6e0e",
         "type": "github"
       },
       "original": {
         "owner": "Integrated-Systems-Neuroengineering",
-        "ref": "marchChange",
+        "ref": "hbm_dev",
         "repo": "connectome_utils",
         "type": "github"
       }
@@ -263,16 +263,16 @@
         "poetry2nix": "poetry2nix_3"
       },
       "locked": {
-        "lastModified": 1777317875,
-        "narHash": "sha256-YWpOKNppb15Jqn9arrBvo39LBPlSBeluN3/URD+vacY=",
-        "ref": "marchChange",
-        "rev": "5198175016b8f3a6fe39d1e9b99a0e2953c7aaba",
-        "revCount": 339,
+        "lastModified": 1778221590,
+        "narHash": "sha256-Ze6PpK2+0JMFCjnNz9hxe3sN8lfXH/2utQdukC8U1CM=",
+        "ref": "hbm_dev",
+        "rev": "806f72707a01732b5ab9d051a5454ff7b37a0559",
+        "revCount": 311,
         "type": "git",
         "url": "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge"
       },
       "original": {
-        "ref": "marchChange",
+        "ref": "hbm_dev",
         "type": "git",
         "url": "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge"
       }

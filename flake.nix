@@ -14,7 +14,7 @@
     };
 
     connectome-utils = {
-      url = "github:Integrated-Systems-Neuroengineering/connectome_utils?ref=marchChange";
+      url = "github:Integrated-Systems-Neuroengineering/connectome_utils?ref=hbm_dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     fxpmath = {
@@ -22,7 +22,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     hs-bridge = {
-      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?ref=marchChange";
+      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?ref=hbm_dev";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
