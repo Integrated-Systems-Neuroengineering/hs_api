@@ -519,7 +519,7 @@ class CRI_network:
             for symbol in inputs
         ]  # convert symbols to internal indicies
         if self.target == "simpleSim":
-            output, spikeOutput = self.simpleSim.step_run(formated_inputs)
+            output, spikeOutput, _ = self.simpleSim.step_run(formated_inputs)
             spikeOutput = [
                 self.connectome.get_neuron_by_idx(spike).get_user_key()
                 for spike in spikeOutput
@@ -532,7 +532,7 @@ class CRI_network:
                 ]
                 return output, spikeOutput
             else:
-                return spikeOutput
+                return (spikeOutput, None, None)  # Match hardware format (spikes, latency, hbm_access)
 
         elif self.target == "CRI":
             if self.simDump:
