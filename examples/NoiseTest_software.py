@@ -3,7 +3,7 @@ from hs_api.neuron_models import LIF_neuron
 
 timesteps = 1000
 
-shift_values = list(range(-17, 18))  # Shifts from -17 to +17
+shift_values = list(range(-17, 20))  # Shifts from -17 to +17
 mp_diff_sums = {} # To accumulate absolute MP differences for each neuron
 for shift in shift_values:
     mp_diff_sums[shift] = 0
@@ -34,8 +34,8 @@ for i in range(0, len(shift_values), 5):
         curr_mp = network.read_membrane(outputs)
 
         for index, neuron_name in enumerate(outputs):
-            mp_diff_sums[neuron_name] += abs(curr_mp[index] - prev_mp[index]) # Accumulate average absolute difference
-
+            diff = abs(curr_mp[index]() - prev_mp[index]())
+            mp_diff_sums[neuron_name] += float(diff)
         prev_mp = curr_mp
 
 print("Absolute MP differences over " + str(timesteps) + " steps:")
@@ -45,7 +45,7 @@ for shift in shift_values:
 #calculate neighboring neuron MP quotients
 print("\nNeighboring neuron MP quotients:")
 
-for shift in range(-17, 17): 
+for shift in range(-17, 19): 
     prev_sum = mp_diff_sums[shift]
     current_sum = mp_diff_sums[shift + 1]
     if prev_sum != 0:
