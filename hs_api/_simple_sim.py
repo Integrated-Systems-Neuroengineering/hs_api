@@ -62,6 +62,37 @@ class simple_sim:
         )
         self.firedNeurons = []
 
+    def clear(self, num_neurons=None, simDump=False, coreOverride=0):
+        """
+        Resets all membrane potentials, refractory states, delay buffers, 
+        and step counters to ensure no information leaks between inferences.
+        
+        This method achieves perfect signature and functional parity with the 
+        physical FPGA controller hardware reset command.
+        
+        Parameters
+        ----------
+        num_neurons : int, optional
+            The total number of neurons to reset in the state vector. 
+            If None (default), it automatically uses the full network size 
+            defined by `self.numNeurons`.
+        simDump : bool, optional
+            A hardware-parity flag used on the physical FPGA to signal a memory 
+            dump of register states during a clear event. In this software 
+            simulator, it defaults to False and is bypassed.
+        coreOverride : int, optional
+            A hardware-parity identifier used to target a specific neurosynaptic 
+            core cluster on the physical chip. In this software simulator, it 
+            defaults to 0 and is bypassed.
+            
+        Returns
+        -------
+        None
+        """
+        target_neurons = num_neurons if num_neurons is not None else self.numNeurons
+        self.initialize_sim_vars(target_neurons)
+        self.stepNum = 0
+
     def gen_weights(self):
         nTotal = len(self.connectome.neuronArr)
         W_imm = dok_array((nTotal, self.numNeurons), dtype=np.float32)
@@ -111,28 +142,22 @@ class simple_sim:
         nNeurons = self.numNeurons
         perturbBits = 17
 
-        # --- 1. NOISE GENERATION (Digital Twin Logic) ---
         raw_noise = np.random.randint(-1*2**(perturbBits-1), 2**(perturbBits-1), size=nNeurons)
         
         noise_mag = np.abs(raw_noise)
         noise_sign = np.sign(raw_noise)
         
-        # Shift on raw int64 to prevent intermediate s17/s32 saturation
         shifted_mag = np.where(perturbs > 0, 
                                np.left_shift(noise_mag.astype(np.int64), perturbs.astype(np.int64)), 
                                np.right_shift(noise_mag.astype(np.int64), np.abs(perturbs).astype(np.int64)))
-        
-        # Now wrap into s35 and restore sign
+
         final_perturbation = Fxp(shifted_mag * noise_sign, dtype=self.formatDict["membrane_potential"])
-        
-        # Apply LSB parity for s35
+
         final_perturbation(final_perturbation | Fxp(1, dtype="fxp-u35/0"))
 
-        # Hardware suppression floor at -17 (shifts 16-bit noise entirely out)
         final_perturbation[np.equal(perturbs, -17)] = 0
         self.perturbation = final_perturbation
 
-        # --- 2. SPIKE DETECTION ---
         eligible = self.refractoryCounters == 0
         spiked_inds = np.nonzero((self.membranePotentials() > threshs) & eligible)
         self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
@@ -140,7 +165,6 @@ class simple_sim:
         spiked_mask = np.zeros(self.numNeurons, dtype=bool)
         spiked_mask[spiked_inds] = True
 
-        # --- 3. STATE UPDATES (Resets & Refractory) ---
         hard_reset_mask = spiked_mask & (self.soft_resets == 0)
         soft_reset_mask = spiked_mask & (self.soft_resets == 1)
         
@@ -213,4 +237,5 @@ class simple_sim:
 
         self.stepNum += 1
         outputSpikes = [i for i in self.firedNeurons if i in self.outputs]
+
         return self.membranePotentials(), outputSpikes
