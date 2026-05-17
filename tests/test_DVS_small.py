@@ -51,7 +51,6 @@ class TestDVSInference:
         connections = model_config['connections']
         outputs = model_config['outputs']
 
-        breakpoint()
         # Create network
         network = CRI_network(
             axons=axons,
