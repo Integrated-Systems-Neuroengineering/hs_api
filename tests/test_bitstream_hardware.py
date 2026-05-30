@@ -1,7 +1,11 @@
 import pytest
 from hs_api.api import CRI_network
-from hs_api.neuron_models import ANN_neuron, LIF_neuron, neuron_model
+from hs_api.neuron_models import ANN_neuron, LIF_neuron
 import pytest
+
+#shift values for ANN neurons are 0
+#shift values for LIF neurons are -17 (for tests not involving noise)
+#does not have synaptic delay or refractory period tests
 
 class TestBitStream:
     """Test suite using pytest framework"""
@@ -489,7 +493,7 @@ class TestBitStream:
             
         Network Configuration:
             - 1 axon (A0) with weight=0 (dummy axon, provides no actual input)
-            - 1 LIF neuron with threshold=0, shift=[parametrized: -17 or 0]
+            - 1 LIF neuron with threshold=0, shift=-17
             
         Test Procedure:
             Run 100 time steps with no input spikes
