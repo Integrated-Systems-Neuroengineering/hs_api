@@ -98,6 +98,22 @@
             (p2n.mkPoetryEnv {
               projectDir = ./.;
               python = pkgs.python311;
+              groups = [ "main" "apps" "dev" "docs" ];
+              preferWheels = true;
+              inherit overrides;
+              editablePackageSources = {
+                hs-api = ./.;
+              };
+            })
+            pkgs.metis
+          ];
+        };
+
+        devShells.fpga = pkgs.devshell.mkShell {
+          packages = [
+            (p2n.mkPoetryEnv {
+              projectDir = ./.;
+              python = pkgs.python311;
               groups = [ "main" "apps" "dev" "fpga" "docs" ];
               preferWheels = true;
               inherit overrides;

@@ -40,58 +40,61 @@ nix develop \
 
 ## FPGA Hardware
 
-`hs_bridge` is an optional dependency in the `fpga` group. To include it:
+`hs_bridge` is an optional dependency in the `fpga` group. To include it, select the
+`fpga` shell and pass `--impure` (required because the flake reads `libadxdma.so`
+directly from the host):
 
 ```bash
-nix develop --override-input hs-bridge path:../hs_bridge
+nix develop .#fpga --impure
+```
+
+On RHEL8 with nix-portable:
+
+```bash
+./scripts/nix-develop.sh .#fpga --impure
 ```
 
 ## Using nix-portable on RHEL8
 
 If you don't have Nix installed system-wide, [nix-portable](https://github.com/DavHau/nix-portable)
-lets you run Nix as a regular user. Download it and place the binary somewhere on your `PATH`
-(e.g. `~/nix-portable`).
-
-### Runtime selection
-
-nix-portable auto-detects a container runtime. On RHEL8 it may fall back to the **nix** runtime,
-which tries to create a private mount namespace directly — this fails because RHEL8 does not allow
-unprivileged mount namespaces without a user namespace. **bwrap** (bubblewrap) handles this
-correctly by creating a user + mount namespace together, and is available on RHEL8 by default.
-
-Force bwrap by exporting `NP_RUNTIME=bwrap` in your shell profile:
+lets you run Nix as a regular user. Download it to `~/nix-portable`, then use the
+wrapper script in this repo instead of invoking nix-portable directly:
 
 ```bash
-echo 'export NP_RUNTIME=bwrap' >> ~/.bashrc
-source ~/.bashrc
+./scripts/nix-develop.sh          # default shell
+./scripts/nix-develop.sh .#fpga   # FPGA shell (requires libadxdma + --impure)
 ```
 
-### Private dependency (hs_bridge)
+The script handles all RHEL8 quirks automatically:
 
-`hs_bridge` is a private GitHub repository. The flake fetches it over SSH, so you need a GitHub
-SSH key configured. Nix does not read your normal SSH config in all environments, so pass
-`GIT_SSH_COMMAND` explicitly if needed:
+- Forces the **bwrap** runtime (correct choice on RHEL8; the nix runtime fails without
+  unprivileged mount namespaces).
+- Injects your user entry into `/etc/passwd` inside the container so SSH key lookup
+  works for domain accounts (AD/Winbind). Safe on plain `/etc/passwd` systems too —
+  it's a no-op if your user is already there.
+- Defaults `NP_LOCATION` to `/local_disk/nix-$USER` so the nix store lives on local
+  disk rather than NFS (nix builds fail on NFS due to file-attribute restrictions
+  inside the bwrap user namespace).
+
+If your home directory is already on local disk, or you want to store the nix store
+elsewhere, override before running:
 
 ```bash
-GIT_SSH_COMMAND="ssh -F /dev/null" nix-portable nix develop
+NP_LOCATION=/some/other/path ./scripts/nix-develop.sh
 ```
 
-(`-F /dev/null` bypasses `/etc/ssh/ssh_config.d/05-redhat.conf` which may have permission
-warnings that confuse git inside Nix's environment.)
+### Manual invocation
 
-### Full invocation on RHEL8
-
-The `fpga` group requires `hs_bridge`, which links against `libadxdma` — the userspace
-interface to the FPGA PCIe DMA kernel driver. Because the flake reads this library
-directly from the host (`/usr/lib64/libadxdma.so.0.12.2`), `--impure` is required:
+If you need to run nix-portable directly (outside the repo, or for debugging):
 
 ```bash
-NP_RUNTIME=bwrap GIT_SSH_COMMAND="ssh -F /dev/null" ~/nix-portable nix develop --impure
-```
+export NP_RUNTIME=bwrap
+export NP_LOCATION=/local_disk/nix-$USER
+export NP_BWRAP=/path/to/scripts/bwrap-wrapper.sh
 
-Without `--impure`, nix will refuse to access paths outside the store. If the adxdma
-driver is not installed on the host, `hs_bridge` will still import but DMA operations
-will fail at runtime.
+~/nix-portable nix develop          # default shell
+~/nix-portable nix develop .#fpga --impure  # FPGA shell
+```
 
 ### Flake design notes
 
