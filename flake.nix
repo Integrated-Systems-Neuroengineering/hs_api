@@ -13,28 +13,32 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    connectome-utils = {
-      url = "github:Integrated-Systems-Neuroengineering/connectome_utils?ref=testing-suite";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     fxpmath = {
       url = "github:Integrated-Systems-Neuroengineering/fxpmath?ref=master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # Branch pinned to 1e3a114c (Christopher's working commit) + build.py/flake.nix grafted on top.
     hs-bridge = {
-      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?ref=testing-suite";
+      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
   outputs = { nixpkgs, flake-utils, devshell, poetry2nix,
-              connectome-utils, fxpmath, hs-bridge, ... }:
+              fxpmath, hs-bridge, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
         p2n = poetry2nix.lib.mkPoetry2Nix { inherit pkgs; };
 
         adxdma = hs-bridge.packages.${system}.adxdma;
+
+        # connectome_utils 181f8a86 predates flake.nix; fetch source directly.
+        connectome-utils-src = builtins.fetchGit {
+          url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git";
+          rev = "181f8a86b9d76500c27c903fe36ffa4d8df300aa";
+          allRefs = true;
+        };
 
         nvidiaNames = [
           "nvidia-cublas-cu12" "nvidia-cuda-cupti-cu12" "nvidia-cuda-nvrtc-cu12"
@@ -52,7 +56,7 @@
           # For git/path dependencies, override src with the pre-fetched flake input
           # so nix doesn't try to fetch from git/path inside the sandbox.
           connectome-utils = prev.connectome-utils.overridePythonAttrs (old: {
-            src = connectome-utils;
+            src = connectome-utils-src;
             nativeBuildInputs = (old.nativeBuildInputs or []) ++ [ final.poetry-core ];
           });
           fxpmath = prev.fxpmath.overridePythonAttrs (old: {
@@ -101,21 +105,45 @@
         packages.default = p2n.mkPoetryApplication {
           projectDir = ./.;
           python = pkgs.python310;
+          preferWheels = true;
           inherit overrides;
         };
+
+        packages.fpga = p2n.mkPoetryApplication {
+          projectDir = ./.;
+          python = pkgs.python310;
+          extras = [ "fpga" ];
+          preferWheels = true;
+          inherit overrides;
+        };
+
+        packages.wheel = pkgs.runCommandNoCC "hs-api-wheel" {
+          src = pkgs.lib.cleanSource ./.;
+          nativeBuildInputs = [
+            pkgs.python310
+            pkgs.python310Packages.poetry-core
+            pkgs.python310Packages.build
+          ];
+        } ''
+          cp -r "$src/." .
+          chmod -R +w .
+          python -m build --wheel --no-isolation
+          mkdir -p "$out"
+          cp dist/*.whl "$out/"
+        '';
 
         devShells.default = pkgs.devshell.mkShell {
           packages = [
             (p2n.mkPoetryEnv {
               projectDir = ./.;
               python = pkgs.python310;
-              groups = [ "main" "apps" "dev" "fpga" ];
+              groups = [ "main" "apps" "dev" ];
+              extras = [ "fpga" ];
               preferWheels = true;
               inherit overrides;
               editablePackageSources = {
                 hs-api = ./.;
                 fxpmath = fxpmath;
-                connectome-utils = connectome-utils;
               };
             })
             pkgs.metis

@@ -264,7 +264,7 @@ version = "1.7.0"
 description = "Painless YAML configuration."
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "confuse-1.7.0-py2.py3-none-any.whl", hash = "sha256:f002a733b3a4c16f73a094fcca3c80715b66e0ec08000983dc755267e2bd069f"},
     {file = "confuse-1.7.0.tar.gz", hash = "sha256:c9fe8474516a62397f8e52fcf89547bb2f2737b1a4a6f6dec11a286f0b3a7401"},
@@ -284,11 +284,13 @@ optional = false
 python-versions = "^3.10"
 groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.source]
-type = "directory"
-url = "../connectome_utils"
+type = "git"
+url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git"
+reference = "181f8a86b9d76500c27c903fe36ffa4d8df300aa"
+resolved_reference = "181f8a86b9d76500c27c903fe36ffa4d8df300aa"
 
 [[package]]
 name = "contourpy"
@@ -443,7 +445,7 @@ version = "3.2.4"
 description = "The Cython compiler for writing C extensions in the Python language."
 optional = false
 python-versions = ">=3.8"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "cython-3.2.4-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:02cb0cc0f23b9874ad262d7d2b9560aed9c7e2df07b49b920bda6f2cc9cb505e"},
     {file = "cython-3.2.4-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:f136f379a4a54246facd0eb6f1ee15c3837cb314ce87b677582ec014db4c6845"},
@@ -602,7 +604,7 @@ version = "1.0"
 description = "Fast computations of PCA/SVD/eigendecompositions via randomized methods"
 optional = false
 python-versions = "*"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "fbpca-1.0.tar.gz", hash = "sha256:150677642479663f317fdbb5e06dab3f98721cf7031bb4a84113d7a631c472d1"},
 ]
@@ -764,15 +766,17 @@ optional = false
 python-versions = "^3.10,<3.12"
 groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 numpy = "^2.2.4"
 scipy = "^1.15.2"
 
 [package.source]
-type = "directory"
-url = "../fxpmath"
+type = "git"
+url = "https://github.com/jfrank8/fxpmath.git"
+reference = "master"
+resolved_reference = "b07a3d304ff1508c64fa36cdb57249fd7699352f"
 
 [[package]]
 name = "grpcio"
@@ -855,11 +859,11 @@ protobuf = ["grpcio-tools (>=1.78.0)"]
 name = "hs-bridge"
 version = "0.1.1"
 description = "Software for interacting with the CRI neuromorphic hardware"
-optional = false
+optional = true
 python-versions = ">=3.10,<3.12"
-groups = ["fpga"]
+groups = ["main"]
 files = []
-develop = true
+develop = false
 
 [package.dependencies]
 bidict = "^0.22.0"
@@ -877,8 +881,10 @@ scipy = "^1.8.1"
 tqdm = "^4.64.1"
 
 [package.source]
-type = "directory"
-url = "../hs_bridge"
+type = "git"
+url = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git"
+reference = "b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6"
+resolved_reference = "b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6"
 
 [[package]]
 name = "idna"
@@ -901,7 +907,7 @@ version = "4.3.1"
 description = "Immutable wrapper around dictionaries (a fork of frozendict)"
 optional = false
 python-versions = "<4.0,>=3.8"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "immutabledict-4.3.1-py3-none-any.whl", hash = "sha256:c9facdc0ff30fdb8e35bd16532026cac472a549e182c94fa201b51b25e4bf7bf"},
     {file = "immutabledict-4.3.1.tar.gz", hash = "sha256:f844a669106cfdc73f47b1a9da003782fb17dc955a54c80972e0d93d1c63c514"},
@@ -1015,7 +1021,7 @@ version = "1.5.3"
 description = "Lightweight pipelining with Python functions"
 optional = false
 python-versions = ">=3.9"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "joblib-1.5.3-py3-none-any.whl", hash = "sha256:5fc3c5039fc5ca8c0276333a188bbd59d6b7ab37fe6632daa76bc7f9ec18e713"},
     {file = "joblib-1.5.3.tar.gz", hash = "sha256:8561a3269e6801106863fd0d6d84bb737be9e7631e33aaed3fb9ce5953688da3"},
@@ -1027,7 +1033,7 @@ version = "0.7.6"
 description = "K-Means clustering constrained with minimum and maximum cluster size"
 optional = false
 python-versions = "*"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "k_means_constrained-0.7.6-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:fe6dc2acfeafda2e7bdb0c3d290dbb0b4b57078ad47990a1ba783a26ed374286"},
     {file = "k_means_constrained-0.7.6-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:6fe7b59e45b8ef21720e16a4b75c69e242c5b447bc4ce230c0c33b9caf91f87b"},
@@ -1738,7 +1744,7 @@ version = "9.15.6755"
 description = "Google OR-Tools python libraries and modules"
 optional = false
 python-versions = ">=3.9"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "ortools-9.15.6755-cp310-cp310-macosx_10_15_x86_64.whl", hash = "sha256:e4559603031ed371c5d86b1e9357fa49fb89236452e4b9bc429a0cf4a2fab05d"},
     {file = "ortools-9.15.6755-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:5bb2b434f4ae01ce81813d01db722d9dedcc452aede681211ee4d4df8963a410"},
@@ -1916,7 +1922,7 @@ version = "5.2.0"
 description = "Threading and multiprocessing eye-candy."
 optional = false
 python-versions = ">=3.8"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "pebble-5.2.0-py3-none-any.whl", hash = "sha256:6237a792a78524648857ec6d2dae069c91a45bdef18daf957078a56e2dd8e0a8"},
     {file = "pebble-5.2.0.tar.gz", hash = "sha256:8e0a5f6a1cfdd0ac1bfc4a789e20d2b4b895de976e547d23b7de23b71ef39b34"},
@@ -2150,7 +2156,7 @@ version = "2020.1"
 description = "A Graph Partitioning Package"
 optional = false
 python-versions = "~=3.6"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "PyMetis-2020.1.tar.gz", hash = "sha256:d13e262e8ee20963e898c2c473b69502661a8727904a49b33689fb4d42248555"},
 ]
@@ -2402,7 +2408,7 @@ version = "1.7.2"
 description = "A set of python modules for machine learning and data mining"
 optional = false
 python-versions = ">=3.10"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "scikit_learn-1.7.2-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6b33579c10a3081d076ab403df4a4190da4f4432d443521674637677dc91e61f"},
     {file = "scikit_learn-1.7.2-cp310-cp310-macosx_12_0_arm64.whl", hash = "sha256:36749fb62b3d961b1ce4fedf08fa57a1986cd409eff2d783bca5d4b9b5fce51c"},
@@ -2641,7 +2647,7 @@ version = "3.6.0"
 description = "threadpoolctl"
 optional = false
 python-versions = ">=3.9"
-groups = ["fpga"]
+groups = ["main"]
 files = [
     {file = "threadpoolctl-3.6.0-py3-none-any.whl", hash = "sha256:43a0b8fd5a2928500110039e43a5eed8480b918967083ea48dc3ab9f13c4a7fb"},
     {file = "threadpoolctl-3.6.0.tar.gz", hash = "sha256:8ab8b4aa3491d812b623328249fab5302a68d2d71745c8a4c719a2fcaba9f44e"},

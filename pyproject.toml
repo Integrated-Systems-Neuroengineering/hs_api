@@ -10,19 +10,20 @@ python = "^3.10,<3.11"
 numpy = "^2.1.2"
 pyyaml = "^6.0.2"
 tqdm = "^4.66.5"
-connectome_utils = {path = "../connectome_utils", develop = true}
+connectome_utils = {git = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git", rev = "181f8a86b9d76500c27c903fe36ffa4d8df300aa"}
 jaal = "^0.1.7"
 bidict = "^0.22.0"
-fxpmath = {path = "../fxpmath", develop = true}
+fxpmath = {git = "https://github.com/jfrank8/fxpmath.git", branch = "master"}
+hs_bridge = {git = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git", rev = "b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6", optional = true}
+
+[tool.poetry.extras]
+fpga = ["hs_bridge"]
 
 [tool.poetry.group.apps.dependencies]
 matplotlib = "^3.9.2"
 spikingjelly = "^0.0.0.0.14"
 snntorch = "^0.9.1"
 tensorboard = "^2.18.0"
-
-[tool.poetry.group.fpga.dependencies]
-hs_bridge = {path = "../hs_bridge", develop = true}
 
 
 [tool.poetry.group.dev.dependencies]
