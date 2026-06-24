@@ -104,6 +104,21 @@
           # jaal is not in nixpkgs; if it fails to build add an override here,
           # e.g. fetching it from PyPI with buildPythonPackage / fetchPypi.
         });
+        hsApiWheel = pkgs.runCommandNoCC "hs-api-wheel" {
+          src = pkgs.lib.cleanSource ./.;
+          nativeBuildInputs = [
+            pkgs.python310
+            pkgs.python310Packages.poetry-core
+            pkgs.python310Packages.build
+          ];
+        } ''
+          cp -r "$src/." .
+          chmod -R +w .
+          python -m build --wheel --no-isolation
+          mkdir -p "$out"
+          cp dist/*.whl "$out/"
+        '';
+
       in {
         packages.default = p2n.mkPoetryApplication {
           projectDir = ./.;
@@ -120,19 +135,12 @@
           inherit overrides;
         };
 
-        packages.wheel = pkgs.runCommandNoCC "hs-api-wheel" {
-          src = pkgs.lib.cleanSource ./.;
-          nativeBuildInputs = [
-            pkgs.python310
-            pkgs.python310Packages.poetry-core
-            pkgs.python310Packages.build
-          ];
-        } ''
-          cp -r "$src/." .
-          chmod -R +w .
-          python -m build --wheel --no-isolation
+        packages.wheel = hsApiWheel;
+
+        packages.wheels = pkgs.runCommandNoCC "hs-wheels" {} ''
           mkdir -p "$out"
-          cp dist/*.whl "$out/"
+          cp ${hsApiWheel}/*.whl "$out/"
+          cp ${hs-bridge.packages.${system}.wheel}/*.whl "$out/"
         '';
 
         devShells.default = pkgs.devshell.mkShell {
