@@ -17,9 +17,11 @@
       url = "github:Integrated-Systems-Neuroengineering/fxpmath?ref=master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    # Branch pinned to 1e3a114c (Christopher's working commit) + build.py/flake.nix grafted on top.
+    # Branch pinned to 1e3a114c (Christopher's working commit) + build.py/flake.nix grafted on top,
+    # plus cherry-picks of f88495f and 26466f3 for L6m refractory/dual-synapse support.
+    # e88e660: add packages.wheel output; fix Cython 3.x DmaMethodNormal compat.
     hs-bridge = {
-      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6";
+      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=e88e6606828795810269f5d44f6ca789eb4607d3";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -33,10 +35,10 @@
 
         adxdma = hs-bridge.packages.${system}.adxdma;
 
-        # connectome_utils 181f8a86 predates flake.nix; fetch source directly.
+        # L6m-testing-suite branch: 181f8a86 + delayed synapse support (is_delayed() getter).
         connectome-utils-src = builtins.fetchGit {
           url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git";
-          rev = "181f8a86b9d76500c27c903fe36ffa4d8df300aa";
+          rev = "12ec6bf1ad6f163e166418b58661739ab5a1ee01";
           allRefs = true;
         };
 
