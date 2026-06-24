@@ -182,26 +182,6 @@
           in "${script}/bin/bundle-env";
         };
 
-        apps.test-env = {
-          type = "app";
-          program = let
-            fpgaEnv = self.packages.${system}.fpga-env;
-            script = pkgs.writeShellApplication {
-              name = "test-env";
-              text = ''
-                LD_LIBRARY_PATH=/usr/lib64 "${fpgaEnv}/bin/python" - << 'EOF'
-import hs_api
-import hs_bridge
-from hs_bridge.wrapped_dmadump import dmadump
-print("hs_api:    ok")
-print("hs_bridge: ok")
-print("dmadump.DmaMethodNormal =", dmadump.DmaMethodNormal)
-EOF
-              '';
-            };
-          in "${script}/bin/test-env";
-        };
-
         packages.wheels = pkgs.runCommandNoCC "hs-wheels" {} ''
           mkdir -p "$out"
           cp ${hsApiWheel}/*.whl "$out/"
