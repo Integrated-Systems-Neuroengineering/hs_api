@@ -20,8 +20,9 @@
     # Branch pinned to 1e3a114c (Christopher's working commit) + build.py/flake.nix grafted on top,
     # plus cherry-picks of f88495f and 26466f3 for L6m refractory/dual-synapse support.
     # e88e660: add packages.wheel output; fix Cython 3.x DmaMethodNormal compat.
+    # 5bafaf3: fix wheel build (pip wheel --no-build-isolation; python -m build silently fails).
     hs-bridge = {
-      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=e88e6606828795810269f5d44f6ca789eb4607d3";
+      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
