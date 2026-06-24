@@ -21,13 +21,14 @@
     # plus cherry-picks of f88495f and 26466f3 for L6m refractory/dual-synapse support.
     # e88e660: add packages.wheel output; fix Cython 3.x DmaMethodNormal compat.
     # 5bafaf3: fix wheel build (pip wheel --no-build-isolation; python -m build silently fails).
+    # fa24290: tag wheel linux_x86_64 to bypass manylinux_2_40 glibc check on RHEL8.
     hs-bridge = {
-      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604";
+      url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { nixpkgs, flake-utils, devshell, poetry2nix,
+  outputs = { self, nixpkgs, flake-utils, devshell, poetry2nix,
               fxpmath, hs-bridge, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
@@ -136,6 +137,50 @@
         };
 
         packages.wheel = hsApiWheel;
+
+        # Standalone Python environment with all fpga deps installed (not editable).
+        # bin/python has hs_api, hs_bridge, connectome_utils, etc. on sys.path.
+        # Used by apps.bundle-env to create a self-contained closure for NSG nodes.
+        packages.fpga-env = p2n.mkPoetryEnv {
+          projectDir = ./.;
+          python = pkgs.python310;
+          groups = [ "main" ];
+          extras = [ "fpga" ];
+          preferWheels = true;
+          inherit overrides;
+        };
+
+        apps.bundle-env = {
+          type = "app";
+          program = let
+            fpgaEnv = self.packages.${system}.fpga-env;
+            script = pkgs.writeShellApplication {
+              name = "bundle-env";
+              runtimeInputs = [ pkgs.nix ];
+              text = ''
+                set -e
+                OUTDIR="''${1:-.}"
+                NAR="$OUTDIR/hs-api-env.nar"
+                WRAPPER="$OUTDIR/run-hs-api.sh"
+
+                echo "Resolving closure for ${fpgaEnv} ..."
+                nix-store --export $(nix-store -qR "${fpgaEnv}") > "$NAR"
+                SIZE=$(du -sh "$NAR" | cut -f1)
+
+                printf '#!/bin/bash\nexec "${fpgaEnv}/bin/python" "$@"\n' > "$WRAPPER"
+                chmod +x "$WRAPPER"
+
+                echo "Done ($SIZE):"
+                echo "  $NAR"
+                echo "  $WRAPPER"
+                echo ""
+                echo "On each NSG node:"
+                echo "  nix-store --import < hs-api-env.nar"
+                echo "  ./run-hs-api.sh priya_script.py"
+              '';
+            };
+          in "${script}/bin/bundle-env";
+        };
 
         packages.wheels = pkgs.runCommandNoCC "hs-wheels" {} ''
           mkdir -p "$out"
