@@ -289,8 +289,8 @@ develop = false
 [package.source]
 type = "git"
 url = "https://github.com/Integrated-Systems-Neuroengineering/connectome_utils.git"
-reference = "181f8a86b9d76500c27c903fe36ffa4d8df300aa"
-resolved_reference = "181f8a86b9d76500c27c903fe36ffa4d8df300aa"
+reference = "12ec6bf1ad6f163e166418b58661739ab5a1ee01"
+resolved_reference = "12ec6bf1ad6f163e166418b58661739ab5a1ee01"
 
 [[package]]
 name = "contourpy"
@@ -883,8 +883,8 @@ tqdm = "^4.64.1"
 [package.source]
 type = "git"
 url = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git"
-reference = "b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6"
-resolved_reference = "b5e4a840717e1f21a7fafbd1c3bdaa2fce1b5ed6"
+reference = "5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604"
+resolved_reference = "5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604"
 
 [[package]]
 name = "idna"
