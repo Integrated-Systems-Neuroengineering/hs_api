@@ -167,7 +167,7 @@
                 nix-store --export $(nix-store -qR "${fpgaEnv}") > "$NAR"
                 SIZE=$(du -sh "$NAR" | cut -f1)
 
-                printf '#!/bin/bash\nexec "${fpgaEnv}/bin/python" "$@"\n' > "$WRAPPER"
+                printf '#!/bin/bash\n# Run inside nix-portable bwrap so /nix/store is mounted for glibc RPATH resolution.\nLD_LIBRARY_PATH=/usr/lib64 NP_RUNTIME=bwrap ~/nix-portable nix run "%s" -- "$@"\n' "${fpgaEnv}" > "$WRAPPER"
                 chmod +x "$WRAPPER"
 
                 echo "Done ($SIZE):"
