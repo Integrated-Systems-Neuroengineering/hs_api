@@ -46,10 +46,15 @@ class LIF_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak):
+    def __init__(self, threshold, shift, leak, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
         self.threshold = threshold
         self.shift = shift
         self.leak = leak
+        self.refractory_max = refractory_max
+        self.dual_synapse_en = 1 if dual_synapse_en else 0
+        self.delay_value = delay_value
+        self.shadow_uram_offset = shadow_uram_offset
+        self.legacy_noise_en = legacy_noise_en
 
     def get_threshold(self):
         return self.threshold
@@ -63,6 +68,21 @@ class LIF_neuron(neuron_model):
     def get_neuronModel(self):
         return 2
 
+    def get_refractory_max(self):
+        return getattr(self, 'refractory_max', 0)
+
+    def get_dual_synapse_en(self):
+        return getattr(self, 'dual_synapse_en', 0)
+
+    def get_delay_value(self):
+        return getattr(self, 'delay_value', 0)
+
+    def get_shadow_uram_offset(self):
+        return getattr(self, 'shadow_uram_offset', 0)
+
+    def get_legacy_noise_en(self):
+        return getattr(self, 'legacy_noise_en', 0)
+
 
 class ANN_neuron(neuron_model):
     """
@@ -73,11 +93,15 @@ class ANN_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak=0):
+    def __init__(self, threshold, shift, leak=0, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
         self.threshold = threshold
-        # TODO: to be determined
         self.shift = shift
         self.leak = leak
+        self.refractory_max = refractory_max
+        self.dual_synapse_en = 1 if dual_synapse_en else 0
+        self.delay_value = delay_value
+        self.shadow_uram_offset = shadow_uram_offset
+        self.legacy_noise_en = legacy_noise_en
 
     def get_threshold(self):
         return self.threshold
@@ -90,3 +114,18 @@ class ANN_neuron(neuron_model):
 
     def get_neuronModel(self):
         return 0
+
+    def get_refractory_max(self):
+        return getattr(self, 'refractory_max', 0)
+
+    def get_dual_synapse_en(self):
+        return getattr(self, 'dual_synapse_en', 0)
+
+    def get_delay_value(self):
+        return getattr(self, 'delay_value', 0)
+
+    def get_shadow_uram_offset(self):
+        return getattr(self, 'shadow_uram_offset', 0)
+
+    def get_legacy_noise_en(self):
+        return getattr(self, 'legacy_noise_en', 0)
