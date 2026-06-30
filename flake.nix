@@ -26,10 +26,14 @@
       url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    bundlers = {
+      url = "github:NixOS/bundlers";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, devshell, poetry2nix,
-              fxpmath, hs-bridge, ... }:
+              fxpmath, hs-bridge, bundlers, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
@@ -150,37 +154,12 @@
           inherit overrides;
         };
 
-        apps.bundle-env = {
-          type = "app";
-          program = let
-            fpgaEnv = self.packages.${system}.fpga-env;
-            script = pkgs.writeShellApplication {
-              name = "bundle-env";
-              runtimeInputs = [ pkgs.nix ];
-              text = ''
-                set -e
-                OUTDIR="''${1:-.}"
-                NAR="$OUTDIR/hs-api-env.nar"
-                WRAPPER="$OUTDIR/run-hs-api.sh"
-
-                echo "Resolving closure for ${fpgaEnv} ..."
-                nix-store --export $(nix-store -qR "${fpgaEnv}") > "$NAR"
-                SIZE=$(du -sh "$NAR" | cut -f1)
-
-                printf '#!/bin/bash\n# Run inside nix-portable bwrap so /nix/store is mounted for glibc RPATH resolution.\nLD_LIBRARY_PATH=/usr/lib64 NP_RUNTIME=bwrap ~/nix-portable nix run "%s" -- "$@"\n' "${fpgaEnv}" > "$WRAPPER"
-                chmod +x "$WRAPPER"
-
-                echo "Done ($SIZE):"
-                echo "  $NAR"
-                echo "  $WRAPPER"
-                echo ""
-                echo "On each NSG node:"
-                echo "  nix-store --import < hs-api-env.nar"
-                echo "  ./run-hs-api.sh priya_script.py"
-              '';
-            };
-          in "${script}/bin/bundle-env";
-        };
+        packages.bundle = bundlers.bundlers.${system}.toArx (pkgs.symlinkJoin {
+          name = "hs-api-fpga-env";
+          pname = "hs-api";
+          paths = [ self.packages.${system}.fpga-env ];
+          meta.mainProgram = "python";
+        });
 
         packages.wheels = pkgs.runCommandNoCC "hs-wheels" {} ''
           mkdir -p "$out"
