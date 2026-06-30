@@ -187,7 +187,7 @@ FLAKE_EOF
 BUNDLE=$(dirname "$(realpath "$0")")
 nix-store --check-validity "${fpgaEnv}" 2>/dev/null || \
   NP_RUNTIME=bwrap ~/nix-portable nix-store --import < "$BUNDLE/hs-api-env.nar"
-LD_LIBRARY_PATH=/usr/lib64 NP_RUNTIME=bwrap ~/nix-portable nix run "$BUNDLE" -- "$@"
+NP_RUNTIME=bwrap ~/nix-portable nix run "path:$BUNDLE" -- "$@"
 SCRIPT_EOF
                 chmod +x "$WRAPPER"
 
@@ -197,7 +197,7 @@ SCRIPT_EOF
                 echo "  $WRAPPER"
                 echo ""
                 echo "On each NSG node: ./run-hs-api.sh priya_script.py"
-                echo "To test locally:  NP_RUNTIME=bwrap ~/nix-portable nix run \"$OUTDIR\" --impure -- -c 'import hs_api; print(\"ok\")'"
+                echo "To test locally:  NP_RUNTIME=bwrap ~/nix-portable nix run \"path:$OUTDIR\" -- -c 'import hs_api; print(\"ok\")'"
               '';
             };
           in "${script}/bin/bundle-env";
