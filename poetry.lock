@@ -883,8 +883,8 @@ tqdm = "^4.64.1"
 [package.source]
 type = "git"
 url = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git"
-reference = "5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604"
-resolved_reference = "5bafaf3a8d061ec68fe0b7b9fa90fd1aa2601604"
+reference = "fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17"
+resolved_reference = "fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17"
 
 [[package]]
 name = "idna"

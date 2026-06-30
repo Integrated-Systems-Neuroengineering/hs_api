@@ -26,14 +26,10 @@
       url = "git+ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge?rev=fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    bundlers = {
-      url = "github:NixOS/bundlers";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, flake-utils, devshell, poetry2nix,
-              fxpmath, hs-bridge, bundlers, ... }:
+              fxpmath, hs-bridge, ... }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = import nixpkgs { inherit system; overlays = [ devshell.overlays.default ]; };
@@ -154,12 +150,58 @@
           inherit overrides;
         };
 
-        packages.bundle = bundlers.bundlers.${system}.toArx (pkgs.symlinkJoin {
-          name = "hs-api-fpga-env";
-          pname = "hs-api";
-          paths = [ self.packages.${system}.fpga-env ];
-          meta.mainProgram = "python";
-        });
+        apps.bundle-env = {
+          type = "app";
+          program = let
+            fpgaEnv = self.packages.${system}.fpga-env;
+            script = pkgs.writeShellApplication {
+              name = "bundle-env";
+              runtimeInputs = [ pkgs.nix ];
+              text = ''
+                set -e
+                OUTDIR="''${1:-.}"
+                NAR="$OUTDIR/hs-api-env.nar"
+                FLAKE="$OUTDIR/flake.nix"
+                WRAPPER="$OUTDIR/run-hs-api.sh"
+
+                echo "Resolving closure for ${fpgaEnv} ..."
+                # shellcheck disable=SC2046
+                nix-store --export $(nix-store -qR "${fpgaEnv}") > "$NAR"
+                SIZE=$(du -sh "$NAR" | cut -f1)
+
+                cat > "$FLAKE" << 'FLAKE_EOF'
+{
+  inputs = {};
+  outputs = _: {
+    apps.x86_64-linux.default = {
+      type = "app";
+      program = "${fpgaEnv}/bin/python";
+    };
+  };
+}
+FLAKE_EOF
+
+                cat > "$WRAPPER" << 'SCRIPT_EOF'
+#!/bin/bash
+# Import closure into local nix store if not already present, then run.
+BUNDLE=$(dirname "$(realpath "$0")")
+nix-store --check-validity "${fpgaEnv}" 2>/dev/null || \
+  NP_RUNTIME=bwrap ~/nix-portable nix-store --import < "$BUNDLE/hs-api-env.nar"
+LD_LIBRARY_PATH=/usr/lib64 NP_RUNTIME=bwrap ~/nix-portable nix run "$BUNDLE" -- "$@"
+SCRIPT_EOF
+                chmod +x "$WRAPPER"
+
+                echo "Done ($SIZE):"
+                echo "  $NAR"
+                echo "  $FLAKE"
+                echo "  $WRAPPER"
+                echo ""
+                echo "On each NSG node: ./run-hs-api.sh priya_script.py"
+                echo "To test locally:  NP_RUNTIME=bwrap ~/nix-portable nix run \"$OUTDIR\" --impure -- -c 'import hs_api; print(\"ok\")'"
+              '';
+            };
+          in "${script}/bin/bundle-env";
+        };
 
         packages.wheels = pkgs.runCommandNoCC "hs-wheels" {} ''
           mkdir -p "$out"
