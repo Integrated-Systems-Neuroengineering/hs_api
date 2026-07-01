@@ -51,6 +51,11 @@ class TestDVSInference:
         connections = model_config['connections']
         outputs = model_config['outputs']
 
+        # Enable legacy noise mode for DVS inference (35-bit MP, unsigned noise/leak)
+        for key in connections:
+            neuron_obj = connections[key][1]
+            neuron_obj.legacy_noise_en = 1
+
         # Create network
         network = CRI_network(
             axons=axons,

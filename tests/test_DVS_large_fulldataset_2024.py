@@ -51,6 +51,14 @@ class TestDVSInference:
         connections = model_config['connections']
         outputs = model_config['outputs']
 
+        # Convert shift=0 (pre-L6d) to shift=-17 (L6d: disables noise) and
+        # enable legacy noise mode for DVS inference (35-bit MP, unsigned noise/leak)
+        for key in connections:
+            neuron_obj = connections[key][1]
+            if getattr(neuron_obj, 'shift', None) == 0:
+                neuron_obj.shift = -17
+            neuron_obj.legacy_noise_en = 1
+
         # Create network
         network = CRI_network(
             axons=axons,
