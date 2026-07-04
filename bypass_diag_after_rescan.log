@@ -1,0 +1,123 @@
+WARNING:root:partitioning library failed to load, multicore disabled
+ERROR: Failed to read 0x20 bytes via window at offset 0x00000000_10000000: ADXDMA_INVALID_REGION(277) 
+========================================================================
+BYPASS PATH DIAGNOSTIC
+========================================================================
+
+--- TEST A: bypass-read of axon-pointer region (rows 0..3) ---
+    These rows were written by create_axon_ptrs_bypass.
+    If bypass-read works at all, we should see structured data,
+    NOT all-0xFF.
+  row 0: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...  *** ALL 0xFF ***
+  row 1: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...  *** ALL 0xFF ***
+  row 2: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...  *** ALL 0xFF ***
+  row 3: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...  *** ALL 0xFF ***
+
+--- TEST B: stream-read of the same axon-pointer region ---
+  row 0: 00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05 ...
+  row 1: 60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05 ...
+  row 2: 00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05 ...
+  row 3: 60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05 ...
+
+--- TEST C: bypass write+read at SMALL offsets (rows 1024..1031) ---
+  row 1024: MISMATCH
+    expected: 00 0d 1a 27 34 41 4e 5b 68 75 82 8f 9c a9 b6 c3 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1025: MISMATCH
+    expected: 01 0e 1b 28 35 42 4f 5c 69 76 83 90 9d aa b7 c4 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1026: MISMATCH
+    expected: 02 0f 1c 29 36 43 50 5d 6a 77 84 91 9e ab b8 c5 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1027: MISMATCH
+    expected: 03 10 1d 2a 37 44 51 5e 6b 78 85 92 9f ac b9 c6 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1028: MISMATCH
+    expected: 04 11 1e 2b 38 45 52 5f 6c 79 86 93 a0 ad ba c7 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1029: MISMATCH
+    expected: 05 12 1f 2c 39 46 53 60 6d 7a 87 94 a1 ae bb c8 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1030: MISMATCH
+    expected: 06 13 20 2d 3a 47 54 61 6e 7b 88 95 a2 af bc c9 ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+  row 1031: MISMATCH
+    expected: 07 14 21 2e 3b 48 55 62 6f 7c 89 96 a3 b0 bd ca ...
+    got:      ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ...
+
+--- TEST D: bypass-write small row, stream-read SAME row ---
+    If both paths target the same physical HBM, they MUST see
+    the bytes we just wrote.
+  row 1024: MISMATCH
+    expected:        00 0d 1a 27 34 41 4e 5b 68 75 82 8f 9c a9 b6 c3
+    got (forward):   00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05
+    got (reversed):  05 80 80 54 05 80 80 48 05 80 80 3c 05 80 80 30
+  row 1025: MISMATCH
+    expected:        01 0e 1b 28 35 42 4f 5c 69 76 83 90 9d aa b7 c4
+    got (forward):   60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05
+    got (reversed):  05 80 80 b4 05 80 80 a8 05 80 80 9c 05 80 80 90
+  row 1026: MISMATCH
+    expected:        02 0f 1c 29 36 43 50 5d 6a 77 84 91 9e ab b8 c5
+    got (forward):   00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05
+    got (reversed):  05 80 80 54 05 80 80 48 05 80 80 3c 05 80 80 30
+  row 1027: MISMATCH
+    expected:        03 10 1d 2a 37 44 51 5e 6b 78 85 92 9f ac b9 c6
+    got (forward):   60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05
+    got (reversed):  05 80 80 b4 05 80 80 a8 05 80 80 9c 05 80 80 90
+  row 1028: MISMATCH
+    expected:        04 11 1e 2b 38 45 52 5f 6c 79 86 93 a0 ad ba c7
+    got (forward):   00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05
+    got (reversed):  05 80 80 54 05 80 80 48 05 80 80 3c 05 80 80 30
+  row 1029: MISMATCH
+    expected:        05 12 1f 2c 39 46 53 60 6d 7a 87 94 a1 ae bb c8
+    got (forward):   60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05
+    got (reversed):  05 80 80 b4 05 80 80 a8 05 80 80 9c 05 80 80 90
+  row 1030: MISMATCH
+    expected:        06 13 20 2d 3a 47 54 61 6e 7b 88 95 a2 af bc c9
+    got (forward):   00 80 80 05 0c 00 80 05 18 80 80 05 24 80 80 05
+    got (reversed):  05 80 80 54 05 80 80 48 05 80 80 3c 05 80 80 30
+  row 1031: MISMATCH
+    expected:        07 14 21 2e 3b 48 55 62 6f 7c 89 96 a3 b0 bd ca
+    got (forward):   60 80 80 05 6c 80 80 05 78 80 80 05 84 80 80 05
+    got (reversed):  05 80 80 b4 05 80 80 a8 05 80 80 9c 05 80 80 90
+
+--- TEST E: bypass-read at increasing offsets ---
+    Looking for a boundary beyond which bypass-read returns 0xFF.
+  offset       0 KB (row          0): all-0xFF
+  offset      32 KB (row       1024): all-0xFF
+  offset      64 KB (row       2048): all-0xFF
+  offset     128 KB (row       4096): all-0xFF
+  offset     256 KB (row       8192): all-0xFF
+  offset     512 KB (row      16384): all-0xFF
+  offset    1024 KB (row      32768): all-0xFF
+  offset    2048 KB (row      65536): all-0xFF
+  offset    4096 KB (row     131072): all-0xFF
+  offset    8192 KB (row     262144): all-0xFF
+  offset   16384 KB (row     524288): all-0xFF
+  offset   32768 KB (row    1048576): all-0xFF
+  offset   65536 KB (row    2097152): all-0xFF
+  offset  131072 KB (row    4194304): all-0xFF
+  offset  262144 KB (row    8388608): READ FAILED (ec=112)
+
+========================================================================
+SUMMARY
+========================================================================
+TEST A: bypass-read of pointer region returned ALL 0xFF.
+        → bypass-read is broken at the BAR/window level,
+          OR axon-pointer bypass writes never landed either
+          (and the previous 'pointers verified' was via stream).
+TEST C: 0/8 small-offset round-trip matched.
+        → bypass writes do NOT persist anywhere bypass-read can see.
+TEST D: 0/8 bypass-writes visible to stream-read.
+        → bypass and stream are accessing DIFFERENT physical HBM!
+          (different channel, or different address translation)
+
+INTERPRETATION:
+  TEST A=clean + TEST D=match → bypass works for small offsets;
+    issue is a write-size or chunking boundary at large offsets.
+  TEST A=all-FF + TEST C=fail → bypass-read is broken regardless;
+    likely BAR window mapping or ADXDMA driver issue.
+  TEST D=mismatch → bypass and core access different physical HBM;
+    likely PCIe-to-AXI translation in xdma IP is non-zero, or
+    bypass goes to a different HBM channel than the core.
+========================================================================

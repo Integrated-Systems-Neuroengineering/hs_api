@@ -1,0 +1,31 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0 -- /home/omowuyi/testing/hs_api/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collecting ... collected 42 items
+
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000] FAILED [  2%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[5000] FAILED [  4%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[10000] FAILED [  7%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_multiple_256 FAILED [  9%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_not_multiple_256 FAILED [ 11%]
+test_bitstream_hardware_fast.py::TestBitStream::test_2layers_no_input FAILED [ 14%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_negative_input FAILED [ 16%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[10] FAILED [ 19%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[25] FAILED [ 21%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[30] FAILED [ 23%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[1000] FAILED [ 26%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[2000] FAILED [ 28%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4095] FAILED [ 30%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4096] FAILED [ 33%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_no_noise[-17] PASSED [ 35%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-1] FAILED [ 38%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-16] FAILED [ 40%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[15] FAILED [ 42%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[0] FAILED [ 45%]
+test_bitstream_hardware_fast.py::TestBitStream::test_network_reset FAILED [ 47%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4000] FAILED [ 50%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4050] FAILED [ 52%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4095] 

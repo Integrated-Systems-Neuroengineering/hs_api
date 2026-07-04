@@ -1,0 +1,14 @@
+WARNING:root:partitioning library failed to load, multicore disabled
+Loading model config...
+Model: 7938 axons, 11 outputs
+Outputs: [0, 1, 2, 3, 4]... (first 5)
+
+Running compileNetwork...
+Traceback (most recent call last):
+  File "/home/omowuyi/testing/hs_api/check_synapse_data.py", line 216, in <module>
+    main()
+  File "/home/omowuyi/testing/hs_api/check_synapse_data.py", line 45, in main
+    hbm_data, numAxon = compileNetwork(
+  File "/home/omowuyi/testing/hs_bridge/hs_bridge/compile_network.py", line 480, in compileNetwork
+    raise ValueError(
+ValueError: compileNetwork was called with loadFile set to False and one or more input dicitonary was empty

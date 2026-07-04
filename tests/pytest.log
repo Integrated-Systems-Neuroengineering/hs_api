@@ -1,0 +1,200 @@
+nohup: ignoring input
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collected 42 items
+
+test_bitstream_hardware_fast.py .................................FFFFFFF [ 95%]
+FF                                                                       [100%]
+
+=================================== FAILURES ===================================
+___________________ TestBitStream.test_refractory_period[0] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a80f10>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1fd8e715a0>
+refractory_period = 0
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[1] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81000>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1fd8e71630>
+refractory_period = 1
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[2] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a813c0>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1eeb00>
+refractory_period = 2
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[3] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81480>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1eeb90>
+refractory_period = 3
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[4] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81540>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1eec20>
+refractory_period = 4
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[5] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81600>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1eee60>
+refractory_period = 5
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[6] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a816c0>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1ef0a0>
+refractory_period = 6
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+___________________ TestBitStream.test_refractory_period[7] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81780>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f1e8e1ef2e0>
+refractory_period = 7
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+>           neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'refractory_max'
+
+test_bitstream_hardware_fast.py:792: TypeError
+______________________ TestBitStream.test_synaptic_delay _______________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f1e90a81a20>
+
+    def test_synaptic_delay(self):
+        """Test that dual synapse mode correctly delays Group B synapse delivery.
+    
+        Network Configuration:
+            - A0 -> N1.0 weight=1
+            - N1.0: LIF threshold=0, dual_synapse_en=True, delay_value=5
+                - N1.0 -> N2.0 weight=5 (Group A, immediate)
+                - N1.0 -> N2.1 weight=5 delayed=True (Group B, delayed 5 timesteps)
+            - N2.0, N2.1: LIF threshold=2
+    
+        Expected:
+            T1: N1.0 spikes; N2.0 MP=5 (immediate); N2.1 MP=0 (queued)
+            T2: N2.0 spikes (MP=5 > 2); N2.1 still waiting
+            T3-T6: no spikes (delay in transit)
+            T7: N2.1 receives delayed weight, spikes
+        """
+        synaptic_delay = 5
+>       model1 = LIF_neuron(threshold=0, shift=-17, leak=63, dual_synapse_en=True, delay_value=synaptic_delay)
+E       TypeError: LIF_neuron.__init__() got an unexpected keyword argument 'dual_synapse_en'
+
+test_bitstream_hardware_fast.py:843: TypeError
+=============================== warnings summary ===============================
+../.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5
+  /home/omowuyi/testing/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+  The dash_html_components package is deprecated. Please replace
+  `import dash_html_components as html` with `from dash import html`
+    import dash_html_components as html
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[0]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[1]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[2]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[3]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[4]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[5]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[6]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[7]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_synaptic_delay - ...
+============= 9 failed, 33 passed, 1 warning in 288.68s (0:04:48) ==============

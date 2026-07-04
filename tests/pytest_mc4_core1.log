@@ -1,0 +1,64 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0 -- /home/omowuyi/testing/hs_api/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collecting ... collected 42 items
+
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000] PASSED [  2%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[5000] PASSED [  4%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[10000] PASSED [  7%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_multiple_256 PASSED [  9%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_not_multiple_256 PASSED [ 11%]
+test_bitstream_hardware_fast.py::TestBitStream::test_2layers_no_input PASSED [ 14%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_negative_input PASSED [ 16%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[10] PASSED [ 19%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[25] PASSED [ 21%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[30] PASSED [ 23%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[1000] PASSED [ 26%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[2000] PASSED [ 28%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4095] PASSED [ 30%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4096] PASSED [ 33%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_no_noise[-17] PASSED [ 35%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-1] PASSED [ 38%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-16] PASSED [ 40%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[15] PASSED [ 42%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[0] PASSED [ 45%]
+test_bitstream_hardware_fast.py::TestBitStream::test_network_reset PASSED [ 47%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4000] PASSED [ 50%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4050] PASSED [ 52%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4095] PASSED [ 54%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4096] PASSED [ 57%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fan_in[8190] PASSED [ 59%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fan_in[8191] PASSED [ 61%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_neuronal_fanout[4094] PASSED [ 64%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_neuronal_fanout[4095] PASSED [ 66%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[10] PASSED [ 69%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[1000] PASSED [ 71%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[5000] PASSED [ 73%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[8158] PASSED [ 76%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[8159] PASSED [ 78%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[0] PASSED [ 80%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[1] PASSED [ 83%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[2] PASSED [ 85%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[3] PASSED [ 88%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[4] PASSED [ 90%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[5] PASSED [ 92%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[6] PASSED [ 95%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[7] PASSED [ 97%]
+test_bitstream_hardware_fast.py::TestBitStream::test_synaptic_delay PASSED [100%]
+
+=============================== warnings summary ===============================
+../.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5
+  /home/omowuyi/testing/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+  The dash_html_components package is deprecated. Please replace
+  `import dash_html_components as html` with `from dash import html`
+    import dash_html_components as html
+
+tests/test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000]
+  /home/omowuyi/testing/hs_bridge/hs_bridge/FPGA_Execution/base_functions.py:27: DeprecationWarning: invalid escape sequence '\s'
+    output = re.findall("INFO:.*:([\s0-9A-F]*)", result[0])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================== 42 passed, 2 warnings in 287.79s (0:04:47) ==================

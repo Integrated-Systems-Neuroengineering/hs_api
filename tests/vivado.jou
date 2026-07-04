@@ -1,0 +1,24 @@
+#-----------------------------------------------------------
+# Vivado v2024.1 (64-bit)
+# SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
+# IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
+# SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
+# Start of session at: Sat Jun  6 18:39:57 2026
+# Process ID: 275814
+# Current directory: /home/omowuyi/testing/hs_api/tests
+# Command line: vivado -mode batch -source /bitstreams/scripts/progbit.tcl -tclargs /bitstreams/sixteen_core_top_L6j.bit
+# Log file: /home/omowuyi/testing/hs_api/tests/vivado.log
+# Journal file: /home/omowuyi/testing/hs_api/tests/vivado.jou
+# Running On        :crisdsc0.ucsd.edu
+# Platform          :Rocky
+# Operating System  :Rocky Linux release 8.10 (Green Obsidian)
+# Processor Detail  :AMD EPYC 7452 32-Core Processor
+# CPU Frequency     :2350.000 MHz
+# CPU Physical cores:64
+# CPU Logical cores :128
+# Host memory       :1081498 MB
+# Swap memory       :0 MB
+# Total Virtual     :1081498 MB
+# Available Virtual :1074466 MB
+#-----------------------------------------------------------
+source /bitstreams/scripts/progbit.tcl

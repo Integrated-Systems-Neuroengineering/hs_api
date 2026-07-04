@@ -1,0 +1,113 @@
+nohup: ignoring input
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collected 42 items
+
+tests/test_bitstream_hardware_fast.py .................................. [ 80%]
+.......F                                                                 [100%]
+
+=================================== FAILURES ===================================
+______________________ TestBitStream.test_synaptic_delay _______________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fce01c08070>
+
+    def test_synaptic_delay(self):
+        """Test that dual synapse mode correctly delays Group B synapse delivery.
+    
+        Network Configuration:
+            - A0 -> N1.0 weight=1
+            - N1.0: LIF threshold=0, dual_synapse_en=True, delay_value=5
+                - N1.0 -> N2.0 weight=5 (Group A, immediate)
+                - N1.0 -> N2.1 weight=5 delayed=True (Group B, delayed 5 timesteps)
+            - N2.0, N2.1: LIF threshold=2
+    
+        Expected:
+            T1: N1.0 spikes; N2.0 MP=5 (immediate); N2.1 MP=0 (queued)
+            T2: N2.0 spikes (MP=5 > 2); N2.1 still waiting
+            T3-T6: no spikes (delay in transit)
+            T7: N2.1 receives delayed weight, spikes
+        """
+        synaptic_delay = 5
+        model1 = LIF_neuron(threshold=0, shift=-17, leak=63, dual_synapse_en=True, delay_value=synaptic_delay)
+        model2 = LIF_neuron(threshold=2, shift=-17, leak=63)
+    
+        axons = {"A0": [("N1.0", 1)]}
+        connections = {
+            "N1.0": ([("N2.0", 5), ("N2.1", 5, True)], model1),
+            "N2.0": ([], model2),
+            "N2.1": ([], model2)
+        }
+        outputs = ["N1.0", "N2.0", "N2.1"]
+        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+    
+        # T0: activate axon
+        _ = network.step(["A0"])
+    
+        # T1: N1.0 spikes; Group A weight immediately to N2.0; Group B queued for N2.1
+        currSpikes1 = network.step([])
+        mp1 = dict(network.read_membrane(outputs))
+        assert len(currSpikes1[0]) == 1, f"Expected 1 spike at T1, got {len(currSpikes1[0])}"
+        assert currSpikes1[0][0] == "N1.0", f"Expected N1.0 spike at T1, got {currSpikes1[0][0]}"
+        assert mp1["N1.0"] == 0, f"Expected N1.0 MP=0 after spike, got {mp1['N1.0']}"
+        assert mp1["N2.0"] == 5, f"Expected N2.0 MP=5 from immediate synapse, got {mp1['N2.0']}"
+>       assert mp1["N2.1"] == 0, f"Expected N2.1 MP=0 (delayed synapse not yet delivered), got {mp1['N2.1']}"
+E       AssertionError: Expected N2.1 MP=0 (delayed synapse not yet delivered), got 5
+E       assert 5 == 0
+
+tests/test_bitstream_hardware_fast.py:865: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0, 32, 33]
+0
+32
+33
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[  1   0 128   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=0 delay=5 dual_syn=True
+[  0  32  74   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+[DEBUG write_neuron_type] stopAddr=64 boundary=4 Threshold=2 model=2 shift=-17 leak=63 refr=0 delay=0 dual_syn=False
+[  0   0 128   0   8   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 14979.66it/s]
+  0%|          | 0/64 [00:00<?, ?it/s]100%|██████████| 64/64 [00:00<00:00, 144320.14it/s]
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5
+  /home/omowuyi/testing/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+  The dash_html_components package is deprecated. Please replace
+  `import dash_html_components as html` with `from dash import html`
+    import dash_html_components as html
+
+tests/test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000]
+  /home/omowuyi/testing/hs_bridge/hs_bridge/FPGA_Execution/base_functions.py:27: DeprecationWarning: invalid escape sequence '\s'
+    output = re.findall("INFO:.*:([\s0-9A-F]*)", result[0])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bitstream_hardware_fast.py::TestBitStream::test_synaptic_delay
+============= 1 failed, 41 passed, 2 warnings in 264.39s (0:04:24) =============

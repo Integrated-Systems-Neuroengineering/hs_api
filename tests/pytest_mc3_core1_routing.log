@@ -1,0 +1,456 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0 -- /home/omowuyi/testing/hs_api/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collecting ... collected 42 items
+
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000] PASSED [  2%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[5000] PASSED [  4%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[10000] PASSED [  7%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_multiple_256 PASSED [  9%]
+test_bitstream_hardware_fast.py::TestBitStream::test_number_axons_not_multiple_256 PASSED [ 11%]
+test_bitstream_hardware_fast.py::TestBitStream::test_2layers_no_input PASSED [ 14%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_negative_input PASSED [ 16%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[10] PASSED [ 19%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[25] PASSED [ 21%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[30] PASSED [ 23%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[1000] PASSED [ 26%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[2000] PASSED [ 28%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4095] PASSED [ 30%]
+test_bitstream_hardware_fast.py::TestBitStream::test_spike_readout[4096] PASSED [ 33%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_no_noise[-17] PASSED [ 35%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-1] PASSED [ 38%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[-16] PASSED [ 40%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[15] PASSED [ 42%]
+test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_with_noise[0] PASSED [ 45%]
+test_bitstream_hardware_fast.py::TestBitStream::test_network_reset PASSED [ 47%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4000] PASSED [ 50%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4050] PASSED [ 52%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4095] PASSED [ 54%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fanout[4096] PASSED [ 57%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fan_in[8190] PASSED [ 59%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_axonal_fan_in[8191] PASSED [ 61%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_neuronal_fanout[4094] PASSED [ 64%]
+test_bitstream_hardware_fast.py::TestBitStream::test_max_neuronal_fanout[4095] PASSED [ 66%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[10] PASSED [ 69%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[1000] PASSED [ 71%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[5000] PASSED [ 73%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[8158] PASSED [ 76%]
+test_bitstream_hardware_fast.py::TestBitStream::test_neuronal_fan_in[8159] PASSED [ 78%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[0] PASSED [ 80%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[1] FAILED [ 83%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[2] FAILED [ 85%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[3] FAILED [ 88%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[4] FAILED [ 90%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[5] FAILED [ 92%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[6] FAILED [ 95%]
+test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[7] FAILED [ 97%]
+test_bitstream_hardware_fast.py::TestBitStream::test_synaptic_delay PASSED [100%]
+
+=================================== FAILURES ===================================
+___________________ TestBitStream.test_refractory_period[1] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca558d7700>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca54871000>
+refractory_period = 1
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+                assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+                assert mp_dict["N1.0"] == 0, f"Unexpected membrane potential during refractory period at time step {i+3}. Expected 0, got {mp_dict['N1.0']}"
+    
+            currSpikes_before_endOfRefractory = network.step(inputs) #time step before end of refractory period
+            mp_before_endOfRefractory = network.read_membrane(outputs)
+>           assert len(currSpikes_before_endOfRefractory[0]) == 0, "Neuron spiked unexpectedly before end of refractory period"
+E           AssertionError: Neuron spiked unexpectedly before end of refractory period
+E           assert 1 == 0
+E            +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:810: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=1 delay=0 dual_syn=False
+[  0  64  64   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 12985.46it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 175907.90it/s]
+___________________ TestBitStream.test_refractory_period[2] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca558d4cd0>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca54871a20>
+refractory_period = 2
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=2 delay=0 dual_syn=False
+[  0 128  64   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 10837.99it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 175218.97it/s]
+___________________ TestBitStream.test_refractory_period[3] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca558d4490>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca52507ac0>
+refractory_period = 3
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=3 delay=0 dual_syn=False
+[  0 192  64   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 13025.79it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 142179.80it/s]
+___________________ TestBitStream.test_refractory_period[4] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca558d4c40>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca52507b50>
+refractory_period = 4
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=4 delay=0 dual_syn=False
+[  0   0  65   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 13107.20it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 175218.97it/s]
+___________________ TestBitStream.test_refractory_period[5] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca5637cee0>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca5258aa70>
+refractory_period = 5
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=5 delay=0 dual_syn=False
+[  0  64  65   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 6374.32it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 174082.66it/s]
+___________________ TestBitStream.test_refractory_period[6] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca5637d330>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca5258ab90>
+refractory_period = 6
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=6 delay=0 dual_syn=False
+[  0 128  65   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 12409.18it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 175677.65it/s]
+___________________ TestBitStream.test_refractory_period[7] ____________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7fca5637ca60>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7fca5258add0>
+refractory_period = 7
+
+    @pytest.mark.parametrize("refractory_period", [0, 1, 2, 3, 4, 5, 6, 7])
+    def test_refractory_period(self, setup_dictionaries, refractory_period):
+        """Test that neurons respect refractory period after spiking."""
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=1,
+            numberNeurons=1,
+            weight=1,
+            neuron_model=LIF_neuron(threshold=0, shift=-17, leak=63, refractory_max=refractory_period)
+        )
+    
+        currSpikes1 = network.step(inputs) #1st time step
+        currSpikes2 = network.step(inputs) #2nd time step   spikes
+    
+        if refractory_period >= 1:
+            for i in range(refractory_period - 1):
+                currSpikes = network.step(inputs) #time steps during refractory period
+                mp = network.read_membrane(outputs)
+                mp_dict = dict(mp)
+>               assert len(currSpikes[0]) == 0, f"Neuron spiked unexpectedly during refractory period at time step {i+3}"
+E               AssertionError: Neuron spiked unexpectedly during refractory period at time step 3
+E               assert 1 == 0
+E                +  where 1 = len(['N1.0'])
+
+test_bitstream_hardware_fast.py:805: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 1  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  1  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=2 shift=-17 leak=63 refr=7 delay=0 dual_syn=False
+[  0 192  65   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   1   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 11066.77it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 176138.75it/s]
+=============================== warnings summary ===============================
+../.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5
+  /home/omowuyi/testing/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+  The dash_html_components package is deprecated. Please replace
+  `import dash_html_components as html` with `from dash import html`
+    import dash_html_components as html
+
+tests/test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000]
+  /home/omowuyi/testing/hs_bridge/hs_bridge/FPGA_Execution/base_functions.py:27: DeprecationWarning: invalid escape sequence '\s'
+    output = re.findall("INFO:.*:([\s0-9A-F]*)", result[0])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[1]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[2]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[3]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[4]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[5]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[6]
+FAILED test_bitstream_hardware_fast.py::TestBitStream::test_refractory_period[7]
+============= 7 failed, 35 passed, 2 warnings in 281.70s (0:04:41) =============

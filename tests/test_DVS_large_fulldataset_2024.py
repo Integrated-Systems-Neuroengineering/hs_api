@@ -1,8 +1,10 @@
+import os
 # tests/test_cifar10_inference.py
 import hs_bridge
 import pytest
 import pickle
 from hs_api.api import CRI_network
+_CORE_ID = int(os.environ.get("HIAER_CORE_ID", 0))
 import hs_bridge
 import torch
 
@@ -52,6 +54,13 @@ class TestDVSInference:
         outputs = model_config['outputs']
 
         # Create network
+        # Convert shift=0 (2024: no noise) to shift=-17 (L6d: no noise)
+        for key in connections:
+            neuron_obj = connections[key][1]  # modelIdx=1
+            if hasattr(neuron_obj, 'shift') and neuron_obj.shift == 0:
+                neuron_obj.shift = -17
+            neuron_obj.legacy_noise_en = 1  # 35-bit MP mode
+
         network = CRI_network(
             axons=axons,
             connections=connections,

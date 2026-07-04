@@ -82,7 +82,7 @@ class CRI_network:
         if type(axons) == dict:
             for keys in axons:
                 for values in axons[keys]:
-                    if not ((type(values) == tuple) and (len(values) == 2)):
+                    if not ((type(values) == tuple) and (len(values) in (2, 3))):
                         logging.error(
                             "Each synapse should only consists of 2 elements: neuron, weight"
                         )
@@ -98,7 +98,7 @@ class CRI_network:
                     for values in connections[keys][
                         synapseIdx
                     ]:  # synapse list is first element in tuple
-                        if not ((type(values) == tuple) and (len(values) == 2)):
+                        if not ((type(values) == tuple) and (len(values) in (2, 3))):
                             logging.error(
                                 "Each synapse should only consists of 2 elements: neuron, weight"
                             )
@@ -122,6 +122,9 @@ class CRI_network:
         self.key2index = {}
         self.simDump = simDump
         self.connectome = None
+        self._delay_queue = []
+        self._delay_map = {}
+        self._preprocess_delayed_synapses()
         self.gen_connectome()
         # breakpoint()
         self.axons, self.connections = self.__format_input(
@@ -176,6 +179,22 @@ class CRI_network:
         pathToFile = os.path.join(os.path.dirname(__file__), "magic.txt")
         return os.path.exists(pathToFile)
 
+    def _preprocess_delayed_synapses(self):
+        """Move delayed synapses into synthetic axons before connectome is built."""
+        for neuron_key in list(self.userConnections.keys()):
+            synapse_list, model = self.userConnections[neuron_key][0], self.userConnections[neuron_key][1]
+            delay_val = getattr(model, 'delay_value', 0)
+            kept = []
+            for syn in synapse_list:
+                is_delayed = len(syn) == 3 and syn[2]
+                if is_delayed:
+                    axon_key = "_DELAY_" + neuron_key + "_" + syn[0]
+                    self.userAxons[axon_key] = [(syn[0], syn[1])]
+                    self._delay_map.setdefault(neuron_key, []).append((axon_key, delay_val))
+                else:
+                    kept.append(syn)
+            self.userConnections[neuron_key] = (kept, model)
+
     def gen_connectome(self):
         """
         Generates a connectome for the CRI network.
@@ -214,9 +233,10 @@ class CRI_network:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
+                delayed = axonSynapse[2] if len(axonSynapse) == 3 else False
                 postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
                 self.connectome.connectomeDict[axonKey].addSynapse(
-                    postsynapticNeuron, weight
+                    postsynapticNeuron, weight, delayed=delayed
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
@@ -225,9 +245,10 @@ class CRI_network:
             # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
+                delayed = neuronSynapse[2] if len(neuronSynapse) == 3 else False
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
                 self.connectome.connectomeDict[neuronKey].addSynapse(
-                    postsynapticNeuron, weight
+                    postsynapticNeuron, weight, delayed=delayed
                 )
         # print("added neuron synapses")
 
@@ -514,6 +535,13 @@ class CRI_network:
         """
         # breakpoint()
         # formated_inputs = [self.symbol2index[symbol][0] for symbol in inputs] #convert symbols to internal indicies
+        new_q = []
+        for axon_key, remaining in self._delay_queue:
+            if remaining <= 0:
+                inputs.append(axon_key)
+            else:
+                new_q.append((axon_key, remaining - 1))
+        self._delay_queue = new_q
         formated_inputs = [
             self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
             for symbol in inputs
@@ -524,6 +552,10 @@ class CRI_network:
                 self.connectome.get_neuron_by_idx(spike).get_user_key()
                 for spike in spikeOutput
             ]
+            for sk in spikeOutput:
+                if sk in self._delay_map:
+                    for ak, dv in self._delay_map[sk]:
+                        self._delay_queue.append((ak, max(0, dv - 1)))
             if membranePotential == True:
                 breakpoint()
                 output = [
@@ -549,6 +581,10 @@ class CRI_network:
                         self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
                     ]
+                    for sk in spikeList:
+                        if sk in self._delay_map:
+                            for ak, dv in self._delay_map[sk]:
+                                self._delay_queue.append((ak, max(0, dv - 1)))
                     numNeurons = len(self.connections)
                     # we currently only print the membrane potential, not the other contents of the spike packet
                     output = [
@@ -565,6 +601,10 @@ class CRI_network:
                         self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
                     ]
+                    for sk in spikeList:
+                        if sk in self._delay_map:
+                            for ak, dv in self._delay_map[sk]:
+                                self._delay_queue.append((ak, max(0, dv - 1)))
                     return (spikeList, spikeResult[1], spikeResult[2])
         else:
             raise Exception("Invalid Target")

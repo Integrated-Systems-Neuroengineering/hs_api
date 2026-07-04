@@ -1,0 +1,324 @@
+nohup: ignoring input
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collected 42 items
+
+tests/test_bitstream_hardware_fast.py .....FF........................... [ 80%]
+.......F                                                                 [100%]
+
+=================================== FAILURES ===================================
+_____________________ TestBitStream.test_2layers_no_input ______________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f3bede7ce50>
+setup_dictionaries_2layers = <function TestBitStream.setup_dictionaries_2layers.<locals>._setup at 0x7f3d32933be0>
+
+    def test_2layers_no_input(self, setup_dictionaries_2layers):
+        """Test network with 2 layers of neurons. No input passed to network
+    
+        Test Description:
+            Tests a simple 2-layer network (axon -> N1 -> N2) with no axonal input
+            to verify that neurons with negative thresholds generate spontaneous activity
+            and that this activity propagates correctly through the network layers.
+    
+        Network Configuration:
+            - 1 axon (A0) with weight=1 to N1.0 (though not activated in this test)
+            - 1 first-layer neuron (N1.0): ANN with threshold=-1, shift=-17
+            - 1 second-layer neuron (N2.0): ANN with threshold=0, shift=-17
+            - Connection: N1.0 -> N2.0 with weight=1
+    
+        Test Procedure:
+            Run 3 time steps with no axonal input (empty spike list to network.step([]))
+            Read membrane potentials after each time step
+    
+        Expected Behavior:
+            - At each time step: N1.0 has MP=0 (spikes every cycle, then resets)
+            - At each time step: N2.0 has MP=1 (receives constant input from N1.0)
+    
+        Explanation:
+            N1.0 has threshold=-1, meaning it spikes whenever MP > -1. With no external
+            input, N1.0's MP is 0, which is greater than -1, so N1.0 spikes at every single
+            time step. After spiking, its MP resets to 0, creating a constant spike source.
+    
+            Each time N1.0 spikes, it sends a spike to N2.0 with weight=1. N2.0 has
+            threshold=0, so it spikes since its MP=1 > 0. This resets the MP of N2.0 to 0.
+            In the subsequent timestep, N2.0 recieves input from N1.0 again so its MP=1
+            before spiking again. Thus, N2.0 maintains MP=1 for all timesteps.
+        """
+        network, _, outputs = setup_dictionaries_2layers(
+            numberAxons=1,
+            numberN1=1,
+            numberN2=1,
+            weightAxon_N1=1,
+            weightN1_N2=1,
+            neuron_model1=ANN_neuron(-1, shift=-17),
+            neuron_model2=ANN_neuron(0, shift=-17)
+        )
+    
+        for i in range(1):    #add N1 neurons to the output list
+            outputs.append(f"N1.{i}")
+    
+        _ = network.step([]) #0th time step
+        mp1 = network.read_membrane(outputs)
+        _ = network.step([]) #1st time step
+        mp2 = network.read_membrane(outputs)
+        _ = network.step([]) #2nd time step
+        mp3 = network.read_membrane(outputs)
+    
+        #convert mp1, mp2, mp3 to dictionaries for easier access
+        mp1_dict = dict(mp1)
+        mp2_dict = dict(mp2)
+        mp3_dict = dict(mp3)
+    
+        #check membrane potentials
+        assert mp1_dict["N1.0"] == 0, f"Membrane potential of N1.0 at 0th timestep does not match expected value. Expected 0, got {mp1_dict['N1.0']}"
+>       assert mp1_dict["N2.0"] == 1, f"Membrane potential of N2.0 at 0th timestep does not match expected value. Expected 1, got {mp1_dict['N2.0']}"
+E       AssertionError: Membrane potential of N2.0 at 0th timestep does not match expected value. Expected 1, got 0
+E       assert 0 == 1
+
+tests/test_bitstream_hardware_fast.py:339: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[  1   0 128   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=0 model=0 shift=-17 leak=0 refr=0 delay=0 dual_syn=False
+[ 0  0 64  0  0  0  0  0  0 47  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  8]
+[DEBUG write_neuron_type] stopAddr=64 boundary=4 Threshold=-1 model=0 shift=-17 leak=0 refr=0 delay=0 dual_syn=False
+[  0   0 128   0 252 255 255 255  63  47   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 12671.61it/s]
+  0%|          | 0/64 [00:00<?, ?it/s]100%|██████████| 64/64 [00:00<00:00, 169573.88it/s]
+_________________ TestBitStream.test_LIF_neuron_negative_input _________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f3bede7fb50>
+setup_dictionaries = <function TestBitStream.setup_dictionaries.<locals>._setup at 0x7f3bea79cca0>
+
+    def test_LIF_neuron_negative_input(self, setup_dictionaries):
+        """Test LIF neuron with negative input weights. 3 axons connected to 1 neuron
+    
+        Test Description:
+        Validates that LIF neurons correctly process both positive and negative
+        synaptic weights from input axons.
+    
+        Network Configuration:
+            - 3 axons: A0 (weight=0), A1 (weight=-1), A2 (weight=+1)
+            - 1 LIF neuron with threshold=20, leak=63, shift=-17 (leak=63 means LIF_neuron has basically no leak)
+    
+        Test Procedure:
+            Time step 0: No input
+            Time step 1: Activate A1 (negative weight)
+            Time step 2: Activate A2 (positive weight)
+            Time step 3-4: No input (observe behavior)
+    
+        Expected Behavior:
+            - Time step 0: MP=0 (no input, no spikes)
+            - Time step 1: MP=-1 (negative input applied, no spikes)
+            - Time step 2: MP=0 (positive cancels negative, no spikes)
+            - Time step 3-4: MP=0 (no spikes)
+    
+        Explanation:
+            One LIF neuron is connected to three axons: A0 (weight=0), A1 (weight=-1), A2 (weight=+1).
+            No input is passed in the 0th time step, A1 is activated in the 1st time step, and A2 is
+            activated in the 2nd time step. Thus, at each time step, the membrane potentials are expected
+            to be 0, -1, 0, 0, and 0 respectively, with no spikes occurring throughout. This tests the
+            hardware's ability to perform summation of both positive and negative weights.
+        """
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=3,
+            numberNeurons=1,
+            weight=[0, -1, 1],   #weight of A0 is 0, A1 is -1, A2 is 1
+            neuron_model=LIF_neuron(threshold=20, shift=-17, leak=63)
+        )
+    
+        FPGA_Vs = []   # membrane potential trace
+        FPGA_Ss = []   # spikes
+    
+        currSpikes1 = network.step([]) #activate no axons at 0th time step
+        results1 = network.read_membrane(outputs)
+        FPGA_Vs.append(results1[0][1])
+        FPGA_Ss.append(currSpikes1[0])
+    
+        currSpikes2 = network.step([inputs[1]]) #activate A1 at 1st time step
+        results2 = network.read_membrane(outputs)
+        FPGA_Vs.append(results2[0][1])
+        FPGA_Ss.append(currSpikes2[0])
+    
+        currSpikes3 = network.step([inputs[2]]) #activate A2 at 2nd time step
+        results3 = network.read_membrane(outputs)
+        FPGA_Vs.append(results3[0][1])
+        FPGA_Ss.append(currSpikes3[0])
+    
+        currSpikes4 = network.step([])
+        results4 = network.read_membrane(outputs)
+        FPGA_Vs.append(results4[0][1])
+        FPGA_Ss.append(currSpikes4[0])
+    
+        currSpikes5 = network.step([])
+        results5 = network.read_membrane(outputs)
+        FPGA_Vs.append(results5[0][1])
+        FPGA_Ss.append(currSpikes5[0])
+    
+        expected_Vs = [0, -1, 0, 0, 0]
+        expected_Ss = [[], [], [], [], []]
+    
+>       assert FPGA_Vs == expected_Vs, f"Membrane potentials do not match expected values: Outputs {FPGA_Vs}, Expected {expected_Vs}"
+E       AssertionError: Membrane potentials do not match expected values: Outputs [0, -1, 1, 1, 1], Expected [0, -1, 0, 0, 0]
+E       assert [0, -1, 1, 1, 1] == [0, -1, 0, 0, 0]
+E         
+E         At index 2 diff: 1 != 0
+E         Use -v to get more diff
+
+tests/test_bitstream_hardware_fast.py:413: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [0]
+0
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[ 3  0 64  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0
+  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=20 model=2 shift=-17 leak=63 refr=0 delay=0 dual_syn=False
+[  0   0  64   0  80   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/3 [00:00<?, ?it/s]100%|██████████| 3/3 [00:00<00:00, 21290.88it/s]
+  0%|          | 0/32 [00:00<?, ?it/s]100%|██████████| 32/32 [00:00<00:00, 193397.30it/s]
+______________________ TestBitStream.test_synaptic_delay _______________________
+
+self = <tests.test_bitstream_hardware_fast.TestBitStream object at 0x7f3bebe39ed0>
+
+    def test_synaptic_delay(self):
+        """Test that dual synapse mode correctly delays Group B synapse delivery.
+    
+        Network Configuration:
+            - A0 -> N1.0 weight=1
+            - N1.0: LIF threshold=0, dual_synapse_en=True, delay_value=5
+                - N1.0 -> N2.0 weight=5 (Group A, immediate)
+                - N1.0 -> N2.1 weight=5 delayed=True (Group B, delayed 5 timesteps)
+            - N2.0, N2.1: LIF threshold=2
+    
+        Expected:
+            T1: N1.0 spikes; N2.0 MP=5 (immediate); N2.1 MP=0 (queued)
+            T2: N2.0 spikes (MP=5 > 2); N2.1 still waiting
+            T3-T6: no spikes (delay in transit)
+            T7: N2.1 receives delayed weight, spikes
+        """
+        synaptic_delay = 5
+        model1 = LIF_neuron(threshold=0, shift=-17, leak=63, dual_synapse_en=True, delay_value=synaptic_delay)
+        model2 = LIF_neuron(threshold=2, shift=-17, leak=63)
+    
+        axons = {"A0": [("N1.0", 1)]}
+        connections = {
+            "N1.0": ([("N2.0", 5), ("N2.1", 5, True)], model1),
+            "N2.0": ([], model2),
+            "N2.1": ([], model2)
+        }
+        outputs = ["N1.0", "N2.0", "N2.1"]
+        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+    
+        # T0: activate axon
+        _ = network.step(["A0"])
+    
+        # T1: N1.0 spikes; Group A weight immediately to N2.0; Group B queued for N2.1
+        currSpikes1 = network.step([])
+        mp1 = dict(network.read_membrane(outputs))
+        assert len(currSpikes1[0]) == 1, f"Expected 1 spike at T1, got {len(currSpikes1[0])}"
+        assert currSpikes1[0][0] == "N1.0", f"Expected N1.0 spike at T1, got {currSpikes1[0][0]}"
+        assert mp1["N1.0"] == 0, f"Expected N1.0 MP=0 after spike, got {mp1['N1.0']}"
+        assert mp1["N2.0"] == 5, f"Expected N2.0 MP=5 from immediate synapse, got {mp1['N2.0']}"
+>       assert mp1["N2.1"] == 0, f"Expected N2.1 MP=0 (delayed synapse not yet delivered), got {mp1['N2.1']}"
+E       AssertionError: Expected N2.1 MP=0 (delayed synapse not yet delivered), got 5
+E       assert 5 == 0
+
+tests/test_bitstream_hardware_fast.py:865: AssertionError
+----------------------------- Captured stdout call -----------------------------
+formatedOutputs: [32, 0, 1]
+0
+1
+32
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+did one
+[  1   0 128   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   4]
+[DEBUG write_neuron_type] stopAddr=32 boundary=2 Threshold=2 model=2 shift=-17 leak=63 refr=0 delay=0 dual_syn=False
+[  0   0  64   0   8   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+[DEBUG write_neuron_type] stopAddr=64 boundary=4 Threshold=0 model=2 shift=-17 leak=63 refr=0 delay=5 dual_syn=True
+[  0  32 138   0   0   0   0   0 128 239  15   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
+   0   0   0   0   0   0   0   0   0   8]
+----------------------------- Captured stderr call -----------------------------
+  0%|          | 0/1 [00:00<?, ?it/s]100%|██████████| 1/1 [00:00<00:00, 14614.30it/s]
+  0%|          | 0/64 [00:00<?, ?it/s]100%|██████████| 64/64 [00:00<00:00, 135027.90it/s]
+=============================== warnings summary ===============================
+.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5
+  /home/omowuyi/testing/hs_api/.venv/lib/python3.10/site-packages/dash_bootstrap_components/_table.py:5: UserWarning: 
+  The dash_html_components package is deprecated. Please replace
+  `import dash_html_components as html` with `from dash import html`
+    import dash_html_components as html
+
+tests/test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000]
+  /home/omowuyi/testing/hs_bridge/hs_bridge/FPGA_Execution/base_functions.py:27: DeprecationWarning: invalid escape sequence '\s'
+    output = re.findall("INFO:.*:([\s0-9A-F]*)", result[0])
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_bitstream_hardware_fast.py::TestBitStream::test_2layers_no_input
+FAILED tests/test_bitstream_hardware_fast.py::TestBitStream::test_LIF_neuron_negative_input
+FAILED tests/test_bitstream_hardware_fast.py::TestBitStream::test_synaptic_delay
+============= 3 failed, 39 passed, 2 warnings in 266.68s (0:04:26) =============

@@ -1,0 +1,9 @@
+============================= test session starts ==============================
+platform linux -- Python 3.10.19, pytest-9.0.2, pluggy-1.6.0 -- /home/omowuyi/testing/hs_api/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /home/omowuyi/testing/hs_api
+configfile: pyproject.toml
+plugins: dash-4.0.0
+collecting ... collected 42 items
+
+test_bitstream_hardware_fast.py::TestBitStream::test_max_number_axons[1000] 
