@@ -160,6 +160,7 @@
               text = ''
                 set -e
                 OUTDIR="''${1:-.}"
+                mkdir -p "$OUTDIR"
                 NAR="$OUTDIR/hs-api-env.nar"
                 FLAKE="$OUTDIR/flake.nix"
                 WRAPPER="$OUTDIR/run-hs-api.sh"
