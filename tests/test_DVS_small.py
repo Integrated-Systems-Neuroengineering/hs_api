@@ -12,13 +12,13 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('./fixtures/DVS_model_small_config_shift=-17.pkl', 'rb') as f:
+        with open('./tests/fixtures/DVS_model_small_config_shift=-17.pkl', 'rb') as f:
             return pickle.load(f)
     
     @pytest.fixture
     def test_batch(self):
         """Load saved test batch"""
-        with open('./fixtures/DVS_test_batch.pkl', 'rb') as f:
+        with open('./tests/fixtures/DVS_test_batch.pkl', 'rb') as f:
             return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
