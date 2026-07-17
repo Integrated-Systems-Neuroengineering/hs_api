@@ -332,9 +332,9 @@ class simple_sim:
     def __init__(self, axons, connections, outputs):
         self.stepNum = 0
         self.formatDict = {
-            "membrane_potential": "fxp-s35/0",
+            "membrane_potential": "fxp-s32/0",
             "synapse_weights": "fxp-s16/0",
-            "voltage_threshold": "fxp-s35/0",
+            "voltage_threshold": "fxp-s32/0",
             "perturbation": "fxp-s17/0",
             "shift": "fxp-s6/0",
         }
@@ -373,7 +373,7 @@ class simple_sim:
         for time in self.timesteps:
             currentInputs = np.array(self.inputs[time])
             #do phase one
-            self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.threshold, self.membranePotentials, self.firedNeurons)
+            self.membranePotentials, self.firedNeurons = phase_one(self.neuronModel, self.theta, self.membranePotentials, self.firedNeurons)
             # phase_one(threshold,membranePotentials,firedNeurons)#look for any spiked neurons
 
             #do phase two
@@ -458,20 +458,20 @@ class simple_sim:
 
     def get_perturbMag(self):
         perturbs = [
-            self.connections[key][1].get_shift() for key in self.connections.keys()
+            self.connections[key][1].get_nu() for key in self.connections.keys()
         ]  # get the nth element of each tuple which is neuron model
         return perturbs
 
     def get_threshold(self):
         threshs = [
-            self.connections[key][1].get_threshold() for key in self.connections.keys()
+            self.connections[key][1].get_theta() for key in self.connections.keys()
         ]  # get the nth element of each tuple which is neuron model
         return threshs
 
     def get_leak(self):
         # breakpoint()
         leaks = [
-            self.connections[key][1].get_leak() for key in self.connections.keys()
+            self.connections[key][1].get_Lambda() for key in self.connections.keys()
         ]  # get the nth element of each tuple which is neuron model
         return leaks
 
@@ -508,7 +508,7 @@ class simple_sim:
                 dtype=self.formatDict["membrane_potential"],
             )  # upper is exclusive so no need to subtract one
             # balancing the positive and negative distribution by setting LSB to 1
-            perturbation(perturbation | Fxp(1, dtype="fxp-u35/0"))
+            perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
             # signed left shift increase the magnitude of the perturbation
             perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs, 0))
             # signed right shift decrease the magnitude of the perturbation

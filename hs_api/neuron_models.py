@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 
 class neuron_model(ABC):
     @abstractmethod
-    def get_threshold(self):
+    def get_theta(self):
         pass
 
     @abstractmethod
@@ -13,20 +13,20 @@ class neuron_model(ABC):
         pass
 
     @abstractmethod
-    def get_shift(self):
+    def get_nu(self):
         pass
 
     @abstractmethod
-    def get_leak(self):
+    def get_Lambda(self):
         pass
 
     def __hash__(self):
         return hash(
             (
-                self.get_threshold(),
+                self.get_theta(),
                 self.get_neuronModel,
-                self.get_shift(),
-                self.get_leak(),
+                self.get_nu(),
+                self.get_Lambda(),
             )
         )
 
@@ -41,29 +41,29 @@ class LIF_neuron(neuron_model):
     """
     LIF neuron model.
 
-    shift: int
-        noise pertubation magnitude
+    nu: int
+        noise perturbation magnitude
 
     """
 
-    def __init__(self, threshold, shift = -17, leak = 63, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
-        self.threshold = threshold
-        self.shift = shift
-        self.leak = leak
+    def __init__(self, theta, nu = -17, Lambda = 63, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
+        self.theta = theta
+        self.nu = nu
+        self.Lambda = Lambda
         self.refractory_max = refractory_max
         self.dual_synapse_en = 1 if dual_synapse_en else 0
         self.delay_value = delay_value
         self.shadow_uram_offset = shadow_uram_offset
         self.legacy_noise_en = legacy_noise_en
 
-    def get_threshold(self):
-        return self.threshold
+    def get_theta(self):
+        return self.theta
 
-    def get_shift(self):
-        return self.shift
+    def get_nu(self):
+        return self.nu
 
-    def get_leak(self):
-        return self.leak
+    def get_Lambda(self):
+        return self.Lambda
 
     def get_neuronModel(self):
         return 2
@@ -88,29 +88,29 @@ class ANN_neuron(neuron_model):
     """
     Memory-less neuron model.
 
-    leak : int
+    Lambda : int
         set to 0 for memory-less neuron
 
     """
 
-    def __init__(self, threshold, shift = -17, leak=0, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
-        self.threshold = threshold
-        self.shift = shift
-        self.leak = leak
+    def __init__(self, theta, nu = -17, Lambda=0, refractory_max=0, dual_synapse_en=False, delay_value=0, shadow_uram_offset=0, legacy_noise_en=0):
+        self.theta = theta
+        self.nu = nu
+        self.Lambda = Lambda
         self.refractory_max = refractory_max
         self.dual_synapse_en = 1 if dual_synapse_en else 0
         self.delay_value = delay_value
         self.shadow_uram_offset = shadow_uram_offset
         self.legacy_noise_en = legacy_noise_en
 
-    def get_threshold(self):
-        return self.threshold
+    def get_theta(self):
+        return self.theta
 
-    def get_shift(self):
-        return self.shift
+    def get_nu(self):
+        return self.nu
 
-    def get_leak(self):
-        return self.leak
+    def get_Lambda(self):
+        return self.Lambda
 
     def get_neuronModel(self):
         return 0
@@ -137,29 +137,25 @@ class IF_neuron(neuron_model):
     True non-leaky integrate-and-fire. MP only changes via synaptic weight
     accumulation. No leak, no noise. Use with soft_reset=True to approximate
     ReLU activation (residual MP preserved after spike).
-
-    legacy_noise_en defaults to 1 (legacy 2024 mode: 35-bit MP, no refractory
-    counter, unsigned noise/leak) since this is the mode DVS inference with
-    IF neurons was designed and validated against.
     """
 
-    def __init__(self, threshold, shift=-17, refractory_max=0, delay_value=0,
+    def __init__(self, theta, nu=-17, refractory_max=0, delay_value=0,
                  dual_synapse_en=False, soft_reset=False, legacy_noise_en=0):
-        self.threshold = threshold
-        self.shift = shift
+        self.theta = theta
+        self.nu = nu
         self.refractory_max = refractory_max
         self.delay_value = delay_value
         self.dual_synapse_en = 1 if dual_synapse_en else 0
         self.soft_reset = soft_reset
         self.legacy_noise_en = legacy_noise_en
 
-    def get_threshold(self):
-        return self.threshold
+    def get_theta(self):
+        return self.theta
 
-    def get_shift(self):
-        return getattr(self, 'shift', 0)
+    def get_nu(self):
+        return getattr(self, 'nu', -17)
 
-    def get_leak(self):
+    def get_Lambda(self):
         return 0
 
     def get_refractory_max(self):
