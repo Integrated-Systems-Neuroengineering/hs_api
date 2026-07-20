@@ -241,14 +241,21 @@ class CRI_network:
         # add neurons to connectome
         for neuronKey in self.userConnections:
             neuron_model = self.userConnections[neuronKey][modelIdx]
-            self.connectome.addNeuron(
-                neuron(
-                    neuronKey,
-                    "neuron",
-                    output=neuronKey in self.outputs,
-                    neuronModel=neuron_model,
-                )
+            newNeuron = neuron(
+                neuronKey,
+                "neuron",
+                output=neuronKey in self.outputs,
+                neuronModel=neuron_model,
             )
+            # Optional 3rd tuple element = manual core assignment (int 0-15).
+            # When present, mark it so partitioning respects it instead of auto-assigning.
+            connTuple = self.userConnections[neuronKey]
+            if len(connTuple) > 2 and connTuple[2] is not None:
+                newNeuron.set_core(int(connTuple[2]))
+                newNeuron.manualCore = True
+            else:
+                newNeuron.manualCore = False
+            self.connectome.addNeuron(newNeuron)
         # print("added neurons to connectome")
 
         # assign synapses to neurons in connectome
