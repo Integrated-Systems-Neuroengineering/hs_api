@@ -252,12 +252,14 @@ class CRI_network:
         # print("added neurons to connectome")
 
         # assign synapses to neurons in connectome
+        # assign synapses to neurons in connectome
+       # assign synapses to neurons in connectome
         for axonKey in self.userAxons:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
-                self.connectome.connectomeDict[axonKey].addSynapse(
+                postsynapticNeuron = self.connectome.get_neuron_by_key(axonSynapse[0])
+                self.connectome.get_neuron_by_key(axonKey).addSynapse(
                     postsynapticNeuron, weight
                 )
         # print("added axon synpases")
@@ -267,13 +269,10 @@ class CRI_network:
             # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
-                postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
-                self.connectome.connectomeDict[neuronKey].addSynapse(
+                postsynapticNeuron = self.connectome.get_neuron_by_key(neuronSynapse[0])
+                self.connectome.get_neuron_by_key(neuronKey).addSynapse(
                     postsynapticNeuron, weight
                 )
-        # print("added neuron synapses")
-
-        # print("generated Connectome")
 
     def __format_input(self, axons, connections):
         """
@@ -630,6 +629,7 @@ class CRI_network:
                     # breakpoint()
                     spikeList = spikeResult[0]
                     # we currently ignore the run execution counter
+                    print(f"DEBUG: spikeList={spikeList}, coreArrHbm[0] len={len(self.connectome.coreArrHbm[0])}")
                     spikeList = [
                         self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
@@ -650,10 +650,18 @@ class CRI_network:
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
                     # breakpoint()
                     spikeList = spikeResult[0]
-                    spikeList = [
-                        self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
-                        for spike in spikeList
-                    ]
+                    if spikeList:
+                        print(f"DEBUG rawspikes: {spikeList[:10]} (total {len(spikeList)})")
+                    decoded = []
+                    dropped = 0
+                    for spike in spikeList:
+                        try:
+                            decoded.append(self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key())
+                        except IndexError:
+                            dropped += 1
+                    if dropped:
+                        print(f"DEBUG: dropped {dropped} spikes that failed hbmIdx lookup")
+                    spikeList = decoded
                     for sk in spikeList:
                         if sk in self._delay_map:
                             for ak, dv in self._delay_map[sk]:
