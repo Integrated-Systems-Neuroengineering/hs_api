@@ -636,7 +636,6 @@ class CRI_network:
                     # breakpoint()
                     spikeList = spikeResult[0]
                     # we currently ignore the run execution counter
-                    print(f"DEBUG: spikeList={spikeList}, coreArrHbm[0] len={len(self.connectome.coreArrHbm[0])}")
                     spikeList = [
                         self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
                         for spike in spikeList
@@ -657,8 +656,6 @@ class CRI_network:
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
                     # breakpoint()
                     spikeList = spikeResult[0]
-                    if spikeList:
-                        print(f"DEBUG rawspikes: {spikeList[:10]} (total {len(spikeList)})")
                     decoded = []
                     dropped = 0
                     for spike in spikeList:
@@ -666,8 +663,6 @@ class CRI_network:
                             decoded.append(self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key())
                         except IndexError:
                             dropped += 1
-                    if dropped:
-                        print(f"DEBUG: dropped {dropped} spikes that failed hbmIdx lookup")
                     spikeList = decoded
                     for sk in spikeList:
                         if sk in self._delay_map:
