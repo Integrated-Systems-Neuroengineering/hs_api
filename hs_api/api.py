@@ -259,8 +259,6 @@ class CRI_network:
         # print("added neurons to connectome")
 
         # assign synapses to neurons in connectome
-        # assign synapses to neurons in connectome
-       # assign synapses to neurons in connectome
         for axonKey in self.userAxons:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
@@ -269,7 +267,36 @@ class CRI_network:
                 self.connectome.get_neuron_by_key(axonKey).addSynapse(
                     postsynapticNeuron, weight
                 )
-        # print("added axon synpases")
+       # print("added axon synpases")
+        # Manual-core support: assign each axon to the core of the neurons it
+        # feeds. When any neuron was manually assigned a core, axons must follow
+        # their targets so inputs are DMA-routed to the correct core's axon BRAM.
+        any_manual = any(
+            (len(self.userConnections[nk]) > 2 and self.userConnections[nk][2] is not None)
+            for nk in self.userConnections
+        )
+        if any_manual:
+            for axonKey in self.userAxons:
+                targets = self.userAxons[axonKey]
+                if not targets:
+                    continue
+                target_cores = set()
+                for axonSynapse in targets:
+                    tgt = self.connectome.get_neuron_by_key(axonSynapse[0])
+                    target_cores.add(tgt.get_core())
+                if len(target_cores) == 1:
+                    core = target_cores.pop()
+                    ax = self.connectome.get_neuron_by_key(axonKey)
+                    ax.set_core(core)
+                    ax.manualCore = True
+                else:
+                    # Axon feeds neurons on multiple cores — needs relay-axon
+                    # handling (cross-core), not yet implemented. Leave on core 0
+                    # and flag for later.
+                    logging.warning(
+                        f"Axon {axonKey} feeds multiple cores {target_cores}; "
+                        "cross-core relay not yet implemented, leaving on core 0"
+                    )
         for neuronKey in self.userConnections:
             # breakpoint()
             synapses = self.userConnections[neuronKey][synapseIdx]
@@ -658,10 +685,19 @@ class CRI_network:
                     spikeList = spikeResult[0]
                     decoded = []
                     dropped = 0
+                    active_cores = getattr(self.CRI, "_active_cores", [0])
                     for spike in spikeList:
-                        try:
-                            decoded.append(self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key())
-                        except IndexError:
+                        found = False
+                        for c in active_cores:
+                            try:
+                                decoded.append(
+                                    self.connectome.get_neuron_by_hbmIdx(spike[1], core=c).get_user_key()
+                                )
+                                found = True
+                                break
+                            except IndexError:
+                                continue
+                        if not found:
                             dropped += 1
                     spikeList = decoded
                     for sk in spikeList:
