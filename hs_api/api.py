@@ -589,9 +589,19 @@ class CRI_network:
                 for symbol in neuronList
             ]
             results = self.CRI.readMP(formated_inputs)
-            formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+            active_cores = getattr(self.CRI, "_active_cores", [0])
+            formatedResults = []
+            for element in results:  # each membrane potential contains (membraneIdx, row, column, potential)
+                neuron_obj = None
+                for c in active_cores:
+                    try:
+                        neuron_obj = self.connectome.get_neuron_by_hbmIdx(element[0], core=c)
+                        break
+                    except IndexError:
+                        continue
+                if neuron_obj is not None:
+                    formatedResults.append((neuron_obj.get_user_key(), element[3]))
             return formatedResults
-
 
     def step(self, inputs, target="simpleSim", membranePotential=False):
         """
