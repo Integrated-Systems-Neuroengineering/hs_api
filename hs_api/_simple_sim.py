@@ -368,6 +368,36 @@ class simple_sim:
         )
         self.firedNeurons = []  # np.array([], dtype=np.single)
 
+    def clear(self, num_neurons=None, simDump=False, coreOverride=0):
+        """
+        Resets all membrane potentials, refractory states, delay buffers,
+        and step counters to ensure no information leaks between inferences.
+
+        This method achieves signature parity with the physical FPGA
+        controller hardware reset command.
+
+        Parameters
+        ----------
+        num_neurons : int, optional
+            The total number of neurons to reset in the state vector.
+            If None (default), it automatically uses the full network size
+            defined by `self.numNeurons`.
+        simDump : bool, optional
+            A hardware-parity flag used on the physical FPGA to signal a
+            memory dump of register states during a clear event. In this
+            software simulator, it defaults to False and is bypassed.
+        coreOverride : int, optional
+            A hardware-parity identifier used to target a specific
+            neurosynaptic core cluster on the physical chip. In this
+            software simulator, it defaults to 0 and is bypassed.
+
+        Returns
+        -------
+        None
+        """
+        target_neurons = num_neurons if num_neurons is not None else self.numNeurons
+        self.initialize_sim_vars(target_neurons)
+        self.stepNum = 0
     """
     def free_run(self):
         for time in self.timesteps:
