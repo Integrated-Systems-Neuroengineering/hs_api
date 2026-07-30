@@ -53,7 +53,7 @@ class TestDVSInference:
         #random conv1 neurons
         for x in range(10):
             y = random.randint(0, 899)
-            output.append(f"C1.{x}.{y}")
+            outputs.append(f"C1.{x}.{y}")
             chosen_ys.append(y)
 
         print("Neuron list:", outputs)
