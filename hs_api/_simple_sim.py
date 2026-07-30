@@ -517,7 +517,7 @@ class simple_sim:
             )
             # add the noise to the membrane potential
            # if any(a != -16 for a in perturbs):
-           #     self.membranePotentials(self.membranePotentials + perturbation)
+            self.membranePotentials(self.membranePotentials + perturbation)
 
             # spike when the membrane potential > self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() > threshs)
