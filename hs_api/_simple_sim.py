@@ -530,25 +530,32 @@ class simple_sim:
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
             perturbBits = 17
-            # generate nNueron number of random numbers in [-2^16, 2^16]
-            perturbation = Fxp(
-                np.random.randint(
-                    -1 * 2 ** (perturbBits - 1), 2 ** (perturbBits - 1), size=nNeurons
-                ),
-                dtype=self.formatDict["membrane_potential"],
-            )  # upper is exclusive so no need to subtract one
+            perturbs_arr = np.array(perturbs)
+
+            # Generate raw noise and shift using int64 intermediates to avoid
+            # Fxp saturation/overflow during the shift itself (ported from
+            # s35-bit-accurate-sim commit 5e06c9a, adapted to 32-bit MP).
+            raw_noise = np.random.randint(
+                -1 * 2 ** (perturbBits - 1), 2 ** (perturbBits - 1), size=nNeurons
+            )
+            noise_mag = np.abs(raw_noise)
+            noise_sign = np.sign(raw_noise)
+
+            shifted_mag = np.where(
+                perturbs_arr > 0,
+                np.left_shift(noise_mag.astype(np.int64), perturbs_arr.astype(np.int64)),
+                np.right_shift(noise_mag.astype(np.int64), np.abs(perturbs_arr).astype(np.int64)),
+            )
+
+            perturbation = Fxp(shifted_mag * noise_sign, dtype=self.formatDict["membrane_potential"])
             # balancing the positive and negative distribution by setting LSB to 1
             perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
-            # signed left shift increase the magnitude of the perturbation
-            perturbation = leftshiftArr(perturbation, perturbs, np.greater(perturbs, 0))
-            # signed right shift decrease the magnitude of the perturbation
-            perturbation = rightshiftArr(
-                perturbation, np.absolute(perturbs), np.less(perturbs, 0)
-            )
-            # add the noise to the membrane potential
-           # if any(a != -16 for a in perturbs):
-            self.membranePotentials(self.membranePotentials + perturbation)
 
+            # Hardware suppression floor at -17 (shifts 16-bit noise entirely out)
+            perturbation[np.equal(perturbs_arr, -17)] = 0
+
+            # add the noise to the membrane potential
+            self.membranePotentials(self.membranePotentials + perturbation)
             # spike when the membrane potential > self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() > threshs)
 
