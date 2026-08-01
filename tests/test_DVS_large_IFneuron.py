@@ -23,11 +23,11 @@ class TestDVSInference:
             return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
-        """Test that DVS model achieves expected accuracy on hardware.
+        """Test that spikes from DVS model are recorded.
         
         Test Description:
-            Validates that the full DVS classification model runs correctly
-            on the CRI hardware and achieves the expected accuracy threshold.
+            Validates that the DVS model runs correctly
+            on the CRI hardware and reads all spikes from conv1 neurons for the first DVS instance
             
         Network Configuration:
             - Full DVS model loaded from saved configuration
@@ -37,16 +37,11 @@ class TestDVSInference:
         Test Procedure:
             1. Load model configuration (axons, connections, outputs)
             2. Create CRI network
-            3. Run inference on 9 test images with different labels
-            4. Calculate accuracy
+            3. Run inference on 1 test image
+            4. Validates that conv1 neurons above threshold should spike
             
         Expected Behavior:
-            Accuracy >= expected threshold
-            
-        Rationale:
-            This end-to-end test ensures the hardware correctly executes a
-            real-world model. If accuracy drops below threshold, it indicates
-            hardware malfunction, weight corruption, or spike readout issues.
+            At each timestep, conv1 neurons above threshold of 32676 should spike
         """
         outputs = []
 
