@@ -532,27 +532,27 @@ class simple_sim:
             perturbBits = 17
             perturbs_arr = np.array(perturbs)
 
-            # Generate raw noise and shift using int64 intermediates to avoid
-            # Fxp saturation/overflow during the shift itself (ported from
-            # s35-bit-accurate-sim commit 5e06c9a, adapted to 32-bit MP).
+            # Generate raw noise, force LSB=1 BEFORE shifting (matching the
+            # original design -- see Gwen's 2023-2024 commits), then shift
+            # using int64 intermediates to avoid Fxp saturation/overflow
+            # during the shift itself.
             raw_noise = np.random.randint(
                 -1 * 2 ** (perturbBits - 1), 2 ** (perturbBits - 1), size=nNeurons
             )
-            noise_mag = np.abs(raw_noise)
+            # balancing the positive and negative distribution by setting LSB to 1,
+            # BEFORE the shift (not after -- doing it after re-injects a nonzero
+            # value into values that should shift fully out to zero)
+            raw_noise = raw_noise | 1
+            noise_mag = np.abs(raw_noise).astype(np.int64)
             noise_sign = np.sign(raw_noise)
 
             shifted_mag = np.where(
                 perturbs_arr > 0,
-                np.left_shift(noise_mag.astype(np.int64), perturbs_arr.astype(np.int64)),
-                np.right_shift(noise_mag.astype(np.int64), np.abs(perturbs_arr).astype(np.int64)),
+                np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
+                np.right_shift(noise_mag, np.abs(perturbs_arr).astype(np.int64)),
             )
 
             perturbation = Fxp(shifted_mag * noise_sign, dtype=self.formatDict["membrane_potential"])
-            # balancing the positive and negative distribution by setting LSB to 1
-            perturbation(perturbation | Fxp(1, dtype="fxp-u32/0"))
-
-            # Hardware suppression floor at -17 (shifts 16-bit noise entirely out)
-            perturbation[np.equal(perturbs_arr, -17)] = 0
 
             # add the noise to the membrane potential
             self.membranePotentials(self.membranePotentials + perturbation)
