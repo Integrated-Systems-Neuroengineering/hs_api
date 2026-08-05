@@ -520,7 +520,6 @@ class simple_sim:
         perturbs = self.get_perturbMag()
         lifNeurons = np.where(np.array(self.get_model()) == 2)[0]
         memLessNeurons = np.where(np.array(self.get_model()) == 0)[0]
-
         if False:  # (self.stepNum == self.timesteps):
             print("Reinitializing simulation to timestep zero")
             initialize_sim_vars()
@@ -529,23 +528,17 @@ class simple_sim:
             # membranePotentials = copy.deepcopy(self.membranePotentials)
             nNeurons = len(self.connections)
             nAxons = len(self.axons)
-            perturbBits = 17
             perturbs_arr = np.array(perturbs)
-
-            # Generate raw noise, force LSB=1 BEFORE shifting (matching the
-            # original design -- see Gwen's 2023-2024 commits), then shift
-            # using int64 intermediates to avoid Fxp saturation/overflow
-            # during the shift itself.
-            raw_noise = np.random.randint(
-                -1 * 2 ** (perturbBits - 1), 2 ** (perturbBits - 1), size=nNeurons
-            )
-            # balancing the positive and negative distribution by setting LSB to 1,
-            # BEFORE the shift (not after -- doing it after re-injects a nonzero
-            # value into values that should shift fully out to zero)
-            raw_noise = raw_noise | 1
-            noise_mag = np.abs(raw_noise).astype(np.int64)
-            noise_sign = np.sign(raw_noise)
-
+            # Match Logan/Sean's description of the FPGA noise mechanism:
+            # 1. Draw a raw UNSIGNED 16-bit value (0-65535) per neuron.
+            # 2. Double it and add 1 -> odd magnitude in [1, 131071] (17 bits).
+            # 3. Sign is determined by whether the ORIGINAL unsigned value was
+            #    in the upper half (>=32768, negative) or lower half (positive).
+            # This differs from our previous approach, which drew a signed
+            # value directly (giving roughly half the magnitude range).
+            raw_unsigned = np.random.randint(0, 2 ** 16, size=nNeurons)
+            noise_mag = (2 * raw_unsigned.astype(np.int64)) + 1  # odd, [1, 131071]
+            noise_sign = np.where(raw_unsigned >= 2 ** 15, -1, 1)
             shifted_mag = np.where(
                 perturbs_arr > 0,
                 np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
