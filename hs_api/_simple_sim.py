@@ -7,6 +7,14 @@ from scipy.sparse import dok_array, csr_matrix
 from fxpmath import Fxp
 from fxpmath.functions import leftshiftArr, rightshiftArr
 
+# Toggle to reproduce the RTL sign-bit bug Sean/Logan found in
+# internal_events_processor.v (line 809), for direct comparison against the
+# corrected behavior. Defaults to False (correct behavior) per Leif's request.
+SIGN_BIT_BUG_MODE = False
+
+
+
+
 
 def load_network(input, connex, output):
     """Loads the network specification.
@@ -539,16 +547,42 @@ class simple_sim:
             raw_unsigned = np.random.randint(0, 2 ** 16, size=nNeurons)
             noise_mag = (2 * raw_unsigned.astype(np.int64)) + 1  # odd, [1, 131071]
             noise_sign = np.where(raw_unsigned >= 2 ** 15, -1, 1)
-            shifted_mag = np.where(
-                perturbs_arr > 0,
-                np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
-                np.right_shift(noise_mag, np.abs(perturbs_arr).astype(np.int64)),
-            )
 
-            perturbation = Fxp(shifted_mag * noise_sign, dtype=self.formatDict["membrane_potential"])
+            if SIGN_BIT_BUG_MODE:
+                # Reproduce the RTL bug Sean/Logan found (internal_events_processor.v
+                # line 809): for negative shifts, the sign bit is included as an
+                # extra bit ABOVE the 16-bit magnitude before shifting, rather
+                # than being reapplied cleanly after. This causes negative-shift
+                # results to come out roughly 2x too large (equivalent to a
+                # shift of n-1 instead of n) whenever the sign bit happens to be
+                # set. Sign is only reapplied AFTER the shift, letting whatever
+                # fraction of the extra bit survived the shift remain baked in
+                # as an error.
+                combined_for_shift = noise_mag + np.where(noise_sign < 0, 2 ** 16, 0)
+                shifted_mag = np.where(
+                    perturbs_arr > 0,
+                    np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
+                    np.right_shift(combined_for_shift, np.abs(perturbs_arr).astype(np.int64)),
+                )
+            else:
+                shifted_mag = np.where(
+                    perturbs_arr > 0,
+                    np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
+                    np.right_shift(noise_mag, np.abs(perturbs_arr).astype(np.int64)),
+                )
 
-            # add the noise to the membrane potential
-            self.membranePotentials(self.membranePotentials + perturbation)
+           # Compute the raw perturbation and MP update in plain int64, then
+            # wrap to 32-bit two's complement manually (matching Sean's
+            # confirmation that the FPGA's final MP update is 32 bits, native
+            # Verilog addition/wraparound, not saturation). Fxp's default
+            # behavior throws an error on overflow instead of wrapping, so we
+            # bypass it here rather than constructing an Fxp value that could
+            # overflow during intermediate math.
+            raw_perturbation = (shifted_mag * noise_sign).astype(np.int64)
+            current_mp = np.array(self.membranePotentials()).astype(np.int64)
+            new_mp_raw = current_mp + raw_perturbation
+            new_mp_wrapped = ((new_mp_raw + 2**31) % (2**32)) - 2**31
+            self.membranePotentials(Fxp(new_mp_wrapped, dtype=self.formatDict["membrane_potential"]))
             # spike when the membrane potential > self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() > threshs)
 
