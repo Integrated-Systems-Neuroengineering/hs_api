@@ -550,19 +550,18 @@ class simple_sim:
 
             if SIGN_BIT_BUG_MODE:
                 # Reproduce the RTL bug Sean/Logan found (internal_events_processor.v
-                # line 809): for negative shifts, the sign bit is included as an
-                # extra bit ABOVE the 16-bit magnitude before shifting, rather
-                # than being reapplied cleanly after. This causes negative-shift
-                # results to come out roughly 2x too large (equivalent to a
-                # shift of n-1 instead of n) whenever the sign bit happens to be
-                # set. Sign is only reapplied AFTER the shift, letting whatever
-                # fraction of the extra bit survived the shift remain baked in
-                # as an error.
-                combined_for_shift = noise_mag + np.where(noise_sign < 0, 2 ** 16, 0)
+                # line 809): bit 16 of the doubled-and-incremented noise value is
+                # the natural sign indicator (it's 1 exactly when the pre-doubling
+                # raw value was >=32768, matching Logan's sign rule). The correct
+                # behavior shifts the FULL 17-bit magnitude (bit 16 included).
+                # The bug instead masks off bit 16 (using only the bottom 16
+                # bits, prbs_regularized[15:0]) before shifting on negative
+                # shifts, discarding that top bit's contribution.
+                truncated_mag = noise_mag & 0xFFFF  # drop bit 16 -- the bug
                 shifted_mag = np.where(
                     perturbs_arr > 0,
                     np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
-                    np.right_shift(combined_for_shift, np.abs(perturbs_arr).astype(np.int64)),
+                    np.right_shift(truncated_mag, np.abs(perturbs_arr).astype(np.int64)),
                 )
             else:
                 shifted_mag = np.where(
