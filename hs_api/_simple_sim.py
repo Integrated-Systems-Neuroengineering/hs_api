@@ -10,8 +10,7 @@ from fxpmath.functions import leftshiftArr, rightshiftArr
 # Toggle to reproduce the RTL sign-bit bug Sean/Logan found in
 # internal_events_processor.v (line 809), for direct comparison against the
 # corrected behavior. Defaults to False (correct behavior) per Leif's request.
-SIGN_BIT_BUG_MODE = False
-
+USE_PROPOSED_SIGN_FIX = False
 
 
 
@@ -548,25 +547,25 @@ class simple_sim:
             noise_mag = (2 * raw_unsigned.astype(np.int64)) + 1  # odd, [1, 131071]
             noise_sign = np.where(raw_unsigned >= 2 ** 15, -1, 1)
 
-            if SIGN_BIT_BUG_MODE:
-                # Reproduce the RTL bug Sean/Logan found (internal_events_processor.v
-                # line 809): bit 16 of the doubled-and-incremented noise value is
-                # the natural sign indicator (it's 1 exactly when the pre-doubling
-                # raw value was >=32768, matching Logan's sign rule). The correct
-                # behavior shifts the FULL 17-bit magnitude (bit 16 included).
-                # The bug instead masks off bit 16 (using only the bottom 16
-                # bits, prbs_regularized[15:0]) before shifting on negative
-                # shifts, discarding that top bit's contribution.
-                truncated_mag = noise_mag & 0xFFFF  # drop bit 16 -- the bug
+            # Ground truth from Logan/Sean's actual Verilog (PRBS noise gen):
+            #   Positive/zero shift: prbs_regularized[15:0] << shift_abs
+            #     (ALWAYS truncated to the 16-bit magnitude, bit 16 dropped)
+            #   Negative shift, CURRENT/buggy hardware: {18'd0, prbs_regularized} >> shift_abs
+            #     (uses the FULL 17 bits, bit 16 included -- this is the bug)
+            #   Negative shift, PROPOSED FIX: would truncate to 16 bits like
+            #     the positive-shift path already does, matching the pattern
+            #     Sean/Logan suggest ("removing the sign bit from negative shift")
+            truncated_mag = noise_mag & 0xFFFF  # bottom 16 bits only
+            if USE_PROPOSED_SIGN_FIX:
                 shifted_mag = np.where(
                     perturbs_arr > 0,
-                    np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
+                    np.left_shift(truncated_mag, perturbs_arr.astype(np.int64)),
                     np.right_shift(truncated_mag, np.abs(perturbs_arr).astype(np.int64)),
                 )
             else:
                 shifted_mag = np.where(
                     perturbs_arr > 0,
-                    np.left_shift(noise_mag, perturbs_arr.astype(np.int64)),
+                    np.left_shift(truncated_mag, perturbs_arr.astype(np.int64)),
                     np.right_shift(noise_mag, np.abs(perturbs_arr).astype(np.int64)),
                 )
 
