@@ -7,7 +7,7 @@ from bidict import bidict
 import os
 import copy
 import logging
-
+import random
 # handle the ordering of the elements of an entry in the neurons dictionary
 synapseIdx = 0
 modelIdx = 1
@@ -60,7 +60,7 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(
-            self, axons, connections, outputs, target=None, simDump=False, coreID=0
+            self, axons, connections, outputs, target=None, simDump=False, coreID=0, random_shuffle=False
     ):
         # return
         # breakpoint()
@@ -126,6 +126,19 @@ class CRI_network:
         self._delay_map = {}
         self._preprocess_delayed_synapses()
         self.gen_connectome()
+        if random_shuffle:
+            # Randomly permute which neuron-group slot each neuron gets
+            # assigned to (as opposed to the default sequential order).
+            # Must happen after all neurons are created (so we have the
+            # full set of globalIdx values) and before compileNetwork/HBM
+            # address generation, since everything downstream (synapses,
+            # axons, outputs) resolves through this same globalIdx.
+            neuron_objs = list(self.connectome.get_neurons().values())
+            original_idxs = [n.get_globalIdx() for n in neuron_objs]
+            shuffled_idxs = original_idxs.copy()
+            random.shuffle(shuffled_idxs)
+            for neuron_obj, new_idx in zip(neuron_objs, shuffled_idxs):
+                neuron_obj.set_globalIdx(new_idx)
         # breakpoint()
         self.axons, self.connections = self.__format_input(
             copy.deepcopy(self.userAxons), copy.deepcopy(self.userConnections)
