@@ -1,0 +1,20 @@
+{
+ "CRI_network": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "hs_api.api",
+   "module_short": "hs_api.api",
+   "name": "CRI_network"
+  }
+ ],
+ "LIF_neuron": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "hs_api.neuron_models",
+   "module_short": "hs_api.neuron_models",
+   "name": "LIF_neuron"
+  }
+ ]
+}

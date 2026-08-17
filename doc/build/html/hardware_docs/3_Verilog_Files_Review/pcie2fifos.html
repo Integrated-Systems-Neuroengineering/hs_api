@@ -1,0 +1,1689 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>pcie2fifos.v &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/pcie2fifos';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Pointer FIFO Controller Module" href="pointer_fifo_controller.html" />
+    <link rel="prev" title="internal_events_processor.v" href="internal_events_processor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">pcie2fifos.v</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="pcie2fifos-v">
+<h1>pcie2fifos.v<a class="headerlink" href="#pcie2fifos-v" title="Link to this heading">#</a></h1>
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading">#</a></h2>
+<section id="purpose-and-role-in-stack">
+<h3>Purpose and Role in Stack<a class="headerlink" href="#purpose-and-role-in-stack" title="Link to this heading">#</a></h3>
+<p>The <strong>pcie2fifos</strong> module serves as the <strong>PCIe AXI4 to FIFO bridge</strong>, providing the critical interface between the host computer and the FPGA neuromorphic hardware. This module:</p>
+<ul class="simple">
+<li><p><strong>Converts AXI4 memory-mapped transactions</strong> (from PCIe controller) into simple FIFO operations</p></li>
+<li><p><strong>Implements AXI4 slave interface</strong> for both read and write transactions</p></li>
+<li><p><strong>Manages bidirectional data flow:</strong> Host→FPGA (writes) and FPGA→Host (reads)</p></li>
+<li><p><strong>Operates at 512-bit data width</strong> for high-bandwidth communication</p></li>
+<li><p><strong>Provides flow control</strong> through FIFO full/empty signals</p></li>
+</ul>
+<p>In the software/hardware stack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Host PC (Python) → PCIe DMA Driver → PCIe Controller (Xilinx IP)
+                                           ↓ AXI4 512-bit
+                                    ┌──────────────┐
+                                    │ pcie2fifos   │
+                                    └──────┬───────┘
+                                           ↓ FIFO Interface
+                              ┌────────────┴─────────────┐
+                              │                          │
+                         Input FIFO                 Output FIFO
+                         (Host→FPGA)                (FPGA→Host)
+                              │                          │
+                              ▼                          ▼
+                     command_interpreter          command_interpreter
+</pre></div>
+</div>
+<p>This module abstracts away AXI4 protocol complexity, allowing the rest of the design to work with simple FIFO interfaces.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<section id="high-level-block-diagram">
+<h3>High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                        pcie2fifos
+    ┌───────────────────────────────────────────────────────┐
+    │                                                       │
+    │  ┌─────────────────────────────────────────────┐      │
+    │  │   AXI4 Write Channel State Machine          │      │
+    │  │   (Host → FPGA Data Path)                   │      │
+    │  │                                             │      │
+    │  │   RX_RESET → RX_DATA → RX_DONE → RX_RESET   │      │
+    │  │        │        ▲         │                 │      │
+    │  │        │        │         │                 │      │
+AXI4 │  │    AW ready  W data   B response           │      │
+Write│  └────────┬──────┼─────────┼──────────────────┘      │
+─────┼───────────┘      │         │                         │
+     │                  │         │                         │
+s_axi│  ┌───────────────▼─────────┴───────────────────┐     │
+_awaddr              AXI4 Write Logic                  │    │
+_awvalid             - Address channel (AW)            │    │
+_awready             - Data channel (W)                │    │ Input FIFO
+_wdata  │            - Response channel (B)            │───▶│ (512-bit)
+_wvalid │            - Flow control via inpFIFO_full  │    │ PC → FPGA
+_wready │            - Write enable: wready &amp; wvalid   │    │
+_wlast  │            └────────────────────────────────────┘    │
+_bvalid │                                                     │
+_bready │                                                     │
+        │                                                     │
+        │  ┌─────────────────────────────────────────────┐   │
+        │  │   AXI4 Read Channel State Machine           │   │
+        │  │   (FPGA → Host Data Path)                   │   │
+        │  │                                              │   │
+        │  │   TX_RESET → TX_DATA → TX_RESET             │   │
+        │  │        │        ▲                            │   │
+        │  │        │        │                            │   │
+AXI4    │  │    AR ready  R data (multi-beat)           │   │
+Read    │  └────────┬──────┼───────────────────────────┘   │
+────────┼───────────┘      │                               │
+        │                  │                               │
+s_axi   │  ┌───────────────▼─────────────────────────┐    │
+_araddr │  │       AXI4 Read Logic                   │    │ Output FIFO
+_arvalid│  │    - Address channel (AR)                │◄───│ (512-bit)
+_arready│  │    - Data channel (R)                    │    │ FPGA → PC
+_rdata  │  │    - Beat counter (arlen)                │    │ (FWFT mode)
+_rvalid │  │    - Auto-pop on rvalid &amp; rready         │    │
+_rready │  │    - rlast generation                    │    │
+_rlast  │  │    └──────────────────────────────────────────┘    │
+        │                                                     │
+        │  ┌─────────────────────────────────────────────┐   │
+        │  │   Mandatory AXI4 Signal Assignments         │   │
+        │  │   - bid = 4&#39;d0                              │   │
+        │  │   - rid = 4&#39;d0                              │   │
+        │  │   - rresp = 2&#39;d0 (OKAY)                     │   │
+        │  │   - bresp = 2&#39;d0 (OKAY)                     │   │
+        │  └─────────────────────────────────────────────┘   │
+        │                                                     │
+        └─────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">aclk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>225 MHz AXI4 clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">aresetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low asynchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="axi4-read-address-channel">
+<h3>AXI4 Read Address Channel<a class="headerlink" href="#axi4-read-address-channel" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_araddr</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>64</p></td>
+<td><p>Read address (unused in this design)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arburst</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>2</p></td>
+<td><p>Burst type (unused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arcache</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>4</p></td>
+<td><p>Cache type (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>4</p></td>
+<td><p>Transaction ID (unused, returns 0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arlen</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Burst length (beats - 1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arlock</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Lock type (unused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arprot</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>3</p></td>
+<td><p>Protection type (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arready</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Read address ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arsize</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>3</p></td>
+<td><p>Burst size (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_arvalid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Read address valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Note:</strong> Address and metadata signals are ignored; this module simply pops data from output FIFO regardless of address.</p>
+</section>
+<section id="axi4-write-address-channel">
+<h3>AXI4 Write Address Channel<a class="headerlink" href="#axi4-write-address-channel" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awaddr</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>64</p></td>
+<td><p>Write address (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awburst</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>2</p></td>
+<td><p>Burst type (unused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awcache</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>4</p></td>
+<td><p>Cache type (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>4</p></td>
+<td><p>Transaction ID (unused, returns 0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awlen</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Burst length (unused, single-beat assumed)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awlock</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Lock type (unused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awprot</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>3</p></td>
+<td><p>Protection type (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awready</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Write address ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awsize</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>3</p></td>
+<td><p>Burst size (unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_awvalid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Write address valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="axi4-write-data-channel">
+<h3>AXI4 Write Data Channel<a class="headerlink" href="#axi4-write-data-channel" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_wdata</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>512</p></td>
+<td><p>Write data (directly connected to inpFIFO_din)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_wlast</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Last beat of write burst</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_wready</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Write data ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_wstrb</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>64</p></td>
+<td><p>Write strobes (unused, all bytes written)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_wvalid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Write data valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="axi4-write-response-channel">
+<h3>AXI4 Write Response Channel<a class="headerlink" href="#axi4-write-response-channel" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_bid</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>4</p></td>
+<td><p>Response transaction ID (always 4’d0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_bready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Response ready (from master)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_bresp</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>2</p></td>
+<td><p>Write response (always 2’d0 = OKAY)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_bvalid</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Write response valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="axi4-read-data-channel">
+<h3>AXI4 Read Data Channel<a class="headerlink" href="#axi4-read-data-channel" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rdata</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>512</p></td>
+<td><p>Read data (from outFIFO_dout or default pattern)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rid</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>4</p></td>
+<td><p>Read transaction ID (always 4’d0)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rlast</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Last beat of read burst</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Read data ready (from master)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rresp</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>2</p></td>
+<td><p>Read response (always 2’d0 = OKAY)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">s_axi_rvalid</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Read data valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="input-fifo-interface-pc-fpga">
+<h3>Input FIFO Interface (PC → FPGA)<a class="headerlink" href="#input-fifo-interface-pc-fpga" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inpFIFO_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>FIFO full flag (backpressure)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">inpFIFO_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>512</p></td>
+<td><p>FIFO data input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">inpFIFO_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Connection:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">inpFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_wdata</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">inpFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_wready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_wvalid</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="output-fifo-interface-fpga-pc">
+<h3>Output FIFO Interface (FPGA → PC)<a class="headerlink" href="#output-fifo-interface-fpga-pc" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outFIFO_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">outFIFO_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>512</p></td>
+<td><p>FIFO data output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">outFIFO_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Connection (FWFT FIFO assumed):</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">s_axi_rdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">outFIFO_empty</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">outFIFO_dout</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="mh">16</span><span class="p">{</span><span class="mh">32&#39;h89ABCDEF</span><span class="p">}};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">outFIFO_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">outFIFO_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rready</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> FWFT (First-Word Fall-Through) mode means data appears on <code class="docutils literal notranslate"><span class="pre">dout</span></code> one cycle after <code class="docutils literal notranslate"><span class="pre">rden</span></code> assertion is not required; data is valid when <code class="docutils literal notranslate"><span class="pre">empty</span></code> is deasserted.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="mandatory-signal-assignments">
+<h3>Mandatory Signal Assignments<a class="headerlink" href="#mandatory-signal-assignments" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">s_axi_bid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">      </span><span class="c1">// Transaction ID always 0</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">s_axi_rid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">      </span><span class="c1">// Transaction ID always 0</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">s_axi_rresp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">    </span><span class="c1">// OKAY response</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">s_axi_bresp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">    </span><span class="c1">// OKAY response</span>
+</pre></div>
+</div>
+<p>These signals are required by AXI4 protocol but carry no information in this simple bridge design.</p>
+</section>
+<section id="input-data-path-write-logic">
+<h3>Input Data Path (Write Logic)<a class="headerlink" href="#input-data-path-write-logic" title="Link to this heading">#</a></h3>
+<p><strong>Direct Assignments:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">inpFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_wdata</span><span class="p">;</span><span class="w">         </span><span class="c1">// 512-bit data passthrough</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">inpFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_wready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_wvalid</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write when handshake occurs</span>
+</pre></div>
+</div>
+<p><strong>Write State Machine States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_RX_RESET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_RX_DATA</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_RX_DONE</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mi">&#39;d3</span><span class="p">;</span><span class="w">  </span><span class="c1">// Note: 2&#39;d2 skipped</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌──────────────┐
+        │  RX_RESET    │
+        └──────┬───────┘
+               │ aresetn
+               ▼
+        ┌──────────────┐
+    ┌──▶│  RX_DATA     │
+    │   │  Wait for    │
+    │   │  awvalid     │──awvalid──┐
+    │   └──────────────┘           │
+    │                              │
+    │                              ▼
+    │                       ┌──────────────┐
+    │                       │  RX_DATA     │
+    │                       │  Push FIFO   │
+    │                       │  (if !full)  │
+    │                       └──────┬───────┘
+    │                              │
+    │                         wvalid &amp; wlast
+    │                              │
+    │                              ▼
+    │                       ┌──────────────┐
+    │                       │  RX_DONE     │
+    │                       │  Send bresp  │
+    │                       └──────┬───────┘
+    │                              │
+    │                         bready
+    │                              │
+    │                              ├─ awvalid ──┐
+    │                              │            │
+    │                              ▼            ▼
+    └──────────────────────────────┘      (back to RX_DATA)
+</pre></div>
+</div>
+<p><strong>Detailed State Behavior:</strong></p>
+<p><strong>STATE_RX_RESET:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">s_axi_awready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">          </span><span class="c1">// Ready to accept address</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_awvalid</span><span class="p">)</span>
+<span class="w">   </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RX_DATA</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>STATE_RX_DATA:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">inpFIFO_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">   </span><span class="n">s_axi_wready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">        </span><span class="c1">// Ready to accept data</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_wvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_wlast</span><span class="p">)</span>
+<span class="w">      </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RX_DONE</span><span class="p">;</span>
+<span class="k">end</span>
+<span class="c1">// Note: Backpressure applied when FIFO full</span>
+</pre></div>
+</div>
+<p><strong>STATE_RX_DONE:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">s_axi_bvalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">           </span><span class="c1">// Assert write response valid</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_bready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">   </span><span class="n">s_axi_awready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">       </span><span class="c1">// Ready for next transaction</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_awvalid</span><span class="p">)</span>
+<span class="w">      </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RX_DATA</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span>
+<span class="w">      </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_RX_RESET</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="output-data-path-read-logic">
+<h3>Output Data Path (Read Logic)<a class="headerlink" href="#output-data-path-read-logic" title="Link to this heading">#</a></h3>
+<p><strong>Direct Assignments:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">s_axi_rdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">outFIFO_empty</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">outFIFO_dout</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="mh">16</span><span class="p">{</span><span class="mh">32&#39;h89ABCDEF</span><span class="p">}};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">outFIFO_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">outFIFO_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rready</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Default Pattern:</strong> <code class="docutils literal notranslate"><span class="pre">0x89ABCDEF</span></code> repeated 16 times (512 bits) when FIFO empty</p>
+<p><strong>Read State Machine States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="n">STATE_TX_RESET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">STATE_TX_DATA</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Read Length Tracking:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s_axi_arlen_reg</span><span class="p">;</span><span class="w">  </span><span class="c1">// Capture burst length</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tx_ctr</span><span class="p">;</span><span class="w">           </span><span class="c1">// Beat counter</span>
+
+<span class="c1">// Capture burst length</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">aresetn</span><span class="p">)</span>
+<span class="w">      </span><span class="n">s_axi_arlen_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_arready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_arvalid</span><span class="p">)</span>
+<span class="w">      </span><span class="n">s_axi_arlen_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">s_axi_arlen</span><span class="p">;</span>
+
+<span class="c1">// Increment beat counter</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">aresetn</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_arready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_arvalid</span><span class="p">))</span>
+<span class="w">      </span><span class="n">tx_ctr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_rready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rvalid</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tx_ctr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">tx_ctr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="c1">// Generate last signal</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">s_axi_rlast</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">tx_ctr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">s_axi_arlen_reg</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌──────────────┐
+        │  TX_RESET    │
+        └──────┬───────┘
+               │ aresetn
+               ▼
+        ┌──────────────┐
+    ┌──▶│  TX_RESET    │
+    │   │  Wait for    │
+    │   │  arvalid     │──arvalid──┐
+    │   └──────────────┘           │
+    │                              │
+    │                              ▼
+    │                       ┌──────────────┐
+    │                       │  TX_DATA     │
+    │                       │  Stream data │
+    │                       │  (multi-beat)│
+    │                       └──────┬───────┘
+    │                              │
+    │                     rready &amp; rlast
+    │                              │
+    │                              ├─ arvalid ──┐
+    │                              │            │
+    │                              ▼            ▼
+    └──────────────────────────────┘      (stay in TX_DATA)
+</pre></div>
+</div>
+<p><strong>Detailed State Behavior:</strong></p>
+<p><strong>STATE_TX_RESET:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">s_axi_arready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">          </span><span class="c1">// Ready to accept read address</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_arvalid</span><span class="p">)</span>
+<span class="w">   </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_TX_DATA</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>STATE_TX_DATA:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">s_axi_rvalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">           </span><span class="c1">// Data always valid (even if FIFO empty)</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_rready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="n">tx_ctr</span><span class="o">==</span><span class="n">s_axi_arlen_reg</span><span class="p">))</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">   </span><span class="n">s_axi_arready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">       </span><span class="c1">// Ready for next transaction</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">s_axi_arvalid</span><span class="p">)</span>
+<span class="w">      </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_TX_RESET</span><span class="p">;</span>
+<span class="w">   </span><span class="c1">// else stay in TX_DATA for back-to-back bursts</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>FWFT FIFO Behavior:</strong></p>
+<ul class="simple">
+<li><p>Data valid on <code class="docutils literal notranslate"><span class="pre">outFIFO_dout</span></code> when <code class="docutils literal notranslate"><span class="pre">outFIFO_empty==0</span></code></p></li>
+<li><p>No read latency: <code class="docutils literal notranslate"><span class="pre">rden</span></code> pulse pops current data and advances to next</p></li>
+<li><p>Simplifies <code class="docutils literal notranslate"><span class="pre">rden</span></code> logic: just AND of <code class="docutils literal notranslate"><span class="pre">rvalid</span></code> and <code class="docutils literal notranslate"><span class="pre">rready</span></code></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="write-transaction-single-beat">
+<h3>Write Transaction (Single Beat)<a class="headerlink" href="#write-transaction-single-beat" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3      4      5      6      7
+           │      │      │      │      │      │      │      │
+aclk     ──┘▔▔▔▔▔▔└┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔
+           │      │▔▔▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│
+RX State   RESET  │DATA  │DATA  │DATA  │DONE  │RESET │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│
+awvalid    │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▔▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│
+awready    │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wvalid     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wready     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wlast      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     XXXXXX │XXXXXX│XXXXXX│WDATA │WDATA │XXXXXX│XXXXXX│
+wdata      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+inpFIFO_   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wren       │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+bvalid     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+bready     │      │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Cycle 0: RESET state, <code class="docutils literal notranslate"><span class="pre">awready</span></code> asserted</p></li>
+<li><p>Cycle 1: <code class="docutils literal notranslate"><span class="pre">awvalid</span></code> handshake, transition to DATA state</p></li>
+<li><p>Cycle 2: Wait for <code class="docutils literal notranslate"><span class="pre">wvalid</span></code> (FIFO not full assumed)</p></li>
+<li><p>Cycle 3: <code class="docutils literal notranslate"><span class="pre">wvalid</span></code> &amp; <code class="docutils literal notranslate"><span class="pre">wready</span></code> handshake, <code class="docutils literal notranslate"><span class="pre">wlast</span></code> asserted, data written to FIFO</p></li>
+<li><p>Cycle 4: DONE state, <code class="docutils literal notranslate"><span class="pre">bvalid</span></code> asserted for write response</p></li>
+<li><p>Cycle 5: <code class="docutils literal notranslate"><span class="pre">bready</span></code> handshake, return to RESET</p></li>
+</ul>
+</section>
+<section id="write-transaction-with-backpressure">
+<h3>Write Transaction with Backpressure<a class="headerlink" href="#write-transaction-with-backpressure" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3      4      5      6      7
+           │      │      │      │      │      │      │      │
+RX State   DATA   │DATA  │DATA  │DATA  │DATA  │DONE  │RESET │
+           │      │      │      │      │      │      │      │
+inpFIFO_   ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+full       │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▔▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+wvalid     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wready     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+inpFIFO_   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+wren       │      │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Cycles 1-3: FIFO full, <code class="docutils literal notranslate"><span class="pre">wready</span></code> deasserted (backpressure)</p></li>
+<li><p>Cycle 4: FIFO no longer full, <code class="docutils literal notranslate"><span class="pre">wready</span></code> asserted, handshake occurs</p></li>
+<li><p>Master must hold <code class="docutils literal notranslate"><span class="pre">wvalid</span></code> and <code class="docutils literal notranslate"><span class="pre">wdata</span></code> stable during backpressure</p></li>
+</ul>
+</section>
+<section id="read-transaction-4-beat-burst-arlen-3">
+<h3>Read Transaction (4-Beat Burst, arlen=3)<a class="headerlink" href="#read-transaction-4-beat-burst-arlen-3" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3      4      5      6      7
+           │      │      │      │      │      │      │      │
+TX State   RESET  │DATA  │DATA  │DATA  │DATA  │RESET │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+arvalid    │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▔▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│
+arready    │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     8&#39;hXX  │8&#39;h03 │8&#39;h03 │8&#39;h03 │8&#39;h03 │8&#39;h03 │8&#39;h00 │
+arlen      │      │      │(=3)  │      │      │      │      │
+           │      │      │      │      │      │      │      │
+arlen_reg  8&#39;h00  │8&#39;h00 │8&#39;h03 │8&#39;h03 │8&#39;h03 │8&#39;h03 │8&#39;h03 │
+           │      │      │      │      │      │      │      │
+tx_ctr     0      │0      │0      │1      │2      │3      │0
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+rvalid     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+rready     │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     XXXXXX │XXXXXX│DATA0 │DATA1 │DATA2 │DATA3 │XXXXXX│
+rdata      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+s_axi_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+rlast      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │
+outFIFO_   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+rden       │      │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Cycle 0: RESET state, <code class="docutils literal notranslate"><span class="pre">arready</span></code> asserted</p></li>
+<li><p>Cycle 1: <code class="docutils literal notranslate"><span class="pre">arvalid</span></code> handshake, <code class="docutils literal notranslate"><span class="pre">arlen=3</span></code> (4 beats total)</p></li>
+<li><p>Cycle 2: First beat, <code class="docutils literal notranslate"><span class="pre">arlen</span></code> registered, <code class="docutils literal notranslate"><span class="pre">tx_ctr=0</span></code>, <code class="docutils literal notranslate"><span class="pre">rlast=0</span></code></p></li>
+<li><p>Cycle 3-5: Beats 2-4, <code class="docutils literal notranslate"><span class="pre">tx_ctr</span></code> increments</p></li>
+<li><p>Cycle 5: Last beat, <code class="docutils literal notranslate"><span class="pre">tx_ctr=3</span></code>, <code class="docutils literal notranslate"><span class="pre">rlast=1</span></code></p></li>
+<li><p>Cycle 6: Return to RESET, counter resets</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-map">
+<h2>Memory Map<a class="headerlink" href="#memory-map" title="Link to this heading">#</a></h2>
+<p>This module does not implement a true memory map. All address signals (<code class="docutils literal notranslate"><span class="pre">s_axi_araddr</span></code>, <code class="docutils literal notranslate"><span class="pre">s_axi_awaddr</span></code>) are ignored. The module operates as a streaming interface:</p>
+<ul class="simple">
+<li><p><strong>Write Operations:</strong> Data pushed to input FIFO regardless of address</p></li>
+<li><p><strong>Read Operations:</strong> Data popped from output FIFO regardless of address</p></li>
+</ul>
+<p>The actual memory mapping and addressing is handled by:</p>
+<ul class="simple">
+<li><p><strong>Host software:</strong> Determines which FIFO queue to use (via PCIe BAR mapping)</p></li>
+<li><p><strong>command_interpreter:</strong> Interprets commands from input FIFO and routes to appropriate modules</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="protocol-details">
+<h2>Protocol Details<a class="headerlink" href="#protocol-details" title="Link to this heading">#</a></h2>
+<section id="axi4-burst-types">
+<h3>AXI4 Burst Types<a class="headerlink" href="#axi4-burst-types" title="Link to this heading">#</a></h3>
+<p><strong>Supported:</strong> INCR (incrementing burst) - assumed by design
+<strong>Unsupported:</strong> FIXED, WRAP bursts - ignored, module treats all as streaming</p>
+<p><strong>Burst Length:</strong></p>
+<ul class="simple">
+<li><p>Write: Assumed single-beat (though <code class="docutils literal notranslate"><span class="pre">wlast</span></code> detection allows multi-beat)</p></li>
+<li><p>Read: Supports multi-beat bursts via <code class="docutils literal notranslate"><span class="pre">arlen</span></code> and beat counter</p></li>
+</ul>
+</section>
+<section id="axi4-response-codes">
+<h3>AXI4 Response Codes<a class="headerlink" href="#axi4-response-codes" title="Link to this heading">#</a></h3>
+<p><strong>Write Response (<code class="docutils literal notranslate"><span class="pre">bresp</span></code>):</strong> Always <code class="docutils literal notranslate"><span class="pre">2'b00</span></code> (OKAY)
+<strong>Read Response (<code class="docutils literal notranslate"><span class="pre">rresp</span></code>):</strong> Always <code class="docutils literal notranslate"><span class="pre">2'b00</span></code> (OKAY)</p>
+<p>No error conditions reported; module assumes all transactions succeed.</p>
+</section>
+<section id="fifo-assumptions">
+<h3>FIFO Assumptions<a class="headerlink" href="#fifo-assumptions" title="Link to this heading">#</a></h3>
+<p><strong>Input FIFO (Standard FIFO):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">wren</span></code> pulse writes data on same cycle</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">full</span></code> flag provides backpressure</p></li>
+<li><p>Depth sufficient to absorb PCIe burst traffic</p></li>
+</ul>
+<p><strong>Output FIFO (FWFT Mode):</strong></p>
+<ul class="simple">
+<li><p>Data appears on <code class="docutils literal notranslate"><span class="pre">dout</span></code> when <code class="docutils literal notranslate"><span class="pre">empty</span></code> deasserted</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rden</span></code> pulse pops data and advances to next</p></li>
+<li><p>Zero read latency (data valid same cycle as <code class="docutils literal notranslate"><span class="pre">empty=0</span></code>)</p></li>
+</ul>
+<p><strong>Typical FIFO Depths:</strong></p>
+<ul class="simple">
+<li><p>Input: 512 entries (256 KB) - handles large DMA transfers</p></li>
+<li><p>Output: 512 entries (256 KB) - buffers spike/response data</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="bandwidth">
+<h3>Bandwidth<a class="headerlink" href="#bandwidth" title="Link to this heading">#</a></h3>
+<p><strong>Theoretical Maximum:</strong></p>
+<ul class="simple">
+<li><p>512 bits &#64; 225 MHz = 115.2 Gb/s = 14.4 GB/s per direction</p></li>
+</ul>
+<p><strong>Practical Bandwidth:</strong></p>
+<ul class="simple">
+<li><p>Write: Limited by FIFO full condition and PCIe overhead</p></li>
+<li><p>Read: Limited by FIFO empty condition and burst efficiency</p></li>
+<li><p>Expected: 8-12 GB/s (accounting for protocol overhead and command processing)</p></li>
+</ul>
+</section>
+<section id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Link to this heading">#</a></h3>
+<p><strong>Write Transaction:</strong></p>
+<ul class="simple">
+<li><p>Address handshake: 1 cycle</p></li>
+<li><p>Data handshake: 1 cycle (if FIFO not full)</p></li>
+<li><p>Response handshake: 1 cycle</p></li>
+<li><p><strong>Total:</strong> 3 cycles minimum (13.3 ns &#64; 225 MHz)</p></li>
+</ul>
+<p><strong>Read Transaction:</strong></p>
+<ul class="simple">
+<li><p>Address handshake: 1 cycle</p></li>
+<li><p>Data valid: Immediate (FWFT FIFO)</p></li>
+<li><p>Per-beat: 1 cycle (if master ready)</p></li>
+<li><p><strong>Total:</strong> 1 cycle address + N cycles data (N = burst length)</p></li>
+</ul>
+</section>
+<section id="flow-control">
+<h3>Flow Control<a class="headerlink" href="#flow-control" title="Link to this heading">#</a></h3>
+<p><strong>Backpressure Mechanisms:</strong></p>
+<p>Write Path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>inpFIFO_full → s_axi_wready deasserted → PCIe master stalls
+</pre></div>
+</div>
+<p>Read Path:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>outFIFO_empty → s_axi_rdata = default pattern → PCIe master receives dummy data
+</pre></div>
+</div>
+<p><strong>Note:</strong> Read path does NOT stall when FIFO empty; returns default pattern instead. Software must track expected response count.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="related-modules">
+<h3>Related Modules<a class="headerlink" href="#related-modules" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Relationship</p></th>
+<th class="head"><p>Interface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>PCIe Controller (Xilinx IP)</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>AXI4 master providing <code class="docutils literal notranslate"><span class="pre">s_axi_*</span></code> signals</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>command_interpreter.v</strong></p></td>
+<td><p>Downstream</p></td>
+<td><p>Connects to <code class="docutils literal notranslate"><span class="pre">inpFIFO</span></code> (read) and <code class="docutils literal notranslate"><span class="pre">outFIFO</span></code> (write)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Input FIFO (Xilinx IP)</strong></p></td>
+<td><p>Internal</p></td>
+<td><p>512-bit async FIFO (PC→FPGA)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Output FIFO (Xilinx IP)</strong></p></td>
+<td><p>Internal</p></td>
+<td><p>512-bit async FIFO (FPGA→PC), FWFT mode</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="software-integration">
+<h3>Software Integration<a class="headerlink" href="#software-integration" title="Link to this heading">#</a></h3>
+<p><strong>DMA Driver (C++ wrapper: adxdma_dmadump.cpp):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">DMA_Write()</span></code> → Triggers AXI4 write transactions → <code class="docutils literal notranslate"><span class="pre">inpFIFO</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DMA_Read()</span></code> → Triggers AXI4 read transactions → <code class="docutils literal notranslate"><span class="pre">outFIFO</span></code></p></li>
+</ul>
+<p><strong>Python (hs_bridge):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.send_command()</span></code> → Formats PCIe packet → DMA write</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.receive_response()</span></code> → DMA read → Parse packet</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>AXI4</strong></p></td>
+<td><p>ARM Advanced eXtensible Interface version 4 - High-performance memory-mapped protocol</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AXI4 Slave</strong></p></td>
+<td><p>Device that responds to read/write requests (this module)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>AXI4 Master</strong></p></td>
+<td><p>Device that initiates transactions (PCIe controller)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Handshake</strong></p></td>
+<td><p>Valid/ready protocol: transaction occurs when both asserted</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Burst</strong></p></td>
+<td><p>Multi-beat transaction transferring multiple data words</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Beat</strong></p></td>
+<td><p>Single data transfer within a burst</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>FWFT</strong></p></td>
+<td><p>First-Word Fall-Through - FIFO mode with zero read latency</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Backpressure</strong></p></td>
+<td><p>Flow control mechanism to pause upstream when buffer full</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Transaction ID</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">arid</span></code>/<code class="docutils literal notranslate"><span class="pre">awid</span></code>/<code class="docutils literal notranslate"><span class="pre">bid</span></code>/<code class="docutils literal notranslate"><span class="pre">rid</span></code> - Allows out-of-order completion (not used here)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Response Code</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">rresp</span></code>/<code class="docutils literal notranslate"><span class="pre">bresp</span></code> - Status of transaction (always OKAY here)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>INCR Burst</strong></p></td>
+<td><p>Incrementing address burst type (addresses increment by size)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>wlast</strong></p></td>
+<td><p>Indicates last beat of write burst</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>rlast</strong></p></td>
+<td><p>Indicates last beat of read burst</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>arlen</strong></p></td>
+<td><p>Read burst length in beats (0 = 1 beat, 1 = 2 beats, etc.)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="design-simplifications">
+<h2>Design Simplifications<a class="headerlink" href="#design-simplifications" title="Link to this heading">#</a></h2>
+<p>This module makes several simplifying assumptions compared to full AXI4 protocol:</p>
+<ol class="arabic simple">
+<li><p><strong>No Address Decoding:</strong> All addresses ignored; operates as pure FIFO bridge</p></li>
+<li><p><strong>No Transaction IDs:</strong> All IDs hardcoded to 0; no out-of-order support</p></li>
+<li><p><strong>No Error Reporting:</strong> All responses OKAY; no SLVERR or DECERR</p></li>
+<li><p><strong>Single Outstanding Transaction:</strong> State machines handle one transaction at a time</p></li>
+<li><p><strong>No Write Strobes:</strong> <code class="docutils literal notranslate"><span class="pre">wstrb</span></code> ignored; all bytes written</p></li>
+<li><p><strong>No Burst Optimization:</strong> Treats each burst independently</p></li>
+<li><p><strong>Read Returns Dummy Data When Empty:</strong> Does not stall; software must manage</p></li>
+</ol>
+<p>These simplifications are valid for this use case:</p>
+<ul class="simple">
+<li><p>Single master (PCIe controller)</p></li>
+<li><p>Software controls transaction ordering</p></li>
+<li><p>Command-response pattern ensures data availability</p></li>
+<li><p>High-level protocol (in command_interpreter) handles errors</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="problem-data-lost-on-write">
+<h3>Problem: Data Lost on Write<a class="headerlink" href="#problem-data-lost-on-write" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> Host sends data but FPGA doesn’t receive it</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">inpFIFO_full</span></code> - if stuck high, downstream not consuming</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">s_axi_wready</span></code> - should pulse when not full</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">inpFIFO_wren</span></code> - should pulse on <code class="docutils literal notranslate"><span class="pre">wready</span> <span class="pre">&amp;</span> <span class="pre">wvalid</span></code></p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">wlast</span></code> assertion - module expects it to transition to DONE state</p></li>
+</ol>
+<p><strong>Common Cause:</strong> Input FIFO overflow due to command_interpreter stalled</p>
+</section>
+<section id="problem-read-returns-garbage">
+<h3>Problem: Read Returns Garbage<a class="headerlink" href="#problem-read-returns-garbage" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> Host reads unexpected data</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">outFIFO_empty</span></code> - if high, FIFO has no data</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">s_axi_rdata</span></code> - should be <code class="docutils literal notranslate"><span class="pre">0x89ABCDEF</span></code> pattern when empty</p></li>
+<li><p>Verify command_interpreter has written response to <code class="docutils literal notranslate"><span class="pre">outFIFO</span></code></p></li>
+<li><p>Check beat counter <code class="docutils literal notranslate"><span class="pre">tx_ctr</span></code> vs <code class="docutils literal notranslate"><span class="pre">arlen_reg</span></code> - ensure correct burst length</p></li>
+</ol>
+<p><strong>Common Cause:</strong> Reading before response ready, or incorrect burst length</p>
+</section>
+<section id="problem-write-transaction-hangs">
+<h3>Problem: Write Transaction Hangs<a class="headerlink" href="#problem-write-transaction-hangs" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> <code class="docutils literal notranslate"><span class="pre">s_axi_wvalid</span></code> stuck high, no progress</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">s_axi_wready</span></code> - if stuck low, likely <code class="docutils literal notranslate"><span class="pre">inpFIFO_full</span></code></p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">rx_curr_state</span></code> - should be DATA state</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">aresetn</span></code> - ensure not in reset</p></li>
+<li><p>Check for missing <code class="docutils literal notranslate"><span class="pre">s_axi_wlast</span></code> - module waits for it</p></li>
+</ol>
+<p><strong>Common Cause:</strong> FIFO backpressure or missing <code class="docutils literal notranslate"><span class="pre">wlast</span></code> signal</p>
+</section>
+<section id="vio-ila-probes-recommended">
+<h3>VIO/ILA Probes (Recommended)<a class="headerlink" href="#vio-ila-probes-recommended" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// State machines</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rx_curr_state</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">tx_curr_state</span><span class="p">;</span>
+
+<span class="c1">// Handshakes</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">aw_hs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_awvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_awready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">w_hs</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_wvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_wready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">b_hs</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_bvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_bready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">ar_hs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_arvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_arready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">r_hs</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">s_axi_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">s_axi_rready</span><span class="p">;</span>
+
+<span class="c1">// FIFO status</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">inpFIFO_full</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">outFIFO_empty</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="potential-enhancements">
+<h2>Potential Enhancements<a class="headerlink" href="#potential-enhancements" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Address-Based Routing:</strong> Use addresses to multiplex between multiple logical FIFOs</p></li>
+<li><p><strong>Error Detection:</strong> Monitor for protocol violations (e.g., <code class="docutils literal notranslate"><span class="pre">wvalid</span></code> without prior <code class="docutils literal notranslate"><span class="pre">awvalid</span></code>)</p></li>
+<li><p><strong>Performance Counters:</strong> Track transactions, stall cycles, bandwidth utilization</p></li>
+<li><p><strong>Configurable Data Width:</strong> Parameterize for 256-bit or 1024-bit data paths</p></li>
+<li><p><strong>Timeout Detection:</strong> Abort transactions stuck waiting for handshakes</p></li>
+<li><p><strong>Out-of-Order Support:</strong> Use transaction IDs for pipelined operation</p></li>
+<li><p><strong>Read Stalling:</strong> Deassert <code class="docutils literal notranslate"><span class="pre">rvalid</span></code> when output FIFO empty instead of returning dummy data</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="safety-and-reset-behavior">
+<h2>Safety and Reset Behavior<a class="headerlink" href="#safety-and-reset-behavior" title="Link to this heading">#</a></h2>
+<section id="reset-assertions">
+<h3>Reset Assertions<a class="headerlink" href="#reset-assertions" title="Link to this heading">#</a></h3>
+<p>On <code class="docutils literal notranslate"><span class="pre">aresetn</span></code> deassertion (active-low reset):</p>
+<ul class="simple">
+<li><p>All state machines → RESET state</p></li>
+<li><p>All <code class="docutils literal notranslate"><span class="pre">ready</span></code> signals → 1 (accepting transactions)</p></li>
+<li><p>All <code class="docutils literal notranslate"><span class="pre">valid</span></code> outputs → 0 (no data/responses)</p></li>
+<li><p>Beat counter <code class="docutils literal notranslate"><span class="pre">tx_ctr</span></code> → 0</p></li>
+<li><p>Burst length register <code class="docutils literal notranslate"><span class="pre">s_axi_arlen_reg</span></code> → 0</p></li>
+</ul>
+</section>
+<section id="fifo-reset-synchronization">
+<h3>FIFO Reset Synchronization<a class="headerlink" href="#fifo-reset-synchronization" title="Link to this heading">#</a></h3>
+<p>FIFOs must be reset consistently with this module:</p>
+<ul class="simple">
+<li><p>Use same <code class="docutils literal notranslate"><span class="pre">aresetn</span></code> or synchronized version</p></li>
+<li><p>Ensure FIFOs clear before module exits reset</p></li>
+<li><p>First transaction after reset should not assume FIFO state</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Document Version:</strong> 1.0
+<strong>Last Updated:</strong> December 2025
+<strong>Module File:</strong> <code class="docutils literal notranslate"><span class="pre">pcie2fifos.v</span></code>
+<strong>Module Location:</strong> <code class="docutils literal notranslate"><span class="pre">CRI_proj/cri_fpga/code/new/hyddenn2/vivado/single_core.srcs/sources_1/new/</span></code>
+<strong>Protocol:</strong> AXI4 (slave interface)
+<strong>Data Width:</strong> 512 bits
+<strong>Clock Frequency:</strong> 225 MHz (aclk)</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-overview">Module Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-role-in-stack">Purpose and Role in Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-block-diagram">High-Level Block Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-read-address-channel">AXI4 Read Address Channel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-write-address-channel">AXI4 Write Address Channel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-write-data-channel">AXI4 Write Data Channel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-write-response-channel">AXI4 Write Response Channel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-read-data-channel">AXI4 Read Data Channel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-fifo-interface-pc-fpga">Input FIFO Interface (PC → FPGA)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-fifo-interface-fpga-pc">Output FIFO Interface (FPGA → PC)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mandatory-signal-assignments">Mandatory Signal Assignments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#input-data-path-write-logic">Input Data Path (Write Logic)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-data-path-read-logic">Output Data Path (Read Logic)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#write-transaction-single-beat">Write Transaction (Single Beat)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#write-transaction-with-backpressure">Write Transaction with Backpressure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-transaction-4-beat-burst-arlen-3">Read Transaction (4-Beat Burst, arlen=3)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-map">Memory Map</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#protocol-details">Protocol Details</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-burst-types">AXI4 Burst Types</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-response-codes">AXI4 Response Codes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-assumptions">FIFO Assumptions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bandwidth">Bandwidth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flow-control">Flow Control</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-modules">Related Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#software-integration">Software Integration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-simplifications">Design Simplifications</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-data-lost-on-write">Problem: Data Lost on Write</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-read-returns-garbage">Problem: Read Returns Garbage</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-write-transaction-hangs">Problem: Write Transaction Hangs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vio-ila-probes-recommended">VIO/ILA Probes (Recommended)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-enhancements">Potential Enhancements</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-reset-behavior">Safety and Reset Behavior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reset-assertions">Reset Assertions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-reset-synchronization">FIFO Reset Synchronization</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/pcie2fifos.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1745 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Appendix: Hardware Glossary for Software Experts &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/supplementary_information/appendix';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Packet Encoding Reference" href="packet_encoding.html" />
+    <link rel="prev" title="Supplementary Information" href="../supplementary_information.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../supplementary_information.html" class="nav-link">Supplementary Information</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Appendix: Hardware Glossary for Software Experts</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="appendix-hardware-glossary-for-software-experts">
+<h1>Appendix: Hardware Glossary for Software Experts<a class="headerlink" href="#appendix-hardware-glossary-for-software-experts" title="Link to this heading">#</a></h1>
+<p>This appendix defines all hardware terms and concepts used throughout the documentation. Each entry includes a software analogy where applicable to bridge the gap between hardware and software thinking.</p>
+<hr class="docutils" />
+<section id="a">
+<h2>A<a class="headerlink" href="#a" title="Link to this heading">#</a></h2>
+<section id="address-passthrough">
+<h3>Address Passthrough<a class="headerlink" href="#address-passthrough" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A technique where a memory controller echoes back the requested address along with the returned data.</p>
+<p><strong>Software analogy:</strong> Like a database query that returns both the data and the primary key you searched for. Useful when multiple reads are in flight and you need to correlate responses with requests.</p>
+<p><strong>Why it matters:</strong> In pipelined hardware, you might issue multiple reads before the first one completes. Address passthrough tells you which read just finished.</p>
+</section>
+<hr class="docutils" />
+<section id="arbiter">
+<h3>Arbiter<a class="headerlink" href="#arbiter" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Hardware logic that decides which of multiple competing requesters gains access to a shared resource (memory, bus, FIFO).</p>
+<p><strong>Software analogy:</strong> Like a mutex or semaphore, but implemented in hardware logic gates. Multiple threads want the same resource; the arbiter picks one based on priority, round-robin fairness, or other policy.</p>
+<p><strong>Common types:</strong></p>
+<ul class="simple">
+<li><p><strong>Priority arbiter:</strong> Always picks highest-priority requester (like VIP queue)</p></li>
+<li><p><strong>Round-robin arbiter:</strong> Cycles through requesters fairly (like <code class="docutils literal notranslate"><span class="pre">itertools.cycle()</span></code>)</p></li>
+<li><p><strong>First-come-first-served:</strong> Picks whoever requested first (like a queue)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Prevents conflicts when multiple hardware modules try to access the same memory or bus simultaneously.</p>
+</section>
+<hr class="docutils" />
+<section id="axi4-advanced-extensible-interface">
+<h3>AXI4 (Advanced eXtensible Interface)<a class="headerlink" href="#axi4-advanced-extensible-interface" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A memory-mapped communication protocol designed by ARM for on-chip data transfer. It’s the “language” FPGA modules speak to transfer data.</p>
+<p><strong>Software analogy:</strong> Like a REST API for hardware—defines request/response formats, handshake protocols, and data structures. Instead of HTTP methods (GET, POST), you have read and write transactions.</p>
+<p><strong>Five channels:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Read Address (AR):</strong> “I want to read from address X”</p></li>
+<li><p><strong>Read Data (R):</strong> “Here’s the data you requested”</p></li>
+<li><p><strong>Write Address (AW):</strong> “I want to write to address X”</p></li>
+<li><p><strong>Write Data (W):</strong> “Here’s the data to write”</p></li>
+<li><p><strong>Write Response (B):</strong> “Write complete, here’s the status”</p></li>
+</ol>
+<p><strong>Key signals:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">VALID</span></code>: “I have valid data/request”</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">READY</span></code>: “I’m ready to accept data/request”</p></li>
+<li><p><strong>Transaction occurs only when both are high (handshake)</strong></p></li>
+</ul>
+<p><strong>Why it matters:</strong> All on-chip communication in the FPGA uses AXI4. Understanding it is like understanding HTTP for web development.</p>
+<p><strong>See:</strong> hardware_map.md Section 4, Chapter 1 (DMA transfers)</p>
+</section>
+<hr class="docutils" />
+<section id="axi4-master">
+<h3>AXI4 Master<a class="headerlink" href="#axi4-master" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware module that initiates AXI4 transactions (sends read/write requests).</p>
+<p><strong>Software analogy:</strong> Like an HTTP client that makes requests to servers. The FPGA’s DMA engine is a master; it requests data from host memory.</p>
+<p><strong>Why it matters:</strong> Determines who “drives” the bus. Masters control data flow; slaves respond.</p>
+</section>
+<hr class="docutils" />
+<section id="axi4-slave">
+<h3>AXI4 Slave<a class="headerlink" href="#axi4-slave" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware module that responds to AXI4 transactions (serves read/write requests).</p>
+<p><strong>Software analogy:</strong> Like an HTTP server that responds to client requests. Host memory is a slave; it serves data when the FPGA requests it.</p>
+<p><strong>Why it matters:</strong> Slaves must be ready to handle requests at any time. They implement the actual storage or computation.</p>
+</section>
+<hr class="docutils" />
+<section id="axon">
+<h3>Axon<a class="headerlink" href="#axon" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> In neuromorphic systems, an external input to the network. In hardware terms, axons don’t have internal state (no membrane potential)—they’re just spike sources.</p>
+<p><strong>Software analogy:</strong> Like a publisher in a pub/sub system. When an axon fires, it publishes a spike event that gets delivered to all subscribed neurons.</p>
+<p><strong>Storage:</strong> Axon spike masks are stored in BRAM as one-hot bit vectors (256 bits per row).</p>
+<p><strong>Why it matters:</strong> Distinguishing axons (stateless inputs) from neurons (stateful computations) determines memory organization and processing flow.</p>
+<p><strong>See:</strong> Chapter 1 (BRAM organization), Chapter 2 (Phase 1 processing)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="b">
+<h2>B<a class="headerlink" href="#b" title="Link to this heading">#</a></h2>
+<section id="backpressure">
+<h3>Backpressure<a class="headerlink" href="#backpressure" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A flow control mechanism where a downstream module signals “I’m full, stop sending data” to an upstream module.</p>
+<p><strong>Software analogy:</strong> Like <code class="docutils literal notranslate"><span class="pre">TCP</span> <span class="pre">windowing</span></code> or a bounded queue’s <code class="docutils literal notranslate"><span class="pre">.full()</span></code> flag. When a buffer fills up, backpressure tells the sender to pause.</p>
+<p><strong>Implementation:</strong> Typically via a <code class="docutils literal notranslate"><span class="pre">FULL</span></code> or <code class="docutils literal notranslate"><span class="pre">!READY</span></code> signal. When asserted, upstream must stop writing.</p>
+<p><strong>Why it matters:</strong> Prevents data loss when fast producers overwhelm slow consumers. Critical in pipelined systems.</p>
+<p><strong>See:</strong> Chapter 2 (FIFO interfaces), hardware_map.md (AXI4 handshakes)</p>
+</section>
+<hr class="docutils" />
+<section id="beat">
+<h3>Beat<a class="headerlink" href="#beat" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A single data transfer within a burst transaction. A burst is composed of multiple beats.</p>
+<p><strong>Software analogy:</strong> Like a single element in a batch API request. If you request 16 records in one query, each record is one “beat.”</p>
+<p><strong>Example:</strong> A 16-beat burst transfers 16 data words sequentially.</p>
+<p><strong>Why it matters:</strong> Bursts amortize transaction overhead. Instead of 16 separate requests (expensive), send one request for 16 beats (efficient).</p>
+</section>
+<hr class="docutils" />
+<section id="bram-block-ram">
+<h3>BRAM (Block RAM)<a class="headerlink" href="#bram-block-ram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Fast on-chip SRAM built into the FPGA fabric. Organized into dual-port blocks (can read and write simultaneously from different ports).</p>
+<p><strong>Specifications:</strong></p>
+<ul class="simple">
+<li><p><strong>Capacity:</strong> 1 MB total (256 rows × 256 bits per row)</p></li>
+<li><p><strong>Latency:</strong> 3 clock cycles &#64; 225 MHz (~13 ns)</p></li>
+<li><p><strong>Technology:</strong> 6-transistor SRAM cells (fast, power-hungry)</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like L1 cache—very fast, very expensive (in silicon area), small capacity. Use for frequently accessed data.</p>
+<p><strong>Usage in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p>Stores axon spike masks (one-hot encoded, 256 bits per row)</p></li>
+<li><p>Dual-port allows host PC to write new spikes while FPGA reads current spikes</p></li>
+</ul>
+<p><strong>Why it matters:</strong> BRAM is the fastest memory accessible to FPGA logic (except registers). Ideal for low-latency, small datasets.</p>
+<p><strong>See:</strong> Chapter 1 Section 1.1, Chapter 2 Phase 0</p>
+</section>
+<hr class="docutils" />
+<section id="burst">
+<h3>Burst<a class="headerlink" href="#burst" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An AXI4 transaction that transfers multiple consecutive data words in a single request.</p>
+<p><strong>Software analogy:</strong> Like a batch database query. Instead of:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+    <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">read</span><span class="p">(</span><span class="n">addr</span> <span class="o">+</span> <span class="n">i</span><span class="p">)</span>  <span class="c1"># 16 separate requests</span>
+</pre></div>
+</div>
+<p>You do:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">read_burst</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>  <span class="c1"># 1 request, 16 data transfers</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Reduces protocol overhead. Each request has setup time (address, handshake); bursts amortize this over multiple data words.</p>
+<p><strong>See:</strong> hardware_map.md (AXI4 timing), Chapter 1 (HBM bursts)</p>
+</section>
+<hr class="docutils" />
+<section id="burst-length">
+<h3>Burst Length<a class="headerlink" href="#burst-length" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The number of beats (data words) in a burst transaction.</p>
+<p><strong>AXI4 limits:</strong> 1-256 beats for INCR bursts.</p>
+<p><strong>Example:</strong> Burst length 16 means the transaction transfers 16 consecutive data words.</p>
+<p><strong>Why it matters:</strong> Longer bursts → higher bandwidth efficiency, but require contiguous addresses.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="c">
+<h2>C<a class="headerlink" href="#c" title="Link to this heading">#</a></h2>
+<section id="clock-domain">
+<h3>Clock Domain<a class="headerlink" href="#clock-domain" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A region of a circuit where all flip-flops are clocked by the same clock signal. Everything in a clock domain updates simultaneously on clock edges.</p>
+<p><strong>Software analogy:</strong> Like a thread with its own event loop. All state updates happen synchronously at clock ticks (like <code class="docutils literal notranslate"><span class="pre">await</span></code> points in async Python).</p>
+<p><strong>Example in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p><strong>225 MHz domain:</strong> BRAM, HBM interfaces, most control logic</p></li>
+<li><p><strong>450 MHz domain:</strong> URAM, internal events processor (2x faster for neuron updates)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Data transfer between clock domains requires special synchronization (FIFOs with gray code) to avoid metastability.</p>
+<p><strong>See:</strong> hardware_map.md (clock generation), Chapter 2 (dual clock operation)</p>
+</section>
+<hr class="docutils" />
+<section id="clock-domain-crossing-cdc">
+<h3>Clock Domain Crossing (CDC)<a class="headerlink" href="#clock-domain-crossing-cdc" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Transferring data from one clock domain to another (e.g., 225 MHz → 450 MHz).</p>
+<p><strong>Software analogy:</strong> Like passing data between threads with different event loops. You need thread-safe mechanisms (mutex, queue) to avoid race conditions.</p>
+<p><strong>Hardware solution:</strong> Asynchronous FIFOs with gray-code counters to prevent metastability.</p>
+<p><strong>Why it matters:</strong> Improper CDC causes random bit flips, data corruption, or circuit hangs. Must use proven synchronization techniques.</p>
+<p><strong>See:</strong> hardware_map.md Section 3 (FIFO synchronization)</p>
+</section>
+<hr class="docutils" />
+<section id="combinational-logic">
+<h3>Combinational Logic<a class="headerlink" href="#combinational-logic" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Digital circuits where outputs depend only on current inputs (no memory, no state). Examples: AND gates, multiplexers, adders.</p>
+<p><strong>Software analogy:</strong> Pure functions in functional programming—same inputs always produce same outputs, no side effects, no state.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">combinational</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">&amp;</span> <span class="n">b</span>  <span class="c1"># Output depends only on a, b (no self.state)</span>
+</pre></div>
+</div>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="k">output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w">  </span><span class="c1">// Combinational: output updates whenever a, b, c change</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Combinational logic is fast (no clock delay) but creates no memory. Contrast with sequential logic (flip-flops, registers) which stores state.</p>
+<p><strong>See:</strong> hardware_map.md (logic gates), Chapter 2 (state machines use both)</p>
+</section>
+<hr class="docutils" />
+<section id="command-opcode">
+<h3>Command Opcode<a class="headerlink" href="#command-opcode" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An 8-bit identifier in PCIe command packets that specifies the operation type.</p>
+<p><strong>Software analogy:</strong> Like HTTP methods (GET, POST, PUT, DELETE) or opcodes in assembly language (MOV, ADD, JMP).</p>
+<p><strong>Example opcodes in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0x01</span></code>: Write to BRAM (axon spikes)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x02</span></code>: Write to HBM (network structure)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x03</span></code>: Write to URAM (neuron states)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x04</span></code>: Read from URAM</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0xC8</span></code>: Execute (run one timestep)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> The command interpreter decodes opcodes to route data to correct hardware modules.</p>
+<p><strong>See:</strong> Chapter 1 Section 1.2, Chapter 2 Phase 0</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="d">
+<h2>D<a class="headerlink" href="#d" title="Link to this heading">#</a></h2>
+<section id="dma-direct-memory-access">
+<h3>DMA (Direct Memory Access)<a class="headerlink" href="#dma-direct-memory-access" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A technique where an FPGA (or peripheral) transfers data to/from host memory without involving the CPU. The FPGA becomes a “bus master” and directly reads/writes RAM.</p>
+<p><strong>Software analogy:</strong> Like <code class="docutils literal notranslate"><span class="pre">mmap()</span></code> or shared memory. Instead of:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Slow: CPU copies data</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">host_memory</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">fpga</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>You have:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fast: FPGA directly accesses host memory</span>
+<span class="n">fpga</span><span class="o">.</span><span class="n">dma_read</span><span class="p">(</span><span class="n">host_address</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> DMA bypasses the CPU bottleneck, achieving 10-100x higher bandwidth. Essential for large data transfers (network initialization, spike outputs).</p>
+<p><strong>How it works:</strong></p>
+<ol class="arabic simple">
+<li><p>FPGA sends PCIe TLP (Transaction Layer Packet) with memory address</p></li>
+<li><p>Host memory controller responds with data</p></li>
+<li><p>No CPU involvement—fully offloaded</p></li>
+</ol>
+<p><strong>See:</strong> Chapter 1 Section 1.2 (initialization), hardware_map.md Section 2 (PCIe)</p>
+</section>
+<hr class="docutils" />
+<section id="double-buffering">
+<h3>Double Buffering<a class="headerlink" href="#double-buffering" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Using two buffers that alternate roles—while one is being read (consumed), the other is being written (produced).</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">DoubleBuffer</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_a</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">buffer_b</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span>  <span class="c1"># Which buffer is being read</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Swap roles: reader becomes writer, writer becomes reader</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">==</span> <span class="s1">&#39;a&#39;</span> <span class="k">else</span> <span class="s1">&#39;a&#39;</span>
+</pre></div>
+</div>
+<p><strong>Usage in neuromorphic system:</strong> External events processor uses double-buffered BRAMs:</p>
+<ul class="simple">
+<li><p><strong>Present BRAM:</strong> Being read/cleared (processing current timestep spikes)</p></li>
+<li><p><strong>Future BRAM:</strong> Being written (collecting spikes for next timestep)</p></li>
+<li><p>After execute, they swap roles</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Enables pipelining—overlap computation with I/O. No need to wait for reads to finish before accepting new writes.</p>
+<p><strong>See:</strong> Verilog sources (external_events_processor_simple.v)</p>
+</section>
+<hr class="docutils" />
+<section id="dram-dynamic-ram">
+<h3>DRAM (Dynamic RAM)<a class="headerlink" href="#dram-dynamic-ram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Memory technology that stores bits as charge in capacitors. “Dynamic” because charge leaks, requiring periodic refresh.</p>
+<p><strong>Structure:</strong> 1 transistor + 1 capacitor per bit (1T1C). Compact but slow.</p>
+<p><strong>Software analogy:</strong> Like disk storage—high capacity, slow access, requires maintenance (refresh = defragmentation).</p>
+<p><strong>Types:</strong></p>
+<ul class="simple">
+<li><p><strong>DDR4:</strong> Desktop/server RAM (~20 GB/s per channel)</p></li>
+<li><p><strong>HBM2:</strong> 3D-stacked high-bandwidth RAM (~400 GB/s, used in neuromorphic system)</p></li>
+</ul>
+<p><strong>Contrast with SRAM:</strong></p>
+<ul class="simple">
+<li><p>DRAM: 1T1C, dense, slow (50-100 ns), needs refresh</p></li>
+<li><p>SRAM: 6T, fast (1-3 ns), expensive, no refresh</p></li>
+</ul>
+<p><strong>Why it matters:</strong> DRAM provides bulk storage (8 GB HBM) for synaptic weights. Too slow for direct neuron computation (hence URAM for neuron states).</p>
+<p><strong>See:</strong> hardware_map.md Section 1.3 (HBM structure)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="e">
+<h2>E<a class="headerlink" href="#e" title="Link to this heading">#</a></h2>
+<section id="execrun-ctr-execution-run-counter">
+<h3>execRun_ctr (Execution Run Counter)<a class="headerlink" href="#execrun-ctr-execution-run-counter" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware register that counts timesteps. Increments after each <code class="docutils literal notranslate"><span class="pre">execute()</span></code> command completes.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">NeuromorphicEngine</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Like execRun_ctr</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Run one timestep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timestep</span> <span class="o">+=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Used to tag spike events with their timestep. When spikes return to host, you know when they occurred.</p>
+<p><strong>See:</strong> Chapter 2 (spike packet format)</p>
+</section>
+<hr class="docutils" />
+<section id="execrun-timer-execution-run-timer">
+<h3>execRun_timer (Execution Run Timer)<a class="headerlink" href="#execrun-timer-execution-run-timer" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware counter that measures clock cycles elapsed during a timestep.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+<span class="n">execute</span><span class="p">()</span>
+<span class="n">elapsed_cycles</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">clock_frequency</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Profiling tool. Tells you how many clock cycles (and thus microseconds) a timestep took. Useful for optimization.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="f">
+<h2>F<a class="headerlink" href="#f" title="Link to this heading">#</a></h2>
+<section id="fifo-first-in-first-out">
+<h3>FIFO (First-In-First-Out)<a class="headerlink" href="#fifo-first-in-first-out" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware buffer that stores data in order received and outputs data in the same order.</p>
+<p><strong>Software analogy:</strong> <code class="docutils literal notranslate"><span class="pre">queue.Queue()</span></code> in Python—<code class="docutils literal notranslate"><span class="pre">.put()</span></code> adds to tail, <code class="docutils literal notranslate"><span class="pre">.get()</span></code> removes from head.</p>
+<p><strong>Hardware interface:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Write side</span>
+<span class="k">input</span><span class="w">  </span><span class="n">full</span><span class="p">,</span><span class="w">       </span><span class="c1">// 1 = FIFO full, cannot write</span>
+<span class="k">output</span><span class="w"> </span><span class="n">wren</span><span class="p">,</span><span class="w">       </span><span class="c1">// 1 = write data_in this cycle</span>
+<span class="k">output</span><span class="w"> </span><span class="n">data_in</span><span class="p">,</span><span class="w">    </span><span class="c1">// Data to write</span>
+
+<span class="c1">// Read side</span>
+<span class="k">input</span><span class="w">  </span><span class="n">empty</span><span class="p">,</span><span class="w">      </span><span class="c1">// 1 = FIFO empty, no data</span>
+<span class="k">output</span><span class="w"> </span><span class="n">rden</span><span class="p">,</span><span class="w">       </span><span class="c1">// 1 = read data_out this cycle</span>
+<span class="k">input</span><span class="w">  </span><span class="n">data_out</span><span class="p">,</span><span class="w">   </span><span class="c1">// Data read</span>
+</pre></div>
+</div>
+<p><strong>FWFT mode (First-Word Fall-Through):</strong> <code class="docutils literal notranslate"><span class="pre">data_out</span></code> always shows next item (zero latency). Like <code class="docutils literal notranslate"><span class="pre">.peek()</span></code> in Python.</p>
+<p><strong>Why it matters:</strong> FIFOs decouple clock domains, buffer mismatched rates (fast producer, slow consumer), and enable pipelining.</p>
+<p><strong>See:</strong> hardware_map.md Section 3, Chapter 2 (pointer FIFOs, spike FIFOs)</p>
+</section>
+<hr class="docutils" />
+<section id="flip-flop">
+<h3>Flip-Flop<a class="headerlink" href="#flip-flop" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A basic sequential logic element that stores one bit. Updates on clock edge.</p>
+<p><strong>Software analogy:</strong> Like a single-bit instance variable:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">FlipFlop</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Current state</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">clock_edge</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">d</span>  <span class="c1"># Update state on clock tick</span>
+</pre></div>
+</div>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">q</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">d</span><span class="p">;</span><span class="w">  </span><span class="c1">// q updates to d on rising clock edge</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>D-type flip-flop:</strong> Most common. Has one data input (D) and one output (Q). On clock edge, Q ← D.</p>
+<p><strong>Why it matters:</strong> Flip-flops are the fundamental unit of memory in digital circuits. Registers, counters, state machines—all built from flip-flops.</p>
+<p><strong>See:</strong> hardware_map.md Section 1.2 (FPGA fabric)</p>
+</section>
+<hr class="docutils" />
+<section id="fpga-field-programmable-gate-array">
+<h3>FPGA (Field-Programmable Gate Array)<a class="headerlink" href="#fpga-field-programmable-gate-array" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A chip containing millions of configurable logic blocks (LUTs, flip-flops) connected by programmable routing. You write code (Verilog/VHDL) that gets “compiled” into a configuration bitstream that rewires the chip.</p>
+<p><strong>Software analogy:</strong> Imagine if you could rewrite the CPU’s microarchitecture at runtime. An FPGA is like a blank canvas where you design custom hardware for your application.</p>
+<p><strong>Neuromorphic system uses:</strong> Xilinx XCVU37p UltraScale+ VU37P</p>
+<ul class="simple">
+<li><p>1.1 million LUTs (programmable logic gates)</p></li>
+<li><p>2.2 million flip-flops (registers)</p></li>
+<li><p>50 MB BRAM (on-chip cache)</p></li>
+<li><p>4.5 MB URAM (ultra-dense cache)</p></li>
+<li><p>16 lanes PCIe Gen3 (host communication)</p></li>
+<li><p>32 HBM2 channels (memory bandwidth)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> FPGAs offer specialized, massively parallel computation. Neuromorphic networks need to update 100,000+ neurons in microseconds—impossible on CPU, possible on FPGA.</p>
+<p><strong>See:</strong> hardware_map.md Section 1.2, Chapter 1 (compilation)</p>
+</section>
+<hr class="docutils" />
+<section id="fwft-first-word-fall-through">
+<h3>FWFT (First-Word Fall-Through)<a class="headerlink" href="#fwft-first-word-fall-through" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A FIFO operating mode where the output data is always valid (showing the next item) without requiring a read strobe first.</p>
+<p><strong>Normal FIFO:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">fifo</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+    <span class="n">fifo</span><span class="o">.</span><span class="n">read_enable</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Request data</span>
+    <span class="c1"># Wait 1 cycle</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fifo</span><span class="o">.</span><span class="n">data_out</span>     <span class="c1"># Data appears next cycle</span>
+</pre></div>
+</div>
+<p><strong>FWFT FIFO:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="ow">not</span> <span class="n">fifo</span><span class="o">.</span><span class="n">empty</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">fifo</span><span class="o">.</span><span class="n">data_out</span>     <span class="c1"># Data already available (0 latency)</span>
+    <span class="n">fifo</span><span class="o">.</span><span class="n">read_enable</span> <span class="o">=</span> <span class="kc">True</span>  <span class="c1"># Advance to next item</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Reduces latency by 1 cycle. Important in high-speed pipelines where every cycle counts.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="h">
+<h2>H<a class="headerlink" href="#h" title="Link to this heading">#</a></h2>
+<section id="handshake">
+<h3>Handshake<a class="headerlink" href="#handshake" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A two-signal protocol (<code class="docutils literal notranslate"><span class="pre">VALID</span></code> and <code class="docutils literal notranslate"><span class="pre">READY</span></code>) where data transfer occurs only when both signals are high.</p>
+<p><strong>Protocol:</strong></p>
+<ul class="simple">
+<li><p><strong>Sender:</strong> Asserts <code class="docutils literal notranslate"><span class="pre">VALID</span></code> when data is available, holds data stable</p></li>
+<li><p><strong>Receiver:</strong> Asserts <code class="docutils literal notranslate"><span class="pre">READY</span></code> when it can accept data</p></li>
+<li><p><strong>Transfer occurs:</strong> When <code class="docutils literal notranslate"><span class="pre">VALID</span> <span class="pre">&amp;&amp;</span> <span class="pre">READY</span></code> on clock edge</p></li>
+</ul>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="n">sender</span><span class="o">.</span><span class="n">valid</span> <span class="o">=</span> <span class="n">sender</span><span class="o">.</span><span class="n">has_data</span><span class="p">()</span>
+    <span class="n">receiver</span><span class="o">.</span><span class="n">ready</span> <span class="o">=</span> <span class="ow">not</span> <span class="n">receiver</span><span class="o">.</span><span class="n">is_full</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">sender</span><span class="o">.</span><span class="n">valid</span> <span class="ow">and</span> <span class="n">receiver</span><span class="o">.</span><span class="n">ready</span><span class="p">:</span>
+        <span class="n">receiver</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">sender</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># Transfer!</span>
+        <span class="n">sender</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">break</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Prevents data loss. Sender can’t send until receiver is ready; receiver doesn’t miss data because sender holds it stable.</p>
+<p><strong>See:</strong> hardware_map.md (AXI4 channels), Chapter 2 (HBM read valid/ready)</p>
+</section>
+<hr class="docutils" />
+<section id="hazard">
+<h3>Hazard<a class="headerlink" href="#hazard" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A conflict in pipelined hardware when consecutive operations access the same resource (typically same memory address) in ways that could cause data corruption.</p>
+<p><strong>Types:</strong></p>
+<ul class="simple">
+<li><p><strong>Read-after-write (RAW):</strong> Read tries to fetch old value before write completes</p></li>
+<li><p><strong>Write-after-read (WAR):</strong> Write might corrupt data before read completes</p></li>
+<li><p><strong>Write-after-write (WAW):</strong> Second write might complete before first</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like race conditions in multithreaded code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Thread 1</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Read x, add 1, write back</span>
+
+<span class="c1"># Thread 2 (starts during Thread 1)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span>      <span class="c1"># Which value of x do I see?</span>
+</pre></div>
+</div>
+<p><strong>Hardware solution:</strong> Hazard detection logic checks if addresses match in pipeline stages. If match, either:</p>
+<ul class="simple">
+<li><p><strong>Stall:</strong> Pause until pipeline clears</p></li>
+<li><p><strong>Bypass/Forward:</strong> Route fresh data directly from pipeline register</p></li>
+</ul>
+<p><strong>Why it matters:</strong> URAM has 3-cycle read latency. If you read address A, then write address A within 3 cycles, hazard detection prevents reading stale data.</p>
+<p><strong>See:</strong> Chapter 2 Section 2.2 (internal_events_processor hazard logic)</p>
+</section>
+<hr class="docutils" />
+<section id="hbm-high-bandwidth-memory">
+<h3>HBM (High Bandwidth Memory)<a class="headerlink" href="#hbm-high-bandwidth-memory" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> 3D-stacked DRAM technology providing extreme bandwidth (~400 GB/s). Multiple DRAM dies stacked vertically, connected by Through-Silicon Vias (TSVs).</p>
+<p><strong>Specifications:</strong></p>
+<ul class="simple">
+<li><p><strong>Capacity:</strong> 8 GB (for synaptic connectivity data)</p></li>
+<li><p><strong>Bandwidth:</strong> 400+ GB/s (32 channels × 14 GB/s per channel)</p></li>
+<li><p><strong>Latency:</strong> ~100-200 ns (slow compared to BRAM/URAM, fast compared to DDR4)</p></li>
+<li><p><strong>Organization:</strong> 2 pseudo-channels × 16 banks per channel</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like a distributed database with 32 shards. Each shard (channel) serves 256 MB and can handle requests independently (parallel access).</p>
+<p><strong>Usage in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p><strong>Region 1:</strong> Axon pointers (maps axon ID → synapse list address)</p></li>
+<li><p><strong>Region 2:</strong> Neuron pointers (maps neuron ID → synapse list address)</p></li>
+<li><p><strong>Region 3:</strong> Synapses (actual connection data: target neuron + weight)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Stores the entire network structure (billions of synapses for large networks). Bandwidth supports updating millions of neurons per millisecond.</p>
+<p><strong>See:</strong> hardware_map.md Section 1.3, Chapter 1 Section 1.1, Chapter 2 Phase 1</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="i">
+<h2>I<a class="headerlink" href="#i" title="Link to this heading">#</a></h2>
+<section id="incr-burst">
+<h3>INCR Burst<a class="headerlink" href="#incr-burst" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An AXI4 burst type where addresses increment sequentially for each beat.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Burst</span> <span class="n">start</span> <span class="n">address</span><span class="p">:</span> <span class="mh">0x1000</span>
+<span class="n">Burst</span> <span class="n">length</span><span class="p">:</span> <span class="mi">4</span>
+<span class="n">Addresses</span> <span class="n">accessed</span><span class="p">:</span> <span class="mh">0x1000</span><span class="p">,</span> <span class="mh">0x1004</span><span class="p">,</span> <span class="mh">0x1008</span><span class="p">,</span> <span class="mh">0x100C</span> <span class="p">(</span><span class="n">assuming</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">words</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Contrast with WRAP bursts:</strong> Addresses wrap around within a boundary (used for cache lines).</p>
+<p><strong>Why it matters:</strong> Simplest burst type. Used for sequential data access (reading synapse lists, writing neuron states).</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="l">
+<h2>L<a class="headerlink" href="#l" title="Link to this heading">#</a></h2>
+<section id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The time delay between when a request is issued and when the response is received.</p>
+<p><strong>Software analogy:</strong> Like ping time in networking, or function call overhead.</p>
+<p><strong>Examples in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p><strong>BRAM latency:</strong> 3 cycles &#64; 225 MHz = ~13 ns</p></li>
+<li><p><strong>URAM latency:</strong> 1 cycle &#64; 450 MHz = ~2 ns</p></li>
+<li><p><strong>HBM latency:</strong> ~100-200 ns</p></li>
+<li><p><strong>PCIe latency:</strong> ~1-10 µs (depends on packet size, distance)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Latency determines pipeline depth. 3-cycle BRAM latency means you need 3 pipeline stages between read request and data availability.</p>
+<p><strong>Contrast with throughput:</strong> Latency is “time per operation,” throughput is “operations per time.”</p>
+<p><strong>See:</strong> hardware_map.md (memory specifications), Chapter 2 (pipeline filling)</p>
+</section>
+<hr class="docutils" />
+<section id="lut-lookup-table">
+<h3>LUT (Lookup Table)<a class="headerlink" href="#lut-lookup-table" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A programmable logic element in an FPGA. Typically a 6-input, 1-output function implemented as a 64-bit SRAM.</p>
+<p><strong>How it works:</strong></p>
+<ul class="simple">
+<li><p>6 inputs → 2^6 = 64 possible input combinations</p></li>
+<li><p>64-bit SRAM stores the output value for each combination</p></li>
+<li><p>LUT acts as a 6-input truth table</p></li>
+</ul>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 2-input LUT (simplified)</span>
+<span class="n">lut_contents</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>  <span class="c1"># 4-bit SRAM for 2 inputs</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">lut</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">&lt;&lt;</span> <span class="mi">1</span><span class="p">)</span> <span class="o">|</span> <span class="n">b</span>  <span class="c1"># Convert inputs to index</span>
+    <span class="k">return</span> <span class="n">lut_contents</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+<span class="c1"># This LUT implements: output = a AND b</span>
+<span class="c1"># 00 → 0, 01 → 0, 10 → 0, 11 → 1</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> LUTs are the fundamental building blocks of FPGA logic. Any combinational function of up to 6 inputs can be implemented in 1 LUT. Complex functions use multiple LUTs connected together.</p>
+<p><strong>See:</strong> hardware_map.md Section 1.2</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="m">
+<h2>M<a class="headerlink" href="#m" title="Link to this heading">#</a></h2>
+<section id="metastability">
+<h3>Metastability<a class="headerlink" href="#metastability" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An undefined state in digital circuits where a flip-flop’s output oscillates between 0 and 1, unable to settle. Occurs during clock domain crossings when setup/hold time requirements are violated.</p>
+<p><strong>Software analogy:</strong> Like a race condition where a variable reads as garbage because two threads wrote simultaneously.</p>
+<p><strong>Cause:</strong> When a flip-flop’s input changes too close to the clock edge, the output can become metastable (neither 0 nor 1, or fluctuating).</p>
+<p><strong>Solution:</strong> Multi-stage synchronizers (2-3 flip-flops in series) give time for metastability to resolve. First flip-flop might be metastable, but probability that second flip-flop is also metastable is astronomically low.</p>
+<p><strong>Why it matters:</strong> Metastability causes random bit flips, data corruption, system crashes. Must use proven synchronization techniques for clock domain crossings (async FIFOs with gray code).</p>
+<p><strong>See:</strong> hardware_map.md Section 3 (FIFO synchronization)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="n">
+<h2>N<a class="headerlink" href="#n" title="Link to this heading">#</a></h2>
+<section id="neuron-group">
+<h3>Neuron Group<a class="headerlink" href="#neuron-group" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A set of 8,192 neurons that share a URAM bank and processing pipeline. The neuromorphic system has 16 neuron groups (0-15), totaling 131,072 neurons.</p>
+<p><strong>Organization:</strong></p>
+<ul class="simple">
+<li><p><strong>Group 0:</strong> Neurons 0-8,191 (URAM bank 0)</p></li>
+<li><p><strong>Group 1:</strong> Neurons 8,192-16,383 (URAM bank 1)</p></li>
+<li><p>…</p></li>
+<li><p><strong>Group 15:</strong> Neurons 122,880-131,071 (URAM bank 15)</p></li>
+</ul>
+<p><strong>Why groups?</strong> Parallel processing. All 16 groups can be updated simultaneously (16-way parallelism).</p>
+<p><strong>Software analogy:</strong> Like database sharding. Each shard (neuron group) has its own storage (URAM bank) and compute pipeline.</p>
+<p><strong>Why it matters:</strong> Determines memory addresses, routing logic, and parallelism. Understanding groups is key to understanding performance scaling.</p>
+<p><strong>See:</strong> Chapter 1 Section 1.1, Chapter 2 Section 2.2</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="p">
+<h2>P<a class="headerlink" href="#p" title="Link to this heading">#</a></h2>
+<section id="pcie-peripheral-component-interconnect-express">
+<h3>PCIe (Peripheral Component Interconnect Express)<a class="headerlink" href="#pcie-peripheral-component-interconnect-express" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A high-speed serial communication bus connecting the CPU to peripherals (GPUs, FPGAs, SSDs). Uses differential signaling over point-to-point links.</p>
+<p><strong>Neuromorphic system:</strong> PCIe Gen3 x16</p>
+<ul class="simple">
+<li><p><strong>Gen3:</strong> Third generation (8 GT/s per lane)</p></li>
+<li><p><strong>x16:</strong> 16 lanes (parallel connections)</p></li>
+<li><p><strong>Bandwidth:</strong> ~14 GB/s bidirectional</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like USB or Ethernet, but much faster and lower latency. From software, you use it via memory-mapped I/O or DMA.</p>
+<p><strong>How it works:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Physical layer:</strong> Differential pairs (16 lanes × 2 directions = 32 pairs)</p></li>
+<li><p><strong>Data link layer:</strong> Packets with CRC error detection</p></li>
+<li><p><strong>Transaction layer:</strong> TLP (Transaction Layer Packets) for reads/writes</p></li>
+</ol>
+<p><strong>Why it matters:</strong> PCIe is the bridge between host CPU (software) and FPGA (hardware). All data transfer (inputs, outputs, configuration) flows through PCIe.</p>
+<p><strong>See:</strong> hardware_map.md Section 2, Chapter 1 Section 1.2</p>
+</section>
+<hr class="docutils" />
+<section id="pipeline">
+<h3>Pipeline<a class="headerlink" href="#pipeline" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A technique where operations are broken into stages, with multiple operations executing simultaneously at different stages.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># No pipeline: 3 cycles per item</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+    <span class="n">stage1</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># 1 cycle</span>
+    <span class="n">stage2</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># 1 cycle</span>
+    <span class="n">stage3</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>  <span class="c1"># 1 cycle</span>
+<span class="c1"># Total: 3N cycles for N items</span>
+
+<span class="c1"># Pipeline: 1 cycle per item after initial fill</span>
+<span class="c1"># Cycle 0: stage1(item[0])</span>
+<span class="c1"># Cycle 1: stage1(item[1]), stage2(item[0])</span>
+<span class="c1"># Cycle 2: stage1(item[2]), stage2(item[1]), stage3(item[0])</span>
+<span class="c1"># Cycle 3: stage1(item[3]), stage2(item[2]), stage3(item[1])</span>
+<span class="c1"># Total: N+2 cycles for N items (3x speedup for large N)</span>
+</pre></div>
+</div>
+<p><strong>Example in neuromorphic system:</strong> BRAM read pipeline</p>
+<ul class="simple">
+<li><p><strong>Cycle 0:</strong> Issue address for read 0</p></li>
+<li><p><strong>Cycle 1:</strong> Issue address for read 1 (read 0 in pipeline stage 1)</p></li>
+<li><p><strong>Cycle 2:</strong> Issue address for read 2 (read 1 in stage 1, read 0 in stage 2)</p></li>
+<li><p><strong>Cycle 3:</strong> Read 0 data available, issue address for read 3</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Pipelines enable high throughput despite high latency. BRAM has 3-cycle latency but can start a new read every cycle (throughput = 1 read/cycle).</p>
+<p><strong>See:</strong> hardware_map.md (memory timing), Chapter 2 (pipeline filling)</p>
+</section>
+<hr class="docutils" />
+<section id="pipeline-depth">
+<h3>Pipeline Depth<a class="headerlink" href="#pipeline-depth" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The number of stages in a pipeline, or equivalently, the number of clock cycles between input and output.</p>
+<p><strong>Example:</strong> BRAM has 3-cycle read latency → pipeline depth = 3.</p>
+<p><strong>Why it matters:</strong> Determines how many cycles you must wait before first result. Also affects hazard detection (must check all pipeline stages for address conflicts).</p>
+</section>
+<hr class="docutils" />
+<section id="pointer-chain">
+<h3>Pointer Chain<a class="headerlink" href="#pointer-chain" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A linked-list structure in HBM where each neuron/axon has a pointer to the start of its synapse list.</p>
+<p><strong>Structure:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Axon a0 → Pointer: 0x00080000 (address of synapse list in HBM)
+HBM[0x00080000] = [synapse_0, synapse_1, ..., synapse_4]
+Each synapse = {target: h0, weight: 1000}
+</pre></div>
+</div>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Like a dictionary of lists</span>
+<span class="n">synapses</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;a0&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;h0&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="o">...</span><span class="p">],</span>
+    <span class="s1">&#39;a1&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;h0&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="o">...</span><span class="p">],</span>
+<span class="p">}</span>
+
+<span class="c1"># In hardware, stored as pointers:</span>
+<span class="n">pointers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;a0&#39;</span><span class="p">:</span> <span class="mh">0x80000</span><span class="p">,</span> <span class="s1">&#39;a1&#39;</span><span class="p">:</span> <span class="mh">0x80005</span><span class="p">}</span>
+<span class="n">memory</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mh">0x80000</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;h0&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="o">...</span><span class="p">],</span>
+    <span class="mh">0x80005</span><span class="p">:</span> <span class="p">[(</span><span class="s1">&#39;h0&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;h1&#39;</span><span class="p">,</span> <span class="mi">1000</span><span class="p">),</span> <span class="o">...</span><span class="p">],</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Enables variable fan-out (some neurons have 10 synapses, others 10,000). Pointer indirection allows efficient memory usage.</p>
+<p><strong>See:</strong> Chapter 1 Section 1.1 (HBM layout), Chapter 2 Phase 1</p>
+</section>
+<hr class="docutils" />
+<section id="priority-arbitration">
+<h3>Priority Arbitration<a class="headerlink" href="#priority-arbitration" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An arbitration scheme where high-priority requesters always win over low-priority requesters.</p>
+<p><strong>Software analogy:</strong> Like a priority queue or VIP line.</p>
+<p><strong>Example:</strong> If both CPU and DMA request the bus, CPU (high priority) always wins.</p>
+<p><strong>Disadvantage:</strong> Low-priority requesters can starve (never get access).</p>
+<p><strong>See also:</strong> Round-robin (fair alternative)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="r">
+<h2>R<a class="headerlink" href="#r" title="Link to this heading">#</a></h2>
+<section id="read-latency">
+<h3>Read Latency<a class="headerlink" href="#read-latency" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The number of clock cycles from when a read address is issued to when the data becomes valid.</p>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><strong>BRAM:</strong> 3 cycles</p></li>
+<li><p><strong>URAM:</strong> 1 cycle</p></li>
+<li><p><strong>HBM:</strong> ~100-200 cycles (at 225 MHz)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Determines pipeline depth and minimum loop iteration time.</p>
+<p><strong>See:</strong> Memory specifications throughout documentation</p>
+</section>
+<hr class="docutils" />
+<section id="register">
+<h3>Register<a class="headerlink" href="#register" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A storage element (or group of flip-flops) that holds a multi-bit value.</p>
+<p><strong>Software analogy:</strong> Like an instance variable in a class.</p>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">counter</span><span class="p">;</span><span class="w">  </span><span class="c1">// 8-bit register</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Updates on every clock edge</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Registers store state in sequential circuits. Counters, addresses, data buffers—all implemented as registers.</p>
+</section>
+<hr class="docutils" />
+<section id="register-slice">
+<h3>Register Slice<a class="headerlink" href="#register-slice" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A pipeline stage inserted into a data path to improve timing (break long combinational paths).</p>
+<p><strong>Software analogy:</strong> Like adding an intermediate variable to break up a complex expression:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Hard to optimize (long dependency chain)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="n">h</span><span class="p">(</span><span class="n">i</span><span class="p">(</span><span class="n">j</span><span class="p">(</span><span class="n">x</span><span class="p">)))))</span>
+
+<span class="c1"># Easier (can pipeline/parallelize)</span>
+<span class="n">temp1</span> <span class="o">=</span> <span class="n">j</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">temp2</span> <span class="o">=</span> <span class="n">i</span><span class="p">(</span><span class="n">temp1</span><span class="p">)</span>
+<span class="n">temp3</span> <span class="o">=</span> <span class="n">h</span><span class="p">(</span><span class="n">temp2</span><span class="p">)</span>
+<span class="n">temp4</span> <span class="o">=</span> <span class="n">g</span><span class="p">(</span><span class="n">temp3</span><span class="p">)</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">temp4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> High-speed interfaces (450 MHz) require short logic paths. Register slices reduce maximum combinational delay, allowing higher clock frequencies.</p>
+<p><strong>See:</strong> internal_events_processor (450 MHz URAM access)</p>
+</section>
+<hr class="docutils" />
+<section id="rmw-read-modify-write">
+<h3>RMW (Read-Modify-Write)<a class="headerlink" href="#rmw-read-modify-write" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A pattern where you read a value, modify it, and write it back.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="n">memory</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span>       <span class="c1"># Read</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">1</span>              <span class="c1"># Modify</span>
+<span class="n">memory</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>       <span class="c1"># Write</span>
+</pre></div>
+</div>
+<p><strong>Hardware challenges:</strong> With 3-cycle read latency, must ensure no other operation accesses the same address during the RMW sequence (hazard detection).</p>
+<p><strong>Example in neuromorphic system:</strong> Masked URAM writes</p>
+<ul class="simple">
+<li><p>Read 72-bit word containing 2 neurons</p></li>
+<li><p>Modify upper 36 bits (neuron voltage)</p></li>
+<li><p>Write back full 72-bit word</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Common pattern requiring careful hazard management.</p>
+<p><strong>See:</strong> Chapter 2 Section 2.2 (internal_events_processor)</p>
+</section>
+<hr class="docutils" />
+<section id="round-robin">
+<h3>Round-Robin<a class="headerlink" href="#round-robin" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A fair arbitration algorithm that cycles through requesters in order, giving each a turn.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">requesters</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">]</span>
+<span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">requesters</span><span class="p">[</span><span class="n">current</span><span class="p">]</span><span class="o">.</span><span class="n">has_request</span><span class="p">():</span>
+        <span class="n">service</span><span class="p">(</span><span class="n">requesters</span><span class="p">[</span><span class="n">current</span><span class="p">])</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="p">(</span><span class="n">current</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="nb">len</span><span class="p">(</span><span class="n">requesters</span><span class="p">)</span>  <span class="c1"># Cycle: 0→1→2→...→7→0</span>
+</pre></div>
+</div>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// 3-bit counter for 8 requesters</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Automatically wraps 7→0</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Usage in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p><strong>Pointer FIFO controller:</strong> 16-way round-robin (checks ptr0, ptr1, …, ptr15, ptr0, …)</p></li>
+<li><p><strong>Spike FIFO controller:</strong> 8-way round-robin (checks spk0, spk1, …, spk7, spk0, …)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> Ensures fairness—no requester starves. Every requester gets regular turns regardless of activity.</p>
+<p><strong>See:</strong> Chapter 2 (FIFO controllers), Verilog sources</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="s">
+<h2>S<a class="headerlink" href="#s" title="Link to this heading">#</a></h2>
+<section id="sequential-logic">
+<h3>Sequential Logic<a class="headerlink" href="#sequential-logic" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Digital circuits with memory—outputs depend on both current inputs and past state.</p>
+<p><strong>Software analogy:</strong> Objects with instance variables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Counter</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># State</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">increment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>  <span class="c1"># Output depends on previous state</span>
+</pre></div>
+</div>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">count</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// State updates on clock edges</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Building blocks:</strong> Flip-flops, registers, state machines, counters, shift registers.</p>
+<p><strong>Contrast with combinational logic:</strong> Combinational has no memory (pure functions).</p>
+<p><strong>Why it matters:</strong> All computation with memory/state requires sequential logic.</p>
+<p><strong>See:</strong> hardware_map.md (flip-flops), Chapter 2 (state machines)</p>
+</section>
+<hr class="docutils" />
+<section id="sign-extension">
+<h3>Sign Extension<a class="headerlink" href="#sign-extension" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Expanding a signed integer to a wider bit width by replicating the sign bit.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">signed</span><span class="p">:</span> <span class="mi">11111010</span> <span class="p">(</span><span class="o">-</span><span class="mi">6</span> <span class="ow">in</span> <span class="n">two</span><span class="s1">&#39;s complement)</span>
+<span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">signed</span><span class="p">:</span> <span class="mi">11111111</span> <span class="mi">11111010</span> <span class="p">(</span><span class="n">still</span> <span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Rule:</strong> Copy the most significant bit (sign bit) into all new upper bits.</p>
+<p><strong>Why it matters:</strong> Prevents corruption when mixing different bit widths in arithmetic. Hardware often needs to extend weights (16-bit) to match neuron voltages (36-bit).</p>
+<p><strong>See:</strong> Chapter 2 (synaptic accumulation)</p>
+</section>
+<hr class="docutils" />
+<section id="spike">
+<h3>Spike<a class="headerlink" href="#spike" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An action potential—a neuron firing event that occurs when membrane potential crosses threshold.</p>
+<p><strong>In hardware:</strong> Represented as a 17-bit value: <code class="docutils literal notranslate"><span class="pre">{valid_bit,</span> <span class="pre">neuron_address[16:0]}</span></code></p>
+<p><strong>Example:</strong> Neuron 5 spikes → spike packet = <code class="docutils literal notranslate"><span class="pre">0x00005</span></code> with valid bit = 1</p>
+<p><strong>Why it matters:</strong> Spikes are the fundamental events in spiking neural networks. All computation revolves around spike propagation and accumulation.</p>
+<p><strong>See:</strong> Throughout documentation</p>
+</section>
+<hr class="docutils" />
+<section id="sram-static-ram">
+<h3>SRAM (Static RAM)<a class="headerlink" href="#sram-static-ram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Memory technology using 6 transistors per bit (6T). “Static” because it holds state as long as powered (no refresh needed).</p>
+<p><strong>Characteristics:</strong></p>
+<ul class="simple">
+<li><p><strong>Fast:</strong> 1-3 ns access time</p></li>
+<li><p><strong>Expensive:</strong> 6 transistors per bit (vs. 1T1C for DRAM)</p></li>
+<li><p><strong>Low density:</strong> Large silicon area</p></li>
+</ul>
+<p><strong>Examples:</strong> CPU caches (L1, L2), FPGA BRAM</p>
+<p><strong>Contrast with DRAM:</strong></p>
+<ul class="simple">
+<li><p>SRAM: 6T, fast, expensive, no refresh</p></li>
+<li><p>DRAM: 1T1C, slow, cheap, needs refresh</p></li>
+</ul>
+<p><strong>Why it matters:</strong> SRAM is used for speed-critical data (BRAM for spike masks). DRAM is used for bulk storage (HBM for synapses).</p>
+<p><strong>See:</strong> hardware_map.md Section 1.1 (BRAM), Section 1.3 (HBM comparison)</p>
+</section>
+<hr class="docutils" />
+<section id="state-machine">
+<h3>State Machine<a class="headerlink" href="#state-machine" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A sequential circuit that transitions through a defined set of states based on inputs and current state.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">StateMachine</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;IDLE&#39;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;IDLE&#39;</span> <span class="ow">and</span> <span class="nb">input</span> <span class="o">==</span> <span class="s1">&#39;start&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;RUNNING&#39;</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;RUNNING&#39;</span> <span class="ow">and</span> <span class="nb">input</span> <span class="o">==</span> <span class="s1">&#39;done&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s1">&#39;IDLE&#39;</span>
+</pre></div>
+</div>
+<p><strong>Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="n">RUNNING</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">DONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RUNNING</span><span class="p">;</span>
+<span class="w">        </span><span class="nl">RUNNING:</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">done</span><span class="p">)</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">DONE</span><span class="p">;</span>
+<span class="w">        </span><span class="nl">DONE:</span><span class="w"> </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example in neuromorphic system:</strong> external_events_processor</p>
+<ul class="simple">
+<li><p><strong>IDLE:</strong> Waiting for execute command</p></li>
+<li><p><strong>FILL_PIPE:</strong> Filling BRAM read pipeline (3 cycles)</p></li>
+<li><p><strong>READ:</strong> Reading spike masks and fetching synapses</p></li>
+<li><p><strong>DONE:</strong> All spikes processed</p></li>
+</ul>
+<p><strong>Why it matters:</strong> State machines coordinate complex multi-step operations. Almost every hardware module has at least one state machine for control flow.</p>
+<p><strong>See:</strong> Chapter 2 Section 2.2 (Verilog state machines)</p>
+</section>
+<hr class="docutils" />
+<section id="synapse">
+<h3>Synapse<a class="headerlink" href="#synapse" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A connection between two neurons with an associated weight. When the presynaptic neuron spikes, the postsynaptic neuron’s voltage increases by the synaptic weight.</p>
+<p><strong>Hardware representation:</strong> 32-bit value</p>
+<ul class="simple">
+<li><p><strong>Bits [31:29]:</strong> Opcode (usually 0 for normal synapse)</p></li>
+<li><p><strong>Bits [28:16]:</strong> Target neuron address (13 bits)</p></li>
+<li><p><strong>Bits [15:0]:</strong> Synaptic weight (signed 16-bit integer)</p></li>
+</ul>
+<p><strong>Example:</strong> <code class="docutils literal notranslate"><span class="pre">0x0000_03E8</span></code> = target neuron 0, weight 1000</p>
+<p><strong>Storage:</strong> Synapses stored in HBM (billions of them for large networks).</p>
+<p><strong>Why it matters:</strong> Synapses define the network structure. All learning involves modifying synaptic weights.</p>
+<p><strong>See:</strong> Chapter 1 Section 1.1 (HBM synapse region), Chapter 2 Phase 1</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="t">
+<h2>T<a class="headerlink" href="#t" title="Link to this heading">#</a></h2>
+<section id="threshold">
+<h3>Threshold<a class="headerlink" href="#threshold" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The membrane potential value at which a neuron fires (spikes).</p>
+<p><strong>Example:</strong> If threshold = 2000 and neuron voltage reaches 2000, the neuron spikes and resets to 0.</p>
+<p><strong>Hardware:</strong> Stored as a 36-bit signed integer in configuration registers.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">neuron</span><span class="o">.</span><span class="n">voltage</span> <span class="o">&gt;=</span> <span class="n">threshold</span><span class="p">:</span>
+    <span class="n">neuron</span><span class="o">.</span><span class="n">spike</span><span class="p">()</span>
+    <span class="n">neuron</span><span class="o">.</span><span class="n">voltage</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Determines network sensitivity and dynamics. Lower threshold → more spikes, higher threshold → sparse activity.</p>
+<p><strong>See:</strong> Introduction (neuron model), Chapter 2 (threshold checking)</p>
+</section>
+<hr class="docutils" />
+<section id="throughput">
+<h3>Throughput<a class="headerlink" href="#throughput" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> The amount of data processed per unit time.</p>
+<p><strong>Software analogy:</strong> Requests per second (RPS), or bandwidth in networking.</p>
+<p><strong>Examples:</strong></p>
+<ul class="simple">
+<li><p><strong>HBM throughput:</strong> 400 GB/s (can transfer 400 billion bytes per second)</p></li>
+<li><p><strong>BRAM throughput:</strong> 1 read per cycle &#64; 225 MHz = 225 million reads/s</p></li>
+<li><p><strong>Pipeline throughput:</strong> 1 result per cycle (after initial fill)</p></li>
+</ul>
+<p><strong>Contrast with latency:</strong> Latency = time per operation, throughput = operations per time.</p>
+<p><strong>Relationship:</strong> High latency can still have high throughput if pipelined.</p>
+<p><strong>Why it matters:</strong> Throughput determines how fast you can process large datasets. Latency determines responsiveness for individual operations.</p>
+</section>
+<hr class="docutils" />
+<section id="transaction-id-tid">
+<h3>Transaction ID (TID)<a class="headerlink" href="#transaction-id-tid" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An identifier tag attached to requests to allow out-of-order completion.</p>
+<p><strong>Software analogy:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Send multiple requests with IDs</span>
+<span class="n">send_request</span><span class="p">(</span><span class="n">addr</span><span class="o">=</span><span class="mh">0x1000</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">send_request</span><span class="p">(</span><span class="n">addr</span><span class="o">=</span><span class="mh">0x2000</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">send_request</span><span class="p">(</span><span class="n">addr</span><span class="o">=</span><span class="mh">0x3000</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="c1"># Responses can return in any order</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">receive</span><span class="p">()</span>  <span class="c1"># {tid: 3, data: ...}  ← request 3 finished first</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">receive</span><span class="p">()</span>  <span class="c1"># {tid: 1, data: ...}  ← request 1 finished second</span>
+<span class="n">response</span> <span class="o">=</span> <span class="n">receive</span><span class="p">()</span>  <span class="c1"># {tid: 2, data: ...}  ← request 2 finished last</span>
+</pre></div>
+</div>
+<p><strong>Why it matters:</strong> Allows parallelism. Without TIDs, you’d have to wait for request 1 to complete before issuing request 2. With TIDs, issue all requests immediately and match responses when they arrive.</p>
+<p><strong>See:</strong> AXI4 protocol, HBM memory controller</p>
+</section>
+<hr class="docutils" />
+<section id="transistor">
+<h3>Transistor<a class="headerlink" href="#transistor" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A semiconductor device that acts as an electrically-controlled switch. The fundamental building block of all digital circuits.</p>
+<p><strong>Types:</strong></p>
+<ul class="simple">
+<li><p><strong>NMOS:</strong> Conducts when gate voltage is high (switch closes with 1)</p></li>
+<li><p><strong>PMOS:</strong> Conducts when gate voltage is low (switch closes with 0)</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like an <code class="docutils literal notranslate"><span class="pre">if</span></code> statement:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">gate_voltage</span><span class="p">:</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="nb">input</span>  <span class="c1"># Transistor &quot;on&quot; (conducting)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="n">disconnected</span>  <span class="c1"># Transistor &quot;off&quot; (not conducting)</span>
+</pre></div>
+</div>
+<p><strong>Scale:</strong> Modern FPGAs contain billions of transistors. A 6T SRAM cell has 6 transistors, a DRAM cell has 1 transistor.</p>
+<p><strong>Why it matters:</strong> Everything in hardware—logic gates, memory, CPUs—is built from transistors.</p>
+<p><strong>See:</strong> hardware_map.md Section 1 (SRAM cells, DRAM cells)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="u">
+<h2>U<a class="headerlink" href="#u" title="Link to this heading">#</a></h2>
+<section id="uram-ultraram">
+<h3>URAM (UltraRAM)<a class="headerlink" href="#uram-ultraram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> High-density on-chip DRAM-like memory blocks in Xilinx UltraScale+ FPGAs. Faster and denser than BRAM.</p>
+<p><strong>Specifications:</strong></p>
+<ul class="simple">
+<li><p><strong>Capacity:</strong> 4.5 MB total (16 banks × 288 KB per bank)</p></li>
+<li><p><strong>Latency:</strong> 1 cycle &#64; 450 MHz (~2 ns)</p></li>
+<li><p><strong>Technology:</strong> 1T1C DRAM-like cells (denser than BRAM’s 6T SRAM)</p></li>
+<li><p><strong>Organization:</strong> 16 banks, each 4096 words × 72 bits</p></li>
+</ul>
+<p><strong>Software analogy:</strong> Like L2 cache—larger than L1 (BRAM) but still much faster than main memory (HBM).</p>
+<p><strong>Usage in neuromorphic system:</strong></p>
+<ul class="simple">
+<li><p>Stores neuron membrane potentials (131,072 neurons × 36 bits)</p></li>
+<li><p>Each bank holds 8,192 neurons (1 neuron group)</p></li>
+<li><p>Dual-neuron packing: 2 neurons per 72-bit word ([71:36]=upper, [35:0]=lower)</p></li>
+</ul>
+<p><strong>Why it matters:</strong> URAM is the perfect middle ground—larger than BRAM, faster than HBM. Ideal for neuron state storage (frequent access, moderate size).</p>
+<p><strong>See:</strong> Chapter 1 Section 1.1, Chapter 2 Section 2.2 (internal_events_processor)</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-hierarchy-summary">
+<h2>Memory Hierarchy Summary<a class="headerlink" href="#memory-hierarchy-summary" title="Link to this heading">#</a></h2>
+<p>From fastest to slowest:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Memory</p></th>
+<th class="head"><p>Capacity</p></th>
+<th class="head"><p>Latency</p></th>
+<th class="head"><p>Bandwidth</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Registers</strong></p></td>
+<td><p>~1 KB</p></td>
+<td><p>0 cycles</p></td>
+<td><p>N/A</p></td>
+<td><p>Pipeline state</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>URAM</strong></p></td>
+<td><p>4.5 MB</p></td>
+<td><p>1 cycle (2 ns)</p></td>
+<td><p>~200 GB/s</p></td>
+<td><p>Neuron states</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>BRAM</strong></p></td>
+<td><p>1 MB</p></td>
+<td><p>3 cycles (13 ns)</p></td>
+<td><p>~50 GB/s</p></td>
+<td><p>Spike masks</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>HBM</strong></p></td>
+<td><p>8 GB</p></td>
+<td><p>100-200 ns</p></td>
+<td><p>400 GB/s</p></td>
+<td><p>Synaptic weights</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Host DDR4</strong></p></td>
+<td><p>64+ GB</p></td>
+<td><p>1-10 µs</p></td>
+<td><p>20 GB/s</p></td>
+<td><p>Long-term storage</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Software analogy:</strong></p>
+<ul class="simple">
+<li><p>Registers = CPU registers</p></li>
+<li><p>URAM = L1 cache</p></li>
+<li><p>BRAM = L2 cache</p></li>
+<li><p>HBM = Main RAM</p></li>
+<li><p>Host DDR4 = Disk/SSD</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="key-concepts-summary">
+<h2>Key Concepts Summary<a class="headerlink" href="#key-concepts-summary" title="Link to this heading">#</a></h2>
+<section id="pipelining">
+<h3>Pipelining<a class="headerlink" href="#pipelining" title="Link to this heading">#</a></h3>
+<p>Break operations into stages, overlap execution. Latency stays same, throughput increases.</p>
+</section>
+<section id="state-machines">
+<h3>State Machines<a class="headerlink" href="#state-machines" title="Link to this heading">#</a></h3>
+<p>Sequential control logic stepping through states (IDLE → RUNNING → DONE).</p>
+</section>
+<section id="hazard-detection">
+<h3>Hazard Detection<a class="headerlink" href="#hazard-detection" title="Link to this heading">#</a></h3>
+<p>Prevent read-modify-write conflicts by tracking pipeline addresses.</p>
+</section>
+<section id="clock-domain-crossing">
+<h3>Clock Domain Crossing<a class="headerlink" href="#clock-domain-crossing" title="Link to this heading">#</a></h3>
+<p>Synchronize data between different clock frequencies using async FIFOs.</p>
+</section>
+<section id="handshake-protocol">
+<h3>Handshake Protocol<a class="headerlink" href="#handshake-protocol" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">VALID</span> <span class="pre">&amp;&amp;</span> <span class="pre">READY</span></code> ensures reliable data transfer with flow control.</p>
+</section>
+<section id="round-robin-arbitration">
+<h3>Round-Robin Arbitration<a class="headerlink" href="#round-robin-arbitration" title="Link to this heading">#</a></h3>
+<p>Fair scheduling by cycling through requesters in order.</p>
+</section>
+<section id="id1">
+<h3>Backpressure<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<p>Downstream signals “I’m full” to pause upstream sender.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="notation-conventions">
+<h2>Notation Conventions<a class="headerlink" href="#notation-conventions" title="Link to this heading">#</a></h2>
+<p>Throughout the documentation, you’ll see:</p>
+<ul class="simple">
+<li><p><strong>Hexadecimal:</strong> <code class="docutils literal notranslate"><span class="pre">0x1234</span></code> or <code class="docutils literal notranslate"><span class="pre">0xABCD</span></code></p></li>
+<li><p><strong>Binary:</strong> <code class="docutils literal notranslate"><span class="pre">0b1010</span></code> or <code class="docutils literal notranslate"><span class="pre">4'b1010</span></code> (4-bit binary)</p></li>
+<li><p><strong>Bit ranges:</strong> <code class="docutils literal notranslate"><span class="pre">[31:0]</span></code> means bits 31 down to 0 (32 bits total)</p></li>
+<li><p><strong>Bit indexing:</strong> <code class="docutils literal notranslate"><span class="pre">data[7]</span></code> means bit 7 of data</p></li>
+<li><p><strong>Active-low signals:</strong> <code class="docutils literal notranslate"><span class="pre">resetn</span></code> (n suffix) means 0=active, 1=inactive</p></li>
+<li><p><strong>Register notation:</strong> <code class="docutils literal notranslate"><span class="pre">reg</span> <span class="pre">[7:0]</span> <span class="pre">counter</span></code> = 8-bit register named counter</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="further-reading">
+<h2>Further Reading<a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>For deeper hardware understanding:</p>
+<ul class="simple">
+<li><p><strong>AXI4 specification:</strong> ARM IHI0022 (AXI protocol)</p></li>
+<li><p><strong>Xilinx UltraScale+ architecture:</strong> UG574 (FPGA fabric, memory)</p></li>
+<li><p><strong>PCIe specification:</strong> PCI-SIG PCIe Base 3.0</p></li>
+<li><p><strong>Digital design fundamentals:</strong> “Digital Design and Computer Architecture” by Harris &amp; Harris</p></li>
+</ul>
+<p>For neuromorphic computing:</p>
+<ul class="simple">
+<li><p><strong>Spiking neural networks:</strong> “Neuronal Dynamics” by Gerstner et al.</p></li>
+<li><p><strong>Hardware acceleration:</strong> “Computer Architecture: A Quantitative Approach” by Hennessy &amp; Patterson</p></li>
+</ul>
+<hr class="docutils" />
+<p>This glossary provides the foundation for understanding the hardware implementation details throughout the documentation. When you encounter an unfamiliar term, refer back to this appendix for clarification and context.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a">A</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#address-passthrough">Address Passthrough</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arbiter">Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-advanced-extensible-interface">AXI4 (Advanced eXtensible Interface)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-master">AXI4 Master</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-slave">AXI4 Slave</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axon">Axon</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#b">B</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backpressure">Backpressure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#beat">Beat</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-block-ram">BRAM (Block RAM)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst">Burst</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst-length">Burst Length</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#c">C</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-domain">Clock Domain</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-domain-crossing-cdc">Clock Domain Crossing (CDC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#combinational-logic">Combinational Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-opcode">Command Opcode</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#d">D</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dma-direct-memory-access">DMA (Direct Memory Access)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-buffering">Double Buffering</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dram-dynamic-ram">DRAM (Dynamic RAM)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#e">E</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execrun-ctr-execution-run-counter">execRun_ctr (Execution Run Counter)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execrun-timer-execution-run-timer">execRun_timer (Execution Run Timer)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#f">F</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-first-in-first-out">FIFO (First-In-First-Out)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#flip-flop">Flip-Flop</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-field-programmable-gate-array">FPGA (Field-Programmable Gate Array)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fwft-first-word-fall-through">FWFT (First-Word Fall-Through)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#h">H</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handshake">Handshake</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hazard">Hazard</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-high-bandwidth-memory">HBM (High Bandwidth Memory)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#i">I</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#incr-burst">INCR Burst</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#l">L</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#lut-lookup-table">LUT (Lookup Table)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#m">M</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#metastability">Metastability</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#n">N</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neuron-group">Neuron Group</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#p">P</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-peripheral-component-interconnect-express">PCIe (Peripheral Component Interconnect Express)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline">Pipeline</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-depth">Pipeline Depth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-chain">Pointer Chain</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-arbitration">Priority Arbitration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#r">R</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-latency">Read Latency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#register">Register</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#register-slice">Register Slice</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rmw-read-modify-write">RMW (Read-Modify-Write)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin">Round-Robin</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#s">S</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sequential-logic">Sequential Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sign-extension">Sign Extension</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike">Spike</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sram-static-ram">SRAM (Static RAM)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-machine">State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synapse">Synapse</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#t">T</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#threshold">Threshold</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transaction-id-tid">Transaction ID (TID)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#transistor">Transistor</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#u">U</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#uram-ultraram">URAM (UltraRAM)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-hierarchy-summary">Memory Hierarchy Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-concepts-summary">Key Concepts Summary</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipelining">Pipelining</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-machines">State Machines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hazard-detection">Hazard Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-domain-crossing">Clock Domain Crossing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handshake-protocol">Handshake Protocol</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin-arbitration">Round-Robin Arbitration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Backpressure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#notation-conventions">Notation Conventions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further Reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/supplementary_information/appendix.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

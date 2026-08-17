@@ -1,0 +1,1255 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4.2 Reading and Writing Synapses &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/4_Implementing_RSTDP/synapse_read_write';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4.3 Hardware Implementation of R-STDP" href="hardware_only_writing.html" />
+    <link rel="prev" title="4.1 What is R-STDP?" href="what_is_rstdp.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_4.html" class="nav-link">4 Implementing RSTDP</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">4.2 Reading and Writing Synapses</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="reading-and-writing-synapses">
+<h1>4.2 Reading and Writing Synapses<a class="headerlink" href="#reading-and-writing-synapses" title="Link to this heading">#</a></h1>
+<p>Implementing Reward-modulated Spike-Timing-Dependent Plasticity (RSTDP) requires the ability to dynamically read and modify synaptic weights during network execution. This page explains how the <code class="docutils literal notranslate"><span class="pre">read_synapse()</span></code> and <code class="docutils literal notranslate"><span class="pre">write_synapse()</span></code> functions work, from the high-level Python API down to the FPGA hardware implementation.</p>
+<hr class="docutils" />
+<section id="memory-organization-recap">
+<h2>Memory Organization Recap<a class="headerlink" href="#memory-organization-recap" title="Link to this heading">#</a></h2>
+<p>Before diving into the functions, let’s recall how synapses are organized in HBM (from Chapter 1):</p>
+<p><strong>HBM Structure:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hbm</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">axon_pointers</span><span class="p">,</span> <span class="n">neuron_pointers</span><span class="p">,</span> <span class="n">synapse_data</span><span class="p">)</span>
+
+<span class="n">Region</span> <span class="mi">1</span><span class="p">:</span> <span class="n">Axon</span> <span class="n">Pointers</span> <span class="p">(</span><span class="n">Base</span> <span class="mh">0x0000</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">pointer</span><span class="p">:</span> <span class="p">(</span><span class="n">start_row</span><span class="p">,</span> <span class="n">end_row</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Region</span> <span class="mi">3</span>
+
+<span class="n">Region</span> <span class="mi">2</span><span class="p">:</span> <span class="n">Neuron</span> <span class="n">Pointers</span> <span class="p">(</span><span class="n">Base</span> <span class="mh">0x4000</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">pointer</span><span class="p">:</span> <span class="p">(</span><span class="n">start_row</span><span class="p">,</span> <span class="n">end_row</span><span class="p">)</span> <span class="ow">in</span> <span class="n">Region</span> <span class="mi">3</span>
+
+<span class="n">Region</span> <span class="mi">3</span><span class="p">:</span> <span class="n">Synapses</span> <span class="p">(</span><span class="n">Base</span> <span class="mh">0x8000</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">row</span><span class="p">:</span> <span class="mi">8</span> <span class="n">synapses</span> <span class="p">(</span><span class="mi">256</span> <span class="n">bits</span> <span class="n">total</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">synapse</span><span class="p">:</span> <span class="mi">32</span> <span class="n">bits</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">29</span><span class="p">]</span><span class="o">=</span><span class="n">OpCode</span> <span class="o">|</span> <span class="p">[</span><span class="mi">28</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span><span class="o">=</span><span class="n">Address</span> <span class="o">|</span> <span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">Weight</span>
+</pre></div>
+</div>
+<p><strong>Key insight:</strong> Each presynaptic source (axon or neuron) gets one or more <strong>contiguous rows</strong> in HBM Region 3. The pointer tells us where those rows are.</p>
+</section>
+<hr class="docutils" />
+<section id="python-api-read-synapse">
+<h2>Python API: read_synapse()<a class="headerlink" href="#python-api-read-synapse" title="Link to this heading">#</a></h2>
+<p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">hs_bridge/hs_bridge/network.py</span></code> (lines 148-166)</p>
+<section id="function-signature">
+<h3>Function Signature<a class="headerlink" href="#function-signature" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">read_synapse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preIndex</span><span class="p">,</span> <span class="n">postIndex</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>preIndex</strong> (int): The index of the presynaptic element (axon or neuron)</p>
+<ul>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">axonFlag=True</span></code>: This is an axon index (e.g., <code class="docutils literal notranslate"><span class="pre">a0</span></code> = index 0)</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">axonFlag=False</span></code>: This is a neuron index (e.g., <code class="docutils literal notranslate"><span class="pre">h0</span></code> = index 0)</p></li>
+</ul>
+</li>
+<li><p><strong>postIndex</strong> (tuple): A 2-element tuple <code class="docutils literal notranslate"><span class="pre">(neuron_index,</span> <span class="pre">position_within_neuron)</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">neuron_index</span></code>: Which neuron receives the synapse</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">position_within_neuron</span></code>: Which connection slot (since neurons can have multiple synapses)</p></li>
+</ul>
+</li>
+<li><p><strong>axonFlag</strong> (bool, optional):</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">True</span></code> = Read from axon → neuron connections (HBM Region 1 pointers)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">False</span></code> = Read from neuron → neuron connections (HBM Region 2 pointers)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="return-value">
+<h3>Return Value<a class="headerlink" href="#return-value" title="Link to this heading">#</a></h3>
+<p>Returns a single synapse tuple: <code class="docutils literal notranslate"><span class="pre">(operation,</span> <span class="pre">address,</span> <span class="pre">weight)</span></code></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">operation</span></code> (int): OpCode (0=internal connection, 4=spike output)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">address</span></code> (int): 13-bit target neuron address</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weight</span></code> (int): 16-bit synaptic weight (signed fixed-point)</p></li>
+</ul>
+</section>
+<section id="how-it-works">
+<h3>How It Works<a class="headerlink" href="#how-it-works" title="Link to this heading">#</a></h3>
+<p>Let’s trace through an example: <strong>Read the synapse from axon a0 to neuron h0</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synapse</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">read_synapse</span><span class="p">(</span>
+    <span class="n">preIndex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>        <span class="c1"># a0 is axon 0</span>
+    <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>  <span class="c1"># h0 is neuron 0, position 0</span>
+    <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span>      <span class="c1"># Reading from axon pointers</span>
+<span class="p">)</span>
+<span class="c1"># Returns: (0, 0, 1000) = operation=0, target=h0, weight=1000</span>
+</pre></div>
+</div>
+<p><strong>Step-by-step execution:</strong></p>
+<ol class="arabic">
+<li><p><strong>Select pointer type:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pntrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hbm</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">axonFlag</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">hbm</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># axonFlag=True → use axon_pointers</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Get synapse range for presynaptic element:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synapseRange</span> <span class="o">=</span> <span class="n">pntrs</span><span class="o">.</span><span class="n">flatten</span><span class="p">()[</span><span class="n">preIndex</span><span class="p">]</span>
+<span class="c1"># preIndex=0 → synapseRange = (0, 0)  (start row 0, end row 0)</span>
+<span class="c1"># This tells us a0&#39;s synapses are in row 0 of Region 3</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Extract synapse data from HBM:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synapses</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hbm</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">2</span><span class="p">][</span><span class="n">synapseRange</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">synapseRange</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+<span class="c1"># self.hbm[0][2] is synapse_data</span>
+<span class="c1"># [0:1] extracts row 0</span>
+<span class="c1"># synapses is now a 2D array of synapse tuples</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Calculate row and column indices:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># DATA_PER_ROW = 8 (synapses per row)</span>
+<span class="n">rowIdx</span> <span class="o">=</span> <span class="p">(</span><span class="n">postIndex</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="p">(</span><span class="n">postIndex</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">//</span><span class="n">DATA_PER_ROW</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="k">else</span> <span class="n">postIndex</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span>
+<span class="c1"># postIndex = (0, 0)</span>
+<span class="c1"># postIndex[1]//DATA_PER_ROW = 0//8 = 0</span>
+<span class="c1"># rowIdx = 0*2 + 1 = 1</span>
+
+<span class="n">columnIdx</span> <span class="o">=</span> <span class="n">postIndex</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">DATA_PER_ROW</span>
+<span class="c1"># columnIdx = 0 % 8 = 0</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Return the synapse:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">return</span> <span class="n">synapses</span><span class="p">[</span><span class="n">rowIdx</span><span class="p">][</span><span class="n">columnIdx</span><span class="p">]</span>
+<span class="c1"># Returns synapse at [1][0]</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="important-notes">
+<h3>Important Notes<a class="headerlink" href="#important-notes" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Software-only:</strong> <code class="docutils literal notranslate"><span class="pre">read_synapse()</span></code> reads from the Python data structure (<code class="docutils literal notranslate"><span class="pre">self.hbm</span></code>), not from the actual FPGA hardware</p></li>
+<li><p><strong>Fast:</strong> No PCIe communication, just local memory access</p></li>
+<li><p><strong>Use case:</strong> Query what weight is currently programmed (e.g., for debugging or RSTDP calculations)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="python-api-write-synapse">
+<h2>Python API: write_synapse()<a class="headerlink" href="#python-api-write-synapse" title="Link to this heading">#</a></h2>
+<p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">hs_bridge/hs_bridge/network.py</span></code> (lines 181-206)</p>
+<section id="id1">
+<h3>Function Signature<a class="headerlink" href="#id1" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">write_synapse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">preIndex</span><span class="p">,</span> <span class="n">postIndex</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<p>Same as <code class="docutils literal notranslate"><span class="pre">read_synapse()</span></code>, plus:</p>
+<ul class="simple">
+<li><p><strong>weight</strong> (int): The new synaptic weight to write (16-bit signed integer)</p></li>
+</ul>
+</section>
+<section id="id3">
+<h3>Return Value<a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>None (modifies the synapse in-place and updates hardware)</p>
+</section>
+<section id="id4">
+<h3>How It Works<a class="headerlink" href="#id4" title="Link to this heading">#</a></h3>
+<p>Continuing our example: <strong>Update the weight from a0 to h0 to 2000</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">network</span><span class="o">.</span><span class="n">write_synapse</span><span class="p">(</span>
+    <span class="n">preIndex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+    <span class="n">weight</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span>
+    <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Step-by-step execution:</strong></p>
+<ol class="arabic">
+<li><p><strong>Steps 1-4 are identical to read_synapse()</strong> - locate the synapse at <code class="docutils literal notranslate"><span class="pre">[rowIdx][columnIdx]</span></code></p></li>
+<li><p><strong>Retrieve current synapse:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">oldSynapse</span> <span class="o">=</span> <span class="n">synapses</span><span class="p">[</span><span class="n">rowIdx</span><span class="p">][</span><span class="n">columnIdx</span><span class="p">]</span>
+<span class="c1"># oldSynapse = (0, 0, 1000)</span>
+<span class="n">row</span> <span class="o">=</span> <span class="n">synapses</span><span class="p">[</span><span class="n">rowIdx</span><span class="p">]</span>
+<span class="c1"># row is the entire row containing this synapse</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Update only the weight, preserving operation and address:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">row</span><span class="p">[</span><span class="n">columnIdx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">oldSynapse</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">oldSynapse</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">weight</span><span class="p">)</span>
+<span class="c1"># row[0] = (0, 0, 2000)</span>
+<span class="c1"># Only the weight changed: 1000 → 2000</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Write the entire row back to FPGA hardware:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">write_synapse_row</span><span class="p">(</span>
+    <span class="n">synapseRange</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">rowIdx</span><span class="p">,</span>  <span class="c1"># HBM row address</span>
+    <span class="n">row</span><span class="p">,</span>                        <span class="c1"># Modified row data</span>
+    <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">coreID</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coreOveride</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>This is where the magic happens - <code class="docutils literal notranslate"><span class="pre">write_synapse_row()</span></code> sends the updated data to the FPGA via PCIe.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="python-api-write-synapse-row">
+<h2>Python API: write_synapse_row()<a class="headerlink" href="#python-api-write-synapse-row" title="Link to this heading">#</a></h2>
+<p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">hs_bridge/hs_bridge/FPGA_Execution/fpga_controller.py</span></code> (lines 1057-1107)</p>
+<p>This is the low-level function that actually communicates with the FPGA hardware.</p>
+<section id="id5">
+<h3>Function Signature<a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">write_synapse_row</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>r</strong> (int): HBM row address in Region 3 (e.g., 0x8000 for row 0)</p></li>
+<li><p><strong>row</strong> (list of tuples): 8 synapse tuples, each <code class="docutils literal notranslate"><span class="pre">(operation,</span> <span class="pre">address,</span> <span class="pre">weight)</span></code></p></li>
+<li><p><strong>simDump</strong> (bool): If True, returns hex commands instead of writing</p></li>
+<li><p><strong>coreID</strong> (int): Target core ID</p></li>
+</ul>
+</section>
+<section id="id7">
+<h3>How It Works<a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<p><strong>Step-by-step execution:</strong></p>
+<ol class="arabic">
+<li><p><strong>Create command prefix:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">coreBits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;0&#39;</span>  <span class="c1"># 5 bits for core ID</span>
+<span class="n">coreByte</span> <span class="o">=</span> <span class="s1">&#39;{:0</span><span class="si">{width}</span><span class="s1">x}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">coreBits</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">width</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">HBM_OP_RW</span> <span class="o">=</span> <span class="s1">&#39;02&#39;</span> <span class="o">+</span> <span class="n">coreByte</span> <span class="o">+</span> <span class="mi">27</span> <span class="o">*</span> <span class="s1">&#39;00&#39;</span>
+<span class="c1"># Command opcode: 0x02 = HBM read/write command</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Encode the HBM row address:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rowAddress</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">SYN_BASE_ADDR</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
+<span class="c1"># Leading &#39;1&#39; = write operation</span>
+<span class="c1"># SYN_BASE_ADDR = 0x8000 (Region 3 base)</span>
+<span class="c1"># Example: r=0 → rowAddress = &#39;1&#39; + binary(0x8000) = write to row 0x8000</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Encode each synapse in the row:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">synapse</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">synapse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Internal connection</span>
+        <span class="n">binCmd</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SYN_OP_BITS</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">synapse</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">SYN_ADDR_BITS</span><span class="p">)</span> <span class="o">+</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">synapse</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">SYN_WEIGHT_BITS</span><span class="p">))</span>
+        <span class="c1"># [31:29]=000, [28:16]=address, [15:0]=weight</span>
+    <span class="k">elif</span> <span class="n">synapse</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>  <span class="c1"># External spike output</span>
+        <span class="n">binSpike</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">SYN_OP_BITS</span><span class="p">)</span> <span class="o">+</span>
+                    <span class="mi">12</span><span class="o">*</span><span class="s1">&#39;0&#39;</span> <span class="o">+</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">synapse</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">17</span><span class="p">))</span>
+        <span class="c1"># [31:29]=100, [28:17]=0, [16:0]=spike target</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Build the full 512-bit command packet:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[511:504] = 0x02 (CMD_HBM_RW opcode)
+[503:280] = core ID and padding
+[279]     = &#39;1&#39; (write flag)
+[278:256] = 23-bit HBM row address
+[255:0]   = 256-bit row data (8 × 32-bit synapses)
+</pre></div>
+</div>
+</li>
+<li><p><strong>Send to FPGA via PCIe/DMA:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">cmd_array</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cmd_array</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ol>
+<p>The command travels: <strong>Host PC → PCIe → FPGA Command Interpreter → HBM Processor → HBM</strong></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hardware-implementation-command-interpreter">
+<h2>Hardware Implementation: Command Interpreter<a class="headerlink" href="#hardware-implementation-command-interpreter" title="Link to this heading">#</a></h2>
+<p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">command_interpreter.v</span></code> (lines 241, 462-469, 720-725)</p>
+<p>The command interpreter is the FPGA’s “front desk” - it receives commands from the host PC and routes them to the appropriate module.</p>
+<section id="command-opcode">
+<h3>Command Opcode<a class="headerlink" href="#command-opcode" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_HBM_RW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Opcode for HBM read/write</span>
+</pre></div>
+</div>
+</section>
+<section id="command-packet-format-from-host-pc">
+<h3>Command Packet Format (from host PC)<a class="headerlink" href="#command-packet-format-from-host-pc" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">504</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="n">x02</span><span class="w"> </span><span class="p">(</span><span class="n">CMD_HBM_RW</span><span class="p">)</span>
+<span class="p">[</span><span class="mh">279</span><span class="p">]</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">R</span><span class="o">/</span><span class="n">W</span><span class="w"> </span><span class="n">flag</span><span class="w"> </span><span class="p">(</span><span class="mh">0</span><span class="o">=</span><span class="n">read</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="o">=</span><span class="n">write</span><span class="p">)</span>
+<span class="p">[</span><span class="mh">278</span><span class="o">:</span><span class="mh">256</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">23</span><span class="o">-</span><span class="kt">bit</span><span class="w"> </span><span class="n">HBM</span><span class="w"> </span><span class="n">address</span>
+<span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">256</span><span class="o">-</span><span class="kt">bit</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="n">payload</span><span class="w"> </span><span class="p">(</span><span class="k">for</span><span class="w"> </span><span class="n">writes</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="routing-logic-rx-state-machine">
+<h3>Routing Logic (RX State Machine)<a class="headerlink" href="#routing-logic-rx-state-machine" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">CMD_HBM_RW:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">ci2hbm_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w">       </span><span class="c1">// Check if HBM queue has space</span>
+<span class="w">        </span><span class="n">ci2hbm_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">        </span><span class="c1">// Send command to HBM processor</span>
+<span class="w">        </span><span class="n">rxFIFO_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">        </span><span class="c1">// Consume command from PCIe FIFO</span>
+<span class="w">        </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">RX_STATE_IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>The command interpreter simply forwards the HBM read/write command to the HBM processor via a FIFO queue.</p>
+</section>
+<section id="response-path-tx-state-machine">
+<h3>Response Path (TX State Machine)<a class="headerlink" href="#response-path-tx-state-machine" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">hbm2ci_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// HBM processor has response data</span>
+<span class="w">    </span><span class="n">txFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">16&#39;hBBBB</span><span class="p">,</span><span class="w"> </span><span class="mh">240</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">hbm2ci_dout</span><span class="p">};</span>
+<span class="w">    </span><span class="c1">// Format: [511:496]=0xBBBB (response opcode), [255:0]=HBM data</span>
+<span class="w">    </span><span class="n">txFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">            </span><span class="c1">// Send packet to host</span>
+<span class="w">    </span><span class="n">hbm2ci_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">            </span><span class="c1">// Consume from HBM response FIFO</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>For read operations, the HBM processor returns data with opcode <code class="docutils literal notranslate"><span class="pre">0xBBBB</span></code>, which the command interpreter forwards back to the host PC.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hardware-implementation-hbm-processor">
+<h2>Hardware Implementation: HBM Processor<a class="headerlink" href="#hardware-implementation-hbm-processor" title="Link to this heading">#</a></h2>
+<p><strong>Location:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor.v</span></code> (lines 573-750, 1046)</p>
+<p>The HBM processor manages all communication with the High Bandwidth Memory. It has two modes:</p>
+<ol class="arabic simple">
+<li><p><strong>Automatic mode:</strong> During network execution (reading pointers and synapses)</p></li>
+<li><p><strong>Host access mode:</strong> When the host PC wants to read/write synapses</p></li>
+</ol>
+<section id="address-mapping">
+<h3>Address Mapping<a class="headerlink" href="#address-mapping" title="Link to this heading">#</a></h3>
+<p>HBM uses 33-bit byte-aligned addresses, but our synapse addresses are 23-bit row addresses. The mapping:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// For host access:</span>
+<span class="n">hbm_araddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ci2hbm_dout</span><span class="p">[</span><span class="mh">278</span><span class="o">:</span><span class="mh">256</span><span class="p">],</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+<span class="c1">//            |  5  |      23-bit addr     |  5  | = 33 bits total</span>
+<span class="c1">//            padding    from command      32-byte alignment</span>
+</pre></div>
+</div>
+<p>The 5-bit padding at the end provides 32-byte alignment (2^5 = 32 bytes = 256 bits = one HBM row).</p>
+</section>
+<section id="host-read-operation-tx-state-machine">
+<h3>Host Read Operation (TX State Machine)<a class="headerlink" href="#host-read-operation-tx-state-machine" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">TX_STATE_READ_HBM_ADDR:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_arvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Assert read address valid</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_arready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// HBM accepted the read request</span>
+<span class="w">        </span><span class="n">ci2hbm_rden</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Consume command from queue</span>
+<span class="w">        </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_STATE_IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>AXI4 Read Address (AR) Channel:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_araddr</span></code>: 33-bit read address</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_arvalid</span></code>: Address valid signal (request active)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_arready</span></code>: HBM ready to accept address</p></li>
+</ul>
+</section>
+<section id="host-write-operation-tx-state-machine-3-phases">
+<h3>Host Write Operation (TX State Machine - 3 Phases)<a class="headerlink" href="#host-write-operation-tx-state-machine-3-phases" title="Link to this heading">#</a></h3>
+<p>AXI4 writes require three separate handshakes:</p>
+<p><strong>Phase 1: Write Address</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">TX_STATE_WRITE_HBM_ADDR:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_awvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Assert write address valid</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_awready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_STATE_WRITE_HBM_DATA</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Phase 2: Write Data</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">TX_STATE_WRITE_HBM_DATA:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_wvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">   </span><span class="c1">// Assert write data valid</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_wready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_STATE_WRITE_HBM_RESP</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Phase 3: Write Response</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">TX_STATE_WRITE_HBM_RESP:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_bready</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">   </span><span class="c1">// Ready to accept write response</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_bvalid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Write completed successfully</span>
+<span class="w">        </span><span class="n">ci2hbm_rden</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Consume command</span>
+<span class="w">        </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_STATE_IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Data Routing:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">hbm_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2hbm_dout</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// Write data from command</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">hbm_awaddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ci2hbm_dout</span><span class="p">[</span><span class="mh">278</span><span class="o">:</span><span class="mh">256</span><span class="p">],</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span><span class="w">  </span><span class="c1">// Write address</span>
+</pre></div>
+</div>
+</section>
+<section id="host-read-response-rx-state-machine">
+<h3>Host Read Response (RX State Machine)<a class="headerlink" href="#host-read-response-rx-state-machine" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">RX_STATE_READ_HBM_RESP:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">hbm2ci_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// HBM data available and response queue has space</span>
+<span class="w">        </span><span class="n">hbm_rready</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">      </span><span class="c1">// Accept data</span>
+<span class="w">        </span><span class="n">hbm2ci_wren</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">     </span><span class="c1">// Send to Command Interpreter</span>
+<span class="w">        </span><span class="n">rx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_STATE_IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Forward raw HBM data to Command Interpreter</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">hbm2ci_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>AXI4 Read Data (R) Channel:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rdata</span></code>: 256-bit read data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rvalid</span></code>: Read data valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rready</span></code>: Processor ready to accept data</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="axi4-protocol-summary">
+<h2>AXI4 Protocol Summary<a class="headerlink" href="#axi4-protocol-summary" title="Link to this heading">#</a></h2>
+<p>The HBM Processor uses the AXI4 memory-mapped protocol to communicate with HBM. AXI4 has 5 independent channels:</p>
+<p><strong>Read Transaction:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>AR (Address Read):</strong> Master sends read address</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_araddr[32:0]</span></code>: Address to read</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_arvalid</span></code>: Address valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_arready</span></code>: HBM ready</p></li>
+</ul>
+</li>
+<li><p><strong>R (Read Data):</strong> HBM returns data</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rdata[255:0]</span></code>: 256-bit data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rvalid</span></code>: Data valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_rready</span></code>: Master ready</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Write Transaction:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>AW (Address Write):</strong> Master sends write address</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_awaddr[32:0]</span></code>: Address to write</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_awvalid</span></code>: Address valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_awready</span></code>: HBM ready</p></li>
+</ul>
+</li>
+<li><p><strong>W (Write Data):</strong> Master sends data</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_wdata[255:0]</span></code>: 256-bit data</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_wvalid</span></code>: Data valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_wready</span></code>: HBM ready</p></li>
+</ul>
+</li>
+<li><p><strong>B (Write Response):</strong> HBM confirms write</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_bvalid</span></code>: Response valid</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_bready</span></code>: Master ready</p></li>
+</ul>
+</li>
+</ol>
+<p>The key insight: <strong>Address and data can be sent independently</strong>, allowing pipelined transactions for higher throughput.</p>
+</section>
+<hr class="docutils" />
+<section id="complete-data-flow">
+<h2>Complete Data Flow<a class="headerlink" href="#complete-data-flow" title="Link to this heading">#</a></h2>
+<p>Let’s trace a complete write operation from start to finish:</p>
+<section id="writing-synapse-a0-h0-weight-2000">
+<h3>Writing Synapse: a0 → h0, weight = 2000<a class="headerlink" href="#writing-synapse-a0-h0-weight-2000" title="Link to this heading">#</a></h3>
+<p><strong>Step 1: Python (host PC)</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">network</span><span class="o">.</span><span class="n">write_synapse</span><span class="p">(</span><span class="n">preIndex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mi">2000</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+  <span class="err">↓</span>
+<span class="n">write_synapse_row</span><span class="p">(</span><span class="n">r</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">row</span><span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2000</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1000</span><span class="p">),</span> <span class="o">...</span><span class="p">])</span>
+</pre></div>
+</div>
+<p><strong>Step 2: Python builds PCIe command</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Command packet (512 bits):</span>
+<span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">504</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x02</span>        <span class="c1"># CMD_HBM_RW</span>
+<span class="p">[</span><span class="mi">279</span><span class="p">]</span>     <span class="o">=</span> <span class="mh">0x1</span>         <span class="c1"># Write flag</span>
+<span class="p">[</span><span class="mi">278</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x8000</span>      <span class="c1"># HBM row address (Region 3, row 0)</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">224</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000_7D0</span> <span class="c1"># Synapse 7: (0, 0, 2000)</span>
+<span class="p">[</span><span class="mi">223</span><span class="p">:</span><span class="mi">192</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00001_3E8</span> <span class="c1"># Synapse 6: (0, 1, 1000)</span>
+<span class="o">...</span>
+<span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="mh">0x00000_7D0</span> <span class="c1"># Synapse 0: (0, 0, 2000) ← our synapse!</span>
+</pre></div>
+</div>
+<p><strong>Step 3: PCIe DMA transfer</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Host PC → PCIe bus → FPGA PCIe endpoint → pcie2fifos → Input FIFO
+</pre></div>
+</div>
+<p><strong>Step 4: Command Interpreter (Verilog)</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// RX state machine receives command</span>
+<span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">504</span><span class="p">])</span>
+<span class="w">    </span><span class="nl">CMD_HBM_RW:</span><span class="w">  </span><span class="c1">// Detected HBM read/write</span>
+<span class="w">        </span><span class="n">ci2hbm_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Forward to HBM processor</span>
+<span class="k">endcase</span>
+</pre></div>
+</div>
+<p><strong>Step 5: HBM Processor (Verilog) - TX Path</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// State: TX_STATE_WRITE_HBM_ADDR</span>
+<span class="n">hbm_awaddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="mh">23&#39;h8000</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">}</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">33&#39;h0000</span><span class="n">_0100_0000</span><span class="w">  </span><span class="c1">// Write address</span>
+<span class="n">hbm_awvalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span>
+
+<span class="c1">// State: TX_STATE_WRITE_HBM_DATA</span>
+<span class="n">hbm_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">256</span><span class="p">&#39;</span><span class="n">h</span><span class="p">..</span><span class="mf">.07</span><span class="n">D0</span><span class="w">  </span><span class="c1">// All 8 synapses</span>
+<span class="n">hbm_wvalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span>
+
+<span class="c1">// State: TX_STATE_WRITE_HBM_RESP</span>
+<span class="n">hbm_bready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">  </span><span class="c1">// Waiting for confirmation</span>
+<span class="c1">// When hbm_bvalid asserts → Write complete!</span>
+</pre></div>
+</div>
+<p><strong>Step 6: HBM</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Row</span> <span class="mh">0x8000</span> <span class="ow">in</span> <span class="n">HBM</span> <span class="ow">is</span> <span class="n">updated</span> <span class="k">with</span> <span class="n">new</span> <span class="n">data</span>
+<span class="n">Synapse</span> <span class="mi">0</span><span class="p">:</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000_7D0</span> <span class="o">=</span> <span class="p">(</span><span class="n">OpCode</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Address</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">Weight</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Result:</strong> The synaptic weight from a0 to h0 is now 2000 instead of 1000!</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="complete-read-flow">
+<h2>Complete Read Flow<a class="headerlink" href="#complete-read-flow" title="Link to this heading">#</a></h2>
+<section id="reading-synapse-a0-h0">
+<h3>Reading Synapse: a0 → h0<a class="headerlink" href="#reading-synapse-a0-h0" title="Link to this heading">#</a></h3>
+<p><strong>Step 1: Python (host PC)</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">synapse</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">read_synapse</span><span class="p">(</span><span class="n">preIndex</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Currently, this only reads from local Python data structure!</strong></p>
+<p>To read from actual hardware, you would need to:</p>
+<ol class="arabic simple">
+<li><p>Call <code class="docutils literal notranslate"><span class="pre">Read_synapse_row(r=0)</span></code> from <code class="docutils literal notranslate"><span class="pre">fpga_controller.py</span></code></p></li>
+<li><p>This sends a read command to the FPGA</p></li>
+<li><p>Hardware returns the row data</p></li>
+<li><p>Decode the response and extract the desired synapse</p></li>
+</ol>
+<p>The <code class="docutils literal notranslate"><span class="pre">Read_synapse_row()</span></code> function follows a similar pattern to <code class="docutils literal notranslate"><span class="pre">write_synapse_row()</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">Read_synapse_row</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># Build read command</span>
+    <span class="n">rowAddress</span> <span class="o">=</span> <span class="s1">&#39;0&#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">SYN_BASE_ADDR</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
+    <span class="c1"># Leading &#39;0&#39; = read operation</span>
+
+    <span class="c1"># Send command via DMA</span>
+    <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Read response</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_read</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+
+    <span class="c1"># Decode response</span>
+    <span class="n">decoded</span> <span class="o">=</span> <span class="n">HBM_decode</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">decoded</span>  <span class="c1"># Returns 8 synapses from the row</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Link to this heading">#</a></h2>
+<section id="rstdp-learning">
+<h3>1. RSTDP Learning<a class="headerlink" href="#rstdp-learning" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># During learning, update weights based on spike timing</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_rstdp_update</span><span class="p">(</span><span class="n">network</span><span class="p">,</span> <span class="n">pre_idx</span><span class="p">,</span> <span class="n">post_idx</span><span class="p">,</span> <span class="n">delta_weight</span><span class="p">):</span>
+    <span class="c1"># Read current weight</span>
+    <span class="n">synapse</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">read_synapse</span><span class="p">(</span><span class="n">pre_idx</span><span class="p">,</span> <span class="n">post_idx</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">current_weight</span> <span class="o">=</span> <span class="n">synapse</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="c1"># Calculate new weight</span>
+    <span class="n">new_weight</span> <span class="o">=</span> <span class="n">current_weight</span> <span class="o">+</span> <span class="n">delta_weight</span>
+    <span class="n">new_weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">new_weight</span><span class="p">,</span> <span class="o">-</span><span class="mi">32768</span><span class="p">,</span> <span class="mi">32767</span><span class="p">)</span>  <span class="c1"># 16-bit signed range</span>
+
+    <span class="c1"># Write updated weight</span>
+    <span class="n">network</span><span class="o">.</span><span class="n">write_synapse</span><span class="p">(</span><span class="n">pre_idx</span><span class="p">,</span> <span class="n">post_idx</span><span class="p">,</span> <span class="n">new_weight</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="network-debugging">
+<h3>2. Network Debugging<a class="headerlink" href="#network-debugging" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Verify all synapses were programmed correctly</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_network_weights</span><span class="p">(</span><span class="n">network</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">axon_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">num_axons</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">post_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">network</span><span class="o">.</span><span class="n">num_neurons</span><span class="p">):</span>
+            <span class="n">synapse</span> <span class="o">=</span> <span class="n">network</span><span class="o">.</span><span class="n">read_synapse</span><span class="p">(</span><span class="n">axon_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">post_idx</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Axon </span><span class="si">{</span><span class="n">axon_idx</span><span class="si">}</span><span class="s2"> → Neuron </span><span class="si">{</span><span class="n">post_idx</span><span class="si">}</span><span class="s2">: weight = </span><span class="si">{</span><span class="n">synapse</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="dynamic-reconfiguration">
+<h3>3. Dynamic Reconfiguration<a class="headerlink" href="#dynamic-reconfiguration" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Disable a connection by setting weight to 0</span>
+<span class="n">network</span><span class="o">.</span><span class="n">write_synapse</span><span class="p">(</span><span class="n">pre_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Later, re-enable it</span>
+<span class="n">network</span><span class="o">.</span><span class="n">write_synapse</span><span class="p">(</span><span class="n">pre_idx</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">postIndex</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">weight</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">axonFlag</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading">#</a></h2>
+<section id="read-performance">
+<h3>Read Performance<a class="headerlink" href="#read-performance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Software read:</strong> ~1 μs (local memory access)</p></li>
+<li><p><strong>Hardware read:</strong> ~10-100 μs (PCIe round-trip + HBM access)</p></li>
+</ul>
+</section>
+<section id="write-performance">
+<h3>Write Performance<a class="headerlink" href="#write-performance" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Row-based writes:</strong> Each <code class="docutils literal notranslate"><span class="pre">write_synapse()</span></code> writes an entire 8-synapse row (~10-100 μs)</p></li>
+<li><p><strong>Bulk updates:</strong> For many weight changes, batch them to minimize PCIe overhead</p></li>
+</ul>
+</section>
+<section id="rstdp-implications">
+<h3>RSTDP Implications<a class="headerlink" href="#rstdp-implications" title="Link to this heading">#</a></h3>
+<p>For online RSTDP learning with frequent weight updates:</p>
+<ul class="simple">
+<li><p>Consider <strong>buffering weight changes</strong> and applying them in batches</p></li>
+<li><p>Use <strong>eligibility traces</strong> to reduce update frequency</p></li>
+<li><p>Trade off <strong>learning rate</strong> vs. <strong>update overhead</strong></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>The synapse read/write system provides a powerful mechanism for dynamic network modification:</p>
+<p><strong>Python API:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">read_synapse()</span></code>: Query weights from local data structure</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_synapse()</span></code>: Update weights and synchronize with hardware</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">write_synapse_row()</span></code>: Low-level PCIe/DMA communication</p></li>
+</ul>
+<p><strong>Hardware Path:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Host PC → PCIe → command_interpreter.v → hbm_processor.v → HBM
+        ←       ←                      ←                 ←
+</pre></div>
+</div>
+<p><strong>Key Insights:</strong></p>
+<ol class="arabic simple">
+<li><p>Synapses are organized in <strong>rows</strong> (8 per row) in HBM Region 3</p></li>
+<li><p>Pointers (Regions 1 &amp; 2) tell us <strong>which rows</strong> belong to each source</p></li>
+<li><p>Writes update <strong>entire rows</strong>, not individual synapses</p></li>
+<li><p>Hardware uses <strong>AXI4 protocol</strong> for HBM access</p></li>
+<li><p>The system supports <strong>real-time weight modification</strong> for learning</p></li>
+</ol>
+<p>This infrastructure makes RSTDP and other online learning algorithms possible on the neuromorphic FPGA hardware!</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-organization-recap">Memory Organization Recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api-read-synapse">Python API: read_synapse()</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#function-signature">Function Signature</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#return-value">Return Value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#how-it-works">How It Works</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#important-notes">Important Notes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api-write-synapse">Python API: write_synapse()</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Function Signature</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Return Value</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id4">How It Works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api-write-synapse-row">Python API: write_synapse_row()</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Function Signature</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">How It Works</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hardware-implementation-command-interpreter">Hardware Implementation: Command Interpreter</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-opcode">Command Opcode</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-packet-format-from-host-pc">Command Packet Format (from host PC)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#routing-logic-rx-state-machine">Routing Logic (RX State Machine)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#response-path-tx-state-machine">Response Path (TX State Machine)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hardware-implementation-hbm-processor">Hardware Implementation: HBM Processor</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#address-mapping">Address Mapping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#host-read-operation-tx-state-machine">Host Read Operation (TX State Machine)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#host-write-operation-tx-state-machine-3-phases">Host Write Operation (TX State Machine - 3 Phases)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#host-read-response-rx-state-machine">Host Read Response (RX State Machine)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-protocol-summary">AXI4 Protocol Summary</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-data-flow">Complete Data Flow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#writing-synapse-a0-h0-weight-2000">Writing Synapse: a0 → h0, weight = 2000</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-read-flow">Complete Read Flow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-synapse-a0-h0">Reading Synapse: a0 → h0</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-cases">Use Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rstdp-learning">1. RSTDP Learning</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-debugging">2. Network Debugging</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamic-reconfiguration">3. Dynamic Reconfiguration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations">Performance Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#read-performance">Read Performance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#write-performance">Write Performance</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rstdp-implications">RSTDP Implications</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/4_Implementing_RSTDP/synapse_read_write.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

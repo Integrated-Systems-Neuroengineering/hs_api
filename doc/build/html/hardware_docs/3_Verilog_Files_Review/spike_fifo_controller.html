@@ -1,0 +1,1654 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Spike FIFO Controller Module &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/spike_fifo_controller';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="4 Implementing RSTDP" href="../chapter_4.html" />
+    <link rel="prev" title="Pointer FIFO Controller Module" href="pointer_fifo_controller.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Spike FIFO Controller Module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="spike-fifo-controller-module">
+<h1>Spike FIFO Controller Module<a class="headerlink" href="#spike-fifo-controller-module" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>The <strong>Spike FIFO Controller</strong> is a simple yet critical arbitration component that aggregates output spikes from 8 parallel Spike FIFOs into a single unified stream. These spikes represent post-synaptic neuron activations generated during Phase 2 (synaptic weight processing) and are fed to the Internal Events Processor for the next time step.</p>
+<section id="role-in-the-software-hardware-stack">
+<h3>Role in the Software/Hardware Stack<a class="headerlink" href="#role-in-the-software-hardware-stack" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    Phase 2: Synaptic Processing
+                       (Weight Application)
+                              |
+    ┌─────────────────────────┼─────────────────────────┐
+    |                         v                         |
+    |              [HBM Processor]                      |
+    |                         |                         |
+    |          Fetch synaptic weights from HBM          |
+    |                         |                         |
+    |          Apply weights to post-synaptic neurons   |
+    |                         |                         |
+    |                  spk0_wren ... spk7_wren          |
+    |                         |                         |
+    |         ┌───────────────┼───────────────┐         |
+    |         |               v               |         |
+    |         | ┌─────┐ ┌─────┐ ... ┌─────┐  |         |
+    |         | │spk0 │ │spk1 │     │spk7 │  |         |
+    |         | │FIFO │ │FIFO │     │FIFO │  |         |
+    |         | │17b  │ │17b  │     │17b  │  |         |
+    |         | └──┬──┘ └──┬──┘     └──┬──┘  |         |
+    |         │    |       |            |     │         |
+    |         │    v       v            v     │         |
+    |         │   ┌────────────────────────┐  │         |
+    |         │   │  Round-Robin Arbiter   │  │         |
+    |         │   │  (3-bit counter 0-7)   │  │         |
+    |         │   └──────────┬─────────────┘  │         |
+    |         │              |                 │         |
+    |         │              v                 │         |
+    |         │      ┌────────────────┐        │         |
+    |         │      │  spk2ciFIFO    │        │         |
+    |         │      │   (17-bit)     │        │         |
+    |         │      └───────┬────────┘        │         |
+    |         └──────────────┼─────────────────┘         |
+    |                        |                           |
+    |                        v                           |
+    |           [Internal Events Processor]              |
+    |                        |                           |
+    |              Next time step (Phase 1b)             |
+    └───────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Function</strong>:</p>
+<ul class="simple">
+<li><p><strong>Aggregate Spikes</strong>: Collect spike events from 8 parallel FIFOs</p></li>
+<li><p><strong>Fair Arbitration</strong>: Round-robin scheduler ensures all spike sources get equal service</p></li>
+<li><p><strong>Unified Output</strong>: Present consolidated spike stream to downstream processor</p></li>
+</ul>
+<p><strong>Key Innovation</strong>: By using round-robin arbitration, the module ensures fairness - no single spike source can monopolize the output, preventing starvation even under heavy load.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                     8 Spike FIFOs
+                    (Parallel Inputs)
+                          |
+    ┌─────────────────────┼─────────────────────┐
+    |                     v                     |
+    | ┌─────┐ ┌─────┐ ┌─────┐ ... ┌─────┐     |
+    | │spk0 │ │spk1 │ │spk2 │     │spk7 │     |
+    | │empty│ │empty│ │empty│     │empty│     |
+    | │dout │ │dout │ │dout │     │dout │     |
+    | │[16:0││ │[16:0││ │[16:0│    │[16:0│    |
+    | └──┬──┘ └──┬──┘ └──┬──┘     └──┬──┘     |
+    |    |       |       |            |        |
+    |    └───────┴───────┴────────────┘        |
+    |                    |                     |
+    |                    v                     |
+    |         ┌──────────────────────┐         |
+    |         │  Round-Robin Counter │         |
+    |         │    addr[2:0]         │         |
+    |         │    0 → 1 → ... → 7   │         |
+    |         └──────────┬───────────┘         |
+    |                    |                     |
+    |                    v                     |
+    |         ┌──────────────────────┐         |
+    |         │   8:1 Multiplexer    │         |
+    |         │   (Select based on   │         |
+    |         │    addr &amp; !empty &amp;   │         |
+    |         │    !spk2ciFIFO_full) │         |
+    |         └──────────┬───────────┘         |
+    |                    |                     |
+    |    ┌───────────────┼───────────────┐     |
+    |    |               v               |     |
+    | spk*_rden   spk2ciFIFO_din[16:0]  |     |
+    |    |         spk2ciFIFO_wren       |     |
+    |    v               |               v     |
+    |   FIFO            FIFO           FIFO    |
+    |  Advance         Write           Enable  |
+    └───────────────────┼─────────────────────┘
+                        |
+                        v
+              ┌──────────────────┐
+              │  spk2ciFIFO      │
+              │  (Output FIFO)   │
+              │  To Internal     │
+              │  Events Proc.    │
+              └──────────────────┘
+</pre></div>
+</div>
+<section id="data-flow">
+<h3>Data Flow<a class="headerlink" href="#data-flow" title="Link to this heading">#</a></h3>
+<p><strong>Phase 2: Spike Generation (Concurrent with Phase 1)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. HBM Processor applies synaptic weights
+2. For each weight applied:
+   - Calculate post-synaptic neuron potential update
+   - If neuron crosses threshold → generate spike
+   - Write spike to appropriate spike FIFO (spk0-7)
+3. Spike data format: [16:0] = {1&#39;b valid, 16&#39;b neuron_address}
+4. Spikes accumulate in parallel FIFOs
+</pre></div>
+</div>
+<p><strong>Phase 3: Spike Drain (After Phase 2 Complete)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Round-robin arbiter cycles addr 0→1→...→7→0
+2. Every cycle:
+   - Check if spk[addr]_empty==0 and spk2ciFIFO_full==0
+   - If true: read from spk[addr], write to spk2ciFIFO
+   - If false: skip (no-op), continue to next address
+3. Continue until all spike FIFOs empty
+4. Spikes now ready for Internal Events Processor (next time step)
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>System clock (225 MHz typical)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low asynchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="spike-fifo-interfaces-8-instances-spk0-spk7">
+<h3>Spike FIFO Interfaces (8 instances: spk0-spk7)<a class="headerlink" href="#spike-fifo-interfaces-8-instances-spk0-spk7" title="Link to this heading">#</a></h3>
+<p>Each spike FIFO has identical read-only interface (example for spk0):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk0_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spk0_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>17</p></td>
+<td><p>Spike data (likely: valid + neuron address)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk0_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Read enable (from arbiter)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Spike FIFOs</strong>: spk1, spk2, …, spk7 (identical interfaces)</p>
+<p><strong>Note</strong>: The module has commented-out ports for spk8-spk15 (lines 40-72, 104-111, 172-229, 239-246), suggesting the design originally supported 16 FIFOs but was reduced to 8 for the current single-core implementation.</p>
+</section>
+<section id="output-interface-aggregated-spike-fifo">
+<h3>Output Interface (Aggregated Spike FIFO)<a class="headerlink" href="#output-interface-aggregated-spike-fifo" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Output FIFO full flag (backpressure)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>17</p></td>
+<td><p>Spike data to output FIFO</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Write enable (from arbiter)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Name Interpretation</strong>: “spk2ciFIFO” likely means “Spike to Command Interpreter FIFO” or “Spike to Core Internal FIFO”, though it actually feeds the Internal Events Processor.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="round-robin-arbiter">
+<h3>Round-Robin Arbiter<a class="headerlink" href="#round-robin-arbiter" title="Link to this heading">#</a></h3>
+<p>A 3-bit counter cycles through FIFOs 0-7, servicing one per cycle:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// 3 bits for 8 FIFOs (0-7)</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Wraps 7→0 automatically</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Arbitration Cycle</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0:  addr=0  → Check spk0
+Cycle 1:  addr=1  → Check spk1
+Cycle 2:  addr=2  → Check spk2
+...
+Cycle 7:  addr=7  → Check spk7
+Cycle 8:  addr=0  → Back to spk0
+...
+</pre></div>
+</div>
+<p><strong>Arbitration Period</strong>: 8 cycles (half the period of pointer_fifo_controller’s 16 cycles)</p>
+</section>
+<section id="arbitration-logic-combinational">
+<h3>Arbitration Logic (Combinational)<a class="headerlink" href="#arbitration-logic-combinational" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// Default: No reads, no writes</span>
+<span class="w">    </span><span class="n">spk0_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">spk1_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... (all spk*_rden = 0)</span>
+<span class="w">    </span><span class="n">spk2ciFIFO_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32</span><span class="p">&#39;</span><span class="n">dX</span><span class="p">;</span><span class="w">  </span><span class="c1">// Note: Typo - should be 17&#39;dX</span>
+<span class="w">    </span><span class="n">spk2ciFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+<span class="w">        </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">spk0_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">spk2ciFIFO_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">spk0_rden</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spk2ciFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">spk0_dout</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spk2ciFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="mh">3</span><span class="mi">&#39;d1</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">spk1_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">spk2ciFIFO_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">spk1_rden</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spk2ciFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">spk1_dout</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spk2ciFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="c1">// ... (pattern repeats for 3&#39;d2 through 3&#39;d7)</span>
+
+<span class="w">        </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// All outputs stay at default (0 or X)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Logic Breakdown</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">For</span> <span class="n">each</span> <span class="n">cycle</span><span class="p">:</span>
+  <span class="n">IF</span> <span class="n">addr</span><span class="o">==</span><span class="n">N</span> <span class="n">AND</span> <span class="n">spk</span><span class="p">[</span><span class="n">N</span><span class="p">]</span><span class="n">_empty</span><span class="o">==</span><span class="mi">0</span> <span class="n">AND</span> <span class="n">spk2ciFIFO_full</span><span class="o">==</span><span class="mi">0</span>
+    <span class="n">THEN</span><span class="p">:</span>
+      <span class="n">spk</span><span class="p">[</span><span class="n">N</span><span class="p">]</span><span class="n">_rden</span> <span class="o">=</span> <span class="mi">1</span>      <span class="p">(</span><span class="n">read</span> <span class="kn">from</span><span class="w"> </span><span class="nn">spike</span> <span class="n">FIFO</span> <span class="n">N</span><span class="p">)</span>
+      <span class="n">spk2ciFIFO_din</span> <span class="o">=</span> <span class="n">spk</span><span class="p">[</span><span class="n">N</span><span class="p">]</span><span class="n">_dout</span>  <span class="p">(</span><span class="n">forward</span> <span class="n">data</span><span class="p">)</span>
+      <span class="n">spk2ciFIFO_wren</span> <span class="o">=</span> <span class="mi">1</span>  <span class="p">(</span><span class="n">write</span> <span class="n">to</span> <span class="n">output</span> <span class="n">FIFO</span><span class="p">)</span>
+  <span class="n">ELSE</span><span class="p">:</span>
+    <span class="p">(</span><span class="nb">all</span> <span class="n">outputs</span> <span class="n">stay</span> <span class="mi">0</span><span class="p">,</span> <span class="n">no</span> <span class="n">action</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Identical to pointer_fifo_controller</strong>: Same arbitration pattern, just fewer FIFOs (8 vs 16).</p>
+</section>
+<section id="spike-data-format-17-bits">
+<h3>Spike Data Format (17 bits)<a class="headerlink" href="#spike-data-format-17-bits" title="Link to this heading">#</a></h3>
+<p>While the exact format isn’t documented in the code, typical interpretations:</p>
+<p><strong>Option 1: Valid + Address</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bit</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span>    <span class="n">Spike</span> <span class="n">valid</span> <span class="p">(</span><span class="mi">1</span><span class="o">=</span><span class="n">spike</span><span class="p">,</span> <span class="mi">0</span><span class="o">=</span><span class="n">no</span> <span class="n">spike</span> <span class="o">/</span> <span class="n">padding</span><span class="p">)</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">0</span><span class="p">]:</span> <span class="n">Post</span><span class="o">-</span><span class="n">synaptic</span> <span class="n">neuron</span> <span class="n">address</span> <span class="p">(</span><span class="mi">0</span><span class="o">-</span><span class="mi">65535</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Option 2: MSB Address + LSB Metadata</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bit</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span>    <span class="n">Bank</span> <span class="n">select</span> <span class="ow">or</span> <span class="n">overflow</span> <span class="n">flag</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">0</span><span class="p">]:</span> <span class="n">Neuron</span> <span class="n">address</span> <span class="n">within</span> <span class="n">bank</span>
+</pre></div>
+</div>
+<p><strong>Option 3: Signed Weight + Address</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bit</span> <span class="p">[</span><span class="mi">16</span><span class="p">]:</span>    <span class="n">Sign</span> <span class="n">bit</span> <span class="p">(</span><span class="n">excitatory</span><span class="o">/</span><span class="n">inhibitory</span><span class="p">)</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">0</span><span class="p">]:</span> <span class="n">Neuron</span> <span class="n">address</span>
+</pre></div>
+</div>
+<p><strong>Most Likely</strong>: Option 1 (valid + address), as this is common in sparse event systems.</p>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spk0_dout</span> <span class="o">=</span> <span class="mi">17</span><span class="s1">&#39;h10ABC  → Spike valid, neuron address 0x0ABC (2748)</span>
+<span class="n">spk1_dout</span> <span class="o">=</span> <span class="mi">17</span><span class="s1">&#39;h00000  → No spike (padding entry)</span>
+<span class="n">spk2_dout</span> <span class="o">=</span> <span class="mi">17</span><span class="s1">&#39;h1FFFF  → Spike valid, neuron address 0xFFFF (65535)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="round-robin-arbiter-operation">
+<h3>Round-Robin Arbiter Operation<a class="headerlink" href="#round-robin-arbiter-operation" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle    0    1    2    3    4    5    6    7    8
+         ────┬────┬────┬────┬────┬────┬────┬────┬────
+addr         0    1    2    3    4    5    6    7    0
+
+spk0_empty   ────┐                             ┌─────
+             ────└─────────────────────────────┘
+             (has data cycles 0-7, empty at 8)
+
+spk1_empty   ───────────────────────────────────────
+             (empty throughout)
+
+spk2_empty   ──────────┐                   ┌────────
+             ──────────└───────────────────┘
+             (has data cycles 2-6)
+
+spk5_empty   ───────────────────────┐   ┌───────────
+             ───────────────────────└───┘
+             (has data cycles 5-6)
+
+spk2ciFIFO_full ────────────────────────────────────
+                (never full)
+
+spk0_rden    ───┐                             ┌─────
+             ───└─────────────────────────────┘
+
+spk2_rden    ──────────┐
+             ──────────└───────────────────────────
+
+spk5_rden    ───────────────────────┐
+             ───────────────────────└───────────────
+
+spk2ciFIFO_wren ──┐    ┌───────────┐───────────┐
+                ──└────┘           └───────────┘
+
+spk2ciFIFO_din     S0   S2         S5          X
+
+Explanation:
+  Cycle 0 (addr=0): spk0 not empty → read spk0, write spk2ciFIFO
+  Cycle 1 (addr=1): spk1 empty → skip
+  Cycle 2 (addr=2): spk2 not empty → read spk2, write spk2ciFIFO
+  Cycle 3-4: All FIFOs empty → skip
+  Cycle 5 (addr=5): spk5 not empty → read spk5, write spk2ciFIFO
+  Cycle 6-7: Empty → skip
+  Cycle 8 (addr=0): Back to spk0
+</pre></div>
+</div>
+</section>
+<section id="backpressure-handling">
+<h3>Backpressure Handling<a class="headerlink" href="#backpressure-handling" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4
+             ────┬────┬────┬────┬────
+addr             0    1    2    3    4
+
+spk0_empty   ────────────────────────
+             (has data)
+
+spk2ciFIFO_full ───────┐         ┌───
+                ───────└─────────┘
+                (becomes full at cycle 1)
+
+spk0_rden    ───┐         ┌─────┐
+             ───└─────────┘     └────
+
+spk2ciFIFO_wren ┐         ┌─────┐
+             ───└─────────┘     └────
+
+Explanation:
+  Cycle 0: spk0 has data, output FIFO not full → read and write
+  Cycle 1: Output FIFO becomes full → blocked (no read/write)
+  Cycle 2: Output FIFO still full → still blocked
+  Cycle 3: Output FIFO has space again → resume read/write
+  Cycle 4: Continue normal operation
+
+  During cycles 1-2, addr continues incrementing (1→2→3),
+  but no operations occur. When spk2ciFIFO has space again,
+  arbiter is at addr=3, not addr=0 (missed spk0&#39;s turn).
+  spk0 will be serviced again when addr wraps back to 0.
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="resource-usage">
+<h2>Resource Usage<a class="headerlink" href="#resource-usage" title="Link to this heading">#</a></h2>
+<section id="logic-complexity">
+<h3>Logic Complexity<a class="headerlink" href="#logic-complexity" title="Link to this heading">#</a></h3>
+<p><strong>Arbiter</strong>:</p>
+<ul class="simple">
+<li><p><strong>Counter</strong>: 3-bit register (3 FFs)</p></li>
+<li><p><strong>8:1 Mux</strong>: ~24 LUTs (17 bits × 8-way = ~1.5 LUTs per bit)</p></li>
+<li><p><strong>Control Logic</strong>: ~16 LUTs (empty checks, full checks, case statement)</p></li>
+<li><p><strong>Total</strong>: ~40 LUTs, ~3 FFs</p></li>
+</ul>
+<p><strong>No FIFOs Instantiated</strong>: This module only arbitrates; FIFOs instantiated elsewhere.</p>
+</section>
+<section id="comparison-to-pointer-fifo-controller">
+<h3>Comparison to Pointer FIFO Controller<a class="headerlink" href="#comparison-to-pointer-fifo-controller" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Pointer FIFO Controller</p></th>
+<th class="head"><p>Spike FIFO Controller</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Input FIFOs</strong></p></td>
+<td><p>16 (ptr0-15)</p></td>
+<td><p>8 (spk0-7)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Data Width</strong></p></td>
+<td><p>32 bits (pointer)</p></td>
+<td><p>17 bits (spike)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Address Bits</strong></p></td>
+<td><p>4 bits (16 FIFOs)</p></td>
+<td><p>3 bits (8 FIFOs)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Arbiter Period</strong></p></td>
+<td><p>16 cycles</p></td>
+<td><p>8 cycles</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Logic</strong></p></td>
+<td><p>~150 LUTs, ~50 FFs</p></td>
+<td><p>~40 LUTs, ~3 FFs</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Writes Input FIFOs</strong></p></td>
+<td><p>Yes (demux from HBM)</p></td>
+<td><p>No (read-only)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Complexity</strong></p></td>
+<td><p>High (demux + arbiter)</p></td>
+<td><p>Low (arbiter only)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Spike FIFO Controller is simpler</strong>: No demux logic, fewer FIFOs, narrower data.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="upstream-modules">
+<h3>Upstream Modules<a class="headerlink" href="#upstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>hbm_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code>):</p>
+<ul>
+<li><p>Writes spike data to spk0-7 FIFOs during Phase 2</p></li>
+<li><p>Generates spikes based on synaptic weight application</p></li>
+<li><p>Each spike FIFO corresponds to a subset of HBM output channels</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="downstream-modules">
+<h3>Downstream Modules<a class="headerlink" href="#downstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>internal_events_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">internal_events_processor.md</span></code>):</p>
+<ul>
+<li><p>Receives aggregated spikes from spk2ciFIFO</p></li>
+<li><p>Uses spikes to update URAM neuron potentials in next time step</p></li>
+<li><p>Coordinates Phase 1b (internal event processing)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="peer-modules">
+<h3>Peer Modules<a class="headerlink" href="#peer-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>pointer_fifo_controller.v</strong> (<code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller.md</span></code>):</p>
+<ul>
+<li><p>Similar architecture (round-robin arbiter)</p></li>
+<li><p>Handles pointer data instead of spikes</p></li>
+<li><p>Both operate concurrently during Phase 2</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="issue-1-spikes-lost-fifo-overflow">
+<h3>Issue 1: Spikes Lost (FIFO Overflow)<a class="headerlink" href="#issue-1-spikes-lost-fifo-overflow" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Neurons don’t receive expected updates</p></li>
+<li><p>Spike counts lower than expected</p></li>
+<li><p>spk*_full flags assert frequently (if monitored)</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>HBM processor generates spikes faster than arbiter drains</p></li>
+<li><p>Spike FIFO depth too small</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Add probes for FIFO occupancy (requires FIFO IP configuration)</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spk0_count</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w">       </span><span class="n">spk0_overflow</span><span class="p">;</span>
+
+<span class="c1">// Monitor overflow</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spk0_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">spk0_wren</span><span class="p">)</span><span class="w">  </span><span class="c1">// Assumes spk0_full and spk0_wren exist</span>
+<span class="w">        </span><span class="n">spk0_overflow</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Increase spike FIFO depth (e.g., 512 → 1024)</p></li>
+<li><p>Optimize arbiter (see Enhancements)</p></li>
+<li><p>Reduce spike generation rate (network-level optimization)</p></li>
+</ul>
+</section>
+<section id="issue-2-unfair-arbitration">
+<h3>Issue 2: Unfair Arbitration<a class="headerlink" href="#issue-2-unfair-arbitration" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Some spike sources take much longer to drain</p></li>
+<li><p>Uneven latency across different neuron groups</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Round-robin treats all FIFOs equally</p></li>
+<li><p>spk0 with 100 spikes gets same service as spk7 with 1 spike</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Track arbitration wins</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">arb_wins</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spk0_rden</span><span class="p">)</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spk1_rden</span><span class="p">)</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... (repeat for all)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Implement weighted round-robin</p></li>
+<li><p>Priority arbitration based on FIFO occupancy</p></li>
+<li><p>Skip-empty optimization (see Enhancement #2)</p></li>
+</ul>
+</section>
+<section id="issue-3-counter-wrapping-error">
+<h3>Issue 3: Counter Wrapping Error<a class="headerlink" href="#issue-3-counter-wrapping-error" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Some FIFOs never serviced</p></li>
+<li><p>Arbiter stuck on certain addresses</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>3-bit counter not wrapping correctly (should wrap 7→0)</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+
+<span class="c1">// Assertion</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">assert</span><span class="w"> </span><span class="p">((</span><span class="n">addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">prev_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">)</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">));</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Explicit wrap (though automatic wrap should work):</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d7</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="issue-4-data-width-mismatch">
+<h3>Issue 4: Data Width Mismatch<a class="headerlink" href="#issue-4-data-width-mismatch" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Compilation warnings about width mismatch</p></li>
+<li><p>spk2ciFIFO_din shows unexpected bit patterns</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Line 112: <code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_din</span> <span class="pre">&lt;=</span> <span class="pre">32'dX;</span></code> should be <code class="docutils literal notranslate"><span class="pre">17'dX</span></code></p></li>
+<li><p>Typo from when module had 32-bit interface</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Check for synthesis warnings:</span>
+<span class="c1">// WARNING: Truncating 32-bit value to 17 bits</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Fix line 112 and 247:</span>
+<span class="n">spk2ciFIFO_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">17</span><span class="p">&#39;</span><span class="n">dX</span><span class="p">;</span><span class="w">  </span><span class="c1">// Changed from 32&#39;dX</span>
+</pre></div>
+</div>
+</section>
+<section id="issue-5-output-fifo-never-drains">
+<h3>Issue 5: Output FIFO Never Drains<a class="headerlink" href="#issue-5-output-fifo-never-drains" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>spk2ciFIFO_full asserts and stays high</p></li>
+<li><p>Spike processing stalls</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Downstream consumer (internal events processor) not reading</p></li>
+<li><p>Deadlock or timing issue</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor output FIFO state</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">spk2ciFIFO_full</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">spk2ciFIFO_rden</span><span class="p">;</span><span class="w">  </span><span class="c1">// From downstream</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">spk2ciFIFO_empty</span><span class="p">;</span>
+
+<span class="c1">// Track stall duration</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">stall_counter</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spk2ciFIFO_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">spk2ciFIFO_rden</span><span class="p">)</span>
+<span class="w">        </span><span class="n">stall_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">stall_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">stall_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Verify downstream module (internal events processor) is enabled</p></li>
+<li><p>Check for deadlock conditions</p></li>
+<li><p>Ensure proper handshaking between modules</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="throughput-analysis">
+<h3>Throughput Analysis<a class="headerlink" href="#throughput-analysis" title="Link to this heading">#</a></h3>
+<p><strong>Arbiter Throughput</strong>:</p>
+<ul class="simple">
+<li><p><strong>Max</strong>: 1 spike per cycle &#64; 225 MHz = 225 million spikes/s</p></li>
+<li><p><strong>Typical</strong> (50% FIFO occupancy): ~112 million spikes/s</p></li>
+<li><p><strong>Effective</strong> (accounting for empty FIFOs): Variable</p></li>
+</ul>
+<p><strong>Arbiter Service Rate per FIFO</strong>:</p>
+<ul class="simple">
+<li><p><strong>Period</strong>: 8 cycles</p></li>
+<li><p><strong>Rate</strong>: 225 MHz / 8 = 28.125 million spikes/s per FIFO</p></li>
+<li><p><strong>Latency</strong> (best case): 0-7 cycles to service (avg 3.5 cycles)</p></li>
+</ul>
+<p><strong>Example Scenario</strong> (10% neurons spike):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Total neurons: 131,072
+Neurons spiking: 13,107 (10%)
+Spikes distributed across 8 FIFOs: ~1,638 per FIFO
+
+Drain time per FIFO:
+  1,638 spikes / (28.125 M spikes/s) = 58.2 µs
+
+Total drain time (concurrent):
+  All FIFOs drain in parallel (interleaved by arbiter)
+  Total time ≈ 1,638 spikes × 8 FIFOs / 225 MHz = 58.2 µs
+
+(Assuming continuous draining without stalls)
+</pre></div>
+</div>
+</section>
+<section id="latency-analysis">
+<h3>Latency Analysis<a class="headerlink" href="#latency-analysis" title="Link to this heading">#</a></h3>
+<p><strong>Spike Latency</strong> (from FIFO write to output):</p>
+<ul class="simple">
+<li><p><strong>Best Case</strong> (FIFO non-empty, arbiter on correct address, output not full):</p>
+<ul>
+<li><p>1 cycle (immediate)</p></li>
+</ul>
+</li>
+<li><p><strong>Worst Case</strong> (FIFO just filled, arbiter just passed, output full):</p>
+<ul>
+<li><p>Wait for arbiter: 7 cycles (worst case, just missed)</p></li>
+<li><p>Wait for output FIFO space: N cycles (depends on drain rate)</p></li>
+<li><p><strong>Total</strong>: ~8+ cycles &#64; 225 MHz = ~35+ ns</p></li>
+</ul>
+</li>
+<li><p><strong>Average Case</strong>:</p>
+<ul>
+<li><p>~4 cycles &#64; 225 MHz = ~18 ns</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Comparison to Pointer FIFO Controller</strong>:</p>
+<ul class="simple">
+<li><p>Spike controller: 8-cycle period → average 4-cycle wait</p></li>
+<li><p>Pointer controller: 16-cycle period → average 8-cycle wait</p></li>
+<li><p><strong>Spike controller has 2× better average latency</strong></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="edge-case-1-all-spike-fifos-full-simultaneously">
+<h3>Edge Case 1: All Spike FIFOs Full Simultaneously<a class="headerlink" href="#edge-case-1-all-spike-fifos-full-simultaneously" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: Every spike FIFO is full, new spikes arriving.</p>
+<p><strong>Behavior</strong>:</p>
+<ul class="simple">
+<li><p>HBM processor tries to write spikes, but FIFOs full</p></li>
+<li><p>Writes are <strong>lost</strong> (assuming standard FIFO behavior)</p></li>
+<li><p>No indication to upstream (unless full flags monitored)</p></li>
+</ul>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>⚠️ Silent data loss (spikes dropped)</p></li>
+<li><p>❌ No backpressure to HBM processor (design limitation)</p></li>
+</ul>
+<p><strong>Required</strong>: Ensure FIFOs sized to handle worst-case burst.</p>
+</section>
+<section id="edge-case-2-no-spikes-generated-quiescent-network">
+<h3>Edge Case 2: No Spikes Generated (Quiescent Network)<a class="headerlink" href="#edge-case-2-no-spikes-generated-quiescent-network" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: No neurons spike during entire Phase 2.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>All spk*_empty = 1  (all FIFOs empty)
+
+Arbiter cycles addr 0→1→...→7→0, but:
+  All cases have condition: if (!spk*_empty &amp; ...)
+  Condition always false → no reads, no writes
+
+spk2ciFIFO receives no data (correct behavior)
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ Correct - no spurious spikes generated</p></li>
+<li><p>✅ Arbiter idles without consuming resources</p></li>
+<li><p>✅ Downstream sees empty spk2ciFIFO (correct state)</p></li>
+</ul>
+</section>
+<section id="edge-case-3-single-spike-in-single-fifo">
+<h3>Edge Case 3: Single Spike in Single FIFO<a class="headerlink" href="#edge-case-3-single-spike-in-single-fifo" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: Only spk3 has one spike, all others empty.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0-2 (addr=0-2): All empty, no action
+Cycle 3 (addr=3): spk3 not empty → read and write
+Cycle 4-7 (addr=4-7): All empty, no action
+Cycle 8 (addr=0): Back to start, spk3 now empty
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ Correct - single spike processed</p></li>
+<li><p>✅ Minimal overhead (7 idle cycles, 1 active)</p></li>
+<li><p>⚠️ Inefficient for sparse spikes (see Enhancement #2)</p></li>
+</ul>
+</section>
+<section id="edge-case-4-output-fifo-full-downstream-backpressure">
+<h3>Edge Case 4: Output FIFO Full (Downstream Backpressure)<a class="headerlink" href="#edge-case-4-output-fifo-full-downstream-backpressure" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: spk2ciFIFO full, upstream FIFOs have data.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>spk2ciFIFO_full = 1
+
+For all cases:
+  if (!spk*_empty &amp; !spk2ciFIFO_full)  → Condition false
+    spk*_rden = 0
+    spk2ciFIFO_wren = 0
+
+Result: No spikes drained, all FIFOs stall
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ Proper backpressure (stops draining)</p></li>
+<li><p>⚠️ Upstream FIFOs may overflow if HBM processor continues writing</p></li>
+<li><p>🔒 Deadlock possible if spk2ciFIFO never drains</p></li>
+</ul>
+<p><strong>Required</strong>: Ensure spk2ciFIFO downstream consumer always active.</p>
+</section>
+<section id="safety-check-one-hot-read-enables">
+<h3>Safety Check: One-Hot Read Enables<a class="headerlink" href="#safety-check-one-hot-read-enables" title="Link to this heading">#</a></h3>
+<p><strong>Assertion</strong>: Verify only one FIFO read per cycle</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rdens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">spk7_rden</span><span class="p">,</span><span class="w"> </span><span class="n">spk6_rden</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">spk0_rden</span><span class="p">};</span>
+
+<span class="n">property</span><span class="w"> </span><span class="n">one_hot_rdens</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="n">$onehot0</span><span class="p">(</span><span class="n">rdens</span><span class="p">);</span><span class="w">  </span><span class="c1">// At most one bit set</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_rdens:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">one_hot_rdens</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="safety-check-no-spurious-writes">
+<h3>Safety Check: No Spurious Writes<a class="headerlink" href="#safety-check-no-spurious-writes" title="Link to this heading">#</a></h3>
+<p><strong>Assertion</strong>: Ensure write only when read occurs</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">property</span><span class="w"> </span><span class="n">write_implies_read</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="n">spk2ciFIFO_wren</span><span class="w"> </span><span class="o">|-&gt;</span><span class="w"> </span><span class="o">|</span><span class="n">rdens</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write implies at least one read</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_write:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">write_implies_read</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="future-enhancement-opportunities">
+<h2>Future Enhancement Opportunities<a class="headerlink" href="#future-enhancement-opportunities" title="Link to this heading">#</a></h2>
+<section id="priority-arbiter-occupancy-based">
+<h3>1. Priority Arbiter (Occupancy-Based)<a class="headerlink" href="#priority-arbiter-occupancy-based" title="Link to this heading">#</a></h3>
+<p>Favor FIFOs with more data:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spk_counts</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// Assume FIFO IP provides rd_data_count</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">priority_addr</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// Find fullest FIFO</span>
+<span class="w">    </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spk_counts</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">spk_counts</span><span class="p">[</span><span class="n">priority_addr</span><span class="p">])</span>
+<span class="w">            </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Use priority_addr instead of round-robin addr (when FIFO above threshold)</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Reduces overflow risk by draining fuller FIFOs first.</p>
+</section>
+<section id="skip-empty-optimization">
+<h3>2. Skip-Empty Optimization<a class="headerlink" href="#skip-empty-optimization" title="Link to this heading">#</a></h3>
+<p>Jump to next non-empty FIFO:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spks_empty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">spk7_empty</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">spk0_empty</span><span class="p">};</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">next_addr</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">next_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">spks_empty</span><span class="p">[(</span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">next_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">next_addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// Jump to next non-empty</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: ~4× faster draining when many FIFOs empty (worst case 8 cycles → 2 cycles avg).</p>
+</section>
+<section id="multi-port-arbiter">
+<h3>3. Multi-Port Arbiter<a class="headerlink" href="#multi-port-arbiter" title="Link to this heading">#</a></h3>
+<p>Read multiple FIFOs per cycle:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Dual-port: service 2 FIFOs per cycle</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr_a</span><span class="p">,</span><span class="w"> </span><span class="n">addr_b</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">addr_a</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">(</span><span class="n">addr_a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">2</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w">  </span><span class="c1">// Even addresses</span>
+<span class="w">    </span><span class="n">addr_b</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">(</span><span class="n">addr_b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">2</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w">  </span><span class="c1">// Odd addresses</span>
+<span class="k">end</span>
+
+<span class="c1">// Dual mux, dual write to spk2ciFIFO (requires wider interface or double-pump)</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: 2× throughput (if downstream supports burst writes).</p>
+</section>
+<section id="configurable-fifo-count">
+<h3>4. Configurable FIFO Count<a class="headerlink" href="#configurable-fifo-count" title="Link to this heading">#</a></h3>
+<p>Parameterize for flexibility:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">spike_fifo_controller</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">NUM_FIFOS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span>
+<span class="p">)(</span>
+<span class="w">    </span><span class="c1">// Generate FIFO ports and arbiter logic</span>
+<span class="p">);</span>
+
+<span class="c1">// Use generate blocks for scalability</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Easy to switch between 8 and 16 FIFOs (uncomment lines 40-72).</p>
+</section>
+<section id="burst-mode-output">
+<h3>5. Burst Mode Output<a class="headerlink" href="#burst-mode-output" title="Link to this heading">#</a></h3>
+<p>Write multiple spikes per cycle:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Wider output: 4 spikes per cycle</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">spk2ciFIFO_din</span><span class="p">[</span><span class="mh">67</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">spk</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">3</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span><span class="w"> </span><span class="n">spk</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">2</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span>
+<span class="w">                                </span><span class="n">spk</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">1</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span><span class="w"> </span><span class="n">spk</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span><span class="n">_dout</span><span class="p">};</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: 4× throughput (requires downstream support).</p>
+</section>
+<section id="adaptive-arbitration">
+<h3>6. Adaptive Arbitration<a class="headerlink" href="#adaptive-arbitration" title="Link to this heading">#</a></h3>
+<p>Switch between round-robin and priority based on load:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">wire</span><span class="w"> </span><span class="n">high_load</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">spk_counts</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">spk_counts</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">THRESHOLD</span><span class="p">);</span>
+
+<span class="k">assign</span><span class="w"> </span><span class="n">arb_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">high_load</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">round_robin_addr</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Fair when lightly loaded, efficient when heavily loaded.</p>
+</section>
+<section id="fix-data-width-typo">
+<h3>7. Fix Data Width Typo<a class="headerlink" href="#fix-data-width-typo" title="Link to this heading">#</a></h3>
+<p>Minor bug fix:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Line 112, 247: Change 32&#39;dX to 17&#39;dX</span>
+<span class="n">spk2ciFIFO_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">17</span><span class="p">&#39;</span><span class="n">dX</span><span class="p">;</span><span class="w">  </span><span class="c1">// Match actual port width</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Spike FIFO</strong></p></td>
+<td><p>Buffer storing spike events (neuron address + metadata)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Round-Robin</strong></p></td>
+<td><p>Fair arbitration scheme servicing each FIFO in cyclic order</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Post-Synaptic</strong></p></td>
+<td><p>Neuron receiving input from synaptic connection (target neuron)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>spk2ciFIFO</strong></p></td>
+<td><p>Output FIFO aggregating spikes from all spike FIFOs</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Arbiter</strong></p></td>
+<td><p>Logic deciding which FIFO gets access to shared output</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Phase 2</strong></p></td>
+<td><p>Synaptic weight application phase (HBM processor generates spikes)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Phase 3</strong></p></td>
+<td><p>Spike drain phase (this module aggregates spikes for next time step)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Backpressure</strong></p></td>
+<td><p>Flow control where full output FIFO blocks upstream reads</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>FWFT (assumed)</strong></p></td>
+<td><p>First-Word Fall-Through mode (data immediately available)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Starvation</strong></p></td>
+<td><p>Condition where some FIFOs never serviced (not possible in round-robin)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>17-bit Spike</strong></p></td>
+<td><p>Data format: likely {valid, neuron_address}</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Arbiter Period</strong></p></td>
+<td><p>Number of cycles to service all FIFOs once (8 cycles)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Fairness</strong></p></td>
+<td><p>Equal service time for all FIFOs regardless of occupancy</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Service Rate</strong></p></td>
+<td><p>Frequency at which each FIFO gets arbitration turn (28.125 MHz per FIFO)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>The <strong>Spike FIFO Controller</strong> is an elegantly simple component that performs critical aggregation:</p>
+<p><strong>Design Strengths</strong>:</p>
+<ul class="simple">
+<li><p><strong>Minimal Complexity</strong>: Pure round-robin arbiter, no demux logic</p></li>
+<li><p><strong>Fair Service</strong>: All spike sources get equal treatment</p></li>
+<li><p><strong>Proven Architecture</strong>: Identical pattern to pointer_fifo_controller</p></li>
+<li><p><strong>Low Resource Usage</strong>: ~40 LUTs, ~3 FFs (negligible)</p></li>
+</ul>
+<p><strong>Design Limitations</strong>:</p>
+<ul class="simple">
+<li><p><strong>No Backpressure to Upstream</strong>: HBM processor can overflow spike FIFOs</p></li>
+<li><p><strong>Inefficient for Sparse Spikes</strong>: Wastes cycles checking empty FIFOs</p></li>
+<li><p><strong>Fixed Arbitration</strong>: No priority for fuller FIFOs</p></li>
+<li><p><strong>Minor Bug</strong>: Data width typo (32’dX vs 17’dX)</p></li>
+</ul>
+<p><strong>Optimization Opportunities</strong>:</p>
+<ul class="simple">
+<li><p>Skip-empty optimization (2-4× faster for sparse spikes)</p></li>
+<li><p>Priority arbitration (prevent overflow)</p></li>
+<li><p>Multi-port arbiter (2× throughput)</p></li>
+<li><p>Burst mode output (4× throughput)</p></li>
+</ul>
+<p><strong>Critical Parameters</strong>:</p>
+<ul class="simple">
+<li><p>Spike FIFO depth must handle worst-case burst</p></li>
+<li><p>Arbiter period (8 cycles) limits drain rate to 225 MHz / 8 = 28.125 M spikes/s per FIFO</p></li>
+<li><p>Output FIFO (spk2ciFIFO) must drain faster than aggregate fill rate</p></li>
+</ul>
+<p>For complete system understanding, see cross-referenced modules: <code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code> (upstream spike generation), <code class="docutils literal notranslate"><span class="pre">internal_events_processor.md</span></code> (downstream spike consumption), and <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller.md</span></code> (peer arbiter).</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#role-in-the-software-hardware-stack">Role in the Software/Hardware Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow">Data Flow</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-fifo-interfaces-8-instances-spk0-spk7">Spike FIFO Interfaces (8 instances: spk0-spk7)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-interface-aggregated-spike-fifo">Output Interface (Aggregated Spike FIFO)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin-arbiter">Round-Robin Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#arbitration-logic-combinational">Arbitration Logic (Combinational)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-data-format-17-bits">Spike Data Format (17 bits)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin-arbiter-operation">Round-Robin Arbiter Operation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#backpressure-handling">Backpressure Handling</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-usage">Resource Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#logic-complexity">Logic Complexity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#comparison-to-pointer-fifo-controller">Comparison to Pointer FIFO Controller</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upstream-modules">Upstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-modules">Downstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peer-modules">Peer Modules</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-1-spikes-lost-fifo-overflow">Issue 1: Spikes Lost (FIFO Overflow)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-2-unfair-arbitration">Issue 2: Unfair Arbitration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-3-counter-wrapping-error">Issue 3: Counter Wrapping Error</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-4-data-width-mismatch">Issue 4: Data Width Mismatch</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-5-output-fifo-never-drains">Issue 5: Output FIFO Never Drains</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput-analysis">Throughput Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency-analysis">Latency Analysis</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-1-all-spike-fifos-full-simultaneously">Edge Case 1: All Spike FIFOs Full Simultaneously</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-2-no-spikes-generated-quiescent-network">Edge Case 2: No Spikes Generated (Quiescent Network)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-3-single-spike-in-single-fifo">Edge Case 3: Single Spike in Single FIFO</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-4-output-fifo-full-downstream-backpressure">Edge Case 4: Output FIFO Full (Downstream Backpressure)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-one-hot-read-enables">Safety Check: One-Hot Read Enables</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-no-spurious-writes">Safety Check: No Spurious Writes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-enhancement-opportunities">Future Enhancement Opportunities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-arbiter-occupancy-based">1. Priority Arbiter (Occupancy-Based)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#skip-empty-optimization">2. Skip-Empty Optimization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-port-arbiter">3. Multi-Port Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configurable-fifo-count">4. Configurable FIFO Count</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst-mode-output">5. Burst Mode Output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-arbitration">6. Adaptive Arbitration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fix-data-width-typo">7. Fix Data Width Typo</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/spike_fifo_controller.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

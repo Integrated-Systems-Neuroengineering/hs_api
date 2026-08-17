@@ -1,0 +1,1786 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.3 The Code Behind Execution &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_3';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Diagram of FPGA During 1 Timestep" href="FPGA_Timestep_Diagram.html" />
+    <link rel="prev" title="2.2 State Machine Coordination and Control Signals" href="Chapter_2_2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_2.html" class="nav-link">2 The Network Comes to Life</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">2.3 The Code Behind Execution</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="the-code-behind-execution">
+<h1>2.3 The Code Behind Execution<a class="headerlink" href="#the-code-behind-execution" title="Link to this heading">#</a></h1>
+<p>Now that we understand the hardware flow from Chapter 2.1, let’s trace through the actual software and Verilog code that makes it happen.</p>
+<section id="setup-sending-inputs-to-bram">
+<h2>Setup: Sending Inputs to BRAM<a class="headerlink" href="#setup-sending-inputs-to-bram" title="Link to this heading">#</a></h2>
+<section id="python-code-network-step">
+<h3>Python Code: network.step()<a class="headerlink" href="#python-code-network-step" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_api/api.py</span></code> (lines 470-552)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;simpleSim&quot;</span><span class="p">,</span> <span class="n">membranePotential</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs a step of the simulation.&quot;&quot;&quot;</span>
+
+    <span class="c1"># Convert symbolic input names to numerical indices</span>
+    <span class="c1"># inputs = [&#39;a0&#39;, &#39;a1&#39;, &#39;a2&#39;]</span>
+    <span class="n">formated_inputs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectome</span><span class="o">.</span><span class="n">get_neuron_by_key</span><span class="p">(</span><span class="n">symbol</span><span class="p">)</span><span class="o">.</span><span class="n">get_coreTypeIdx</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">symbol</span> <span class="ow">in</span> <span class="n">inputs</span>
+    <span class="p">]</span>
+    <span class="c1"># formated_inputs = [0, 1, 2] (axon indices)</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;CRI&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">simDump</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">CRI</span><span class="o">.</span><span class="n">run_step</span><span class="p">(</span><span class="n">formated_inputs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">spikeResult</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CRI</span><span class="o">.</span><span class="n">run_step</span><span class="p">(</span><span class="n">formated_inputs</span><span class="p">,</span> <span class="n">membranePotential</span><span class="p">)</span>
+            <span class="c1"># ... (parse and return spikes)</span>
+</pre></div>
+</div>
+<p>This calls <code class="docutils literal notranslate"><span class="pre">hs_bridge.network.run_step()</span></code>, which calls <code class="docutils literal notranslate"><span class="pre">fpga_controller.input_user()</span></code>.</p>
+</section>
+<section id="python-code-fpga-controller-input-user">
+<h3>Python Code: fpga_controller.input_user()<a class="headerlink" href="#python-code-fpga-controller-input-user" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py</span></code> (lines 899-1031)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">input_user</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">numAxons</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">reserve</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cont_flag</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates the input command for a given timestep</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - inputs: list of axon indices (e.g., [0, 1, 2])</span>
+<span class="sd">    - numAxons: total number of axons (e.g., 5)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">currInput</span> <span class="o">=</span> <span class="n">inputs</span>  <span class="c1"># [0, 1, 2]</span>
+    <span class="n">currInput</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>    <span class="c1"># Ensure sorted order</span>
+
+    <span class="n">coreBits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;0&#39;</span>  <span class="c1"># 5 bits for coreID</span>
+    <span class="n">coreByte</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">coreBits</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="n">commandList</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">62</span> <span class="o">+</span> <span class="p">[</span><span class="n">coreByte</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Init packet: opcode 0x01</span>
+
+    <span class="c1"># For networks with &lt;= 256 axons, we use a single 256-bit chunk</span>
+    <span class="k">for</span> <span class="n">count</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">numAxons</span><span class="o">/</span><span class="mi">256</span><span class="p">)):</span>
+        <span class="c1"># Create 256-bit one-hot encoding</span>
+        <span class="n">one_hot_bin</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;0&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">256</span>
+        <span class="n">inputSegment</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">currInput</span>
+                        <span class="k">if</span> <span class="p">(</span><span class="mi">256</span><span class="o">*</span><span class="n">count</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="p">(</span><span class="mi">256</span><span class="o">*</span><span class="n">count</span><span class="o">+</span><span class="mi">256</span><span class="p">)]</span>
+
+        <span class="k">for</span> <span class="n">axon</span> <span class="ow">in</span> <span class="n">inputSegment</span><span class="p">:</span>
+            <span class="n">one_hot_bin</span><span class="p">[</span><span class="n">axon</span><span class="o">%</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;1&quot;</span>
+
+        <span class="c1"># Convert to bytes (8 bits per byte, little-endian)</span>
+        <span class="k">while</span> <span class="n">one_hot_bin</span><span class="p">:</span>
+            <span class="n">curr_byte</span> <span class="o">=</span> <span class="n">one_hot_bin</span><span class="p">[:</span><span class="mi">8</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Reverse for endianness</span>
+            <span class="n">curr_byte</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">curr_byte</span><span class="p">)</span>
+            <span class="n">commandList</span> <span class="o">=</span> <span class="n">commandList</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">curr_byte</span><span class="p">,</span> <span class="mi">2</span><span class="p">)]</span>
+            <span class="n">one_hot_bin</span> <span class="o">=</span> <span class="n">one_hot_bin</span><span class="p">[</span><span class="mi">8</span><span class="p">:]</span>
+
+        <span class="c1"># Add tail: padding + coreID + opcode</span>
+        <span class="n">tail</span> <span class="o">=</span> <span class="mi">30</span><span class="o">*</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">commandList</span> <span class="o">=</span> <span class="n">commandList</span> <span class="o">+</span> <span class="n">tail</span> <span class="o">+</span> <span class="p">[</span><span class="n">coreByte</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># Opcode 0x00</span>
+
+    <span class="c1"># Example for inputs [0, 1, 2]:</span>
+    <span class="c1"># one_hot_bin = [&quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, ..., &quot;0&quot;]</span>
+    <span class="c1"># curr_byte = one_hot_bin[:8] = [&quot;1&quot;, &quot;1&quot;, &quot;1&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;]</span>
+    <span class="c1"># curr_byte reversed = [&quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;0&quot;, &quot;1&quot;, &quot;1&quot;, &quot;1&quot;]</span>
+    <span class="c1"># curr_byte string = &quot;00000111&quot;</span>
+    <span class="c1"># int(&quot;00000111&quot;, 2) = 7 = 0x07 ✓</span>
+
+    <span class="c1"># So commandList will contain:</span>
+    <span class="c1"># [0]*62 + [coreID] + [1]  ← Init packet (opcode 0x01)</span>
+    <span class="c1"># [0x07, 0x00, 0x00, ..., 0x00]  ← Data packet (256 bits = 32 bytes)</span>
+    <span class="c1"># [0]*30 + [coreID] + [0]  ← Tail (opcode 0x00)</span>
+
+    <span class="n">command</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">commandList</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+
+    <span class="c1"># Send via DMA</span>
+    <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+                                       <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What gets sent:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Init packet (64 bytes):</strong> Opcode 0x01, tells FPGA “input data incoming”</p></li>
+<li><p><strong>Data packet (64 bytes):</strong> Opcode 0x00, contains 256-bit one-hot mask</p>
+<ul class="simple">
+<li><p>Byte 0 = 0x07 (bits 0,1,2 set for axons a0,a1,a2)</p></li>
+<li><p>Bytes 1-31 = 0x00</p></li>
+<li><p>Tail: padding + coreID + opcode</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="verilog-command-interpreter-receives-input">
+<h3>Verilog: command_interpreter Receives Input<a class="headerlink" href="#verilog-command-interpreter-receives-input" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/command_interpreter.v</span></code> (lines 200-280, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// State machine receives packets from Input FIFO (rxFIFO from pcie2fifos)</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">rx_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">RX_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">rxFIFO_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">rxFIFO_rd_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">rx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_READ_PACKET</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">RX_READ_PACKET:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">packet</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">            </span><span class="n">opcode</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">504</span><span class="p">];</span><span class="w">  </span><span class="c1">// Top 8 bits</span>
+<span class="w">            </span><span class="n">coreID</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mh">503</span><span class="o">:</span><span class="mh">496</span><span class="p">];</span><span class="w">  </span><span class="c1">// Next 8 bits</span>
+<span class="w">            </span><span class="n">payload</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mh">495</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">   </span><span class="c1">// Remaining 496 bits</span>
+<span class="w">            </span><span class="n">rx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_PROCESS_OPCODE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">RX_PROCESS_OPCODE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="p">)</span>
+<span class="w">                </span><span class="mh">8&#39;h01</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// CMD_EEP_W_INIT - Init input packet</span>
+<span class="w">                    </span><span class="c1">// Prepare to receive data packet</span>
+<span class="w">                    </span><span class="n">rx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Wait for next packet</span>
+<span class="w">                </span><span class="k">end</span>
+
+<span class="w">                </span><span class="mh">8&#39;h00</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// CMD_EEP_W - Input data packet</span>
+<span class="w">                    </span><span class="c1">// Extract 256-bit one-hot mask from payload</span>
+<span class="w">                    </span><span class="n">axonEvent_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">payload</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">                    </span><span class="c1">// Calculate write address (for BRAM Future buffer)</span>
+<span class="w">                    </span><span class="n">axonEvent_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bram_write_row</span><span class="p">;</span>
+
+<span class="w">                    </span><span class="c1">// Signal external_events_processor to write to Future buffer</span>
+<span class="w">                    </span><span class="n">axonEvent_we</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="w">                    </span><span class="n">rx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_IDLE</span><span class="p">;</span>
+<span class="w">                </span><span class="k">end</span>
+<span class="w">            </span><span class="k">endcase</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+
+<span class="c1">// Signals to external_events_processor</span>
+<span class="c1">// These write to the FUTURE buffer while execution reads PRESENT buffer</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">eep_wr_en</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_we</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">eep_wr_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_addr</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">eep_wr_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_data</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="verilog-external-events-processor-double-buffered-bram">
+<h3>Verilog: external_events_processor Double-Buffered BRAM<a class="headerlink" href="#verilog-external-events-processor-double-buffered-bram" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/external_events_processor.v</span></code> (lines 100-200, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Double-buffered BRAM for external events</span>
+<span class="c1">// Present buffer: Read during execution</span>
+<span class="c1">// Future buffer: Written by host for next timestep</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="n">bram_select</span><span class="p">;</span><span class="w">  </span><span class="c1">// 0 = BRAM0 is Present, BRAM1 is Future</span>
+<span class="w">                  </span><span class="c1">// 1 = BRAM1 is Present, BRAM0 is Future</span>
+
+<span class="c1">// BRAM0: 8K entries × 16 bits (or 16K × 8 bits depending on variant)</span>
+<span class="n">RAMB36E2</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ADDR_WIDTH</span><span class="p">(</span><span class="mh">13</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DATA_WIDTH</span><span class="p">(</span><span class="mh">16</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="n">bram0</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">CLKA</span><span class="p">(</span><span class="n">aclk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ADDRA</span><span class="p">(</span><span class="n">bram0_addr</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DINA</span><span class="p">(</span><span class="n">bram0_din</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DOUTA</span><span class="p">(</span><span class="n">bram0_dout</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WEA</span><span class="p">(</span><span class="n">bram0_we</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ENA</span><span class="p">(</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">// BRAM1: Identical to BRAM0</span>
+<span class="n">RAMB36E2</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ADDR_WIDTH</span><span class="p">(</span><span class="mh">13</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DATA_WIDTH</span><span class="p">(</span><span class="mh">16</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="n">bram1</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">CLKA</span><span class="p">(</span><span class="n">aclk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ADDRA</span><span class="p">(</span><span class="n">bram1_addr</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DINA</span><span class="p">(</span><span class="n">bram1_din</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">DOUTA</span><span class="p">(</span><span class="n">bram1_dout</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WEA</span><span class="p">(</span><span class="n">bram1_we</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">ENA</span><span class="p">(</span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="c1">// Write logic: Always write to Future buffer</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bram_select</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// BRAM0 is Present, BRAM1 is Future</span>
+<span class="w">        </span><span class="n">bram1_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram1_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_data</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram1_we</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_en</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// BRAM1 is Present, BRAM0 is Future</span>
+<span class="w">        </span><span class="n">bram0_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram0_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_data</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram0_we</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep_wr_en</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Read logic: Always read from Present buffer</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bram_select</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// BRAM0 is Present</span>
+<span class="w">        </span><span class="n">bram0_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_rd_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram0_we</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">exec_rd_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bram0_dout</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// BRAM1 is Present</span>
+<span class="w">        </span><span class="n">bram1_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_rd_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram1_we</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">exec_rd_data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bram1_dout</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Buffer role reassignment on execute command</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">execute_cmd</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">bram_select</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">~</span><span class="n">bram_select</span><span class="p">;</span><span class="w">  </span><span class="c1">// Flip role assignment bit</span>
+<span class="w">        </span><span class="c1">// Buffer that was Future is now designated Present</span>
+<span class="w">        </span><span class="c1">// Buffer that was Present is now designated Future</span>
+<span class="w">        </span><span class="c1">// NO data is copied - just a pointer swap</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Physical operation:</strong></p>
+<ul class="simple">
+<li><p>Host writes to Future buffer: <code class="docutils literal notranslate"><span class="pre">bram_din</span> <span class="pre">=</span> <span class="pre">256'h0000...0007</span></code> (bits 0,1,2 set)</p></li>
+<li><p>On execute command: <code class="docutils literal notranslate"><span class="pre">bram_select</span></code> flips (role reassignment, no data movement)</p></li>
+<li><p>Execution reads from the buffer now designated Present</p></li>
+<li><p>Host can immediately start writing next timestep to buffer now designated Future</p></li>
+</ul>
+<hr class="docutils" />
+</section>
+</section>
+<section id="triggering-execution-execute-command">
+<h2>Triggering Execution: execute() Command<a class="headerlink" href="#triggering-execution-execute-command" title="Link to this heading">#</a></h2>
+<p>After writing inputs, we trigger execution:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># In hs_bridge/network.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">run_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+    <span class="c1"># Write inputs to Future buffer</span>
+    <span class="n">fpga_controller</span><span class="o">.</span><span class="n">input_user</span><span class="p">(</span><span class="n">inputs</span><span class="p">,</span> <span class="n">numAxons</span><span class="p">,</span> <span class="n">coreID</span><span class="p">)</span>
+
+    <span class="c1"># Trigger execution (reassigns buffer roles, starts Phase 1)</span>
+    <span class="n">fpga_controller</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="n">coreID</span><span class="p">)</span>
+
+    <span class="c1"># Collect results</span>
+    <span class="n">spikes</span> <span class="o">=</span> <span class="n">fpga_controller</span><span class="o">.</span><span class="n">flush_spikes</span><span class="p">(</span><span class="n">coreID</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">spikes</span>
+</pre></div>
+</div>
+<section id="python-code-fpga-controller-execute">
+<h3>Python Code: fpga_controller.execute()<a class="headerlink" href="#python-code-fpga-controller-execute" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py</span></code> (lines 872-892)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">execute</span><span class="p">(</span><span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Runs a single step of the network&quot;&quot;&quot;</span>
+
+    <span class="n">coreBits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;0&#39;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">62</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">coreBits</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">6</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+    <span class="c1"># Opcode 0x06 = CMD_EXEC (execute timestep)</span>
+
+    <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">),</span>
+                                       <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="verilog-command-interpreter-triggers-execution">
+<h3>Verilog: command_interpreter Triggers Execution<a class="headerlink" href="#verilog-command-interpreter-triggers-execution" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/command_interpreter.v</span></code> (lines 300-350, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="p">)</span>
+<span class="w">        </span><span class="mh">8&#39;h06</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// CMD_EXEC - Execute timestep</span>
+<span class="w">            </span><span class="c1">// Set execution control signals</span>
+<span class="w">            </span><span class="n">exec_run</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">          </span><span class="c1">// Enable execution</span>
+<span class="w">            </span><span class="n">execRun_ctr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">execRun_ctr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Increment timestep counter</span>
+
+<span class="w">            </span><span class="c1">// Trigger external_events_processor Phase 1a</span>
+<span class="w">            </span><span class="n">exec_bram_phase1_start</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// One-cycle pulse</span>
+
+<span class="w">            </span><span class="n">rx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">RX_IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+
+<span class="c1">// Phase 1a start signal to external_events_processor</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">eep_phase1_start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_bram_phase1_start</span><span class="p">;</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="phase-1a-external-event-processing-pointer-collection">
+<h2>Phase 1a: External Event Processing (Pointer Collection)<a class="headerlink" href="#phase-1a-external-event-processing-pointer-collection" title="Link to this heading">#</a></h2>
+<p>The key insight: <strong>Phase 1a ONLY collects HBM addresses (pointers) of synapse rows to read</strong>. It does NOT read the synapse data itself.</p>
+<section id="verilog-external-events-processor-phase-1a-state-machine">
+<h3>Verilog: external_events_processor Phase 1a State Machine<a class="headerlink" href="#verilog-external-events-processor-phase-1a-state-machine" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/external_events_processor.v</span></code> (simplified)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1a: Read BRAM, generate spike mask, trigger HBM pointer reads</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">EEP_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">EEP_FILL_PIPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">EEP_READ_BRAM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">EEP_GEN_MASK</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">EEP_PHASE1_DONE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="p">;</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">12</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bram_row_counter</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">current_mask</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">exec_bram_spiked_reg</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">EEP_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">eep_phase1_start</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Buffer role reassignment already happened</span>
+<span class="w">                </span><span class="n">bram_row_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">13</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">exec_bram_spiked_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">16</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_FILL_PIPE</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">EEP_FILL_PIPE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// BRAM has 3-cycle read latency, fill pipeline</span>
+<span class="w">            </span><span class="n">exec_rd_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bram_row_counter</span><span class="p">;</span>
+<span class="w">            </span><span class="n">pipeline_ctr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_READ_BRAM</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">EEP_READ_BRAM:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Wait for pipeline to fill</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pipeline_ctr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d2</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">current_mask</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">exec_rd_data</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_GEN_MASK</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">pipeline_ctr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pipeline_ctr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">EEP_GEN_MASK:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Generate 16-bit spike mask for neuron groups</span>
+<span class="w">            </span><span class="c1">// Each bit represents one neuron group (0-15)</span>
+<span class="w">            </span><span class="c1">// For our small network, only bit 0 will be set</span>
+
+<span class="w">            </span><span class="c1">// Check if any axons in this row are active</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_mask</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mh">16&#39;h0000</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Axons active in row 0 → neuron group 0</span>
+<span class="w">                </span><span class="n">exec_bram_spiked_reg</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+
+<span class="w">            </span><span class="c1">// For larger networks, would scan more rows</span>
+<span class="w">            </span><span class="n">bram_row_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bram_row_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bram_row_counter</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">max_rows</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_PHASE1_DONE</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_READ_BRAM</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">EEP_PHASE1_DONE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Output spike mask to pointer_fifo_controller</span>
+<span class="w">            </span><span class="n">exec_bram_spiked</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">exec_bram_spiked_reg</span><span class="p">;</span>
+<span class="w">            </span><span class="n">exec_bram_phase1_done</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Signal completion</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">EEP_IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>What this outputs:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">exec_bram_spiked[15:0]</span></code> = 16-bit mask indicating which neuron groups have active axons</p></li>
+<li><p>For our network: <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span> <span class="pre">=</span> <span class="pre">16'h0001</span></code> (only group 0 active)</p></li>
+<li><p>This signal goes to <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> and <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code></p></li>
+</ul>
+<p><strong>Critically: external_events_processor does NOT read HBM or synapse data!</strong></p>
+</section>
+<hr class="docutils" />
+<section id="verilog-hbm-processor-phase-1a-read-axon-pointers">
+<h3>Verilog: hbm_processor Phase 1a - Read Axon Pointers<a class="headerlink" href="#verilog-hbm-processor-phase-1a-read-axon-pointers" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/hbm_processor.v</span></code> (lines 400-500, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1a: Read axon pointers from HBM Region 1</span>
+<span class="c1">// Uses exec_bram_spiked to determine which axons to read</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">phase1_state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P1_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P1_READ_PTRS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P1_WAIT_PTRS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P1_SEND_TO_PFC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">group_index</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">phase1_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">P1_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_bram_phase1_done</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">group_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_READ_PTRS</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P1_READ_PTRS:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Check if this group has active axons</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_bram_spiked</span><span class="p">[</span><span class="n">group_index</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Calculate HBM address for axon pointers</span>
+<span class="w">                </span><span class="c1">// Region 1 base address + group offset</span>
+<span class="w">                </span><span class="n">ptr_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="n">AXN_PTR_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">group_index</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mb">&#39;b00000</span><span class="p">};</span>
+
+<span class="w">                </span><span class="c1">// Issue AXI4 read to HBM</span>
+<span class="w">                </span><span class="n">hbm_arvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_araddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mb">&#39;b00000</span><span class="p">};</span><span class="w">  </span><span class="c1">// 33-bit address</span>
+<span class="w">                </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">   </span><span class="c1">// 1 beat (256 bits = 16 pointers)</span>
+<span class="w">                </span><span class="n">hbm_arsize</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d5</span><span class="p">;</span><span class="w">  </span><span class="c1">// 32 bytes</span>
+
+<span class="w">                </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_WAIT_PTRS</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// No activity in this group, skip</span>
+<span class="w">                </span><span class="n">group_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">group_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">group_index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d15</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Done with all groups</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P1_WAIT_PTRS:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Wait for HBM read completion</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_rvalid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Got 256 bits = 8 × 32-bit pointers (16 pointers with upper bits)</span>
+<span class="w">                </span><span class="n">ptr_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">                </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_SEND_TO_PFC</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P1_SEND_TO_PFC:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Forward pointer data to pointer_fifo_controller</span>
+<span class="w">            </span><span class="n">hbm2pfc_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">256</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_data</span><span class="p">};</span><span class="w">  </span><span class="c1">// Pad to 512 bits</span>
+<span class="w">            </span><span class="n">hbm2pfc_valid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// Continue with next group</span>
+<span class="w">            </span><span class="n">group_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">group_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">group_index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d15</span><span class="p">)</span>
+<span class="w">                </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Phase 1a complete</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">phase1_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1_READ_PTRS</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example for our network (group 0 only):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Input: exec_bram_spiked = 16&#39;h0001 (group 0 active)
+
+Cycle N: P1_READ_PTRS
+  group_index = 0
+  exec_bram_spiked[0] = 1 (active)
+  hbm_araddr = {5&#39;d0, 23&#39;h000000, 5&#39;d0} (Region 1, group 0)
+
+Cycle N+100: P1_WAIT_PTRS (after HBM latency)
+  hbm_rdata[255:0] contains 8 × 32-bit axon pointers:
+    ptr[0] = {9&#39;b000000001, 23&#39;h8000} (axon 0: 1 row at 0x8000)
+    ptr[1] = {9&#39;b000000001, 23&#39;h8001} (axon 1: 1 row at 0x8001)
+    ptr[2] = {9&#39;b000000001, 23&#39;h8002} (axon 2: 1 row at 0x8002)
+    ptr[3-7] = 32&#39;h0 (unused)
+
+Cycle N+101: P1_SEND_TO_PFC
+  hbm2pfc_data = 512-bit packet with pointer data
+  hbm2pfc_valid = 1
+</pre></div>
+</div>
+<p><strong>Key point:</strong> We now have ADDRESSES of where synapses are stored, but haven’t read the synapses yet!</p>
+</section>
+<hr class="docutils" />
+<section id="verilog-pointer-fifo-controller-phase-1-demultiplex-pointers">
+<h3>Verilog: pointer_fifo_controller Phase 1 - Demultiplex Pointers<a class="headerlink" href="#verilog-pointer-fifo-controller-phase-1-demultiplex-pointers" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/pointer_fifo_controller.v</span></code> (lines 200-300, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1: Demultiplex HBM pointer data to 16 FIFOs</span>
+<span class="c1">// Uses exec_bram_spiked to determine which FIFOs to write</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr_row_data</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">pointer</span><span class="w"> </span><span class="p">[</span><span class="mh">0</span><span class="o">:</span><span class="mh">7</span><span class="p">];</span><span class="w">  </span><span class="c1">// 8 pointers per HBM row</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">target_fifo</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm2pfc_valid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">ptr_row_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm2pfc_data</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">        </span><span class="c1">// Extract 8 pointers from 256-bit data</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">pointer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptr_row_data</span><span class="p">[(</span><span class="n">i</span><span class="o">*</span><span class="mh">32</span><span class="p">)</span><span class="o">+:</span><span class="mh">32</span><span class="p">];</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pointer</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="mh">32&#39;h0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Valid pointer</span>
+<span class="w">                </span><span class="c1">// Format: [31:23]=length, [22:0]=base_address</span>
+
+<span class="w">                </span><span class="c1">// Determine which FIFO to write to</span>
+<span class="w">                </span><span class="c1">// Based on which group had activity (exec_bram_spiked)</span>
+<span class="w">                </span><span class="n">target_fifo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">find_first_set_bit</span><span class="p">(</span><span class="n">exec_bram_spiked</span><span class="p">);</span>
+
+<span class="w">                </span><span class="c1">// Write 32-bit pointer to FIFO</span>
+<span class="w">                </span><span class="n">ptrFIFO_wr_en</span><span class="p">[</span><span class="n">target_fifo</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">ptrFIFO_din</span><span class="p">[</span><span class="n">target_fifo</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pointer</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// 16 pointer FIFOs (one per neuron group)</span>
+<span class="k">genvar</span><span class="w"> </span><span class="n">g</span><span class="p">;</span>
+<span class="k">generate</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">g</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">16</span><span class="p">;</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">gen_ptr_fifos</span>
+<span class="w">        </span><span class="n">FIFO_SYNC</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">            </span><span class="p">.</span><span class="n">DATA_WIDTH</span><span class="p">(</span><span class="mh">32</span><span class="p">),</span><span class="w">  </span><span class="c1">// 32-bit HBM address</span>
+<span class="w">            </span><span class="p">.</span><span class="n">DEPTH</span><span class="p">(</span><span class="mh">512</span><span class="p">)</span>
+<span class="w">        </span><span class="p">)</span><span class="w"> </span><span class="n">ptr_fifo</span><span class="w"> </span><span class="p">(</span>
+<span class="w">            </span><span class="p">.</span><span class="n">WR_CLK</span><span class="p">(</span><span class="n">aclk</span><span class="p">),</span><span class="w">        </span><span class="c1">// Write at 225 MHz</span>
+<span class="w">            </span><span class="p">.</span><span class="n">WR_EN</span><span class="p">(</span><span class="n">ptrFIFO_wr_en</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">DIN</span><span class="p">(</span><span class="n">ptrFIFO_din</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">FULL</span><span class="p">(</span><span class="n">ptrFIFO_full</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+
+<span class="w">            </span><span class="p">.</span><span class="n">RD_CLK</span><span class="p">(</span><span class="n">aclk</span><span class="p">),</span><span class="w">        </span><span class="c1">// Read at 225 MHz (same domain)</span>
+<span class="w">            </span><span class="p">.</span><span class="n">RD_EN</span><span class="p">(</span><span class="n">ptrFIFO_rd_en</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">DOUT</span><span class="p">(</span><span class="n">ptrFIFO_dout</span><span class="p">[</span><span class="n">g</span><span class="p">]),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">EMPTY</span><span class="p">(</span><span class="n">ptrFIFO_empty</span><span class="p">[</span><span class="n">g</span><span class="p">])</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endgenerate</span>
+</pre></div>
+</div>
+<p><strong>Example for our network:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">After</span> <span class="n">Phase</span> <span class="mi">1</span><span class="n">a</span> <span class="n">completes</span><span class="p">,</span> <span class="n">ptrFIFO</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">contains</span><span class="p">:</span>
+  <span class="n">Entry</span> <span class="mi">0</span><span class="p">:</span> <span class="mi">32</span><span class="s1">&#39;h0080_8000 = {9&#39;</span><span class="n">d1</span><span class="p">,</span> <span class="mi">23</span><span class="s1">&#39;h8000} (axon 0 pointer)</span>
+  <span class="n">Entry</span> <span class="mi">1</span><span class="p">:</span> <span class="mi">32</span><span class="s1">&#39;h0080_8001 = {9&#39;</span><span class="n">d1</span><span class="p">,</span> <span class="mi">23</span><span class="s1">&#39;h8001} (axon 1 pointer)</span>
+  <span class="n">Entry</span> <span class="mi">2</span><span class="p">:</span> <span class="mi">32</span><span class="s1">&#39;h0080_8002 = {9&#39;</span><span class="n">d1</span><span class="p">,</span> <span class="mi">23</span><span class="s1">&#39;h8002} (axon 2 pointer)</span>
+
+<span class="n">ptrFIFO</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">15</span><span class="p">]:</span> <span class="n">Empty</span> <span class="p">(</span><span class="n">no</span> <span class="n">activity</span> <span class="ow">in</span> <span class="n">other</span> <span class="n">groups</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Critical understanding:</strong> These FIFOs contain <strong>HBM addresses</strong> (pointers), NOT synapse data!</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="phase-1b-internal-event-processing-if-neurons-spiked">
+<h2>Phase 1b: Internal Event Processing (If Neurons Spiked)<a class="headerlink" href="#phase-1b-internal-event-processing-if-neurons-spiked" title="Link to this heading">#</a></h2>
+<p>If neurons spiked during Phase 2, they trigger Phase 1b to collect their output pointers.</p>
+<section id="verilog-internal-events-processor-spike-detection">
+<h3>Verilog: internal_events_processor Spike Detection<a class="headerlink" href="#verilog-internal-events-processor-spike-detection" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/internal_events_processor.v</span></code> (lines 600-700, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// During Phase 2 neuron updates, track which neurons spike</span>
+<span class="c1">// Output exec_uram_spiked mask for Phase 1b</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">uram_spiked_mask</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk450</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">neuron_spike_detected</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Neuron in group X spiked</span>
+<span class="w">        </span><span class="n">neuron_group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">spiked_neuron_addr</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">13</span><span class="p">];</span><span class="w">  </span><span class="c1">// Top 4 bits</span>
+<span class="w">        </span><span class="n">uram_spiked_mask</span><span class="p">[</span><span class="n">neuron_group</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// At end of Phase 2, output spike mask</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">exec_uram_spiked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uram_spiked_mask</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">exec_uram_phase1_done</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">phase2_complete</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Example after hidden neurons spike:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Neurons</span> <span class="n">h0</span><span class="o">-</span><span class="n">h4</span> <span class="nb">all</span> <span class="n">spiked</span> <span class="p">(</span><span class="n">addresses</span> <span class="mi">0</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="nb">all</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">exec_uram_spiked</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;h0001 (group 0 has spiking neurons)</span>
+</pre></div>
+</div>
+</section>
+<section id="verilog-hbm-processor-phase-1b-read-neuron-pointers">
+<h3>Verilog: hbm_processor Phase 1b - Read Neuron Pointers<a class="headerlink" href="#verilog-hbm-processor-phase-1b-read-neuron-pointers" title="Link to this heading">#</a></h3>
+<p>This is nearly identical to Phase 1a, but reads from HBM Region 2 instead of Region 1:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1b: Read neuron pointers from HBM Region 2</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">phase1b_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">P1B_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_uram_phase1_done</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">group_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">phase1b_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1B_READ_PTRS</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P1B_READ_PTRS:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_uram_spiked</span><span class="p">[</span><span class="n">group_index</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Read neuron pointers from Region 2</span>
+<span class="w">                </span><span class="n">ptr_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="n">NRN_PTR_BASE</span><span class="p">,</span><span class="w"> </span><span class="n">group_index</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mb">&#39;b00000</span><span class="p">};</span>
+
+<span class="w">                </span><span class="n">hbm_arvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_araddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mb">&#39;b00000</span><span class="p">};</span>
+
+<span class="w">                </span><span class="n">phase1b_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P1B_WAIT_PTRS</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">            </span><span class="c1">// ... (same pattern as Phase 1a)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Result:</strong> More pointers added to the same ptrFIFOs, now containing both axon and neuron output pointers.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="phase-2-synaptic-processing-and-neuron-updates">
+<h2>Phase 2: Synaptic Processing and Neuron Updates<a class="headerlink" href="#phase-2-synaptic-processing-and-neuron-updates" title="Link to this heading">#</a></h2>
+<p>Now we read the actual synapses using the pointers we collected!</p>
+<section id="verilog-pointer-fifo-controller-round-robin-read">
+<h3>Verilog: pointer_fifo_controller Round-Robin Read<a class="headerlink" href="#verilog-pointer-fifo-controller-round-robin-read" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/pointer_fifo_controller.v</span></code> (lines 400-500, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 2: Multiplex (round-robin read) from 16 FIFOs to HBM processor</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rr_counter</span><span class="p">;</span><span class="w">  </span><span class="c1">// Round-robin counter (0-15)</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">phase2_active</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Check current FIFO</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ptrFIFO_empty</span><span class="p">[</span><span class="n">rr_counter</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Read pointer from this FIFO</span>
+<span class="w">            </span><span class="n">ptrFIFO_rd_en</span><span class="p">[</span><span class="n">rr_counter</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">current_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ptrFIFO_dout</span><span class="p">[</span><span class="n">rr_counter</span><span class="p">];</span>
+
+<span class="w">            </span><span class="c1">// Send to HBM processor</span>
+<span class="w">            </span><span class="n">pfc2hbm_ptr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">current_ptr</span><span class="p">;</span>
+<span class="w">            </span><span class="n">pfc2hbm_valid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="c1">// Move to next FIFO</span>
+<span class="w">        </span><span class="n">rr_counter</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">(</span><span class="n">rr_counter</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d15</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">rr_counter</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example execution:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0: Check ptrFIFO[0] → not empty
+         Pop 32&#39;h0080_8000 (axon 0 pointer)
+         Send to hbm_processor
+
+Cycle 5: Check ptrFIFO[1] → empty, skip
+Cycle 6: Check ptrFIFO[2] → empty, skip
+...
+Cycle 21: Check ptrFIFO[0] again → not empty
+          Pop 32&#39;h0080_8001 (axon 1 pointer)
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="verilog-hbm-processor-phase-2-read-synapses">
+<h3>Verilog: hbm_processor Phase 2 - Read Synapses<a class="headerlink" href="#verilog-hbm-processor-phase-2-read-synapses" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/hbm_processor.v</span></code> (lines 600-800, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 2: Use pointers to read synapse data from HBM Region 3</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">phase2_state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P2_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P2_READ_SYN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P2_WAIT_SYN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P2_PARSE_SYN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">P2_FORWARD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="p">;</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">current_pointer</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">syn_base_addr</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">syn_length</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">synapse_data</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">phase2_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">P2_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pfc2hbm_valid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">current_pointer</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pfc2hbm_ptr</span><span class="p">;</span>
+
+<span class="w">                </span><span class="c1">// Extract pointer fields</span>
+<span class="w">                </span><span class="n">syn_length</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">current_pointer</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">23</span><span class="p">];</span>
+<span class="w">                </span><span class="n">syn_base_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">current_pointer</span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">                </span><span class="n">phase2_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P2_READ_SYN</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P2_READ_SYN:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Read synapse row from HBM Region 3</span>
+<span class="w">            </span><span class="c1">// Address = SYN_BASE + syn_base_addr</span>
+<span class="w">            </span><span class="n">hbm_arvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">hbm_araddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">SYN_BASE</span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">syn_base_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+<span class="w">            </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">  </span><span class="c1">// 1 beat</span>
+<span class="w">            </span><span class="n">hbm_arsize</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d5</span><span class="p">;</span><span class="w"> </span><span class="c1">// 32 bytes = 256 bits</span>
+
+<span class="w">            </span><span class="n">phase2_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P2_WAIT_SYN</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P2_WAIT_SYN:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_rvalid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">synapse_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">                </span><span class="n">phase2_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P2_PARSE_SYN</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P2_PARSE_SYN:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Parse 8 × 32-bit synapses from 256-bit data</span>
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">8</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">syn</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">synapse_data</span><span class="p">[(</span><span class="n">i</span><span class="o">*</span><span class="mh">32</span><span class="p">)</span><span class="o">+:</span><span class="mh">32</span><span class="p">];</span>
+<span class="w">                </span><span class="n">opcode</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">syn</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mh">31</span><span class="o">:</span><span class="mh">29</span><span class="p">];</span>
+<span class="w">                </span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">syn</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mh">28</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span><span class="w">  </span><span class="c1">// 13-bit address</span>
+<span class="w">                </span><span class="n">weight</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">syn</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">   </span><span class="c1">// 16-bit weight</span>
+
+<span class="w">                </span><span class="c1">// Check synapse type</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">syn</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mh">31</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                    </span><span class="c1">// OpCode bit 31 = 1: This is a spike (send to spike FIFO)</span>
+<span class="w">                    </span><span class="n">spkFIFO_wr_en</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                    </span><span class="n">spkFIFO_din</span><span class="p">[</span><span class="n">i</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mh">8</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">4</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">target</span><span class="p">[</span><span class="n">i</span><span class="p">]};</span>
+<span class="w">                </span><span class="k">end</span>
+<span class="w">            </span><span class="k">end</span>
+
+<span class="w">            </span><span class="n">phase2_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P2_FORWARD</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">P2_FORWARD:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Forward synapse data to internal_events_processor</span>
+<span class="w">            </span><span class="n">exec_hbm_rdata</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">256</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">synapse_data</span><span class="p">};</span>
+<span class="w">            </span><span class="n">exec_hbm_valid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="w">            </span><span class="c1">// Back to check for more pointers</span>
+<span class="w">            </span><span class="n">phase2_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">P2_IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example for axon 0’s synapses:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Input</span><span class="p">:</span> <span class="n">pointer</span> <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;h0080_8000</span>
+       <span class="n">syn_length</span> <span class="o">=</span> <span class="mi">9</span><span class="s1">&#39;d1</span>
+       <span class="n">syn_base_addr</span> <span class="o">=</span> <span class="mi">23</span><span class="s1">&#39;h8000</span>
+
+<span class="n">Read</span> <span class="n">HBM</span><span class="p">[</span><span class="mh">0x8000</span><span class="p">]:</span>
+  <span class="n">synapse_data</span> <span class="o">=</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">containing</span><span class="p">:</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="s1">&#39;b000, 13&#39;</span><span class="n">d0</span><span class="p">,</span> <span class="mi">16</span><span class="s1">&#39;d1000}  (target=h0, weight=1000)</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="s1">&#39;b000, 13&#39;</span><span class="n">d1</span><span class="p">,</span> <span class="mi">16</span><span class="s1">&#39;d1000}  (target=h1, weight=1000)</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="s1">&#39;b000, 13&#39;</span><span class="n">d2</span><span class="p">,</span> <span class="mi">16</span><span class="s1">&#39;d1000}  (target=h2, weight=1000)</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="s1">&#39;b000, 13&#39;</span><span class="n">d3</span><span class="p">,</span> <span class="mi">16</span><span class="s1">&#39;d1000}  (target=h3, weight=1000)</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mi">3</span><span class="s1">&#39;b000, 13&#39;</span><span class="n">d4</span><span class="p">,</span> <span class="mi">16</span><span class="s1">&#39;d1000}  (target=h4, weight=1000)</span>
+    <span class="n">syn</span><span class="p">[</span><span class="mi">5</span><span class="o">-</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;h0 (unused)</span>
+
+<span class="n">Forward</span> <span class="n">to</span> <span class="n">internal_events_processor</span><span class="p">:</span>
+  <span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">synapse_data</span>
+  <span class="n">exec_hbm_valid</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="verilog-internal-events-processor-phase-2-neuron-updates">
+<h3>Verilog: internal_events_processor Phase 2 - Neuron Updates<a class="headerlink" href="#verilog-internal-events-processor-phase-2-neuron-updates" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/internal_events_processor.v</span></code> (lines 800-1000)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 2: Process synapses from exec_hbm_rdata, update neurons</span>
+<span class="c1">// Runs @ 450 MHz (aclk450) for higher throughput</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_PARSE_SYN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_READ_URAM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_ACCUMULATE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_APPLY_MODEL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_WRITE_URAM</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IEP_CHECK_SPIKE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">6</span><span class="p">;</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">syn_index</span><span class="p">;</span><span class="w">  </span><span class="c1">// Which synapse in packet (0-7 or 0-15)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">current_syn</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">weight</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">V_old</span><span class="p">,</span><span class="w"> </span><span class="n">V_new</span><span class="p">,</span><span class="w"> </span><span class="n">V_final</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="n">spike</span><span class="p">;</span>
+
+<span class="c1">// Neuron model parameters (programmed during init)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">36</span><span class="mi">&#39;d2000</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">5</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">leak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">6</span><span class="mi">&#39;d63</span><span class="p">;</span><span class="w">  </span><span class="c1">// No leak for IF neurons</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">neuron_model</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b00</span><span class="p">;</span><span class="w">  </span><span class="c1">// 00=IF, 10=LIF</span>
+
+<span class="c1">// Pipeline hazard tracking (addresses currently in flight)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="w"> </span><span class="p">[</span><span class="mh">0</span><span class="o">:</span><span class="mh">4</span><span class="p">];</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk450</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">IEP_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_hbm_valid</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">syn_data_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">                </span><span class="n">syn_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_PARSE_SYN</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_PARSE_SYN:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Extract synapse from data</span>
+<span class="w">            </span><span class="n">current_syn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">syn_data_reg</span><span class="p">[(</span><span class="n">syn_index</span><span class="o">*</span><span class="mh">32</span><span class="p">)</span><span class="o">+:</span><span class="mh">32</span><span class="p">];</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">current_syn</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">32&#39;h0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Unused synapse slot, skip</span>
+<span class="w">                </span><span class="n">syn_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">syn_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">syn_index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d7</span><span class="p">)</span>
+<span class="w">                    </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Done with this packet</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Valid synapse</span>
+<span class="w">                </span><span class="n">target_neuron</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_syn</span><span class="p">[</span><span class="mh">28</span><span class="o">:</span><span class="mh">16</span><span class="p">];</span><span class="w">  </span><span class="c1">// 13-bit address</span>
+<span class="w">                </span><span class="n">weight</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">current_syn</span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_READ_URAM</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_READ_URAM:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Check for read-after-write hazard</span>
+<span class="w">            </span><span class="n">hazard</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">||</span>
+<span class="w">                     </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span><span class="w"> </span><span class="o">||</span>
+<span class="w">                     </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">3</span><span class="p">]);</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hazard</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Stall: same neuron still in pipeline</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_READ_URAM</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Safe to read</span>
+<span class="w">                </span><span class="c1">// URAM stores 2 neurons per 72-bit word</span>
+<span class="w">                </span><span class="n">uram_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">1</span><span class="p">];</span><span class="w">  </span><span class="c1">// Word address</span>
+<span class="w">                </span><span class="n">uram_rd_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="w">                </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">;</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_ACCUMULATE</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_ACCUMULATE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// URAM read latency: 1 cycle @ 450 MHz</span>
+<span class="w">            </span><span class="n">uram_word</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">uram_dout</span><span class="p">[</span><span class="mh">71</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">            </span><span class="c1">// Select upper or lower neuron in word</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">)</span>
+<span class="w">                </span><span class="n">V_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uram_word</span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">    </span><span class="c1">// Lower neuron</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">V_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uram_word</span><span class="p">[</span><span class="mh">71</span><span class="o">:</span><span class="mh">36</span><span class="p">];</span><span class="w">   </span><span class="c1">// Upper neuron</span>
+
+<span class="w">            </span><span class="c1">// Check for bypass (recent write to same neuron)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span>
+<span class="w">                </span><span class="n">V_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span>
+<span class="w">                </span><span class="n">V_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">            </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">3</span><span class="p">])</span>
+<span class="w">                </span><span class="n">V_old</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">3</span><span class="p">];</span>
+
+<span class="w">            </span><span class="c1">// Accumulate synaptic input</span>
+<span class="w">            </span><span class="n">V_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">V_old</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">$signed</span><span class="p">(</span><span class="n">weight</span><span class="p">);</span>
+
+<span class="w">            </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">V_new</span><span class="p">;</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_APPLY_MODEL</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_APPLY_MODEL:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Apply neuron model (leak, etc.)</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">neuron_model</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b10</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// LIF</span>
+<span class="w">                </span><span class="n">V_new</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">V_new</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">V_new</span><span class="w"> </span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">leak</span><span class="p">);</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">            </span><span class="c1">// IF model: no leak</span>
+
+<span class="w">            </span><span class="c1">// Threshold check</span>
+<span class="w">            </span><span class="n">spike</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">V_new</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="n">$signed</span><span class="p">(</span><span class="n">threshold</span><span class="p">));</span>
+
+<span class="w">            </span><span class="c1">// Reset if spike</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spike</span><span class="p">)</span>
+<span class="w">                </span><span class="n">V_final</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">36</span><span class="p">&#39;</span><span class="n">sd0</span><span class="p">;</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">V_final</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">V_new</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">V_final</span><span class="p">;</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_WRITE_URAM</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_WRITE_URAM:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Reconstruct 72-bit word with updated neuron</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">target_neuron</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">)</span>
+<span class="w">                </span><span class="n">uram_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">uram_word</span><span class="p">[</span><span class="mh">71</span><span class="o">:</span><span class="mh">36</span><span class="p">],</span><span class="w"> </span><span class="n">V_final</span><span class="p">};</span><span class="w">  </span><span class="c1">// Update lower</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">uram_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">V_final</span><span class="p">,</span><span class="w"> </span><span class="n">uram_word</span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]};</span><span class="w">   </span><span class="c1">// Update upper</span>
+
+<span class="w">            </span><span class="c1">// Write back to URAM</span>
+<span class="w">            </span><span class="n">uram_we</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">uram_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">1</span><span class="p">];</span>
+
+<span class="w">            </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">pipeline_addr</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bypass_data</span><span class="p">[</span><span class="mh">3</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">V_final</span><span class="p">;</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_CHECK_SPIKE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">IEP_CHECK_SPIKE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">spike</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Record spike for Phase 1b</span>
+<span class="w">                </span><span class="n">neuron_group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">13</span><span class="p">];</span>
+<span class="w">                </span><span class="n">uram_spiked_mask</span><span class="p">[</span><span class="n">neuron_group</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="w">                </span><span class="c1">// Send to spike_fifo_controller</span>
+<span class="w">                </span><span class="n">spike_out_valid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spike_out_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">target_neuron</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+
+<span class="w">            </span><span class="c1">// Move to next synapse in packet</span>
+<span class="w">            </span><span class="n">syn_index</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">syn_index</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">syn_index</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d7</span><span class="p">)</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Done with packet</span>
+<span class="w">            </span><span class="k">else</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IEP_PARSE_SYN</span><span class="p">;</span><span class="w">  </span><span class="c1">// Next synapse</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example trace for neuron h0 receiving 3 inputs:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>═══════════════════════════════════════════
+Input 1: From axon a0, weight=1000
+═══════════════════════════════════════════
+
+Cycle 0: IEP_IDLE
+  exec_hbm_rdata contains a0&#39;s synapses
+
+Cycle 1: IEP_PARSE_SYN
+  syn_index = 0
+  current_syn = {3&#39;b000, 13&#39;d0, 16&#39;d1000}
+  target_neuron = 17&#39;d0 (h0)
+  weight = 16&#39;d1000
+
+Cycle 2: IEP_READ_URAM
+  uram_addr = 0 &gt;&gt; 1 = 0
+  No hazard (pipeline empty)
+
+Cycle 3: IEP_ACCUMULATE
+  uram_word = {neuron_1_data, neuron_0_data}
+  V_old = uram_word[35:0] = 36&#39;d0 (zero)
+  V_new = 0 + 1000 = 1000
+
+Cycle 4: IEP_APPLY_MODEL
+  neuron_model = IF, no leak
+  spike = (1000 &gt;= 2000) = 0
+  V_final = 1000
+
+Cycle 5: IEP_WRITE_URAM
+  uram_din = {upper_data, 36&#39;d1000}
+  uram_we = 1
+
+Cycle 6: IEP_CHECK_SPIKE
+  spike = 0, no output
+  Continue to next synapse...
+
+═══════════════════════════════════════════
+Input 2: From axon a1, weight=1000
+═══════════════════════════════════════════
+
+Cycle 100: IEP_PARSE_SYN
+  target_neuron = 17&#39;d0 (h0 again!)
+  weight = 16&#39;d1000
+
+Cycle 101: IEP_READ_URAM
+  uram_addr = 0
+
+Cycle 102: IEP_ACCUMULATE
+  uram_word[35:0] = 36&#39;d1000 (from previous!)
+  V_old = 1000
+  V_new = 1000 + 1000 = 2000
+
+Cycle 103: IEP_APPLY_MODEL
+  spike = (2000 &gt;= 2000) = 1  ← SPIKE!
+  V_final = 0 (reset)
+
+Cycle 104: IEP_WRITE_URAM
+  uram_din = {upper_data, 36&#39;d0}
+  uram_we = 1
+
+Cycle 105: IEP_CHECK_SPIKE
+  spike = 1
+  uram_spiked_mask[0] &lt;= 1 (group 0 spiked)
+  spike_out_addr = 17&#39;d0 (neuron h0)
+
+═══════════════════════════════════════════
+Input 3: From axon a2, weight=1000
+═══════════════════════════════════════════
+
+Cycle 200: IEP_ACCUMULATE
+  V_old = 0 (was just reset!)
+  V_new = 0 + 1000 = 1000
+
+Cycle 201: IEP_APPLY_MODEL
+  spike = (1000 &gt;= 2000) = 0
+  V_final = 1000
+
+Cycle 202: IEP_WRITE_URAM
+  V = 1000
+
+Final state of h0: V = 1000, spiked once
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="recurrent-processing-hidden-output-neurons">
+<h2>Recurrent Processing: Hidden → Output Neurons<a class="headerlink" href="#recurrent-processing-hidden-output-neurons" title="Link to this heading">#</a></h2>
+<p>When hidden neurons spike, they automatically trigger Phase 1b → Phase 2 again:</p>
+<ol class="arabic simple">
+<li><p><strong>internal_events_processor</strong> outputs <code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span> <span class="pre">=</span> <span class="pre">16'h0001</span></code> (group 0 spiked)</p></li>
+<li><p><strong>hbm_processor</strong> Phase 1b: Reads neuron pointers from HBM Region 2</p></li>
+<li><p><strong>pointer_fifo_controller</strong>: Adds neuron output pointers to FIFOs</p></li>
+<li><p><strong>hbm_processor</strong> Phase 2: Reads synapses from HBM Region 3</p></li>
+<li><p><strong>internal_events_processor</strong>: Updates output neurons o0-o4</p></li>
+</ol>
+<p><strong>For output neurons:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Each output receives: 5 hidden neurons × 1000 weight = 5000 total
+o0: V = 0 + 5000 = 5000 &gt;= 2000 → SPIKE (at V=2000, reset, then +3000 more)
+Final: V = 3000
+
+Output neuron synapses may have OpCode=100 (0b100) which marks them
+as &quot;output spikes&quot; to send to host.
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+<section id="reading-results-flush-spikes">
+<h2>Reading Results: flush_spikes()<a class="headerlink" href="#reading-results-flush-spikes" title="Link to this heading">#</a></h2>
+<section id="python-code-fpga-controller-flush-spikes">
+<h3>Python Code: fpga_controller.flush_spikes()<a class="headerlink" href="#python-code-fpga-controller-flush-spikes" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py</span></code> (lines 273-343)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">flush_spikes</span><span class="p">(</span><span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reads spike packets from FPGA via PCIe&quot;&quot;&quot;</span>
+
+    <span class="n">packetNum</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">spikeOutput</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">800</span><span class="o">/</span><span class="mf">1000000.0</span><span class="p">)</span>  <span class="c1"># Wait 800 µs for processing</span>
+
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">exitCode</span><span class="p">,</span> <span class="n">batchRead</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_read</span><span class="p">(</span>
+            <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">,</span> <span class="mi">64</span><span class="o">*</span><span class="n">packetNum</span>
+        <span class="p">)</span>
+
+        <span class="n">splitRead</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array_split</span><span class="p">(</span><span class="n">batchRead</span><span class="p">,</span> <span class="n">packetNum</span><span class="p">)</span>
+        <span class="n">splitRead</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+        <span class="n">flushed</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">currentRead</span> <span class="ow">in</span> <span class="n">splitRead</span><span class="p">:</span>
+            <span class="c1"># Check packet type by tag (bytes 62-63)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">currentRead</span><span class="p">[</span><span class="mi">62</span><span class="p">]</span> <span class="o">==</span> <span class="mi">255</span> <span class="ow">and</span> <span class="n">currentRead</span><span class="p">[</span><span class="mi">63</span><span class="p">]</span> <span class="o">==</span> <span class="mi">255</span><span class="p">):</span>
+                <span class="c1"># FIFO Empty packet (0xFFFF tag)</span>
+                <span class="n">n</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">50</span><span class="p">:</span>
+                    <span class="n">flushed</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="k">break</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">currentRead</span><span class="p">[</span><span class="mi">62</span><span class="p">]</span> <span class="o">==</span> <span class="mi">238</span> <span class="ow">and</span> <span class="n">currentRead</span><span class="p">[</span><span class="mi">63</span><span class="p">]</span> <span class="o">==</span> <span class="mi">238</span><span class="p">):</span>
+                <span class="c1"># Spike packet (0xEEEE tag)</span>
+                <span class="n">executionRun_counter</span><span class="p">,</span> <span class="n">spikeList</span> <span class="o">=</span> <span class="n">read_spikes</span><span class="p">(</span><span class="n">currentRead</span><span class="p">)</span>
+                <span class="n">spikeOutput</span> <span class="o">=</span> <span class="n">spikeOutput</span> <span class="o">+</span> <span class="n">spikeList</span>
+                <span class="n">n</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">currentRead</span><span class="p">[</span><span class="mi">62</span><span class="p">]</span> <span class="o">==</span> <span class="mi">205</span> <span class="ow">and</span> <span class="n">currentRead</span><span class="p">[</span><span class="mi">63</span><span class="p">]</span> <span class="o">==</span> <span class="mi">171</span><span class="p">):</span>
+                <span class="c1"># Latency packet (0xCDAB tag) - end of execution</span>
+                <span class="n">executionRun_counter</span><span class="p">,</span> <span class="n">spikeList</span> <span class="o">=</span> <span class="n">read_spikes</span><span class="p">(</span><span class="n">currentRead</span><span class="p">)</span>
+                <span class="n">spikeOutput</span> <span class="o">=</span> <span class="n">spikeOutput</span> <span class="o">+</span> <span class="n">spikeList</span>
+                <span class="n">flushed</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-spike packet encountered&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">flushed</span><span class="p">:</span>
+            <span class="k">break</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">spikeOutput</span><span class="p">,</span> <span class="n">latency</span><span class="p">,</span> <span class="n">hbmAcc</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="verilog-command-interpreter-batches-spikes">
+<h3>Verilog: command_interpreter Batches Spikes<a class="headerlink" href="#verilog-command-interpreter-batches-spikes" title="Link to this heading">#</a></h3>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/command_interpreter.v</span></code> (lines 800-900, conceptual)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// TX state machine: Collect spikes and send to host</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tx_state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">TX_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">TX_COLLECT_SPIKES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">TX_BATCH_PACKET</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">TX_SEND</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spike_packet</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spike_count</span><span class="p">;</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">spike_addr</span><span class="w"> </span><span class="p">[</span><span class="mh">0</span><span class="o">:</span><span class="mh">13</span><span class="p">];</span><span class="w">  </span><span class="c1">// Up to 14 spikes per packet</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">tx_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">TX_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">spk2ciFIFO_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">spike_count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">tx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_COLLECT_SPIKES</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">TX_COLLECT_SPIKES:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">spk2ciFIFO_empty</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">spike_count</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">14</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Read spike from aggregated spike FIFO</span>
+<span class="w">                </span><span class="n">spk2ciFIFO_rd_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spike_addr</span><span class="p">[</span><span class="n">spike_count</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">spk2ciFIFO_dout</span><span class="p">;</span>
+<span class="w">                </span><span class="n">spike_count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">spike_count</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Either FIFO empty or batch full</span>
+<span class="w">                </span><span class="n">tx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_BATCH_PACKET</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">TX_BATCH_PACKET:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Build 512-bit spike packet</span>
+<span class="w">            </span><span class="c1">// [511:496] = 0xEEEE (spike packet tag)</span>
+<span class="w">            </span><span class="c1">// [495:32] = 14 × 32-bit spike entries</span>
+<span class="w">            </span><span class="c1">// [31:0] = timestep counter</span>
+
+<span class="w">            </span><span class="n">spike_packet</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">496</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">16&#39;hEEEE</span><span class="p">;</span>
+<span class="w">            </span><span class="n">spike_packet</span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">execRun_ctr</span><span class="p">;</span>
+
+<span class="w">            </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mh">14</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">spike_count</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                    </span><span class="c1">// Valid spike</span>
+<span class="w">                    </span><span class="n">spike_packet</span><span class="p">[(</span><span class="n">i</span><span class="o">*</span><span class="mh">32</span><span class="p">)</span><span class="o">+</span><span class="mh">32</span><span class="w"> </span><span class="o">+:</span><span class="w"> </span><span class="mh">32</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span>
+<span class="w">                        </span><span class="p">{</span><span class="mh">7</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">,</span><span class="w"> </span><span class="mh">7</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">spike_addr</span><span class="p">[</span><span class="n">i</span><span class="p">]};</span>
+<span class="w">                        </span><span class="c1">// [31:25]=0, [24]=valid, [23:17]=0, [16:0]=address</span>
+<span class="w">                </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                    </span><span class="c1">// Unused slot</span>
+<span class="w">                    </span><span class="n">spike_packet</span><span class="p">[(</span><span class="n">i</span><span class="o">*</span><span class="mh">32</span><span class="p">)</span><span class="o">+</span><span class="mh">32</span><span class="w"> </span><span class="o">+:</span><span class="w"> </span><span class="mh">32</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">32&#39;h0</span><span class="p">;</span>
+<span class="w">                </span><span class="k">end</span>
+<span class="w">            </span><span class="k">end</span>
+
+<span class="w">            </span><span class="n">tx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_SEND</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">TX_SEND:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Write to txFIFO (goes to pcie2fifos → host)</span>
+<span class="w">            </span><span class="n">txFIFO_wr_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">txFIFO_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">spike_packet</span><span class="p">;</span>
+
+<span class="w">            </span><span class="n">tx_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Example spike packet for our network:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">512</span><span class="o">-</span><span class="n">bit</span> <span class="n">packet</span><span class="p">:</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">496</span><span class="p">]</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;hEEEE (spike packet identifier)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="mi">0</span><span class="p">:</span> <span class="p">{</span><span class="mi">7</span><span class="s1">&#39;b0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="mi">7</span><span class="s1">&#39;b0, 17&#39;</span><span class="n">d5</span><span class="p">}</span> <span class="p">(</span><span class="n">o0</span><span class="p">,</span> <span class="n">valid</span><span class="p">)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">464</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="mi">1</span><span class="p">:</span> <span class="p">{</span><span class="mi">7</span><span class="s1">&#39;b0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="mi">7</span><span class="s1">&#39;b0, 17&#39;</span><span class="n">d6</span><span class="p">}</span> <span class="p">(</span><span class="n">o1</span><span class="p">,</span> <span class="n">valid</span><span class="p">)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">463</span><span class="p">:</span><span class="mi">448</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="mi">2</span><span class="p">:</span> <span class="p">{</span><span class="mi">7</span><span class="s1">&#39;b0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="mi">7</span><span class="s1">&#39;b0, 17&#39;</span><span class="n">d7</span><span class="p">}</span> <span class="p">(</span><span class="n">o2</span><span class="p">,</span> <span class="n">valid</span><span class="p">)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">447</span><span class="p">:</span><span class="mi">432</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="mi">3</span><span class="p">:</span> <span class="p">{</span><span class="mi">7</span><span class="s1">&#39;b0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="mi">7</span><span class="s1">&#39;b0, 17&#39;</span><span class="n">d8</span><span class="p">}</span> <span class="p">(</span><span class="n">o3</span><span class="p">,</span> <span class="n">valid</span><span class="p">)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">431</span><span class="p">:</span><span class="mi">416</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="mi">4</span><span class="p">:</span> <span class="p">{</span><span class="mi">7</span><span class="s1">&#39;b0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="mi">7</span><span class="s1">&#39;b0, 17&#39;</span><span class="n">d9</span><span class="p">}</span> <span class="p">(</span><span class="n">o4</span><span class="p">,</span> <span class="n">valid</span><span class="p">)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">415</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>  <span class="o">=</span> <span class="n">Spikes</span> <span class="mi">5</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span> <span class="p">{</span><span class="mi">32</span><span class="s1">&#39;h0} (unused)</span>
+  <span class="n">Bits</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;d0 (timestep counter)</span>
+
+<span class="n">Host</span> <span class="n">receives</span> <span class="ow">and</span> <span class="n">parses</span><span class="p">:</span>
+  <span class="n">spikeList</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">9</span><span class="p">)]</span>
+  <span class="n">Converts</span> <span class="n">to</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;o0&#39;</span><span class="p">,</span> <span class="s1">&#39;o1&#39;</span><span class="p">,</span> <span class="s1">&#39;o2&#39;</span><span class="p">,</span> <span class="s1">&#39;o3&#39;</span><span class="p">,</span> <span class="s1">&#39;o4&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="conclusion-the-complete-code-journey">
+<h2>Conclusion: The Complete Code Journey<a class="headerlink" href="#conclusion-the-complete-code-journey" title="Link to this heading">#</a></h2>
+<p>We’ve now traced the complete code path from Python to Verilog and back:</p>
+<p><strong>Setup:</strong></p>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">network.step(['a0',</span> <span class="pre">'a1',</span> <span class="pre">'a2'])</span></code> → <code class="docutils literal notranslate"><span class="pre">input_user()</span></code> creates 256-bit mask</p></li>
+<li><p>DMA writes to FPGA → <code class="docutils literal notranslate"><span class="pre">command_interpreter</span></code> receives opcode 0x00</p></li>
+<li><p>Writes to BRAM <strong>Future buffer</strong> (double-buffered)</p></li>
+</ol>
+<p><strong>Execute:</strong>
+4. <code class="docutils literal notranslate"><span class="pre">execute()</span></code> sends opcode 0x06 → <code class="docutils literal notranslate"><span class="pre">command_interpreter</span></code> reassigns buffer roles
+5. <strong>Phase 1a:</strong> <code class="docutils literal notranslate"><span class="pre">external_events_processor</span></code> reads Present BRAM → generates <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code>
+6. <strong>Phase 1a:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> reads axon pointers from HBM Region 1
+7. <strong>Phase 1a:</strong> <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> demuxes pointers to 16 FIFOs</p>
+<p><strong>Process:</strong>
+8. <strong>Phase 2:</strong> <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> round-robin reads from FIFOs
+9. <strong>Phase 2:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> pops pointers → reads synapses from HBM Region 3
+10. <strong>Phase 2:</strong> <code class="docutils literal notranslate"><span class="pre">internal_events_processor</span></code> updates URAM &#64; 450 MHz
+- h0: V=0 → 1000 → 2000 (spike!) → 0 → 1000
+- Generates <code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span></code> for neurons that spiked</p>
+<p><strong>Recurrent:</strong>
+11. <strong>Phase 1b:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> reads neuron pointers from HBM Region 2
+12. <strong>Phase 1b:</strong> <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> adds neuron pointers to FIFOs
+13. <strong>Phase 2:</strong> Process hidden → output synapses (o0-o4 spike)</p>
+<p><strong>Output:</strong>
+14. <code class="docutils literal notranslate"><span class="pre">spike_fifo_controller</span></code> aggregates spikes → <code class="docutils literal notranslate"><span class="pre">command_interpreter</span></code>
+15. <code class="docutils literal notranslate"><span class="pre">command_interpreter</span></code> batches spikes into 512-bit packets
+16. Sends via <code class="docutils literal notranslate"><span class="pre">txFIFO</span></code> → <code class="docutils literal notranslate"><span class="pre">pcie2fifos</span></code> → PCIe → Host
+17. <code class="docutils literal notranslate"><span class="pre">flush_spikes()</span></code> reads packets, parses: <code class="docutils literal notranslate"><span class="pre">['o0',</span> <span class="pre">'o1',</span> <span class="pre">'o2',</span> <span class="pre">'o3',</span> <span class="pre">'o4']</span></code></p>
+<p><strong>Total time: ~2-5 microseconds</strong> from input to output, with neurons updated at 450 MHz and HBM accessed via efficient burst reads.</p>
+<p>The beauty of this architecture is the <strong>two-phase separation</strong>: Phase 1 collects <em>where</em> to read (pointers), Phase 2 does the actual reading (synapses) and processing (neuron updates). This allows for efficient memory coalescing and high parallelism across 16 neuron groups.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-sending-inputs-to-bram">Setup: Sending Inputs to BRAM</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-network-step">Python Code: network.step()</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-fpga-controller-input-user">Python Code: fpga_controller.input_user()</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-command-interpreter-receives-input">Verilog: command_interpreter Receives Input</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-external-events-processor-double-buffered-bram">Verilog: external_events_processor Double-Buffered BRAM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triggering-execution-execute-command">Triggering Execution: execute() Command</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-fpga-controller-execute">Python Code: fpga_controller.execute()</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-command-interpreter-triggers-execution">Verilog: command_interpreter Triggers Execution</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1a-external-event-processing-pointer-collection">Phase 1a: External Event Processing (Pointer Collection)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-external-events-processor-phase-1a-state-machine">Verilog: external_events_processor Phase 1a State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-hbm-processor-phase-1a-read-axon-pointers">Verilog: hbm_processor Phase 1a - Read Axon Pointers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-pointer-fifo-controller-phase-1-demultiplex-pointers">Verilog: pointer_fifo_controller Phase 1 - Demultiplex Pointers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1b-internal-event-processing-if-neurons-spiked">Phase 1b: Internal Event Processing (If Neurons Spiked)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-internal-events-processor-spike-detection">Verilog: internal_events_processor Spike Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-hbm-processor-phase-1b-read-neuron-pointers">Verilog: hbm_processor Phase 1b - Read Neuron Pointers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-synaptic-processing-and-neuron-updates">Phase 2: Synaptic Processing and Neuron Updates</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-pointer-fifo-controller-round-robin-read">Verilog: pointer_fifo_controller Round-Robin Read</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-hbm-processor-phase-2-read-synapses">Verilog: hbm_processor Phase 2 - Read Synapses</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-internal-events-processor-phase-2-neuron-updates">Verilog: internal_events_processor Phase 2 - Neuron Updates</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recurrent-processing-hidden-output-neurons">Recurrent Processing: Hidden → Output Neurons</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#reading-results-flush-spikes">Reading Results: flush_spikes()</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-code-fpga-controller-flush-spikes">Python Code: fpga_controller.flush_spikes()</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#verilog-command-interpreter-batches-spikes">Verilog: command_interpreter Batches Spikes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion-the-complete-code-journey">Conclusion: The Complete Code Journey</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_3.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

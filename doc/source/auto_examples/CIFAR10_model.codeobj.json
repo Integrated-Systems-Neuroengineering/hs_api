@@ -1,0 +1,227 @@
+{
+ "CRI_network": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "hs_api.api",
+   "module_short": "hs_api.api",
+   "name": "CRI_network"
+  }
+ ],
+ "Image.Image": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "PIL.Image",
+   "module_short": "PIL.Image",
+   "name": "Image"
+  }
+ ],
+ "hs_bridge.FPGA_Execution.fpga_controller.clear": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "hs_bridge.FPGA_Execution.fpga_controller",
+   "module_short": "hs_bridge.FPGA_Execution.fpga_controller",
+   "name": "clear"
+  }
+ ],
+ "io.BytesIO": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "io",
+   "module_short": "io",
+   "name": "BytesIO"
+  }
+ ],
+ "pickle.load": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "pickle",
+   "module_short": "pickle",
+   "name": "load"
+  }
+ ],
+ "torch.Tensor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "Tensor"
+  }
+ ],
+ "torch.arange": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "arange"
+  }
+ ],
+ "torch.argmax": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "argmax"
+  }
+ ],
+ "torch.bool": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "bool"
+  }
+ ],
+ "torch.cat": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "cat"
+  }
+ ],
+ "torch.cuda.is_available": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch.cuda",
+   "module_short": "torch.cuda",
+   "name": "is_available"
+  }
+ ],
+ "torch.device": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "device"
+  }
+ ],
+ "torch.dtype": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "dtype"
+  }
+ ],
+ "torch.float32": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "float32"
+  }
+ ],
+ "torch.ones": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "ones"
+  }
+ ],
+ "torch.randint": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "randint"
+  }
+ ],
+ "torch.uint8": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "uint8"
+  }
+ ],
+ "torch.unbind": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "unbind"
+  }
+ ],
+ "torch.zeros": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torch",
+   "module_short": "torch",
+   "name": "zeros"
+  }
+ ],
+ "torchvision.datasets.CIFAR10": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torchvision.datasets",
+   "module_short": "torchvision.datasets",
+   "name": "CIFAR10"
+  }
+ ],
+ "transforms.Compose": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torchvision.transforms",
+   "module_short": "torchvision.transforms",
+   "name": "Compose"
+  }
+ ],
+ "transforms.PILToTensor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torchvision.transforms",
+   "module_short": "torchvision.transforms",
+   "name": "PILToTensor"
+  }
+ ],
+ "transforms.Resize": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torchvision.transforms",
+   "module_short": "torchvision.transforms",
+   "name": "Resize"
+  }
+ ],
+ "transforms.ToTensor": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "torchvision.transforms",
+   "module_short": "torchvision.transforms",
+   "name": "ToTensor"
+  }
+ ],
+ "urllib.request.urlopen": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "urllib.request",
+   "module_short": "urllib.request",
+   "name": "urlopen"
+  }
+ ]
+}

@@ -31,6 +31,14 @@ pylint = "^3.3.4"
 black = "^25.1.0"
 pytest = "^9.0.2"
 
+[tool.poetry.group.docs.dependencies]
+sphinx = "^8.0"
+sphinx-design = "^0.6"
+sphinx-gallery = "^0.18"
+sphinxcontrib-bibtex = "^2.6"
+pydata-sphinx-theme = "^0.16"
+myst-parser = "^4.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

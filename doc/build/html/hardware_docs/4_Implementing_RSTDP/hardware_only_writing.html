@@ -1,0 +1,1130 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>4.3 Hardware Implementation of R-STDP &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/4_Implementing_RSTDP/hardware_only_writing';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Supplementary Information" href="../supplementary_information.html" />
+    <link rel="prev" title="4.2 Reading and Writing Synapses" href="synapse_read_write.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_4.html" class="nav-link">4 Implementing RSTDP</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">4.3 Hardware Implementation of R-STDP</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="hardware-implementation-of-r-stdp">
+<h1>4.3 Hardware Implementation of R-STDP<a class="headerlink" href="#hardware-implementation-of-r-stdp" title="Link to this heading">#</a></h1>
+<p>This chapter explains how R-STDP is implemented in the FPGA hardware by extending the existing framework from Chapters 1-2. The key insight is <strong>reusing existing logic</strong>: eligibility traces are updated like neuron membrane potentials (but without spiking), and weight updates reuse the existing HBM write infrastructure.</p>
+<hr class="docutils" />
+<section id="memory-architecture-adding-hbm-region-4-for-eligibility-traces">
+<h2>Memory Architecture: Adding HBM Region 4 for Eligibility Traces<a class="headerlink" href="#memory-architecture-adding-hbm-region-4-for-eligibility-traces" title="Link to this heading">#</a></h2>
+<p>Recall from Chapter 1 that the existing system uses three HBM regions:</p>
+<ul class="simple">
+<li><p><strong>Region 1</strong>: Axon pointers (where each axon’s synapses are located)</p></li>
+<li><p><strong>Region 2</strong>: Neuron pointers (where each neuron’s output synapses are located)</p></li>
+<li><p><strong>Region 3</strong>: Synapse data (OpCode, Target address, Weight)</p></li>
+</ul>
+<p>For R-STDP, we add a fourth region:</p>
+<ul class="simple">
+<li><p><strong>Region 4</strong>: Eligibility traces (one value per synapse, stored like membrane potentials)</p></li>
+</ul>
+<section id="address-mapping-region-3-region-4">
+<h3>Address Mapping: Region 3 ↔ Region 4<a class="headerlink" href="#address-mapping-region-3-region-4" title="Link to this heading">#</a></h3>
+<p>Each synapse in Region 3 has a corresponding eligibility trace in Region 4. The mapping uses simple address arithmetic:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Synapse address (Region 3)  →  Eligibility trace address (Region 4)
+──────────────────────────────────────────────────────────────────
+0x8000                      →  0x8000 + REGION4_OFFSET
+0x8001                      →  0x8001 + REGION4_OFFSET
+0x8002                      →  0x8002 + REGION4_OFFSET
+</pre></div>
+</div>
+<p><strong>REGION4_OFFSET</strong> = 1000 (or approximately half the number of rows in Region 3)</p>
+<p><strong>Example:</strong></p>
+<ul class="simple">
+<li><p>Synapse at HBM row <code class="docutils literal notranslate"><span class="pre">0x8001</span></code> in Region 3</p></li>
+<li><p>Its eligibility trace at row <code class="docutils literal notranslate"><span class="pre">0x8001</span> <span class="pre">+</span> <span class="pre">1000</span> <span class="pre">=</span> <span class="pre">0x8FA9</span></code> in Region 4</p></li>
+</ul>
+<p><strong>Why this simple mapping?</strong></p>
+<ul class="simple">
+<li><p>Easy to compute in hardware (just add/subtract offset)</p></li>
+<li><p>Leverages existing HBM read/write logic</p></li>
+<li><p>Reversible: <code class="docutils literal notranslate"><span class="pre">Region_3_addr</span> <span class="pre">=</span> <span class="pre">Region_4_addr</span> <span class="pre">-</span> <span class="pre">REGION4_OFFSET</span></code></p></li>
+</ul>
+</section>
+<section id="data-format">
+<h3>Data Format<a class="headerlink" href="#data-format" title="Link to this heading">#</a></h3>
+<p>Each eligibility trace is stored as a <strong>36-bit signed fixed-point value</strong>, identical in format to neuron membrane potentials:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">35</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Eligibility</span> <span class="n">trace</span> <span class="n">value</span>
+  <span class="o">-</span> <span class="n">Starts</span> <span class="n">at</span> <span class="mi">0</span>
+  <span class="o">-</span> <span class="n">Increases</span> <span class="n">when</span> <span class="n">STDP</span> <span class="n">event</span> <span class="n">occurs</span> <span class="p">(</span><span class="n">coincidence</span> <span class="n">detection</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Decays</span> <span class="n">over</span> <span class="n">time</span> <span class="p">(</span><span class="n">like</span> <span class="n">membrane</span> <span class="n">potential</span> <span class="n">leak</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">NO</span> <span class="n">threshold</span> <span class="n">comparison</span> <span class="p">(</span><span class="n">doesn</span><span class="s1">&#39;t spike)</span>
+</pre></div>
+</div>
+<p>This reuse of the membrane potential format means we can use the <strong>same hardware logic</strong> that updates neurons to also update eligibility traces.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="the-reward-register-dopamine-signal">
+<h2>The Reward Register: Dopamine Signal<a class="headerlink" href="#the-reward-register-dopamine-signal" title="Link to this heading">#</a></h2>
+<p>A new 1-bit register stores the reward signal (dopamine modulation):</p>
+<p><strong>Reward Register:</strong></p>
+<ul class="simple">
+<li><p><strong>Width</strong>: 1 bit (binary on/off)</p></li>
+<li><p><strong>Set by</strong>: New command opcode (CMD_SET_REWARD = 0x0A)</p></li>
+<li><p><strong>Broadcast to</strong>: internal_events_processor during Phase 2</p></li>
+<li><p><strong>Purpose</strong>: Gates whether weight updates occur</p></li>
+</ul>
+<p><strong>Simplified for initial implementation:</strong></p>
+<ul class="simple">
+<li><p>Binary signal: 1 = reward on, 0 = reward off</p></li>
+<li><p>Can be toggled per timestep or set once for entire simulation</p></li>
+<li><p>Future enhancement: Multi-bit for graded reward levels</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="phase-2-flow-with-r-stdp-step-by-step">
+<h2>Phase 2 Flow with R-STDP: Step-by-Step<a class="headerlink" href="#phase-2-flow-with-r-stdp-step-by-step" title="Link to this heading">#</a></h2>
+<p>We extend the existing Phase 2 (Synaptic Processing) to include eligibility trace handling and weight updates.</p>
+<section id="step-1-pointer-processing-with-dual-address-computation">
+<h3>Step 1: Pointer Processing with Dual Address Computation<a class="headerlink" href="#step-1-pointer-processing-with-dual-address-computation" title="Link to this heading">#</a></h3>
+<p>Recall from Chapter 2 that Phase 2 begins with <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> reading synapse pointers from the 16 ptrFIFOs and sending them to <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code>.</p>
+<p><strong>Extension:</strong> When <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> receives a synapse pointer, it now computes <strong>two addresses</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Region 3 address</strong> (existing): Where the synapse data is stored</p></li>
+<li><p><strong>Region 4 address</strong> (new): Where the eligibility trace is stored</p>
+<ul class="simple">
+<li><p>Computed as: <code class="docutils literal notranslate"><span class="pre">Region_3_addr</span> <span class="pre">+</span> <span class="pre">REGION4_OFFSET</span></code></p></li>
+</ul>
+</li>
+</ol>
+<p><strong>New FIFO introduced: etFIFO (Eligibility Trace FIFO)</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Width</strong></p></td>
+<td><p>23 bits (HBM address)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Depth</strong></p></td>
+<td><p>512</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Written by</strong></p></td>
+<td><p>hbm_processor (when processing synapse pointers)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Read by</strong></p></td>
+<td><p>internal_events_processor (during neuron updates)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Contains</strong></p></td>
+<td><p>Region 4 addresses (eligibility trace locations)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>What happens:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> pops a synapse pointer from ptrFIFO</p></li>
+<li><p>Extracts Region 3 address: <code class="docutils literal notranslate"><span class="pre">0x8001</span></code></p></li>
+<li><p>Computes Region 4 address: <code class="docutils literal notranslate"><span class="pre">0x8001</span> <span class="pre">+</span> <span class="pre">1000</span> <span class="pre">=</span> <span class="pre">0x8FA9</span></code></p></li>
+<li><p>Pushes <code class="docutils literal notranslate"><span class="pre">0x8FA9</span></code> to <strong>etFIFO</strong></p></li>
+<li><p>Issues HBM read for synapse data at Region 3 address <code class="docutils literal notranslate"><span class="pre">0x8001</span></code> (existing behavior)</p></li>
+</ul>
+<p><strong>Result:</strong> The etFIFO now holds eligibility trace addresses in the <strong>same order</strong> as synapses are being processed. This synchronization is critical for the next step.</p>
+</section>
+<hr class="docutils" />
+<section id="step-2-neuron-update-with-coincidence-detection">
+<h3>Step 2: Neuron Update with Coincidence Detection<a class="headerlink" href="#step-2-neuron-update-with-coincidence-detection" title="Link to this heading">#</a></h3>
+<p>As synapses are read from HBM Region 3, they flow to <code class="docutils literal notranslate"><span class="pre">internal_events_processor</span></code> for neuron updates (existing behavior from Chapter 2.2).</p>
+<p><strong>Extension:</strong> While processing each synapse, the internal_events_processor now also:</p>
+<ol class="arabic simple">
+<li><p><strong>Pops the corresponding eligibility trace address from etFIFO</strong></p>
+<ul class="simple">
+<li><p>Because addresses were pushed in the same order, this stays synchronized</p></li>
+</ul>
+</li>
+<li><p><strong>Performs the neuron update</strong> (existing):</p>
+<ul class="simple">
+<li><p>Read current membrane potential from URAM</p></li>
+<li><p>Add synaptic weight: <code class="docutils literal notranslate"><span class="pre">V_new</span> <span class="pre">=</span> <span class="pre">V_old</span> <span class="pre">+</span> <span class="pre">weight</span></code></p></li>
+<li><p>Check threshold: <code class="docutils literal notranslate"><span class="pre">spike</span> <span class="pre">=</span> <span class="pre">(V_new</span> <span class="pre">&gt;=</span> <span class="pre">threshold)</span></code></p></li>
+<li><p>Write updated potential to URAM</p></li>
+</ul>
+</li>
+<li><p><strong>Performs coincidence detection</strong> (new):</p>
+<ul class="simple">
+<li><p>Check: Did the post-synaptic neuron spike?</p></li>
+<li><p>If YES: We have an STDP event (pre fired → caused input → post fired)</p></li>
+<li><p>This is <strong>coincidence detection</strong>: pre and post activity temporally correlated</p></li>
+</ul>
+</li>
+<li><p><strong>Checks reward signal</strong> (new):</p>
+<ul class="simple">
+<li><p>Read the reward register (broadcast to all processing units)</p></li>
+<li><p>Check: Is dopamine ON?</p></li>
+</ul>
+</li>
+<li><p><strong>Conditional weight update trigger</strong> (new):</p>
+<ul class="simple">
+<li><p>If (coincidence detected) AND (reward signal = 1):</p>
+<ul>
+<li><p>Push the Region 4 address to <strong>et2FIFO</strong></p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p><strong>New FIFO introduced: et2FIFO (Eligibility Trace to Weight Update FIFO)</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Width</strong></p></td>
+<td><p>23 bits (HBM Region 4 address)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Depth</strong></p></td>
+<td><p>512</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Written by</strong></p></td>
+<td><p>internal_events_processor (when coincidence + reward detected)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Read by</strong></p></td>
+<td><p>hbm_processor weight update logic</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Contains</strong></p></td>
+<td><p>Region 4 addresses of synapses that should have weights updated</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>What this achieves:</strong></p>
+<ul class="simple">
+<li><p>Only synapses with <strong>recent STDP events</strong> (recorded in eligibility traces) that also receive <strong>reward</strong> will trigger weight updates</p></li>
+<li><p>The et2FIFO acts as a queue of “synapses to update”</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="step-3-weight-updates-via-eligibility-traces">
+<h3>Step 3: Weight Updates via Eligibility Traces<a class="headerlink" href="#step-3-weight-updates-via-eligibility-traces" title="Link to this heading">#</a></h3>
+<p>While Phase 2 is running (or immediately after), <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> monitors the <strong>et2FIFO</strong>. When entries appear, it performs weight updates.</p>
+<p><strong>Process for each entry:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Pop Region 4 address from et2FIFO</strong></p>
+<ul class="simple">
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">0x8FA9</span></code> (eligibility trace address)</p></li>
+</ul>
+</li>
+<li><p><strong>Read eligibility trace value from HBM Region 4</strong></p>
+<ul class="simple">
+<li><p>Issue HBM read to address <code class="docutils literal notranslate"><span class="pre">0x8FA9</span></code></p></li>
+<li><p>Receive 36-bit eligibility trace value: <code class="docutils literal notranslate"><span class="pre">c(t)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Compute corresponding synapse address</strong></p>
+<ul class="simple">
+<li><p>Reverse the mapping: <code class="docutils literal notranslate"><span class="pre">Region_3_addr</span> <span class="pre">=</span> <span class="pre">0x8FA9</span> <span class="pre">-</span> <span class="pre">1000</span> <span class="pre">=</span> <span class="pre">0x8001</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Read current synapse weight from HBM Region 3</strong></p>
+<ul class="simple">
+<li><p>Issue HBM read to address <code class="docutils literal notranslate"><span class="pre">0x8001</span></code></p></li>
+<li><p>Receive 32-bit synapse data</p></li>
+<li><p>Extract weight: <code class="docutils literal notranslate"><span class="pre">current_weight</span> <span class="pre">=</span> <span class="pre">synapse_data[15:0]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Compute new weight using R-STDP rule</strong></p>
+<ul class="simple">
+<li><p>R-STDP: <code class="docutils literal notranslate"><span class="pre">Δw</span> <span class="pre">=</span> <span class="pre">R(t)</span> <span class="pre">×</span> <span class="pre">c(t)</span></code></p></li>
+<li><p>Since we’re in this state, <code class="docutils literal notranslate"><span class="pre">R(t)</span> <span class="pre">=</span> <span class="pre">1</span></code> (reward is on)</p></li>
+<li><p>Therefore: <code class="docutils literal notranslate"><span class="pre">Δw</span> <span class="pre">=</span> <span class="pre">c(t)</span></code> (the eligibility trace value)</p></li>
+<li><p>New weight: <code class="docutils literal notranslate"><span class="pre">w_new</span> <span class="pre">=</span> <span class="pre">w_old</span> <span class="pre">+</span> <span class="pre">c(t)</span></code></p></li>
+<li><p>Apply clamping to prevent overflow: <code class="docutils literal notranslate"><span class="pre">w_new</span> <span class="pre">∈</span> <span class="pre">[-32768,</span> <span class="pre">32767]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Write updated weight to HBM Region 3</strong></p>
+<ul class="simple">
+<li><p>Reconstruct synapse data: <code class="docutils literal notranslate"><span class="pre">{OpCode,</span> <span class="pre">Target,</span> <span class="pre">w_new}</span></code></p></li>
+<li><p>Issue HBM write to address <code class="docutils literal notranslate"><span class="pre">0x8001</span></code></p></li>
+<li><p><strong>This reuses the same HBM write logic</strong> that’s called when the host updates weights via <code class="docutils literal notranslate"><span class="pre">write_synapse</span></code> commands</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Key insight:</strong> The weight update path reuses existing infrastructure. We just need to:</p>
+<ul class="simple">
+<li><p>Cut into the write_synapse function at the point where it has the Region 3 address and new weight value</p></li>
+<li><p>Provide those values from our R-STDP computation instead of from the host</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="step-4-eligibility-trace-maintenance">
+<h3>Step 4: Eligibility Trace Maintenance<a class="headerlink" href="#step-4-eligibility-trace-maintenance" title="Link to this heading">#</a></h3>
+<p>Eligibility traces need to be updated to:</p>
+<ol class="arabic simple">
+<li><p><strong>Decay over time</strong> (like membrane potential leak)</p></li>
+<li><p><strong>Increase when STDP events occur</strong> (coincidence detection)</p></li>
+</ol>
+<p><strong>Mathematical update:</strong></p>
+<div class="math notranslate nohighlight">
+\[\dot{c}(t) = -\frac{c}{\tau_c} + \delta_{\text{STDP event}}\]</div>
+<p><strong>Implementation approach: Reuse neuron membrane potential logic</strong></p>
+<p>The key insight is that eligibility trace updates are <strong>nearly identical</strong> to neuron updates:</p>
+<ul class="simple">
+<li><p>Both are 36-bit values stored in memory</p></li>
+<li><p>Both decay exponentially (leak)</p></li>
+<li><p>Both accumulate inputs</p></li>
+<li><p><strong>Difference:</strong> Eligibility traces don’t spike (no threshold comparison)</p></li>
+</ul>
+<p><strong>Method:</strong></p>
+<ul class="simple">
+<li><p>Read eligibility trace from Region 4: <code class="docutils literal notranslate"><span class="pre">c_old</span></code></p></li>
+<li><p>Apply decay: <code class="docutils literal notranslate"><span class="pre">c_new</span> <span class="pre">=</span> <span class="pre">c_old</span> <span class="pre">-</span> <span class="pre">(c_old</span> <span class="pre">&gt;&gt;</span> <span class="pre">leak_shift)</span></code></p>
+<ul>
+<li><p>This is the same right-shift leak used for neurons</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">leak_shift</span></code> determines τ_c (longer decay than neurons)</p></li>
+</ul>
+</li>
+<li><p>If STDP event detected for this synapse: <code class="docutils literal notranslate"><span class="pre">c_new</span> <span class="pre">+=</span> <span class="pre">STDP_INCREMENT</span></code></p></li>
+<li><p>Write back to Region 4: <code class="docutils literal notranslate"><span class="pre">c_new</span></code></p></li>
+</ul>
+<p><strong>When to perform these updates:</strong></p>
+<ul class="simple">
+<li><p><strong>Option A</strong>: During Phase 2 (parallel with neuron updates)</p></li>
+<li><p><strong>Option B</strong>: Separate Phase 3 after neuron updates complete</p></li>
+<li><p><strong>Option C</strong>: Lazy update - only when accessed for weight updates</p>
+<ul>
+<li><p>More efficient: don’t read/write all eligibility traces every timestep</p></li>
+<li><p>Only update the ones being used</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="complete-phase-2-data-flow-diagram">
+<h2>Complete Phase 2 Data Flow Diagram<a class="headerlink" href="#complete-phase-2-data-flow-diagram" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                    PHASE 2 WITH R-STDP                      │
+└─────────────────────────────────────────────────────────────┘
+
+Step 1: Pointer Processing
+─────────────────────────
+pointer_fifo_controller
+    │
+    └──&gt; ptrFIFO (pop synapse pointer)
+           │
+           └──&gt; hbm_processor
+                  │
+                  ├──&gt; Compute Region 3 address (synapse)
+                  ├──&gt; Compute Region 4 address (eligibility trace)
+                  ├──&gt; Push Region 4 addr to etFIFO ───┐
+                  └──&gt; Read synapse from HBM Region 3  │
+                                                        │
+Step 2: Neuron Update + Coincidence Detection          │
+───────────────────────────────────────────            │
+hbm_processor forwards synapse data                    │
+    │                                                   │
+    └──&gt; internal_events_processor                     │
+           │                                            │
+           ├──&gt; Pop Region 4 addr from etFIFO &lt;────────┘
+           ├──&gt; Update neuron (URAM):
+           │      V_new = V_old + weight
+           ├──&gt; Check threshold: spike?
+           ├──&gt; Coincidence detection: post fired?
+           ├──&gt; Check reward register: DA on?
+           │
+           └──&gt; If (coincidence AND reward):
+                  Push Region 4 addr to et2FIFO ───┐
+                                                    │
+Step 3: Weight Updates                              │
+──────────────────────                              │
+hbm_processor (parallel state machine)              │
+    │                                                │
+    ├──&gt; Pop Region 4 addr from et2FIFO &lt;──────────┘
+    ├──&gt; Read eligibility trace from Region 4
+    ├──&gt; Compute Region 3 addr (subtract offset)
+    ├──&gt; Read current weight from Region 3
+    ├──&gt; Compute: w_new = w_old + et_value
+    └──&gt; Write w_new to Region 3 (reuse write_synapse logic)
+
+Step 4: Eligibility Trace Maintenance (parallel or separate)
+────────────────────────────────────────────────────────────
+For each synapse&#39;s eligibility trace:
+    ├──&gt; Read from Region 4
+    ├──&gt; Apply decay: c_new = c_old - (c_old &gt;&gt; leak_shift)
+    ├──&gt; If STDP event: c_new += INCREMENT
+    └──&gt; Write back to Region 4
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="summary-of-new-components">
+<h2>Summary of New Components<a class="headerlink" href="#summary-of-new-components" title="Link to this heading">#</a></h2>
+<section id="memory-regions">
+<h3>Memory Regions<a class="headerlink" href="#memory-regions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>HBM Region 4</strong>: Eligibility trace storage (one 36-bit value per synapse)</p></li>
+</ul>
+</section>
+<section id="fifos-introduced-as-needed-in-the-flow">
+<h3>FIFOs (introduced as needed in the flow)<a class="headerlink" href="#fifos-introduced-as-needed-in-the-flow" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>etFIFO</strong>: Queues eligibility trace addresses during pointer processing</p></li>
+<li><p><strong>et2FIFO</strong>: Queues eligibility traces that should trigger weight updates</p></li>
+</ul>
+</section>
+<section id="control-signals">
+<h3>Control Signals<a class="headerlink" href="#control-signals" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Reward Register</strong>: 1-bit dopamine signal (set by new opcode CMD_SET_REWARD)</p></li>
+<li><p><strong>exec_reward</strong>: Broadcast signal from command_interpreter to internal_events_processor</p></li>
+</ul>
+</section>
+<section id="reused-logic">
+<h3>Reused Logic<a class="headerlink" href="#reused-logic" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Neuron update pipeline</strong> → Eligibility trace updates (disable threshold check)</p></li>
+<li><p><strong>HBM write infrastructure</strong> → Weight updates</p></li>
+<li><p><strong>Phase 2 synapse processing</strong> → Coincidence detection point</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-design-decisions">
+<h2>Key Design Decisions<a class="headerlink" href="#key-design-decisions" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Simple address mapping</strong>: Region4 = Region3 + constant offset</p>
+<ul class="simple">
+<li><p>Makes address computation trivial (one addition)</p></li>
+<li><p>Easily reversible for going from eligibility trace back to synapse</p></li>
+</ul>
+</li>
+<li><p><strong>Binary reward signal</strong>: On/off only (for now)</p>
+<ul class="simple">
+<li><p>Simplifies initial implementation</p></li>
+<li><p>Future: Could be multi-bit for graded reward</p></li>
+</ul>
+</li>
+<li><p><strong>Coincidence-based STDP</strong>: Post fires in same timestep as pre input</p>
+<ul class="simple">
+<li><p>Simplified from asymmetric STDP window</p></li>
+<li><p>Good enough for initial learning demonstrations</p></li>
+</ul>
+</li>
+<li><p><strong>Reuse existing hardware</strong>: Eligibility traces use neuron logic</p>
+<ul class="simple">
+<li><p>Minimal new hardware required</p></li>
+<li><p>Proven, tested infrastructure</p></li>
+</ul>
+</li>
+<li><p><strong>FIFO-based pipeline</strong>: Maintains synchronization</p>
+<ul class="simple">
+<li><p>etFIFO keeps addresses aligned with synapse processing</p></li>
+<li><p>et2FIFO queues weight updates for parallel processing</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="testing-the-implementation">
+<h2>Testing the Implementation<a class="headerlink" href="#testing-the-implementation" title="Link to this heading">#</a></h2>
+<section id="simple-test-case">
+<h3>Simple Test Case<a class="headerlink" href="#simple-test-case" title="Link to this heading">#</a></h3>
+<p><strong>Network:</strong></p>
+<ul class="simple">
+<li><p>Neuron A (pre-synaptic) → Neuron B (post-synaptic)</p></li>
+<li><p>Single synapse with initial weight <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">500</span></code></p></li>
+<li><p>Threshold = 2000</p></li>
+</ul>
+<p><strong>Experiment sequence:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Timestep 0</strong>: Fire A repeatedly without B firing</p>
+<ul class="simple">
+<li><p>No coincidence → eligibility trace stays at 0</p></li>
+</ul>
+</li>
+<li><p><strong>Timestep 5</strong>: Fire A enough to make B spike</p>
+<ul class="simple">
+<li><p>B receives input, crosses threshold, spikes</p></li>
+<li><p>Coincidence detected: pre (A) was active, post (B) fired</p></li>
+<li><p>Eligibility trace increases (but reward is still OFF)</p></li>
+</ul>
+</li>
+<li><p><strong>Timesteps 6-10</strong>: No activity</p>
+<ul class="simple">
+<li><p>Eligibility trace decays: <code class="docutils literal notranslate"><span class="pre">c(t)</span> <span class="pre">×</span> <span class="pre">exp(-Δt/τ_c)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Timestep 11</strong>: Turn on reward (set reward register = 1)</p></li>
+<li><p><strong>Timestep 12</strong>: Fire A, B spikes again</p>
+<ul class="simple">
+<li><p>Coincidence detected</p></li>
+<li><p>Reward is ON</p></li>
+<li><p>→ Weight update triggered!</p></li>
+<li><p>Read eligibility trace from Region 4: <code class="docutils literal notranslate"><span class="pre">c(t)</span> <span class="pre">=</span> <span class="pre">100</span></code> (example)</p></li>
+<li><p>Compute: <code class="docutils literal notranslate"><span class="pre">W_new</span> <span class="pre">=</span> <span class="pre">500</span> <span class="pre">+</span> <span class="pre">100</span> <span class="pre">=</span> <span class="pre">600</span></code></p></li>
+<li><p>Write updated weight to Region 3</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Validation:</strong></p>
+<ul class="simple">
+<li><p>Read back synapse weight from HBM → should be 600</p></li>
+<li><p>On next input from A, B should spike with less input (stronger synapse)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="potential-issues-and-mitigations">
+<h2>Potential Issues and Mitigations<a class="headerlink" href="#potential-issues-and-mitigations" title="Link to this heading">#</a></h2>
+<section id="fifo-overflow">
+<h3>1. FIFO Overflow<a class="headerlink" href="#fifo-overflow" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: etFIFO or et2FIFO fills up if too many synapses processed</p>
+<p><strong>Mitigation</strong>:</p>
+<ul class="simple">
+<li><p>Size FIFOs same as ptrFIFO (512 entries proven sufficient)</p></li>
+<li><p>Add overflow detection flags</p></li>
+<li><p>Backpressure: stall pointer processing if etFIFO full</p></li>
+</ul>
+</section>
+<section id="hbm-bandwidth">
+<h3>2. HBM Bandwidth<a class="headerlink" href="#hbm-bandwidth" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: Additional reads/writes for Region 4 and weight updates</p>
+<p><strong>Impact analysis</strong>:</p>
+<ul class="simple">
+<li><p>Existing: ~200-300 HBM transactions per timestep</p></li>
+<li><p>New: +1 read per synapse (eligibility trace), +2 reads + 1 write per weight update</p></li>
+<li><p>For network with 1000 active synapses, 10% coincidence: +100 transactions</p></li>
+</ul>
+<p><strong>Mitigation</strong>:</p>
+<ul class="simple">
+<li><p>Weight updates run in parallel with ongoing Phase 2</p></li>
+<li><p>Burst mode for sequential eligibility trace reads</p></li>
+<li><p>Lazy decay (only update accessed traces)</p></li>
+</ul>
+</section>
+<section id="address-mapping-collision">
+<h3>3. Address Mapping Collision<a class="headerlink" href="#address-mapping-collision" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: Region 4 might overlap with Region 3 if offset too small</p>
+<p><strong>Solution</strong>:</p>
+<ul class="simple">
+<li><p>Choose REGION4_OFFSET &gt; maximum Region 3 size</p></li>
+<li><p>Example: If Region 3 uses rows 0x8000-0xFFFF (32K rows)</p>
+<ul>
+<li><p>Set REGION4_OFFSET = 0x8000 (32768 in decimal)</p></li>
+<li><p>Region 4 spans: 0x10000-0x17FFF</p></li>
+<li><p>No overlap ✓</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="coincidence-detection-granularity">
+<h3>4. Coincidence Detection Granularity<a class="headerlink" href="#coincidence-detection-granularity" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: Current design: “post fired this timestep” = coincidence</p>
+<p><strong>Limitation</strong>: Doesn’t distinguish if post fired 1ms or 10ms after pre</p>
+<p><strong>Future enhancement</strong>:</p>
+<ul class="simple">
+<li><p>Track spike times with sub-timestep resolution</p></li>
+<li><p>Implement asymmetric STDP window (separate τ+ and τ-)</p></li>
+<li><p>Different eligibility trace increments for potentiation vs depression</p></li>
+</ul>
+</section>
+<section id="eligibility-trace-decay-timing">
+<h3>5. Eligibility Trace Decay Timing<a class="headerlink" href="#eligibility-trace-decay-timing" title="Link to this heading">#</a></h3>
+<p><strong>Issue</strong>: When to apply decay? Every timestep for all traces is expensive</p>
+<p><strong>Recommended approach</strong>: Lazy decay</p>
+<ul class="simple">
+<li><p>Store last_update_timestamp with each trace</p></li>
+<li><p>When reading for weight update:</p>
+<ul>
+<li><p>Calculate time elapsed: <code class="docutils literal notranslate"><span class="pre">Δt</span> <span class="pre">=</span> <span class="pre">current_time</span> <span class="pre">-</span> <span class="pre">last_update_time</span></code></p></li>
+<li><p>Apply accumulated decay: <code class="docutils literal notranslate"><span class="pre">c</span> <span class="pre">=</span> <span class="pre">c_stored</span> <span class="pre">×</span> <span class="pre">exp(-Δt/τ_c)</span></code></p></li>
+</ul>
+</li>
+<li><p>Only write back when updating (not every read)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="python-api-usage">
+<h2>Python API Usage<a class="headerlink" href="#python-api-usage" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-architecture-adding-hbm-region-4-for-eligibility-traces">Memory Architecture: Adding HBM Region 4 for Eligibility Traces</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#address-mapping-region-3-region-4">Address Mapping: Region 3 ↔ Region 4</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-format">Data Format</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-reward-register-dopamine-signal">The Reward Register: Dopamine Signal</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-flow-with-r-stdp-step-by-step">Phase 2 Flow with R-STDP: Step-by-Step</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-pointer-processing-with-dual-address-computation">Step 1: Pointer Processing with Dual Address Computation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-neuron-update-with-coincidence-detection">Step 2: Neuron Update with Coincidence Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-weight-updates-via-eligibility-traces">Step 3: Weight Updates via Eligibility Traces</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-eligibility-trace-maintenance">Step 4: Eligibility Trace Maintenance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-phase-2-data-flow-diagram">Complete Phase 2 Data Flow Diagram</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-new-components">Summary of New Components</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-regions">Memory Regions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifos-introduced-as-needed-in-the-flow">FIFOs (introduced as needed in the flow)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#control-signals">Control Signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reused-logic">Reused Logic</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-design-decisions">Key Design Decisions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#testing-the-implementation">Testing the Implementation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-test-case">Simple Test Case</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-issues-and-mitigations">Potential Issues and Mitigations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-overflow">1. FIFO Overflow</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-bandwidth">2. HBM Bandwidth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#address-mapping-collision">3. Address Mapping Collision</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coincidence-detection-granularity">4. Coincidence Detection Granularity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#eligibility-trace-decay-timing">5. Eligibility Trace Decay Timing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-api-usage">Python API Usage</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/4_Implementing_RSTDP/hardware_only_writing.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

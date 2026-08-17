@@ -1,0 +1,2466 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>External Events Processor Module Family &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/external_events_processor';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="hbm_processor.v" href="hbm_processor.html" />
+    <link rel="prev" title="command_interpreter.v" href="command_interpreter.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">External Events Processor Module Family</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="external-events-processor-module-family">
+<h1>External Events Processor Module Family<a class="headerlink" href="#external-events-processor-module-family" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>The <strong>External Events Processor</strong> family manages input spike events (axons) in the neuromorphic FPGA system. These modules maintain two Block RAMs in a double-buffering scheme: one for the “present” time step (currently being processed) and one for the “future” time step (accumulating new events). This architecture allows continuous operation without dropping input events.</p>
+<p>Three variants exist:</p>
+<ol class="arabic simple">
+<li><p><strong>external_events_processor.v</strong> - Base version with full pipeline hazard handling</p></li>
+<li><p><strong>external_events_processor_simple.v</strong> - Simplified single-core version with wider data paths</p></li>
+<li><p><strong>external_events_processor_v2.v</strong> - Enhanced version with debugging capabilities</p></li>
+</ol>
+<section id="role-in-the-software-hardware-stack">
+<h3>Role in the Software/Hardware Stack<a class="headerlink" href="#role-in-the-software-hardware-stack" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Host</span> <span class="n">Application</span> <span class="p">(</span><span class="n">Python</span><span class="o">/</span><span class="n">C</span><span class="o">++</span><span class="p">)</span>
+         <span class="o">|</span>
+    <span class="p">[</span><span class="n">hs_bridge</span><span class="p">]</span>
+         <span class="o">|</span>
+  <span class="p">[</span><span class="n">PCIe</span> <span class="n">Interface</span><span class="p">]</span>
+         <span class="o">|</span>
+  <span class="p">[</span><span class="n">Command</span> <span class="n">Interpreter</span><span class="p">]</span> <span class="o">-----&gt;</span> <span class="p">[</span><span class="n">External</span> <span class="n">Events</span> <span class="n">Processor</span><span class="p">]</span> <span class="o">&lt;----</span> <span class="n">External</span> <span class="n">spike</span> <span class="n">events</span>
+         <span class="o">|</span>                              <span class="o">|</span>
+         <span class="o">|</span>                     <span class="n">Present</span> <span class="n">BRAM</span> <span class="p">(</span><span class="mi">8</span> <span class="ow">or</span> <span class="mi">16</span> <span class="n">axons</span><span class="o">/</span><span class="n">row</span><span class="p">)</span>
+         <span class="o">|</span>                     <span class="n">Future</span> <span class="n">BRAM</span> <span class="p">(</span><span class="mi">8</span> <span class="ow">or</span> <span class="mi">16</span> <span class="n">axons</span><span class="o">/</span><span class="n">row</span><span class="p">)</span>
+         <span class="o">|</span>                              <span class="o">|</span>
+    <span class="p">[</span><span class="n">HBM</span> <span class="n">Processor</span><span class="p">]</span> <span class="o">&lt;------</span> <span class="n">exec_bram_spiked</span> <span class="p">(</span><span class="n">spike</span> <span class="n">mask</span><span class="p">)</span>
+         <span class="o">|</span>                              <span class="o">|</span>
+  <span class="p">[</span><span class="n">Internal</span> <span class="n">Events</span><span class="p">]</span> <span class="o">&lt;--------</span> <span class="n">exec_bram_phase1_done</span>
+    <span class="n">Processor</span>
+</pre></div>
+</div>
+<p><strong>Function</strong>:</p>
+<ul class="simple">
+<li><p>Receive input spike events from external sources or command interpreter</p></li>
+<li><p>Store events in double-buffered BRAMs (present/future)</p></li>
+<li><p>Synchronize event delivery with HBM read operations</p></li>
+<li><p>Clear processed events after reading</p></li>
+<li><p>Handle pipeline hazards for concurrent writes during multi-core operation</p></li>
+</ul>
+<p><strong>Key Innovation</strong>: Double-buffering allows new events to accumulate in the “future” BRAM while the “present” BRAM is being read and cleared, ensuring no event loss during processing.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="variant-comparison">
+<h2>Variant Comparison<a class="headerlink" href="#variant-comparison" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Feature</p></th>
+<th class="head"><p>Base Version</p></th>
+<th class="head"><p>Simple Version</p></th>
+<th class="head"><p>V2 Version</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>File</strong></p></td>
+<td><p>external_events_processor.v</p></td>
+<td><p>external_events_processor_simple.v</p></td>
+<td><p>external_events_processor_v2.v</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Axons per row</strong></p></td>
+<td><p>8</p></td>
+<td><p>16</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Address width</strong></p></td>
+<td><p>14 bits</p></td>
+<td><p>13 bits</p></td>
+<td><p>14 bits</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Data width</strong></p></td>
+<td><p>8 bits</p></td>
+<td><p>16 bits</p></td>
+<td><p>8 bits</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Target</strong></p></td>
+<td><p>Multi-core</p></td>
+<td><p>Single-core</p></td>
+<td><p>Debug/verification</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Future pipeline</strong></p></td>
+<td><p>3-stage hazard handling</p></td>
+<td><p>Direct write (no hazards)</p></td>
+<td><p>Simplified RMW</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>State machine</strong></p></td>
+<td><p>5 states</p></td>
+<td><p>4 states</p></td>
+<td><p>5 states + debug FSM</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Debug features</strong></p></td>
+<td><p>None</p></td>
+<td><p>None</p></td>
+<td><p>CI interface, debug ports</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Complexity</strong></p></td>
+<td><p>High</p></td>
+<td><p>Low</p></td>
+<td><p>High</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="module-architecture-base-version">
+<h2>Module Architecture (Base Version)<a class="headerlink" href="#module-architecture-base-version" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                                    ┌─────────────────────────────────┐
+                                    │  External Events Processor      │
+                                    │                                 │
+   setArray_go ──────────┐          │  ┌──────────────────────────┐  │
+   setArray_addr[13:0] ──┼──────────┼─&gt;│  Future BRAM Control     │  │
+   setArray_data[7:0] ───┘          │  │  - 3-stage pipeline      │  │
+                                    │  │  - Hazard detection      │  │
+   exec_run ────────────────────────┼─&gt;│  - waddr/wdata/wren[2:0] │  │
+                                    │  └────────┬─────────────────┘  │
+                                    │           │                     │
+                                    │           v                     │
+                                    │  ┌──────────────────────────┐  │
+                                    │  │   BRAM Multiplexer       │  │
+                                    │  │   bram_select toggle     │  │
+    ┌───────────────────────────────┼─&gt;│   - BRAM0 ←→ Present    │  │
+    │                               │  │   - BRAM1 ←→ Future      │  │
+    │  ┌────────────────────────────┼─&lt;│                          │  │
+    │  │                            │  └───────┬──────────────────┘  │
+    │  │                            │          │                     │
+    │  │                            │          v                     │
+    │  │                            │  ┌──────────────────────────┐  │
+    │  │   exec_hbm_rvalidready ────┼─&gt;│ Present BRAM Control     │  │
+    │  │                            │  │ - State machine (5)      │  │
+    │  │                            │  │ - Pipeline fill          │  │
+    │  │                            │  │ - Read &amp; clear           │  │
+    │  │                            │  │ - raddr/waddr tracking   │  │
+    │  │                            │  └────────┬─────────────────┘  │
+    │  │                            │           │                     │
+    │  └───────── exec_bram_spiked[7:0] &lt;───────┘                    │
+    │                               │                                 │
+    └───────── exec_bram_phase1_done ────────────────────────────────┤
+                                    │                                 │
+                                    └─────────────────────────────────┘
+
+    BRAM0 (18Kb)                    BRAM1 (18Kb)
+    ┌────────────┐                  ┌────────────┐
+    │ 16384 × 8b │                  │ 16384 × 8b │
+    │            │                  │            │
+    │ Toggles:   │                  │ Toggles:   │
+    │ Present ←→ │                  │ Future ←→  │
+    │ Future     │                  │ Present    │
+    └────────────┘                  └────────────┘
+</pre></div>
+</div>
+<section id="data-flow-two-phase-operation">
+<h3>Data Flow (Two-Phase Operation)<a class="headerlink" href="#data-flow-two-phase-operation" title="Link to this heading">#</a></h3>
+<p><strong>Phase 0: Setup (between time steps)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. exec_run pulse triggers:
+   - bram_select toggles (swaps present ←→ future)
+   - State machine resets to IDLE
+
+2. Present BRAM now contains accumulated events from previous &quot;future&quot;
+3. Future BRAM ready to accumulate new events
+</pre></div>
+</div>
+<p><strong>Phase 1: Event Processing (during time step)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>STATE_FILL_PIPE (cycles 0-2):
+   ├─&gt; Read BRAM addresses 0, 1, 2
+   └─&gt; Fill 3-stage pipeline (no writes yet)
+
+STATE_READ_INPUTS (cycles 3 to completion):
+   ├─&gt; Wait for exec_hbm_rvalidready
+   ├─&gt; Read next BRAM address (bramPresent_raddr++)
+   ├─&gt; Write 0 to lagging address (bramPresent_waddr++)
+   ├─&gt; Output exec_bram_spiked[7:0] to downstream
+   └─&gt; Loop until bramPresent_waddr == BRAM_ADDR_LIMIT
+
+STATE_PHASE1_DONE:
+   └─&gt; Assert exec_bram_phase1_done
+</pre></div>
+</div>
+<p><strong>Concurrent Future Writes</strong> (throughout processing):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>setArray_go pulse:
+   ├─&gt; Check for pipeline hazards (same address in stages 0, 1, 2)
+   ├─&gt; Merge with in-flight data if hazard detected
+   ├─&gt; Propagate through 3-stage pipeline
+   └─&gt; Write to Future BRAM after 3 cycles
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="base-version-external-events-processor-v">
+<h3>Base Version (external_events_processor.v)<a class="headerlink" href="#base-version-external-events-processor-v" title="Link to this heading">#</a></h3>
+<section id="parameters">
+<h4>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PIPE_DEPTH</span></code></p></td>
+<td><p>3</p></td>
+<td><p>BRAM read pipeline depth (matches BRAM latency)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="clock-and-reset">
+<h4>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>System clock (225 MHz)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low asynchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="configuration">
+<h4>Configuration<a class="headerlink" href="#configuration" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_inputs</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>17</p></td>
+<td><p>Total number of input axons (max 131,072)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="external-event-input-interface">
+<h4>External Event Input Interface<a class="headerlink" href="#external-event-input-interface" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">setArray_go</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Write pulse for new axon event</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">setArray_addr</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>14</p></td>
+<td><p>BRAM row address (8 axons per row)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">setArray_data</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Bit mask (1=spike, 0=no spike)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="execution-control-interface">
+<h4>Execution Control Interface<a class="headerlink" href="#execution-control-interface" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Start new time step (toggles BRAMs)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Pipeline filled, ready for reads</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>HBM data valid &amp; ready (advance BRAM)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>8</p></td>
+<td><p>Current spike mask (8 axons)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>All inputs read, phase 1 complete</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bram0-interface">
+<h4>BRAM0 Interface<a class="headerlink" href="#bram0-interface" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_waddr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Write address</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_wdata</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>8</p></td>
+<td><p>Write data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Write enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_raddr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Read address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Read enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_rdata</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Read data (3-cycle latency)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bram1-interface">
+<h4>BRAM1 Interface<a class="headerlink" href="#bram1-interface" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_waddr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Write address</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_wdata</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>8</p></td>
+<td><p>Write data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Write enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_raddr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Read address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Read enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_rdata</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Read data (3-cycle latency)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="simple-version-external-events-processor-simple-v">
+<h3>Simple Version (external_events_processor_simple.v)<a class="headerlink" href="#simple-version-external-events-processor-simple-v" title="Link to this heading">#</a></h3>
+<p>Key differences from base version:</p>
+<ul class="simple">
+<li><p><strong>13-bit addresses</strong>: <code class="docutils literal notranslate"><span class="pre">axonEvent_addr[12:0]</span></code>, <code class="docutils literal notranslate"><span class="pre">bram0/1_*addr[12:0]</span></code></p></li>
+<li><p><strong>16-bit data</strong>: <code class="docutils literal notranslate"><span class="pre">axonEvent_data[15:0]</span></code>, <code class="docutils literal notranslate"><span class="pre">bram0/1_*data[15:0]</span></code>, <code class="docutils literal notranslate"><span class="pre">exec_eep_spiked[15:0]</span></code></p></li>
+<li><p><strong>16 axons per row</strong>: <code class="docutils literal notranslate"><span class="pre">axon_addr_limit</span> <span class="pre">=</span> <span class="pre">num_inputs[16:4]</span></code> (not <code class="docutils literal notranslate"><span class="pre">[16:3]</span></code>)</p></li>
+<li><p><strong>Additional output</strong>: <code class="docutils literal notranslate"><span class="pre">hbm2eep_rden</span></code> (HBM FIFO read enable)</p></li>
+<li><p><strong>Debug outputs</strong>: <code class="docutils literal notranslate"><span class="pre">eep_curr_state[1:0]</span></code>, <code class="docutils literal notranslate"><span class="pre">curr_bram_waddr[12:0]</span></code></p></li>
+<li><p><strong>Renamed ports</strong>: <code class="docutils literal notranslate"><span class="pre">exec_eep_*</span></code> instead of <code class="docutils literal notranslate"><span class="pre">exec_bram_*</span></code></p></li>
+</ul>
+</section>
+<section id="v2-version-external-events-processor-v2-v">
+<h3>V2 Version (external_events_processor_v2.v)<a class="headerlink" href="#v2-version-external-events-processor-v2-v" title="Link to this heading">#</a></h3>
+<p>Additional interfaces (beyond base version):</p>
+<section id="command-interpreter-debug-interface">
+<h4>Command Interpreter Debug Interface<a class="headerlink" href="#command-interpreter-debug-interface" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2eep_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Debug command FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2eep_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>14</p></td>
+<td><p>Debug read address from CI</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2eep_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Debug command FIFO read enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eep2ci_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Debug response FIFO full flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eep2ci_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>22</p></td>
+<td><p>Debug response data (addr + data)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eep2ci_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Debug response FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="debug-bram-read-ports">
+<h4>Debug BRAM Read Ports<a class="headerlink" href="#debug-bram-read-ports" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_raddr_dbg</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Debug read address for BRAM0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram0_rdata_dbg</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Debug read data from BRAM0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_raddr_dbg</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>14</p></td>
+<td><p>Debug read address for BRAM1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram1_rdata_dbg</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>8</p></td>
+<td><p>Debug read data from BRAM1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="base-version-state-machine">
+<h3>Base Version State Machine<a class="headerlink" href="#base-version-state-machine" title="Link to this heading">#</a></h3>
+<section id="present-bram-control-fsm">
+<h4>Present BRAM Control FSM<a class="headerlink" href="#present-bram-control-fsm" title="Link to this heading">#</a></h4>
+<p><strong>States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">STATE_RESET</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="w">  </span><span class="c1">// Reset addresses and flags</span>
+<span class="n">STATE_IDLE</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d1</span><span class="w">  </span><span class="c1">// Wait for exec_run</span>
+<span class="n">STATE_FILL_PIPE</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d2</span><span class="w">  </span><span class="c1">// Fill 3-stage BRAM read pipeline</span>
+<span class="n">STATE_READ_INPUTS</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d3</span><span class="w">  </span><span class="c1">// Read inputs, clear memory, sync with HBM</span>
+<span class="n">STATE_PHASE1_DONE</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d4</span><span class="w">  </span><span class="c1">// Signal completion</span>
+</pre></div>
+</div>
+<p><strong>State Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>    RESET
+      |
+      v
+    IDLE &lt;────────────────┐
+      |                   │
+      | exec_run          │
+      v                   │
+   FILL_PIPE              │
+      |                   │
+      | raddr &gt;= 3        │
+      v                   │
+  READ_INPUTS             │
+      |                   │
+      | waddr == limit    │
+      v                   │
+  PHASE1_DONE ────────────┘
+</pre></div>
+</div>
+<p><strong>State Behaviors:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">STATE_RESET:</span>
+<span class="w">    </span><span class="n">bramPresent_addr_rst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">        </span><span class="c1">// Reset raddr and waddr to 0</span>
+<span class="w">    </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_IDLE</span>
+
+<span class="nl">STATE_IDLE:</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_run</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_addr_rst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">    </span><span class="c1">// Reset for new time step</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_FILL_PIPE</span>
+
+<span class="nl">STATE_FILL_PIPE:</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">PIPE_DEPTH</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">        </span><span class="c1">// Issue read</span>
+<span class="w">        </span><span class="n">bramPresent_addr_inc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">    </span><span class="c1">// Increment raddr</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_READ_INPUTS</span><span class="w"> </span><span class="c1">// Pipeline full</span>
+
+<span class="nl">STATE_READ_INPUTS:</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_hbm_rvalidready</span><span class="p">)</span><span class="w">          </span><span class="c1">// HBM ready for next data</span>
+<span class="w">        </span><span class="n">bramPresent_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">        </span><span class="c1">// Read next address</span>
+<span class="w">        </span><span class="n">bramPresent_addr_inc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">    </span><span class="c1">// Increment both raddr and waddr</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BRAM_ADDR_LIMIT</span><span class="p">)</span>
+<span class="w">            </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_PHASE1_DONE</span>
+
+<span class="nl">STATE_PHASE1_DONE:</span>
+<span class="w">    </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_IDLE</span><span class="w">            </span><span class="c1">// Return to idle</span>
+</pre></div>
+</div>
+</section>
+<section id="address-management-present-bram">
+<h4>Address Management (Present BRAM)<a class="headerlink" href="#address-management-present-bram" title="Link to this heading">#</a></h4>
+<p>The module maintains two addresses with different roles:</p>
+<p><strong>Read Address (raddr)</strong> - Leading edge:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Advances PIPE_DEPTH cycles ahead of write address</span>
+<span class="c1">// Points to data that will be available after pipeline latency</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">exec_run</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramPresent_addr_rst</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_addr_inc</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Write Address (waddr)</strong> - Lagging edge:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Trails read address by PIPE_DEPTH cycles</span>
+<span class="c1">// Points to data currently emerging from pipeline</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">exec_run</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramPresent_addr_rst</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_addr_inc</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">exec_bram_phase1_ready</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Address Relationship:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0-2 (FILL_PIPE):
+   raddr: 0→1→2→3
+   waddr: 0→0→0→0  (not advancing until exec_bram_phase1_ready)
+
+Cycle 3+ (READ_INPUTS):
+   raddr: 3→4→5→6→...
+   waddr: 0→1→2→3→...  (maintaining 3-cycle lag)
+</pre></div>
+</div>
+<p><strong>Why Two Addresses?</strong></p>
+<ul class="simple">
+<li><p>BRAM has 3-cycle read latency</p></li>
+<li><p>raddr issues read requests</p></li>
+<li><p>waddr writes zeros to addresses whose data has emerged from pipeline</p></li>
+<li><p>This implements “read first” behavior: read data, then clear it</p></li>
+</ul>
+</section>
+<section id="future-bram-pipeline-hazard-handling">
+<h4>Future BRAM Pipeline Hazard Handling<a class="headerlink" href="#future-bram-pipeline-hazard-handling" title="Link to this heading">#</a></h4>
+<p>The base version implements a sophisticated 3-stage pipeline to handle concurrent writes to the same BRAM address during the PIPE_DEPTH filling phase.</p>
+<p><strong>Problem</strong>: If two <code class="docutils literal notranslate"><span class="pre">setArray_go</span></code> pulses target the same address within 3 cycles, data could be lost.</p>
+<p><strong>Solution</strong>: Three-stage pipeline with hazard detection and data merging.</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Pipeline registers</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">13</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// Stages 2→1→0</span>
+<span class="kt">reg</span><span class="w">        </span><span class="n">bramFuture_wren</span><span class="w">  </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="c1">// Stage assignments (stage 2 is newest, stage 0 is oldest)</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Initialize all stages</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// ... (similar for waddr, wren)</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_go</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Check for hazards at each stage</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Hazard in stage 2: merge immediately</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Hazard in stage 1: merge with stage 1 data</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// Hazard in stage 0: data will merge at BRAM (commented out)</span>
+<span class="w">            </span><span class="c1">// Current code doesn&#39;t merge (see lines 95-96, 103-104)</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// No hazard: normal pipeline operation</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">            </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="c1">// Always propagate addresses and enables</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">setArray_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// No new write: propagate with zeros</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">        </span><span class="c1">// ... (propagate addresses/enables)</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Hazard Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle | setArray_go | addr | data | Stage2    | Stage1    | Stage0    | Action
+------|-------------|------|------|-----------|-----------|-----------|------------------
+  0   |      1      | 100  | 0x01 | 100/0x01  |    -/-    |    -/-    | New write
+  1   |      1      | 100  | 0x02 | 100/0x00  | 100/0x03  |    -/-    | Hazard! Merge 0x01|0x02=0x03
+  2   |      1      | 200  | 0x04 | 200/0x04  | 100/0x00  | 100/0x03  | No hazard
+  3   |      0      |  -   |  -   |    -/0x00 | 200/0x04  | 100/0x00  | Propagate
+  4   |      0      |  -   |  -   |    -/0x00 |    -/0x00 | 200/0x04  | Write 100(0x03)
+  5   |      0      |  -   |  -   |    -/0x00 |    -/0x00 |    -/0x00 | Write 200(0x04)
+</pre></div>
+</div>
+<p><strong>Note</strong>: Lines 95-96 and 103-104 show debugging modifications that bypass the final merge operation:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Original (with full hazard handling):</span>
+<span class="c1">// assign bram0_wdata = ~bram_select ? bramPresent_wdata : bramFuture_wdata[0] | bramFuture_rdata | setArray_data_pipe;</span>
+
+<span class="c1">// Debug version (simpler, may lose events):</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram0_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">bram_select</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">bramPresent_wdata</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="simple-version-logic">
+<h3>Simple Version Logic<a class="headerlink" href="#simple-version-logic" title="Link to this heading">#</a></h3>
+<p>The simple version removes complex hazard handling for single-core operation:</p>
+<p><strong>Key Simplifications:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Direct Future Write</strong> (no pipeline):</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// No pipeline registers - direct assignment</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_addr_reg</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_data_reg</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">axonEvent_set_reg</span><span class="p">;</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="2">
+<li><p><strong>No Future BRAM Read</strong> (unless debugging):</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_raddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">13</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_rden</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Disabled to avoid pipeline issues</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="3">
+<li><p><strong>Simplified State Machine</strong> (4 states instead of 5):</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Removed STATE_PHASE1_DONE, completion detected in STATE_READ_INPUTS</span>
+<span class="nl">STATE_READ_INPUTS:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_hbm_rvalidready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">bramPresent_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramPresent_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">axon_addr_limit</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">phase1_done_set</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Direct transition</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<ol class="arabic simple" start="4">
+<li><p><strong>16 Axons Per Row</strong>:</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Base version: 8 axons per row</span>
+<span class="c1">// BRAM_ADDR_LIMIT = num_inputs[16:3]  // Divide by 8</span>
+
+<span class="c1">// Simple version: 16 axons per row</span>
+<span class="c1">// axon_addr_limit = num_inputs[16:4]  // Divide by 16</span>
+</pre></div>
+</div>
+<p><strong>Address Calculation Example:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num_inputs</span> <span class="pre">=</span> <span class="pre">17'd131072</span></code> (max neurons)</p></li>
+<li><p>Base: <code class="docutils literal notranslate"><span class="pre">BRAM_ADDR_LIMIT</span> <span class="pre">=</span> <span class="pre">131072</span> <span class="pre">&gt;&gt;</span> <span class="pre">3</span> <span class="pre">=</span> <span class="pre">16384</span></code> rows</p></li>
+<li><p>Simple: <code class="docutils literal notranslate"><span class="pre">axon_addr_limit</span> <span class="pre">=</span> <span class="pre">131072</span> <span class="pre">&gt;&gt;</span> <span class="pre">4</span> <span class="pre">=</span> <span class="pre">8192</span></code> rows</p></li>
+</ul>
+<ol class="arabic simple" start="5">
+<li><p><strong>Registered Input Events</strong>:</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Better place-and-route by registering inputs</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">axonEvent_set_reg</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">axonEvent_addr_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">13</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">axonEvent_data_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">16</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">axonEvent_set_reg</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">axonEvent_set</span><span class="p">;</span>
+<span class="w">        </span><span class="n">axonEvent_addr_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">axonEvent_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">axonEvent_data_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">axonEvent_data</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="v2-version-enhancements">
+<h3>V2 Version Enhancements<a class="headerlink" href="#v2-version-enhancements" title="Link to this heading">#</a></h3>
+<p>The V2 version adds debug capabilities while simplifying the future write logic:</p>
+<section id="simplified-future-write-read-modify-write">
+<h4>Simplified Future Write (Read-Modify-Write)<a class="headerlink" href="#simplified-future-write-read-modify-write" title="Link to this heading">#</a></h4>
+<p>Instead of complex pipeline hazard detection, V2 uses RMW:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Read the current value</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_raddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">setArray_addr</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">3</span><span class="p">];</span><span class="w">  </span><span class="c1">// Note: only uses upper bits</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_rden</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">ci2eep_rden</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_go</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_rdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bram_select</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">bram0_rdata</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">bram1_rdata</span><span class="p">;</span>
+
+<span class="c1">// Merge with new data via OR operation</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bramFuture_rdata</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+
+<span class="c1">// Propagate through 3-stage pipeline (addresses and enables only)</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">setArray_addr</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">setArray_go</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="w">        </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Why This Works:</strong></p>
+<ul class="simple">
+<li><p>Always read before write (RMW pattern)</p></li>
+<li><p>OR operation merges new spikes with existing ones</p></li>
+<li><p>Simpler than explicit hazard detection</p></li>
+<li><p>Relies on BRAM “read first” mode</p></li>
+</ul>
+</section>
+<section id="debug-state-machine">
+<h4>Debug State Machine<a class="headerlink" href="#debug-state-machine" title="Link to this heading">#</a></h4>
+<p>V2 adds a separate FSM for debug access:</p>
+<p><strong>Debug States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">DBG_STATE_RESET</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="w">  </span><span class="c1">// Reset debug logic</span>
+<span class="n">DBG_STATE_IDLE</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d1</span><span class="w">  </span><span class="c1">// Wait for debug command</span>
+<span class="n">DBG_STATE_WAIT_0</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d2</span><span class="w">  </span><span class="c1">// Issue first read</span>
+<span class="n">DBG_STATE_WAIT_1</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d3</span><span class="w">  </span><span class="c1">// Wait cycle 2</span>
+<span class="n">DBG_STATE_WAIT_2</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d4</span><span class="w">  </span><span class="c1">// Wait cycle 3</span>
+<span class="n">DBG_STATE_WAIT_3</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d5</span><span class="w">  </span><span class="c1">// Wait cycle 4</span>
+<span class="n">DBG_STATE_DONE</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d6</span><span class="w">  </span><span class="c1">// Send response, pop command</span>
+</pre></div>
+</div>
+<p><strong>Debug Flow:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Command Interpreter writes address to ci2eep FIFO
+2. Debug FSM detects ~ci2eep_empty
+3. Issue BRAM read (bram0/1_raddr_dbg = ci2eep_dout)
+4. Wait 4 cycles for pipeline (WAIT_0→1→2→3)
+5. Write response to eep2ci FIFO (address + data)
+6. Pop command from ci2eep (ci2eep_rden = 1)
+7. Return to IDLE
+</pre></div>
+</div>
+<p><strong>Debug Interface Behavior:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">ci2eep_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">eep2ci_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">dbg_curr_state</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">dbg_curr_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">DBG_STATE_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">ci2eep_empty</span><span class="p">)</span>
+<span class="w">                </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DBG_STATE_WAIT_0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="nl">DBG_STATE_WAIT_0:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">eep2ci_full</span><span class="p">)</span>
+<span class="w">                </span><span class="n">eep2ci_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write response</span>
+<span class="w">            </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DBG_STATE_WAIT_1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="c1">// ... (similar for WAIT_1, WAIT_2, WAIT_3)</span>
+<span class="w">        </span><span class="nl">DBG_STATE_DONE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">ci2eep_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">      </span><span class="c1">// Pop command</span>
+<span class="w">            </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DBG_STATE_IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+
+<span class="c1">// Response format: {address, data}</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">eep2ci_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bram_select</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="p">{</span><span class="n">bram0_raddr_dbg</span><span class="p">,</span><span class="w"> </span><span class="n">bram0_rdata_dbg</span><span class="p">}</span>
+<span class="w">                                </span><span class="o">:</span><span class="w"> </span><span class="p">{</span><span class="n">bram1_raddr_dbg</span><span class="p">,</span><span class="w"> </span><span class="n">bram1_rdata_dbg</span><span class="p">};</span>
+
+<span class="c1">// Debug read addresses (always driven)</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram0_raddr_dbg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2eep_dout</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram1_raddr_dbg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2eep_dout</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-map">
+<h2>Memory Map<a class="headerlink" href="#memory-map" title="Link to this heading">#</a></h2>
+<section id="base-and-v2-versions-8-axons-row">
+<h3>Base and V2 Versions (8 axons/row)<a class="headerlink" href="#base-and-v2-versions-8-axons-row" title="Link to this heading">#</a></h3>
+<p><strong>BRAM Organization:</strong></p>
+<ul class="simple">
+<li><p><strong>Depth</strong>: 16,384 rows (14-bit address)</p></li>
+<li><p><strong>Width</strong>: 8 bits (1 bit per axon)</p></li>
+<li><p><strong>Total Capacity</strong>: 131,072 axons</p></li>
+<li><p><strong>Dual BRAMs</strong>: BRAM0 and BRAM1 (double buffering)</p></li>
+</ul>
+<p><strong>Address Mapping:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Axon</span> <span class="n">ID</span> <span class="n">Range</span>     <span class="o">|</span> <span class="n">BRAM</span> <span class="n">Address</span> <span class="o">|</span> <span class="n">Bit</span> <span class="n">Position</span>
+<span class="o">------------------|--------------|-------------</span>
+<span class="mi">0</span> <span class="o">-</span> <span class="mi">7</span>             <span class="o">|</span> <span class="mh">0x0000</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+<span class="mi">8</span> <span class="o">-</span> <span class="mi">15</span>            <span class="o">|</span> <span class="mh">0x0001</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+<span class="mi">16</span> <span class="o">-</span> <span class="mi">23</span>           <span class="o">|</span> <span class="mh">0x0002</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+<span class="o">...</span>               <span class="o">|</span> <span class="o">...</span>          <span class="o">|</span> <span class="o">...</span>
+<span class="mi">131064</span> <span class="o">-</span> <span class="mi">131071</span>   <span class="o">|</span> <span class="mh">0x3FFF</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Bit Encoding:</strong></p>
+<ul class="simple">
+<li><p>Bit = 1: Axon spiked</p></li>
+<li><p>Bit = 0: No spike</p></li>
+</ul>
+<p><strong>Address Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">bram_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axon_id</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">3</span><span class="p">];</span><span class="w">      </span><span class="c1">// Upper 14 bits</span>
+<span class="n">bit_pos</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">axon_id</span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">       </span><span class="c1">// Lower 3 bits</span>
+</pre></div>
+</div>
+</section>
+<section id="simple-version-16-axons-row">
+<h3>Simple Version (16 axons/row)<a class="headerlink" href="#simple-version-16-axons-row" title="Link to this heading">#</a></h3>
+<p><strong>BRAM Organization:</strong></p>
+<ul class="simple">
+<li><p><strong>Depth</strong>: 8,192 rows (13-bit address)</p></li>
+<li><p><strong>Width</strong>: 16 bits (1 bit per axon)</p></li>
+<li><p><strong>Total Capacity</strong>: 131,072 axons</p></li>
+<li><p><strong>Dual BRAMs</strong>: BRAM0 and BRAM1</p></li>
+</ul>
+<p><strong>Address Mapping:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Axon</span> <span class="n">ID</span> <span class="n">Range</span>     <span class="o">|</span> <span class="n">BRAM</span> <span class="n">Address</span> <span class="o">|</span> <span class="n">Bit</span> <span class="n">Position</span>
+<span class="o">------------------|--------------|-------------</span>
+<span class="mi">0</span> <span class="o">-</span> <span class="mi">15</span>            <span class="o">|</span> <span class="mh">0x0000</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+<span class="mi">16</span> <span class="o">-</span> <span class="mi">31</span>           <span class="o">|</span> <span class="mh">0x0001</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+<span class="mi">32</span> <span class="o">-</span> <span class="mi">47</span>           <span class="o">|</span> <span class="mh">0x0002</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+<span class="o">...</span>               <span class="o">|</span> <span class="o">...</span>          <span class="o">|</span> <span class="o">...</span>
+<span class="mi">131056</span> <span class="o">-</span> <span class="mi">131071</span>   <span class="o">|</span> <span class="mh">0x1FFF</span>       <span class="o">|</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="n">to</span> <span class="p">[</span><span class="mi">15</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Address Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">bram_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">axon_id</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">4</span><span class="p">];</span><span class="w">      </span><span class="c1">// Upper 13 bits</span>
+<span class="n">bit_pos</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">axon_id</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">       </span><span class="c1">// Lower 4 bits</span>
+</pre></div>
+</div>
+<p><strong>Memory Utilization:</strong></p>
+<ul class="simple">
+<li><p>Base/V2: 16,384 × 8 = 128 Kb per BRAM → 256 Kb total</p></li>
+<li><p>Simple: 8,192 × 16 = 128 Kb per BRAM → 256 Kb total</p></li>
+<li><p>Same total capacity, different organization</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="time-step-transition-double-buffer-swap">
+<h3>Time Step Transition (Double Buffer Swap)<a class="headerlink" href="#time-step-transition-double-buffer-swap" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────┬─────
+clk      ┘     └─────┘     └─────┘     └─────┘     └─────┘
+
+exec_run ──────┐     ┌─────────────────────────────────────────
+               └─────┘
+
+         Time Step N-1    │ Time Step N
+         ─────────────────┼─────────────────────────────────────
+                          │
+bram_select = 0           │ Toggle → 1
+BRAM0 = Present           │ BRAM0 → Future
+BRAM1 = Future            │ BRAM1 → Present
+                          │
+State:   READ_INPUTS      │ IDLE → FILL_PIPE → READ_INPUTS
+
+bramPresent = BRAM0       │ bramPresent = BRAM1
+bramFuture  = BRAM1       │ bramFuture  = BRAM0
+</pre></div>
+</div>
+</section>
+<section id="present-bram-read-sequence-base-v2">
+<h3>Present BRAM Read Sequence (Base &amp; V2)<a class="headerlink" href="#present-bram-read-sequence-base-v2" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle    0    1    2    3    4    5    6    7    8    9
+         ─────┬────┬────┬────┬────┬────┬────┬────┬────┬────
+State    FILL │FILL│FILL│READ│READ│READ│READ│READ│READ│...
+         ────┬┴────┴────┴────┴────┴────┴────┴────┴────┴────
+
+rden     ────┐    ┌───┐    ┌───┐    ┌───┐    ┌───┐    ┌───
+         ────└────┘   └────┘   └────┘   └────┘   └────┘
+
+raddr        0    1    2    3    4    5    6    7    8    9
+
+wren     ───────────────────┐    ┌───┐    ┌───┐    ┌───┐
+         ───────────────────└────┘   └────┘   └────┘   └────
+
+waddr        0    0    0    0    1    2    3    4    5    6
+
+                     ┌─────────┐
+phase1_ready ────────┘         └──────────────────────────────
+                          (asserted in READ_INPUTS state)
+
+hbm_rvalidready ────────────┐    ┌───┐    ┌───┐    ┌───┐
+                ────────────└────┘   └────┘   └────┘   └────
+
+exec_bram_spiked    X    X    X    D0   D1   D2   D3   D4   D5
+                    (pipeline latency = 3 cycles)
+
+BRAM Data Flow:
+  Cycle 0: Issue read addr 0  →  (3-cycle latency)  →  Cycle 3: Data 0 emerges
+  Cycle 1: Issue read addr 1  →  (3-cycle latency)  →  Cycle 4: Data 1 emerges
+  Cycle 2: Issue read addr 2  →  (3-cycle latency)  →  Cycle 5: Data 2 emerges
+  Cycle 3: Issue read addr 3, Write 0 to addr 0
+  Cycle 4: Issue read addr 4, Write 0 to addr 1
+  ...
+</pre></div>
+</div>
+</section>
+<section id="future-bram-write-with-hazard-base-version">
+<h3>Future BRAM Write with Hazard (Base Version)<a class="headerlink" href="#future-bram-write-with-hazard-base-version" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4    5    6    7
+             ────┬────┬────┬────┬────┬────┬────┬────
+setArray_go  ───┐    ┌───┐    ┌───────────────────
+             ───└────┘   └────┘
+
+setArray_addr    100  200  100  -    -    -    -    -
+setArray_data    0x01 0x04 0x02 -    -    -    -    -
+
+Pipeline Stage 2:
+  waddr          100  200  100  -    -    -    -    -
+  wdata          0x01 0x04 0x00 -    -    -    -    -
+  wren           1    1    0    -    -    -    -    -
+
+Pipeline Stage 1:
+  waddr          -    100  200  100  -    -    -    -
+  wdata          -    0x01 0x04 0x03 -    -    -    - ← Merged!
+  wren           -    1    1    0    -    -    -    -
+
+Pipeline Stage 0:
+  waddr          -    -    100  200  100  -    -    -
+  wdata          -    -    0x01 0x04 0x00 -    -    -
+  wren           -    -    1    1    0    -    -    -
+
+BRAM Write:
+  Addr 100 ──────────────────────────────────────┐
+    Data = 0x01 (from cycle 2) ───────────────────┘
+
+  Addr 200 ─────────────────────────────────────────┐
+    Data = 0x04 (from cycle 3) ───────────────────┘
+
+  Addr 100 ────────────────────────────────────────────┐
+    Data = 0x03 (merged 0x01|0x02 from cycle 4) ───────┘
+
+Note: Cycle 2 write to addr 100 detected hazard with cycle 0, merged data in stage 1.
+</pre></div>
+</div>
+</section>
+<section id="simple-version-no-pipeline-direct-write">
+<h3>Simple Version: No Pipeline (Direct Write)<a class="headerlink" href="#simple-version-no-pipeline-direct-write" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4    5
+             ────┬────┬────┬────┬────┬────
+axonEvent_set ──┐    ┌───┐    ┌──────────
+             ───└────┘   └────┘
+
+axonEvent_addr   100  200  300  -    -    -
+axonEvent_data   0x0001 0x0004 0x0008 -    -    -
+
+(Register inputs for better timing)
+             ────┬────┬────┬────┬────┬────
+*_set_reg    ───────┐    ┌───┐    ┌──────
+                ───└────┘   └────┘
+
+*_addr_reg       -    100  200  300  -    -
+*_data_reg       -    0x0001 0x0004 0x0008 -    -
+
+bramFuture_waddr -    100  200  300  -    -
+bramFuture_wdata -    0x0001 0x0004 0x0008 -    -
+bramFuture_wren  -    1    1    1    -    -
+
+BRAM Write:      -    100  200  300  -    -
+                      0x0001 0x0004 0x0008
+
+No hazard handling! Single-core only.
+If same address written twice within pipeline depth, later write overwrites earlier.
+</pre></div>
+</div>
+</section>
+<section id="v2-debug-read-sequence">
+<h3>V2 Debug Read Sequence<a class="headerlink" href="#v2-debug-read-sequence" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4    5    6    7
+             ────┬────┬────┬────┬────┬────┬────┬────
+DBG_State    IDLE│WAIT│WAIT│WAIT│WAIT│DONE│IDLE│...
+                 │  0 │  1 │  2 │  3 │    │    │
+
+ci2eep_empty ────┐                                  ┌───
+             ────└──────────────────────────────────┘
+
+ci2eep_dout      0x1234 (stays valid until rden)
+
+ci2eep_rden  ────────────────────────────────────┐  ┌───
+             ────────────────────────────────────└──┘
+
+bram*_raddr_dbg  0x1234 (always driven)
+
+eep2ci_wren  ───────┐    ┌───┐    ┌───┐    ┌───┐  ┌───
+             ───────└────┘   └────┘   └────┘   └──┘
+                 (writes in WAIT_0 through WAIT_3 if not full)
+
+eep2ci_din       X    {0x1234,D}  (data D emerges after latency)
+
+Debug transaction:
+  Cycle 0: Detect command available
+  Cycle 1-4: Issue reads, wait for pipeline, write response
+  Cycle 5: Pop command FIFO
+  Cycle 6: Return to IDLE
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="upstream-modules">
+<h3>Upstream Modules<a class="headerlink" href="#upstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>command_interpreter.v</strong> (<code class="docutils literal notranslate"><span class="pre">command_interpreter.md</span></code>):</p>
+<ul>
+<li><p>Generates <code class="docutils literal notranslate"><span class="pre">setArray_go</span></code>, <code class="docutils literal notranslate"><span class="pre">setArray_addr</span></code>, <code class="docutils literal notranslate"><span class="pre">setArray_data</span></code> signals</p></li>
+<li><p>V2: Provides debug FIFO interfaces (<code class="docutils literal notranslate"><span class="pre">ci2eep_*</span></code>, <code class="docutils literal notranslate"><span class="pre">eep2ci_*</span></code>)</p></li>
+<li><p>Controls when external events are injected</p></li>
+</ul>
+</li>
+<li><p><strong>pcie2fifos.v</strong> (<code class="docutils literal notranslate"><span class="pre">pcie2fifos.md</span></code>):</p>
+<ul>
+<li><p>Ultimate source of external events from host</p></li>
+<li><p>Events flow: PCIe → Command Interpreter → External Events Processor</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="downstream-modules">
+<h3>Downstream Modules<a class="headerlink" href="#downstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>hbm_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code>):</p>
+<ul>
+<li><p>Receives <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code> (spike mask)</p></li>
+<li><p>Provides <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code> (synchronization signal)</p></li>
+<li><p>Uses spike masks to fetch pointer chains from HBM</p></li>
+</ul>
+</li>
+<li><p><strong>internal_events_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">internal_events_processor.md</span></code>):</p>
+<ul>
+<li><p>Receives <code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code> (completion signal)</p></li>
+<li><p>Coordinates two-phase execution (external then internal events)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="peer-modules">
+<h3>Peer Modules<a class="headerlink" href="#peer-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>pointer_fifo_controller.v</strong> (<code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller.md</span></code>):</p>
+<ul>
+<li><p>Works with spike masks from this module</p></li>
+<li><p>Controls flow of pointer data to HBM processor</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-comparison-when-to-use-each-variant">
+<h2>Module Comparison: When to Use Each Variant<a class="headerlink" href="#module-comparison-when-to-use-each-variant" title="Link to this heading">#</a></h2>
+<section id="use-base-version-when">
+<h3>Use Base Version When:<a class="headerlink" href="#use-base-version-when" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Multi-core architecture</strong> with multiple cores writing to same future BRAM</p></li>
+<li><p><strong>Concurrent writes</strong> to the same BRAM address are expected</p></li>
+<li><p><strong>Data integrity</strong> is critical and no events can be lost</p></li>
+<li><p><strong>Pipeline hazards</strong> need explicit detection and merging</p></li>
+<li><p><strong>8 axons per row</strong> organization preferred</p></li>
+</ul>
+<p><strong>Trade-offs:</strong></p>
+<ul class="simple">
+<li><p>✅ Full hazard handling</p></li>
+<li><p>✅ No data loss in multi-core scenarios</p></li>
+<li><p>❌ More complex logic</p></li>
+<li><p>❌ Higher resource usage (pipeline registers)</p></li>
+<li><p>⚠️ Debugging modifications present (lines 95-96, 103-104)</p></li>
+</ul>
+</section>
+<section id="use-simple-version-when">
+<h3>Use Simple Version When:<a class="headerlink" href="#use-simple-version-when" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Single-core architecture</strong> with only one writer to future BRAM</p></li>
+<li><p><strong>Lower resource usage</strong> is priority</p></li>
+<li><p><strong>Wider data paths</strong> (16-bit) preferred for bandwidth</p></li>
+<li><p><strong>No concurrent writes</strong> to same address expected</p></li>
+<li><p><strong>Simpler logic</strong> easier to verify and debug</p></li>
+</ul>
+<p><strong>Trade-offs:</strong></p>
+<ul class="simple">
+<li><p>✅ Minimal resource usage</p></li>
+<li><p>✅ 2× data width (16 vs 8 bits)</p></li>
+<li><p>✅ Simpler state machine (4 vs 5 states)</p></li>
+<li><p>✅ Better timing due to registered inputs</p></li>
+<li><p>❌ No hazard protection</p></li>
+<li><p>❌ Data loss if concurrent writes occur</p></li>
+<li><p>❌ Single-core only</p></li>
+</ul>
+</section>
+<section id="use-v2-version-when">
+<h3>Use V2 Version When:<a class="headerlink" href="#use-v2-version-when" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Debug and verification</strong> required</p></li>
+<li><p><strong>BRAM inspection</strong> needed during runtime</p></li>
+<li><p><strong>Command interpreter interface</strong> for test patterns</p></li>
+<li><p><strong>Read-modify-write</strong> approach acceptable</p></li>
+<li><p><strong>Production debugging</strong> of neuromorphic algorithms</p></li>
+</ul>
+<p><strong>Trade-offs:</strong></p>
+<ul class="simple">
+<li><p>✅ Debug capabilities (FIFO interface)</p></li>
+<li><p>✅ Simplified future write logic (RMW vs explicit hazards)</p></li>
+<li><p>✅ Direct BRAM inspection via debug ports</p></li>
+<li><p>❌ Additional debug FSM (more resources)</p></li>
+<li><p>❌ Extra FIFO interfaces</p></li>
+<li><p>❌ Not optimized for performance</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="base-and-v2-versions">
+<h3>Base and V2 Versions<a class="headerlink" href="#base-and-v2-versions" title="Link to this heading">#</a></h3>
+<p><strong>Throughput:</strong></p>
+<ul class="simple">
+<li><p><strong>Read Rate</strong>: 1 BRAM address per <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code> cycle</p></li>
+<li><p><strong>Effective Rate</strong>: Limited by HBM bandwidth (~450 MHz possible, typically 225 MHz)</p></li>
+<li><p><strong>Pipeline Fill</strong>: 3 cycles (one-time cost per time step)</p></li>
+<li><p><strong>Total Time</strong>: <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">num_inputs[16:3]</span></code> cycles per time step</p></li>
+</ul>
+<p><strong>Example</strong> (131,072 neurons):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">BRAM</span> <span class="n">addresses</span> <span class="o">=</span> <span class="mi">131072</span> <span class="o">/</span> <span class="mi">8</span> <span class="o">=</span> <span class="mi">16384</span>
+<span class="n">Pipeline</span> <span class="n">fill</span>  <span class="o">=</span> <span class="mi">3</span> <span class="n">cycles</span>
+<span class="n">Total</span> <span class="n">cycles</span>   <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">16384</span> <span class="o">=</span> <span class="mi">16387</span> <span class="n">cycles</span>
+<span class="n">At</span> <span class="mi">225</span> <span class="n">MHz</span>     <span class="o">=</span> <span class="mi">16387</span> <span class="o">/</span> <span class="mf">225e6</span> <span class="o">=</span> <span class="mf">72.8</span> <span class="n">µs</span>
+</pre></div>
+</div>
+<p><strong>Future Write Latency:</strong></p>
+<ul class="simple">
+<li><p><strong>Base</strong>: 3 cycles (pipeline depth) from <code class="docutils literal notranslate"><span class="pre">setArray_go</span></code> to BRAM write</p></li>
+<li><p><strong>V2</strong>: 3 cycles (pipeline depth) from <code class="docutils literal notranslate"><span class="pre">setArray_go</span></code> to BRAM write</p></li>
+<li><p><strong>Hazard Penalty</strong>: 0 cycles (merged in pipeline)</p></li>
+</ul>
+</section>
+<section id="simple-version">
+<h3>Simple Version<a class="headerlink" href="#simple-version" title="Link to this heading">#</a></h3>
+<p><strong>Throughput:</strong></p>
+<ul class="simple">
+<li><p><strong>Read Rate</strong>: 1 BRAM address per <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code> cycle</p></li>
+<li><p><strong>Effective Rate</strong>: 225 MHz typical</p></li>
+<li><p><strong>Pipeline Fill</strong>: 3 cycles</p></li>
+<li><p><strong>Total Time</strong>: <code class="docutils literal notranslate"><span class="pre">3</span> <span class="pre">+</span> <span class="pre">num_inputs[16:4]</span></code> cycles per time step</p></li>
+</ul>
+<p><strong>Example</strong> (131,072 neurons):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>BRAM addresses = 131072 / 16 = 8192
+Pipeline fill  = 3 cycles
+Total cycles   = 3 + 8192 = 8195 cycles
+At 225 MHz     = 8195 / 225e6 = 36.4 µs  (2× faster than base!)
+</pre></div>
+</div>
+<p><strong>Future Write Latency:</strong></p>
+<ul class="simple">
+<li><p><strong>Direct</strong>: 1 cycle from <code class="docutils literal notranslate"><span class="pre">axonEvent_set</span></code> to registered write</p></li>
+<li><p><strong>Total</strong>: 2 cycles (register + BRAM write)</p></li>
+</ul>
+<p><strong>Resource Usage Comparison:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Resource</p></th>
+<th class="head"><p>Base</p></th>
+<th class="head"><p>Simple</p></th>
+<th class="head"><p>V2</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LUTs (approx.)</p></td>
+<td><p>500</p></td>
+<td><p>250</p></td>
+<td><p>600</p></td>
+</tr>
+<tr class="row-odd"><td><p>Flip-Flops</p></td>
+<td><p>200</p></td>
+<td><p>120</p></td>
+<td><p>280</p></td>
+</tr>
+<tr class="row-even"><td><p>BRAM18K</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+<td><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pipeline Regs</p></td>
+<td><p>3×(14+8+1)</p></td>
+<td><p>0</p></td>
+<td><p>3×(14+1)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="issue-1-events-lost-during-time-step-transition">
+<h3>Issue 1: Events Lost During Time Step Transition<a class="headerlink" href="#issue-1-events-lost-during-time-step-transition" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>External events written near <code class="docutils literal notranslate"><span class="pre">exec_run</span></code> pulse disappear</p></li>
+<li><p>Inconsistent spike counts between time steps</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Writing to future BRAM while <code class="docutils literal notranslate"><span class="pre">bram_select</span></code> is toggling</p></li>
+<li><p>Race condition between write and buffer swap</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Check timing of setArray_go relative to exec_run</span>
+<span class="c1">// Add ILA probe:</span>
+<span class="n">ila_0</span><span class="w"> </span><span class="n">your_ila</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">clk</span><span class="p">(</span><span class="n">clk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">probe0</span><span class="p">(</span><span class="n">exec_run</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">probe1</span><span class="p">(</span><span class="n">setArray_go</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">probe2</span><span class="p">(</span><span class="n">setArray_addr</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">probe3</span><span class="p">(</span><span class="n">bram_select</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Ensure <code class="docutils literal notranslate"><span class="pre">setArray_go</span></code> never occurs within 3 cycles of <code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></li>
+<li><p>Add FIFO between command interpreter and external events processor</p></li>
+<li><p>Stall writes during buffer swap</p></li>
+</ul>
+</section>
+<section id="issue-2-pipeline-hazards-not-detected-base-version">
+<h3>Issue 2: Pipeline Hazards Not Detected (Base Version)<a class="headerlink" href="#issue-2-pipeline-hazards-not-detected-base-version" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Expected spike data doesn’t appear</p></li>
+<li><p>OR of multiple writes shows only one bit set</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Hazard detection logic not functioning</p></li>
+<li><p>Debugging modifications (lines 95-96, 103-104) bypass merging</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor pipeline stages</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">13</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bramFuture_waddr_dbg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w">  </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bramFuture_wdata_dbg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w">        </span><span class="n">bramFuture_wren_dbg</span><span class="w">  </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">bramFuture_waddr_dbg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">;</span>
+<span class="w">    </span><span class="n">bramFuture_wdata_dbg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">;</span>
+<span class="w">    </span><span class="n">bramFuture_wren_dbg</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wren</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Restore original BRAM write logic:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Change:</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram0_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">bram_select</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">bramPresent_wdata</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="c1">// To:</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram0_wdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">bram_select</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">bramPresent_wdata</span><span class="w"> </span><span class="o">:</span>
+<span class="w">                     </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">bramFuture_rdata</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data_pipe</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="issue-3-address-limit-calculation-wrong">
+<h3>Issue 3: Address Limit Calculation Wrong<a class="headerlink" href="#issue-3-address-limit-calculation-wrong" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Phase 1 completes too early or too late</p></li>
+<li><p>Not all neurons receive input events</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Incorrect calculation of BRAM address limit</p></li>
+<li><p>Mismatch between <code class="docutils literal notranslate"><span class="pre">num_inputs</span></code> and actual neuron count</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Check address limit</span>
+<span class="c1">// Base:   BRAM_ADDR_LIMIT = num_inputs[16:3]  (divide by 8)</span>
+<span class="c1">// Simple: axon_addr_limit = num_inputs[16:4]  (divide by 16)</span>
+
+<span class="c1">// Add assertion:</span>
+<span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">curr_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_READ_INPUTS</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BRAM_ADDR_LIMIT</span><span class="p">)</span>
+<span class="w">    </span><span class="o">|=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">curr_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_PHASE1_DONE</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">num_inputs</span></code> matches neuron configuration</p></li>
+<li><p>Base: Ensure multiple of 8</p></li>
+<li><p>Simple: Ensure multiple of 16</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">+1</span></code> if rounding needed:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// If num_inputs not exact multiple</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">BRAM_ADDR_LIMIT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">num_inputs</span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">3</span><span class="p">])</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="o">|</span><span class="n">num_inputs</span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// Round up</span>
+</pre></div>
+</div>
+</section>
+<section id="issue-4-bram-read-latency-mismatch">
+<h3>Issue 4: BRAM Read Latency Mismatch<a class="headerlink" href="#issue-4-bram-read-latency-mismatch" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Data appears corrupted or delayed</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code> shows wrong values</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>BRAM configured with latency ≠ PIPE_DEPTH (3)</p></li>
+<li><p>Pipeline depth parameter doesn’t match actual BRAM</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Verify BRAM configuration in IP customization:</span>
+<span class="c1">// - Read Latency: should be 3</span>
+<span class="c1">// - Primitive Type: should match PIPE_DEPTH</span>
+
+<span class="c1">// Check if raddr/waddr maintain proper offset:</span>
+<span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">curr_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">STATE_READ_INPUTS</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">exec_bram_phase1_ready</span><span class="p">)</span>
+<span class="w">    </span><span class="o">|-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">PIPE_DEPTH</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Reconfigure BRAM IP for 3-cycle latency</p></li>
+<li><p>Or update PIPE_DEPTH parameter to match BRAM:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">external_events_processor</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">PIPE_DEPTH</span><span class="p">(</span><span class="mh">2</span><span class="p">)</span><span class="w">  </span><span class="c1">// If BRAM has 2-cycle latency</span>
+<span class="p">)</span><span class="w"> </span><span class="n">eep_inst</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="issue-5-v2-debug-reads-return-stale-data">
+<h3>Issue 5: V2 Debug Reads Return Stale Data<a class="headerlink" href="#issue-5-v2-debug-reads-return-stale-data" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Debug responses show old/incorrect BRAM data</p></li>
+<li><p>Debug state machine stuck in WAIT states</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Insufficient wait cycles for BRAM read latency</p></li>
+<li><p>Debug FSM transitions too quickly</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor debug state progression</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">dbg_state_history</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">dbg_state_history</span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">dbg_state_history</span><span class="p">[</span><span class="mh">6</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">    </span><span class="n">dbg_state_history</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">dbg_curr_state</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Ensure 4 WAIT states (WAIT_0→WAIT_1→WAIT_2→WAIT_3)</p></li>
+<li><p>Add extra wait state if needed:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">DBG_STATE_WAIT_4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d7</span><span class="p">;</span>
+
+<span class="c1">// In state machine:</span>
+<span class="nl">DBG_STATE_WAIT_3:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">eep2ci_full</span><span class="p">)</span>
+<span class="w">        </span><span class="n">eep2ci_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DBG_STATE_WAIT_4</span><span class="p">;</span><span class="w">  </span><span class="c1">// Extra cycle</span>
+<span class="k">end</span>
+<span class="nl">DBG_STATE_WAIT_4:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">dbg_next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">DBG_STATE_DONE</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="edge-case-1-num-inputs-0">
+<h3>Edge Case 1: num_inputs = 0<a class="headerlink" href="#edge-case-1-num-inputs-0" title="Link to this heading">#</a></h3>
+<p><strong>Behavior:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">BRAM_ADDR_LIMIT</span> <span class="pre">=</span> <span class="pre">0</span></code></p></li>
+<li><p>State machine immediately transitions FILL_PIPE → READ_INPUTS → PHASE1_DONE</p></li>
+<li><p>No BRAM accesses occur</p></li>
+</ul>
+<p><strong>Safety:</strong></p>
+<ul class="simple">
+<li><p>✅ No undefined behavior</p></li>
+<li><p>✅ Module functions correctly (zero inputs processed)</p></li>
+<li><p>⚠️ Wastes cycles (should be caught at system level)</p></li>
+</ul>
+</section>
+<section id="edge-case-2-num-inputs-not-multiple-of-8-or-16">
+<h3>Edge Case 2: num_inputs Not Multiple of 8 (or 16)<a class="headerlink" href="#edge-case-2-num-inputs-not-multiple-of-8-or-16" title="Link to this heading">#</a></h3>
+<p><strong>Example:</strong> <code class="docutils literal notranslate"><span class="pre">num_inputs</span> <span class="pre">=</span> <span class="pre">17'd100</span></code></p>
+<p><strong>Base Version:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">BRAM_ADDR_LIMIT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">100</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mh">3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">12</span>
+<span class="n">Actual</span><span class="w"> </span><span class="n">coverage</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">12</span><span class="w"> </span><span class="err">×</span><span class="w"> </span><span class="mh">8</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">96</span><span class="w"> </span><span class="n">axons</span>
+<span class="n">Missing</span><span class="w">           </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="w"> </span><span class="n">axons</span><span class="w"> </span><span class="p">(</span><span class="mh">96</span><span class="o">-</span><span class="mh">99</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="n">processed</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Fix:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Round up to nearest multiple</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">BRAM_ADDR_LIMIT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">num_inputs</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">7</span><span class="p">)</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="mh">3</span><span class="p">;</span><span class="w">  </span><span class="c1">// Ceiling division</span>
+</pre></div>
+</div>
+</section>
+<section id="edge-case-3-concurrent-setarray-go-and-exec-run">
+<h3>Edge Case 3: Concurrent setArray_go and exec_run<a class="headerlink" href="#edge-case-3-concurrent-setarray-go-and-exec-run" title="Link to this heading">#</a></h3>
+<p><strong>Scenario:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Cycle</span> <span class="n">N</span><span class="p">:</span>   <span class="n">exec_run</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">toggle</span> <span class="n">bram_select</span><span class="p">)</span>
+<span class="n">Cycle</span> <span class="n">N</span><span class="p">:</span>   <span class="n">setArray_go</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">write</span> <span class="n">to</span> <span class="n">future</span> <span class="n">BRAM</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Problem:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bram_select</span></code> changes, may write to wrong BRAM</p></li>
+</ul>
+<p><strong>Current Design:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">bram_select</span></code> registered on <code class="docutils literal notranslate"><span class="pre">exec_run</span></code> edge</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">setArray_go</span></code> writes on same edge</p></li>
+<li><p><strong>Race condition!</strong> Indeterminate which BRAM receives write</p></li>
+</ul>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Pipeline <code class="docutils literal notranslate"><span class="pre">exec_run</span></code> by 1 cycle:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="n">exec_run_pipe</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">exec_run_pipe</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">exec_run_pipe</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">exec_run</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">// Use exec_run_pipe for bram_select toggle</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bram_select</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_run_pipe</span><span class="p">)</span><span class="w">  </span><span class="c1">// Changed from exec_run</span>
+<span class="w">        </span><span class="n">bram_select</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">~</span><span class="n">bram_select</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="edge-case-4-bram-write-during-pipeline-fill">
+<h3>Edge Case 4: BRAM Write During Pipeline Fill<a class="headerlink" href="#edge-case-4-bram-write-during-pipeline-fill" title="Link to this heading">#</a></h3>
+<p><strong>Scenario:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">STATE_FILL_PIPE</span><span class="p">:</span> <span class="n">bramPresent_wren</span> <span class="o">=</span> <span class="mi">0</span> <span class="p">(</span><span class="ow">not</span> <span class="n">asserted</span> <span class="n">yet</span><span class="p">)</span>
+<span class="n">Future</span> <span class="n">writes</span><span class="p">:</span>    <span class="n">bramFuture_wren</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">trying</span> <span class="n">to</span> <span class="n">write</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Problem (Multi-core):</strong></p>
+<ul class="simple">
+<li><p>If multiple cores write to future BRAM during present BRAM pipeline fill</p></li>
+<li><p>Potential for lost writes if exceeding BRAM write bandwidth</p></li>
+</ul>
+<p><strong>Current Design:</strong></p>
+<ul class="simple">
+<li><p>Single write port per BRAM</p></li>
+<li><p>Future writes serialized through pipeline</p></li>
+<li><p><strong>Safe</strong> as long as write rate ≤ 1 per 3 cycles</p></li>
+</ul>
+<p><strong>Solution (if needed):</strong></p>
+<ul class="simple">
+<li><p>Use dual-port BRAM (separate read/write ports)</p></li>
+<li><p>Or implement write FIFO to buffer concurrent writes</p></li>
+</ul>
+</section>
+<section id="safety-check-phase-1-completion-detection">
+<h3>Safety Check: Phase 1 Completion Detection<a class="headerlink" href="#safety-check-phase-1-completion-detection" title="Link to this heading">#</a></h3>
+<p><strong>Assertion:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Ensure phase1_done only asserted when all addresses processed</span>
+<span class="n">property</span><span class="w"> </span><span class="n">phase1_done_check</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">exec_bram_phase1_done</span><span class="p">)</span><span class="w"> </span><span class="o">|-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_waddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BRAM_ADDR_LIMIT</span><span class="p">);</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_phase1:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">phase1_done_check</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="safety-check-no-writes-during-buffer-swap">
+<h3>Safety Check: No Writes During Buffer Swap<a class="headerlink" href="#safety-check-no-writes-during-buffer-swap" title="Link to this heading">#</a></h3>
+<p><strong>Assertion:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Ensure no future writes during exec_run</span>
+<span class="n">property</span><span class="w"> </span><span class="n">no_write_during_swap</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="p">(</span><span class="n">exec_run</span><span class="p">)</span><span class="w"> </span><span class="o">|-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">bramFuture_wren</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">);</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_no_write:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">no_write_during_swap</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="future-enhancement-opportunities">
+<h2>Future Enhancement Opportunities<a class="headerlink" href="#future-enhancement-opportunities" title="Link to this heading">#</a></h2>
+<section id="configurable-data-width">
+<h3>1. Configurable Data Width<a class="headerlink" href="#configurable-data-width" title="Link to this heading">#</a></h3>
+<p>Allow parameterization of axons per row:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">external_events_processor</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">PIPE_DEPTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="p">,</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">AXONS_PER_ROW</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="w">  </span><span class="c1">// 8, 16, 32, etc.</span>
+<span class="p">)(</span>
+<span class="w">    </span><span class="c1">// Derive address and data widths</span>
+<span class="w">    </span><span class="k">localparam</span><span class="w"> </span><span class="n">ADDR_BITS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">17</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">$clog2</span><span class="p">(</span><span class="n">AXONS_PER_ROW</span><span class="p">);</span>
+<span class="w">    </span><span class="k">localparam</span><span class="w"> </span><span class="n">DATA_BITS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">AXONS_PER_ROW</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">ADDR_BITS</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">setArray_addr</span><span class="p">,</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">DATA_BITS</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="burst-mode-for-faster-pipeline-fill">
+<h3>2. Burst Mode for Faster Pipeline Fill<a class="headerlink" href="#burst-mode-for-faster-pipeline-fill" title="Link to this heading">#</a></h3>
+<p>Current: Fill pipeline sequentially (3 cycles)
+Enhancement: Issue all 3 reads in 1 cycle (if BRAM supports)</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">STATE_FILL_PIPE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">bramPresent_raddr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Issue all 3 reads at once</span>
+<span class="w">        </span><span class="n">bram_raddr</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram_raddr</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram_raddr</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">14</span><span class="mi">&#39;d2</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram_rden</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram_rden</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">bram_rden</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_READ_INPUTS</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="event-timestamping">
+<h3>3. Event Timestamping<a class="headerlink" href="#event-timestamping" title="Link to this heading">#</a></h3>
+<p>Add timestamp to each event for precise temporal resolution:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Expand data width: [7:0] data + [15:0] timestamp</span>
+<span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="mh">23</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">,</span><span class="w">  </span><span class="c1">// {timestamp, spike_mask}</span>
+
+<span class="c1">// BRAM organization: 24 bits per row</span>
+</pre></div>
+</div>
+</section>
+<section id="event-compression">
+<h3>4. Event Compression<a class="headerlink" href="#event-compression" title="Link to this heading">#</a></h3>
+<p>Sparse events (few spikes per row) waste bandwidth:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Instead of full bit mask, store indices</span>
+<span class="c1">// Example: Spikes at axons 5, 17, 42</span>
+<span class="c1">// Compressed: {3&#39;b011, 6&#39;d42, 6&#39;d17, 6&#39;d5}  // Count + indices</span>
+</pre></div>
+</div>
+</section>
+<section id="multi-buffer-2-brams">
+<h3>5. Multi-Buffer (&gt;2 BRAMs)<a class="headerlink" href="#multi-buffer-2-brams" title="Link to this heading">#</a></h3>
+<p>Allow more than 2 time steps in flight:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">parameter</span><span class="w"> </span><span class="n">NUM_BUFFERS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="p">;</span><span class="w">  </span><span class="c1">// Quad buffering</span>
+
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bram_select</span><span class="p">;</span><span class="w">      </span><span class="c1">// 2-bit select (4 buffers)</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_run</span><span class="p">)</span>
+<span class="w">        </span><span class="n">bram_select</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">(</span><span class="n">bram_select</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">2</span><span class="mb">&#39;b11</span><span class="p">;</span><span class="w">  </span><span class="c1">// Circular</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="axi4-stream-interface">
+<h3>6. AXI4-Stream Interface<a class="headerlink" href="#axi4-stream-interface" title="Link to this heading">#</a></h3>
+<p>Replace custom interface with standard AXI4-Stream:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Input events</span>
+<span class="k">input</span><span class="w">         </span><span class="n">s_axis_tvalid</span><span class="p">,</span>
+<span class="k">output</span><span class="w">        </span><span class="n">s_axis_tready</span><span class="p">,</span>
+<span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">s_axis_tdata</span><span class="p">,</span><span class="w">  </span><span class="c1">// {addr, data}</span>
+<span class="k">input</span><span class="w">         </span><span class="n">s_axis_tlast</span><span class="p">,</span>
+
+<span class="c1">// Output spikes</span>
+<span class="k">output</span><span class="w">        </span><span class="n">m_axis_tvalid</span><span class="p">,</span>
+<span class="k">input</span><span class="w">         </span><span class="n">m_axis_tready</span><span class="p">,</span>
+<span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">31</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">m_axis_tdata</span><span class="p">,</span><span class="w">  </span><span class="c1">// Spike mask + metadata</span>
+</pre></div>
+</div>
+</section>
+<section id="configurable-pipeline-depth">
+<h3>7. Configurable Pipeline Depth<a class="headerlink" href="#configurable-pipeline-depth" title="Link to this heading">#</a></h3>
+<p>Auto-detect BRAM latency at synthesis:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Query BRAM IP for latency</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">BRAM_LATENCY</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">bram0</span><span class="p">.</span><span class="n">READ_LATENCY_A</span><span class="p">;</span><span class="w">  </span><span class="c1">// From BRAM IP</span>
+
+<span class="n">external_events_processor</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">PIPE_DEPTH</span><span class="p">(</span><span class="n">BRAM_LATENCY</span><span class="p">)</span><span class="w">  </span><span class="c1">// Match automatically</span>
+<span class="p">)</span><span class="w"> </span><span class="n">eep</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="c1">// ...</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Axon</strong></p></td>
+<td><p>Input neuron connection; source of spike events</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Double Buffering</strong></p></td>
+<td><p>Two-buffer scheme (present/future) allowing simultaneous read and write</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Present BRAM</strong></p></td>
+<td><p>BRAM being read during current time step (then cleared)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Future BRAM</strong></p></td>
+<td><p>BRAM accumulating events for next time step</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>bram_select</strong></p></td>
+<td><p>Toggle bit selecting which physical BRAM is present vs. future</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Pipeline Depth</strong></p></td>
+<td><p>Number of cycles between BRAM read request and data availability (typically 3)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Pipeline Fill</strong></p></td>
+<td><p>Initial phase where read pipeline is populated before writes begin</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Leading Address</strong></p></td>
+<td><p>Read address (raddr) - advances pipeline depth ahead of write address</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Lagging Address</strong></p></td>
+<td><p>Write address (waddr) - clears data after it emerges from pipeline</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Spike Mask</strong></p></td>
+<td><p>Bit vector where each bit represents spike (1) or no-spike (0) for an axon</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Phase 1</strong></p></td>
+<td><p>External event processing (vs. Phase 2: internal/synaptic events)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>exec_run</strong></p></td>
+<td><p>Control pulse starting new time step, toggling present ←→ future BRAMs</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>exec_hbm_rvalidready</strong></p></td>
+<td><p>Synchronization signal from HBM indicating data consumed, advance BRAM</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>setArray_go</strong></p></td>
+<td><p>Write pulse for external event (from command interpreter or other source)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Pipeline Hazard</strong></p></td>
+<td><p>Conflict when concurrent writes target same BRAM address within pipeline depth</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>RMW (Read-Modify-Write)</strong></p></td>
+<td><p>Pattern of reading current value, modifying, then writing back</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Hazard Detection</strong></p></td>
+<td><p>Logic identifying when new write conflicts with in-flight writes</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Data Merging</strong></p></td>
+<td><p>Combining multiple writes to same address via OR operation</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Time Step</strong></p></td>
+<td><p>Discrete computation cycle in neuromorphic algorithm (milliseconds typically)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Axon Event</strong></p></td>
+<td><p>External spike arriving at input neuron</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Axons Per Row</strong></p></td>
+<td><p>Number of axons packed into single BRAM address (8 or 16 bits)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Address Limit</strong></p></td>
+<td><p>Maximum BRAM address to read/write (depends on num_inputs)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>The <strong>External Events Processor</strong> family provides flexible solutions for managing input spike events in neuromorphic systems:</p>
+<ul class="simple">
+<li><p><strong>Base version</strong>: Full-featured with pipeline hazard handling for multi-core</p></li>
+<li><p><strong>Simple version</strong>: Streamlined single-core variant with lower resource usage</p></li>
+<li><p><strong>V2 version</strong>: Debug-enhanced variant for verification and development</p></li>
+</ul>
+<p><strong>Key Design Principles:</strong></p>
+<ol class="arabic simple">
+<li><p>Double buffering prevents event loss during time step transitions</p></li>
+<li><p>Pipeline management ensures correct synchronization with BRAM latency</p></li>
+<li><p>Hazard detection/merging (base) or simplified RMW (V2) prevents data corruption</p></li>
+<li><p>State machine coordinates read-clear cycles with downstream modules</p></li>
+</ol>
+<p><strong>Selection Guide:</strong></p>
+<ul class="simple">
+<li><p>Multi-core system with concurrent writes → <strong>Base version</strong></p></li>
+<li><p>Single-core system, resource-constrained → <strong>Simple version</strong></p></li>
+<li><p>Debug/verification needed → <strong>V2 version</strong></p></li>
+</ul>
+<p>For questions or issues, cross-reference with <code class="docutils literal notranslate"><span class="pre">command_interpreter.md</span></code> (upstream) and <code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code> (downstream) for complete system understanding.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#role-in-the-software-hardware-stack">Role in the Software/Hardware Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variant-comparison">Variant Comparison</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture-base-version">Module Architecture (Base Version)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-flow-two-phase-operation">Data Flow (Two-Phase Operation)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-version-external-events-processor-v">Base Version (external_events_processor.v)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters">Parameters</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration">Configuration</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#external-event-input-interface">External Event Input Interface</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-control-interface">Execution Control Interface</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bram0-interface">BRAM0 Interface</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#bram1-interface">BRAM1 Interface</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-version-external-events-processor-simple-v">Simple Version (external_events_processor_simple.v)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#v2-version-external-events-processor-v2-v">V2 Version (external_events_processor_v2.v)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#command-interpreter-debug-interface">Command Interpreter Debug Interface</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-bram-read-ports">Debug BRAM Read Ports</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-version-state-machine">Base Version State Machine</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#present-bram-control-fsm">Present BRAM Control FSM</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#address-management-present-bram">Address Management (Present BRAM)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#future-bram-pipeline-hazard-handling">Future BRAM Pipeline Hazard Handling</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-version-logic">Simple Version Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#v2-version-enhancements">V2 Version Enhancements</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#simplified-future-write-read-modify-write">Simplified Future Write (Read-Modify-Write)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-state-machine">Debug State Machine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-map">Memory Map</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-and-v2-versions-8-axons-row">Base and V2 Versions (8 axons/row)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-version-16-axons-row">Simple Version (16 axons/row)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#time-step-transition-double-buffer-swap">Time Step Transition (Double Buffer Swap)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#present-bram-read-sequence-base-v2">Present BRAM Read Sequence (Base &amp; V2)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#future-bram-write-with-hazard-base-version">Future BRAM Write with Hazard (Base Version)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-version-no-pipeline-direct-write">Simple Version: No Pipeline (Direct Write)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#v2-debug-read-sequence">V2 Debug Read Sequence</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upstream-modules">Upstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-modules">Downstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peer-modules">Peer Modules</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-comparison-when-to-use-each-variant">Module Comparison: When to Use Each Variant</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-base-version-when">Use Base Version When:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-simple-version-when">Use Simple Version When:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#use-v2-version-when">Use V2 Version When:</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#base-and-v2-versions">Base and V2 Versions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simple-version">Simple Version</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-1-events-lost-during-time-step-transition">Issue 1: Events Lost During Time Step Transition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-2-pipeline-hazards-not-detected-base-version">Issue 2: Pipeline Hazards Not Detected (Base Version)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-3-address-limit-calculation-wrong">Issue 3: Address Limit Calculation Wrong</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-4-bram-read-latency-mismatch">Issue 4: BRAM Read Latency Mismatch</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-5-v2-debug-reads-return-stale-data">Issue 5: V2 Debug Reads Return Stale Data</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-1-num-inputs-0">Edge Case 1: num_inputs = 0</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-2-num-inputs-not-multiple-of-8-or-16">Edge Case 2: num_inputs Not Multiple of 8 (or 16)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-3-concurrent-setarray-go-and-exec-run">Edge Case 3: Concurrent setArray_go and exec_run</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-4-bram-write-during-pipeline-fill">Edge Case 4: BRAM Write During Pipeline Fill</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-phase-1-completion-detection">Safety Check: Phase 1 Completion Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-no-writes-during-buffer-swap">Safety Check: No Writes During Buffer Swap</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-enhancement-opportunities">Future Enhancement Opportunities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configurable-data-width">1. Configurable Data Width</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst-mode-for-faster-pipeline-fill">2. Burst Mode for Faster Pipeline Fill</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#event-timestamping">3. Event Timestamping</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#event-compression">4. Event Compression</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-buffer-2-brams">5. Multi-Buffer (&gt;2 BRAMs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi4-stream-interface">6. AXI4-Stream Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configurable-pipeline-depth">7. Configurable Pipeline Depth</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/external_events_processor.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

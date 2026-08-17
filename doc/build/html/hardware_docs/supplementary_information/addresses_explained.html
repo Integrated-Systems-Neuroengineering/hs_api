@@ -1,0 +1,990 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Address Encoding Explained &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/supplementary_information/addresses_explained';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="PCIe and HBM Packet Definitions" href="../pcie_hbm_packet_definitions.html" />
+    <link rel="prev" title="Packet Encoding Reference" href="packet_encoding.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../supplementary_information.html" class="nav-link">Supplementary Information</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Address Encoding Explained</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="address-encoding-explained">
+<h1>Address Encoding Explained<a class="headerlink" href="#address-encoding-explained" title="Link to this heading">#</a></h1>
+<p>This document explains how addresses and binary numbers work in hardware systems. Understanding address encoding is fundamental to working with memory, packets, and hardware interfaces.</p>
+<hr class="docutils" />
+<section id="binary-address-encoding">
+<h2>Binary Address Encoding<a class="headerlink" href="#binary-address-encoding" title="Link to this heading">#</a></h2>
+<p>Addresses in hardware are binary numbers. Each bit position represents a power of 2:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Binary:    0b101010
+Positions:   543210  (bit positions, numbered right to left)
+
+Value = (1 × 2^5) + (0 × 2^4) + (1 × 2^3) + (0 × 2^2) + (1 × 2^1) + (0 × 2^0)
+      = 32 + 0 + 8 + 0 + 2 + 0
+      = 42 (decimal)
+</pre></div>
+</div>
+<p><strong>Key concepts:</strong></p>
+<ul class="simple">
+<li><p><strong>Rightmost bit (bit 0)</strong> is the Least Significant Bit (LSB) - contributes 2^0 = 1</p></li>
+<li><p><strong>Leftmost bit</strong> is the Most Significant Bit (MSB) - contributes the largest power of 2</p></li>
+<li><p>Each additional bit doubles the range: n bits can represent 0 to (2^n - 1)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="hexadecimal-notation">
+<h2>Hexadecimal Notation<a class="headerlink" href="#hexadecimal-notation" title="Link to this heading">#</a></h2>
+<p>Hexadecimal (base 16) is commonly used in hardware because each hex digit represents exactly 4 binary bits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Binary</span>    <span class="n">Hex</span>    <span class="n">Decimal</span>
+<span class="mi">0000</span>      <span class="mi">0</span>      <span class="mi">0</span>
+<span class="mi">0001</span>      <span class="mi">1</span>      <span class="mi">1</span>
+<span class="mi">0010</span>      <span class="mi">2</span>      <span class="mi">2</span>
+<span class="mi">0011</span>      <span class="mi">3</span>      <span class="mi">3</span>
+<span class="mi">0100</span>      <span class="mi">4</span>      <span class="mi">4</span>
+<span class="mi">0101</span>      <span class="mi">5</span>      <span class="mi">5</span>
+<span class="mi">0110</span>      <span class="mi">6</span>      <span class="mi">6</span>
+<span class="mi">0111</span>      <span class="mi">7</span>      <span class="mi">7</span>
+<span class="mi">1000</span>      <span class="mi">8</span>      <span class="mi">8</span>
+<span class="mi">1001</span>      <span class="mi">9</span>      <span class="mi">9</span>
+<span class="mi">1010</span>      <span class="n">A</span>      <span class="mi">10</span>
+<span class="mi">1011</span>      <span class="n">B</span>      <span class="mi">11</span>
+<span class="mi">1100</span>      <span class="n">C</span>      <span class="mi">12</span>
+<span class="mi">1101</span>      <span class="n">D</span>      <span class="mi">13</span>
+<span class="mi">1110</span>      <span class="n">E</span>      <span class="mi">14</span>
+<span class="mi">1111</span>      <span class="n">F</span>      <span class="mi">15</span>
+</pre></div>
+</div>
+<p><strong>Example: Converting between representations</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Binary:       0b11010110
+Group by 4:   1101  0110
+Hexadecimal:    D      6   = 0xD6
+Decimal:      (13×16) + 6  = 214
+</pre></div>
+</div>
+<p><strong>Why use hexadecimal?</strong></p>
+<ul class="simple">
+<li><p>Compact: 32-bit number = 8 hex digits vs 32 binary digits</p></li>
+<li><p>Easy conversion: Each hex digit ↔ 4 bits (no complex math)</p></li>
+<li><p>Standard in hardware: Datasheets, debuggers, memory dumps all use hex</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="memory-address-format">
+<h2>Memory Address Format<a class="headerlink" href="#memory-address-format" title="Link to this heading">#</a></h2>
+<section id="bit-address-example-0x12345678">
+<h3><strong>32-bit address example:</strong> <code class="docutils literal notranslate"><span class="pre">0x12345678</span></code><a class="headerlink" href="#bit-address-example-0x12345678" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Hex:    1    2    3    4    5    6    7    8
+Binary: 0001 0010 0011 0100 0101 0110 0111 1000
+
+This represents byte address 305,419,896 in decimal.
+
+Breakdown:
+  0x10000000 = 268,435,456
+  0x02000000 =  33,554,432
+  0x00300000 =   3,145,728
+  0x00040000 =     262,144
+  0x00005000 =      20,480
+  0x00000600 =       1,536
+  0x00000070 =         112
+  0x00000008 =           8
+  ──────────   ───────────
+  0x12345678   305,419,896
+</pre></div>
+</div>
+</section>
+<section id="bit-address-example-0x0000000123456000">
+<h3><strong>64-bit address example:</strong> <code class="docutils literal notranslate"><span class="pre">0x0000000123456000</span></code><a class="headerlink" href="#bit-address-example-0x0000000123456000" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Used</span> <span class="ow">in</span><span class="p">:</span> <span class="n">PCIe</span> <span class="n">Memory</span> <span class="n">Read</span> <span class="n">TLPs</span><span class="p">,</span> <span class="n">host</span> <span class="n">system</span> <span class="n">physical</span> <span class="n">addresses</span>
+
+<span class="n">Upper</span> <span class="mi">32</span> <span class="n">bits</span><span class="p">:</span> <span class="mh">0x00000001</span>
+<span class="n">Lower</span> <span class="mi">32</span> <span class="n">bits</span><span class="p">:</span> <span class="mh">0x23456000</span>
+
+<span class="n">Decimal</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span><span class="mi">883</span><span class="p">,</span><span class="mi">857</span><span class="p">,</span><span class="mi">408</span> <span class="p">(</span><span class="n">over</span> <span class="mi">4</span> <span class="n">GB</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="byte-addressing">
+<h2>Byte Addressing<a class="headerlink" href="#byte-addressing" title="Link to this heading">#</a></h2>
+<p><strong>Why byte addresses?</strong></p>
+<ul class="simple">
+<li><p>Most systems are byte-addressable: Each address points to 1 byte (8 bits)</p></li>
+<li><p>Even if you read/write larger chunks (32-bit words, 512-bit packets), addresses still refer to bytes</p></li>
+<li><p>Consecutive bytes have consecutive addresses</p></li>
+</ul>
+<p><strong>Example: Address sequence</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Address     Content (1 byte each)
+─────────   ────────────────────
+0x1000      0xAA
+0x1001      0xBB
+0x1002      0xCC
+0x1003      0xDD
+0x1004      0xEE
+...
+</pre></div>
+</div>
+<p><strong>Reading multi-byte values:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">word</span> <span class="n">at</span> <span class="n">address</span> <span class="mh">0x1000</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Byte</span> <span class="mi">0</span> <span class="p">(</span><span class="mh">0x1000</span><span class="p">):</span> <span class="mh">0xAA</span>
+  <span class="o">-</span> <span class="n">Byte</span> <span class="mi">1</span> <span class="p">(</span><span class="mh">0x1001</span><span class="p">):</span> <span class="mh">0xBB</span>
+  <span class="o">-</span> <span class="n">Byte</span> <span class="mi">2</span> <span class="p">(</span><span class="mh">0x1002</span><span class="p">):</span> <span class="mh">0xCC</span>
+  <span class="o">-</span> <span class="n">Byte</span> <span class="mi">3</span> <span class="p">(</span><span class="mh">0x1003</span><span class="p">):</span> <span class="mh">0xDD</span>
+
+<span class="n">Little</span><span class="o">-</span><span class="n">endian</span> <span class="n">system</span><span class="p">:</span> <span class="mh">0xDDCCBBAA</span> <span class="p">(</span><span class="n">least</span> <span class="n">significant</span> <span class="n">byte</span> <span class="n">first</span><span class="p">)</span>
+<span class="n">Big</span><span class="o">-</span><span class="n">endian</span> <span class="n">system</span><span class="p">:</span>    <span class="mh">0xAABBCCDD</span> <span class="p">(</span><span class="n">most</span> <span class="n">significant</span> <span class="n">byte</span> <span class="n">first</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="address-alignment">
+<h2>Address Alignment<a class="headerlink" href="#address-alignment" title="Link to this heading">#</a></h2>
+<p>Many systems require addresses to be aligned to the size of the data being accessed.</p>
+<p><strong>Alignment rules:</strong></p>
+<ul class="simple">
+<li><p><strong>Byte (8-bit):</strong> Any address (0x1000, 0x1001, 0x1002…)</p></li>
+<li><p><strong>16-bit (2-byte):</strong> Address must be divisible by 2 (0x1000, 0x1002, 0x1004…)</p></li>
+<li><p><strong>32-bit (4-byte) word:</strong> Address must be divisible by 4 (0x1000, 0x1004, 0x1008…)</p></li>
+<li><p><strong>64-bit (8-byte):</strong> Address must be divisible by 8 (0x1000, 0x1008, 0x1010…)</p></li>
+<li><p><strong>512-bit (64-byte) packet:</strong> Address must be divisible by 64 (0x1000, 0x1040, 0x1080…)</p></li>
+</ul>
+<p><strong>How to check alignment:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">addr</span> <span class="o">=</span> <span class="mh">0x12345678</span>
+
+<span class="c1"># Check if 4-byte aligned (for 32-bit words)</span>
+<span class="n">is_4byte_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">addr</span> <span class="o">%</span> <span class="mi">4</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="c1"># Equivalent: Check if lower 2 bits are zero</span>
+<span class="n">is_4byte_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">addr</span> <span class="o">&amp;</span> <span class="mh">0x3</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="c1"># Check if 64-byte aligned (for 512-bit packets)</span>
+<span class="n">is_64byte_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">addr</span> <span class="o">%</span> <span class="mi">64</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+<span class="c1"># Equivalent: Check if lower 6 bits are zero</span>
+<span class="n">is_64byte_aligned</span> <span class="o">=</span> <span class="p">(</span><span class="n">addr</span> <span class="o">&amp;</span> <span class="mh">0x3F</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span>
+</pre></div>
+</div>
+<p><strong>Why alignment matters:</strong></p>
+<ul class="simple">
+<li><p><strong>Performance:</strong> Aligned accesses are faster (single memory transaction)</p></li>
+<li><p><strong>Requirements:</strong> Some hardware can ONLY access aligned addresses</p></li>
+<li><p><strong>Atomicity:</strong> Aligned accesses are often atomic (all-or-nothing)</p></li>
+</ul>
+<p><strong>Example: Aligned vs unaligned</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>32-bit word read at address 0x1000 (aligned):
+  Single memory access: Read bytes [0x1000-0x1003]
+
+32-bit word read at address 0x1001 (unaligned):
+  Two memory accesses needed:
+    Read bytes [0x1000-0x1003]
+    Read bytes [0x1004-0x1007]
+  Extract and combine the middle bytes → slower!
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="bit-field-notation">
+<h2>Bit Field Notation<a class="headerlink" href="#bit-field-notation" title="Link to this heading">#</a></h2>
+<p>When documenting packet formats and registers, we use <code class="docutils literal notranslate"><span class="pre">[MSB:LSB]</span></code> notation to specify bit ranges.</p>
+<section id="notation-format">
+<h3><strong>Notation Format</strong><a class="headerlink" href="#notation-format" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="n">means</span> <span class="n">bits</span> <span class="mi">31</span> <span class="n">down</span> <span class="n">to</span> <span class="mi">0</span> <span class="p">(</span><span class="mi">32</span> <span class="n">bits</span> <span class="n">total</span><span class="p">,</span> <span class="nb">all</span> <span class="n">bits</span> <span class="n">of</span> <span class="n">a</span> <span class="mi">32</span><span class="o">-</span><span class="n">bit</span> <span class="n">value</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">504</span><span class="p">]</span> <span class="n">means</span> <span class="n">bits</span> <span class="mi">511</span> <span class="n">down</span> <span class="n">to</span> <span class="mi">504</span> <span class="p">(</span><span class="mi">8</span> <span class="n">bits</span> <span class="o">=</span> <span class="mi">1</span> <span class="n">byte</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">15</span><span class="p">]</span>      <span class="n">means</span> <span class="n">bit</span> <span class="mi">15</span> <span class="n">only</span> <span class="p">(</span><span class="n">single</span> <span class="n">bit</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>     <span class="n">means</span> <span class="n">bits</span> <span class="mi">7</span> <span class="n">down</span> <span class="n">to</span> <span class="mi">0</span> <span class="p">(</span><span class="mi">1</span> <span class="n">byte</span><span class="p">,</span> <span class="n">lower</span> <span class="mi">8</span> <span class="n">bits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Why MSB:LSB order?</strong></p>
+<ul class="simple">
+<li><p><strong>MSB (Most Significant Bit)</strong> comes first: Bit 511 has the highest value (2^511)</p></li>
+<li><p><strong>LSB (Least Significant Bit)</strong> comes last: Bit 0 has the lowest value (2^0)</p></li>
+<li><p>Reading left-to-right gives you the range in decreasing significance</p></li>
+</ul>
+</section>
+<section id="example-512-bit-command-packet">
+<h3><strong>Example: 512-bit Command Packet</strong><a class="headerlink" href="#example-512-bit-command-packet" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   512-bit Command Packet                    │
+├───────────────┬─────────────────────────────────────────────┤
+│ [511:504]     │ Opcode (8 bits)                             │
+│ [503:496]     │ Core ID (8 bits)                            │
+│ [495:0]       │ Payload (496 bits)                          │
+└───────────────┴─────────────────────────────────────────────┘
+
+Total bits: 512
+Bit 511 is the highest/leftmost bit
+Bit 0 is the lowest/rightmost bit
+</pre></div>
+</div>
+</section>
+<section id="extracting-bit-fields-in-python">
+<h3><strong>Extracting Bit Fields in Python</strong><a class="headerlink" href="#extracting-bit-fields-in-python" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example: 512-bit packet (represented as Python integer)</span>
+<span class="n">packet</span> <span class="o">=</span> <span class="mh">0x0102000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000ABCD</span>
+
+<span class="c1"># Extract opcode from bits [511:504]</span>
+<span class="c1"># Step 1: Shift right by 504 bits to move [511:504] to [7:0]</span>
+<span class="c1"># Step 2: Mask with 0xFF (8 bits = 0b11111111) to keep only lower 8 bits</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet</span> <span class="o">&gt;&gt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+<span class="c1"># Result: 0x01</span>
+
+<span class="c1"># Extract core_id from bits [503:496]</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet</span> <span class="o">&gt;&gt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+<span class="c1"># Result: 0x02</span>
+
+<span class="c1"># Extract payload from bits [495:0]</span>
+<span class="c1"># Mask with all 1s for lower 496 bits: (2^496 - 1)</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="n">packet</span> <span class="o">&amp;</span> <span class="p">((</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+<span class="c1"># Result: 0x0000...ABCD (496 bits)</span>
+
+<span class="c1"># Extract a middle field, e.g., bits [479:464] (16 bits)</span>
+<span class="n">field_16bit</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet</span> <span class="o">&gt;&gt;</span> <span class="mi">464</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+</pre></div>
+</div>
+</section>
+<section id="constructing-packets-from-bit-fields">
+<h3><strong>Constructing Packets from Bit Fields</strong><a class="headerlink" href="#constructing-packets-from-bit-fields" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Build a 512-bit packet from components</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x01</span>      <span class="c1"># 8 bits</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>     <span class="c1"># 8 bits</span>
+<span class="n">payload</span> <span class="o">=</span> <span class="mh">0x1234</span>   <span class="c1"># 496 bits (upper bits assumed zero)</span>
+
+<span class="c1"># Shift each field to its position and combine with OR</span>
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="n">payload</span>
+
+<span class="c1"># Result:</span>
+<span class="c1"># Bits [511:504] = 0x01 (opcode)</span>
+<span class="c1"># Bits [503:496] = 0x00 (core_id)</span>
+<span class="c1"># Bits [495:0]   = 0x00...001234 (payload)</span>
+</pre></div>
+</div>
+</section>
+<section id="bit-masks">
+<h3><strong>Bit Masks</strong><a class="headerlink" href="#bit-masks" title="Link to this heading">#</a></h3>
+<p>Masks are used to isolate specific bits:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a mask for N bits (all 1s)</span>
+<span class="n">mask_8bit</span>  <span class="o">=</span> <span class="mh">0xFF</span>          <span class="c1"># 0b11111111 (8 bits)</span>
+<span class="n">mask_16bit</span> <span class="o">=</span> <span class="mh">0xFFFF</span>        <span class="c1"># 0b1111111111111111 (16 bits)</span>
+<span class="n">mask_32bit</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span>    <span class="c1"># (32 bits)</span>
+
+<span class="c1"># Create a mask for specific bit range [N:M]</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_mask</span><span class="p">(</span><span class="n">high_bit</span><span class="p">,</span> <span class="n">low_bit</span><span class="p">):</span>
+    <span class="n">num_bits</span> <span class="o">=</span> <span class="n">high_bit</span> <span class="o">-</span> <span class="n">low_bit</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">num_bits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># 2^num_bits - 1</span>
+    <span class="k">return</span> <span class="n">mask</span> <span class="o">&lt;&lt;</span> <span class="n">low_bit</span>
+
+<span class="c1"># Example: Mask for bits [15:8] (8 bits in the middle)</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">create_mask</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>  <span class="c1"># Returns 0xFF00</span>
+
+<span class="c1"># Use mask to extract field</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mh">0x12345678</span>
+<span class="n">field</span> <span class="o">=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span>  <span class="c1"># Extract bits [15:8] → 0x56</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="address-arithmetic">
+<h2>Address Arithmetic<a class="headerlink" href="#address-arithmetic" title="Link to this heading">#</a></h2>
+<section id="adding-offsets">
+<h3><strong>Adding Offsets</strong><a class="headerlink" href="#adding-offsets" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">base_address</span> <span class="o">=</span> <span class="mh">0x12340000</span>
+<span class="n">offset</span> <span class="o">=</span> <span class="mh">0x100</span>  <span class="c1"># 256 bytes</span>
+
+<span class="c1"># Compute new address</span>
+<span class="n">new_address</span> <span class="o">=</span> <span class="n">base_address</span> <span class="o">+</span> <span class="n">offset</span>  <span class="c1"># 0x12340100</span>
+
+<span class="c1"># For array indexing (4-byte elements)</span>
+<span class="n">element_size</span> <span class="o">=</span> <span class="mi">4</span>  <span class="c1"># bytes</span>
+<span class="n">index</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">element_address</span> <span class="o">=</span> <span class="n">base_address</span> <span class="o">+</span> <span class="p">(</span><span class="n">index</span> <span class="o">*</span> <span class="n">element_size</span><span class="p">)</span>  <span class="c1"># 0x12340028</span>
+</pre></div>
+</div>
+</section>
+<section id="splitting-addresses-into-pages-and-offsets">
+<h3><strong>Splitting Addresses into Pages and Offsets</strong><a class="headerlink" href="#splitting-addresses-into-pages-and-offsets" title="Link to this heading">#</a></h3>
+<p>Many memory systems organize memory into pages:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">address</span> <span class="o">=</span> <span class="mh">0x12345678</span>
+
+<span class="c1"># 4KB pages (12-bit offset, 20-bit page number for 32-bit address)</span>
+<span class="n">page_size</span> <span class="o">=</span> <span class="mi">4096</span>  <span class="c1"># 0x1000</span>
+<span class="n">page_offset</span> <span class="o">=</span> <span class="n">address</span> <span class="o">&amp;</span> <span class="mh">0xFFF</span>         <span class="c1"># Lower 12 bits: 0x678</span>
+<span class="n">page_number</span> <span class="o">=</span> <span class="n">address</span> <span class="o">&gt;&gt;</span> <span class="mi">12</span>           <span class="c1"># Upper 20 bits: 0x12345</span>
+
+<span class="c1"># Reconstruct address</span>
+<span class="n">reconstructed</span> <span class="o">=</span> <span class="p">(</span><span class="n">page_number</span> <span class="o">&lt;&lt;</span> <span class="mi">12</span><span class="p">)</span> <span class="o">|</span> <span class="n">page_offset</span>  <span class="c1"># 0x12345678</span>
+</pre></div>
+</div>
+</section>
+<section id="range-checking">
+<h3><strong>Range Checking</strong><a class="headerlink" href="#range-checking" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check if address is within a region</span>
+<span class="n">region_start</span> <span class="o">=</span> <span class="mh">0xD0000000</span>
+<span class="n">region_size</span> <span class="o">=</span> <span class="mh">0x1000</span>  <span class="c1"># 4KB</span>
+<span class="n">region_end</span> <span class="o">=</span> <span class="n">region_start</span> <span class="o">+</span> <span class="n">region_size</span>
+
+<span class="n">address</span> <span class="o">=</span> <span class="mh">0xD0000500</span>
+
+<span class="k">if</span> <span class="n">region_start</span> <span class="o">&lt;=</span> <span class="n">address</span> <span class="o">&lt;</span> <span class="n">region_end</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Address 0x</span><span class="si">{</span><span class="n">address</span><span class="si">:</span><span class="s2">08X</span><span class="si">}</span><span class="s2"> is in region&quot;</span><span class="p">)</span>
+    <span class="n">offset_in_region</span> <span class="o">=</span> <span class="n">address</span> <span class="o">-</span> <span class="n">region_start</span>  <span class="c1"># 0x500</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-address-ranges-in-our-system">
+<h2>Common Address Ranges in Our System<a class="headerlink" href="#common-address-ranges-in-our-system" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌──────────────────────────────────────────────────────────────┐
+│ System Address Map                                           │
+├────────────────────────┬─────────────────────────────────────┤
+│ 0x00000000-0x7FFFFFFF  │ Host System RAM (DDR4, 2 GB)        │
+│ 0xD0000000-0xD0000FFF  │ FPGA Control Registers (4 KB)       │
+│ 0x00000000-0x00003FFF  │ HBM Region 1: Axon Pointers (16 KB) │
+│ 0x00004000-0x0007FFFF  │ HBM Region 2: Neuron Ptrs (512 KB)  │
+│ 0x00080000-0x7FFFFFFF  │ HBM Region 3: Synapses (~2 GB)      │
+└────────────────────────┴─────────────────────────────────────┘
+
+Note: HBM addresses are local to the FPGA (not in host address space)
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="python-helper-functions">
+<h2>Python Helper Functions<a class="headerlink" href="#python-helper-functions" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">hex_dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">bytes_per_line</span><span class="o">=</span><span class="mi">16</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print data in hexadecimal with addresses</span>
+
+<span class="sd">    Example output:</span>
+<span class="sd">    0x0000: 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10</span>
+<span class="sd">    0x0010: 11 12 13 14 15 16 17 18 19 1A 1B 1C 1D 1E 1F 20</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">bytes_per_line</span><span class="p">):</span>
+        <span class="c1"># Format address</span>
+        <span class="n">addr</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;0x</span><span class="si">{</span><span class="n">i</span><span class="si">:</span><span class="s2">04X</span><span class="si">}</span><span class="s2">:&quot;</span>
+
+        <span class="c1"># Format hex bytes</span>
+        <span class="n">hex_bytes</span> <span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">b</span><span class="si">:</span><span class="s2">02X</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">bytes_per_line</span><span class="p">])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">addr</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">hex_bytes</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_bits</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">high_bit</span><span class="p">,</span> <span class="n">low_bit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract bits [high_bit:low_bit] from value&quot;&quot;&quot;</span>
+    <span class="n">num_bits</span> <span class="o">=</span> <span class="n">high_bit</span> <span class="o">-</span> <span class="n">low_bit</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">num_bits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">value</span> <span class="o">&gt;&gt;</span> <span class="n">low_bit</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">mask</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">insert_bits</span><span class="p">(</span><span class="n">dest</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">high_bit</span><span class="p">,</span> <span class="n">low_bit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Insert value into bits [high_bit:low_bit] of dest&quot;&quot;&quot;</span>
+    <span class="n">num_bits</span> <span class="o">=</span> <span class="n">high_bit</span> <span class="o">-</span> <span class="n">low_bit</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;&lt;</span> <span class="n">num_bits</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="c1"># Clear the target bits</span>
+    <span class="n">dest</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="p">(</span><span class="n">mask</span> <span class="o">&lt;&lt;</span> <span class="n">low_bit</span><span class="p">)</span>
+    <span class="c1"># Insert the new value</span>
+    <span class="n">dest</span> <span class="o">|=</span> <span class="p">(</span><span class="n">value</span> <span class="o">&amp;</span> <span class="n">mask</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="n">low_bit</span>
+    <span class="k">return</span> <span class="n">dest</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">is_aligned</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">alignment</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if address is aligned to &#39;alignment&#39; bytes&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">address</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">alignment</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="c1"># Usage examples</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mh">0x12345678</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="n">extract_bits</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">24</span><span class="p">)</span>  <span class="c1"># Get upper byte → 0x12</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">packet</span> <span class="o">=</span> <span class="n">insert_bits</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="mh">0x01</span><span class="p">,</span> <span class="mi">511</span><span class="p">,</span> <span class="mi">504</span><span class="p">)</span>  <span class="c1"># Set opcode</span>
+<span class="n">packet</span> <span class="o">=</span> <span class="n">insert_bits</span><span class="p">(</span><span class="n">packet</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mi">503</span><span class="p">,</span> <span class="mi">496</span><span class="p">)</span>  <span class="c1"># Set core_id</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is 0x1004 aligned to 4 bytes? </span><span class="si">{</span><span class="n">is_aligned</span><span class="p">(</span><span class="mh">0x1004</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># True</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Is 0x1005 aligned to 4 bytes? </span><span class="si">{</span><span class="n">is_aligned</span><span class="p">(</span><span class="mh">0x1005</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># False</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p><strong>Key Takeaways:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Binary is fundamental:</strong> Everything in hardware is binary (0s and 1s)</p></li>
+<li><p><strong>Hexadecimal is convenient:</strong> Each hex digit = 4 bits, compact representation</p></li>
+<li><p><strong>Byte addressing:</strong> Addresses point to bytes (8 bits), not bits or words</p></li>
+<li><p><strong>Alignment matters:</strong> Many operations require aligned addresses for correctness/performance</p></li>
+<li><p><strong>Bit field notation <code class="docutils literal notranslate"><span class="pre">[MSB:LSB]</span></code>:</strong> Standard way to specify bit ranges in documentation</p></li>
+<li><p><strong>Bit manipulation:</strong> Shift (&gt;&gt;, &lt;&lt;) and mask (&amp;, |) operations extract/insert bit fields</p></li>
+</ol>
+<p><strong>When working with hardware:</strong></p>
+<ul class="simple">
+<li><p>Always check address alignment requirements</p></li>
+<li><p>Use bit field notation to understand packet/register formats</p></li>
+<li><p>Convert between hex, binary, and decimal as needed</p></li>
+<li><p>Verify address ranges before accessing memory</p></li>
+</ul>
+<p>This foundation is essential for understanding the packet formats and memory structures described in the rest of the documentation.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#binary-address-encoding">Binary Address Encoding</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hexadecimal-notation">Hexadecimal Notation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-address-format">Memory Address Format</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bit-address-example-0x12345678"><strong>32-bit address example:</strong> <code class="docutils literal notranslate"><span class="pre">0x12345678</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bit-address-example-0x0000000123456000"><strong>64-bit address example:</strong> <code class="docutils literal notranslate"><span class="pre">0x0000000123456000</span></code></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#byte-addressing">Byte Addressing</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#address-alignment">Address Alignment</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bit-field-notation">Bit Field Notation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#notation-format"><strong>Notation Format</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#example-512-bit-command-packet"><strong>Example: 512-bit Command Packet</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-bit-fields-in-python"><strong>Extracting Bit Fields in Python</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constructing-packets-from-bit-fields"><strong>Constructing Packets from Bit Fields</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bit-masks"><strong>Bit Masks</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#address-arithmetic">Address Arithmetic</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-offsets"><strong>Adding Offsets</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#splitting-addresses-into-pages-and-offsets"><strong>Splitting Addresses into Pages and Offsets</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#range-checking"><strong>Range Checking</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-address-ranges-in-our-system">Common Address Ranges in Our System</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#python-helper-functions">Python Helper Functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/supplementary_information/addresses_explained.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

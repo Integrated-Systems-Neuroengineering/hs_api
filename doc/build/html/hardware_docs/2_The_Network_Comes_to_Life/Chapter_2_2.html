@@ -1,0 +1,3135 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.2 State Machine Coordination and Control Signals &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_2';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.3 The Code Behind Execution" href="Chapter_2_3.html" />
+    <link rel="prev" title="2.1 Visualizing the Network’s Signal Processing in Hardware" href="Chapter_2_1.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_2.html" class="nav-link">2 The Network Comes to Life</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">2.2 State Machine Coordination and Control Signals</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="state-machine-coordination-and-control-signals">
+<h1>2.2 State Machine Coordination and Control Signals<a class="headerlink" href="#state-machine-coordination-and-control-signals" title="Link to this heading">#</a></h1>
+<section id="introduction">
+<h2>Introduction<a class="headerlink" href="#introduction" title="Link to this heading">#</a></h2>
+<p>The FPGA neuromorphic system executes neural network timesteps through the coordinated operation of <strong>four independent state machines</strong> across multiple Verilog modules. Understanding how these state machines communicate and synchronize is key to understanding how the hardware processes spiking neural networks in real-time.</p>
+<section id="the-four-state-machines">
+<h3>The Four State Machines<a class="headerlink" href="#the-four-state-machines" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Command Interpreter (CI)</strong> - The Orchestrator</p>
+<ul class="simple">
+<li><p><strong>Module:</strong> <code class="docutils literal notranslate"><span class="pre">command_interpreter.v</span></code></p></li>
+<li><p><strong>Role:</strong> Receives commands from the host PC, initiates timesteps, coordinates all other modules, batches output spikes</p></li>
+<li><p><strong>State Machines:</strong> RX (receive commands) and TX (send responses)</p></li>
+<li><p><strong>Analogy:</strong> The conductor of an orchestra, setting tempo and cuing sections</p></li>
+</ul>
+</li>
+<li><p><strong>HBM Processor</strong> - The Memory Access Engine</p>
+<ul class="simple">
+<li><p><strong>Module:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor.v</span></code></p></li>
+<li><p><strong>Role:</strong> Reads connectivity pointers and synaptic data from High Bandwidth Memory, routes spikes</p></li>
+<li><p><strong>State Machines:</strong> TX (send memory read commands) and RX (receive and distribute data)</p></li>
+<li><p><strong>Analogy:</strong> The database engine that fetches network structure and weights</p></li>
+</ul>
+</li>
+<li><p><strong>External Events Processor (EEP)</strong> - The Input Handler</p>
+<ul class="simple">
+<li><p><strong>Module:</strong> <code class="docutils literal notranslate"><span class="pre">external_events_processor.v</span></code></p></li>
+<li><p><strong>Role:</strong> Manages external spike inputs in BRAM, streams them to HBM processor during Phase 1</p></li>
+<li><p><strong>State Machine:</strong> Pipeline controller for BRAM read/write/clear operations</p></li>
+<li><p><strong>Analogy:</strong> The input buffer that receives and distributes external stimuli</p></li>
+</ul>
+</li>
+<li><p><strong>Internal Events Processor (IEP)</strong> - The Neuron State Manager</p>
+<ul class="simple">
+<li><p><strong>Module:</strong> <code class="docutils literal notranslate"><span class="pre">internal_events_processor.v</span></code></p></li>
+<li><p><strong>Role:</strong> Stores neuron membrane potentials in URAM, accumulates synaptic inputs, generates spikes</p></li>
+<li><p><strong>State Machine:</strong> Pipeline controller for URAM read/modify/write operations</p></li>
+<li><p><strong>Analogy:</strong> The computational core that updates neuron states</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="why-coordination-is-critical">
+<h3>Why Coordination Is Critical<a class="headerlink" href="#why-coordination-is-critical" title="Link to this heading">#</a></h3>
+<p>Each state machine runs independently but must synchronize at specific points because:</p>
+<ul class="simple">
+<li><p><strong>Pipeline Latency:</strong> BRAM has 3-cycle read latency, URAM has 3-cycle read latency, HBM has 100+ cycle latency</p></li>
+<li><p><strong>Data Dependencies:</strong> Phase 2 cannot start until Phase 1 pointers are collected</p></li>
+<li><p><strong>Resource Sharing:</strong> Multiple modules access shared resources (HBM, spike FIFOs)</p></li>
+<li><p><strong>Timing Constraints:</strong> All must complete before the next timestep can begin</p></li>
+</ul>
+<p>The coordination is achieved through <strong>handshake signals</strong> (like <code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code>, <code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase1_done</span></code>) that allow modules to signal their status and wait for others.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-1-conceptual-overview">
+<h2>Part 1: Conceptual Overview<a class="headerlink" href="#part-1-conceptual-overview" title="Link to this heading">#</a></h2>
+<section id="the-symphony-orchestra-analogy">
+<h3>The Symphony Orchestra Analogy<a class="headerlink" href="#the-symphony-orchestra-analogy" title="Link to this heading">#</a></h3>
+<p>Think of timestep execution like a symphony orchestra performance:</p>
+<ul class="simple">
+<li><p><strong>Conductor (Command Interpreter):</strong> Raises baton (<code class="docutils literal notranslate"><span class="pre">exec_run</span></code> pulse), cues sections, keeps time</p></li>
+<li><p><strong>String Section (External Events Processor):</strong> Starts immediately, fills the air with melody (streams input spikes)</p></li>
+<li><p><strong>Brass Section (HBM Processor):</strong> Waits for strings to establish rhythm, then adds harmony (fetches pointers, then synapses)</p></li>
+<li><p><strong>Percussion (Internal Events Processor):</strong> Listens to all sections, adds accents (updates neurons, generates spikes)</p></li>
+<li><p><strong>Stage Manager (FIFOs):</strong> Passes music sheets between sections (pointer FIFOs, spike FIFOs)</p></li>
+</ul>
+<p>The conductor must wait for all sections to finish their parts before starting the next movement (timestep).</p>
+</section>
+<section id="visual-timeline-of-a-complete-timestep">
+<h3>Visual Timeline of a Complete Timestep<a class="headerlink" href="#visual-timeline-of-a-complete-timestep" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE 0: exec_run pulse ━━━━━┓ (Conductor raises baton)
+                             ┃
+         ┏━━━━━━━━━━━━━━━━━━━╋━━━━━━━━━━━━━━━━━━━━┓
+         ┃                   ┃                    ┃
+         ▼ EEP               ▼ IEP                ▼ HBM
+    Fill BRAM pipe      Fill URAM pipe      Wait for sections
+    (3 cycles)          (3 cycles)          to signal ready
+         │                   │                    │
+         ▼                   ▼                    ▼
+    exec_bram_          exec_uram_          RX waits for
+    phase1_ready        phase1_ready        exec_bram_phase1_ready
+         │                   │                    │
+         │                   │                    ▼
+         │                   │               TX sends input
+         │                   │               pointer read cmds
+         │                   │                    │
+         ├───────────────────┴────────────────────┤
+         │                                        │
+         │         PHASE 1: POINTER COLLECTION    │
+         │         (~200-500 cycles)              │
+         │                                        │
+         │  EEP: Stream input spikes ────────────&gt;│
+         │  IEP: Stream neuron pointers ─────────&gt;│ HBM: Collect
+         │                                        │ pointers in
+         │                                        │ ptrFIFO
+         │                                        │
+         ├────────────────────────────────────────┤
+         │                                        ▼
+         │                                   rx_phase1_done
+         │                                        │
+         │         PHASE 2: SYNAPSE PROCESSING    │
+         │         (~300-1000 cycles)             │
+         │                                        │
+         │                         HBM TX: Pop ptrFIFO,
+         │                         send synapse read cmds
+         │                                 │
+         │                                 ▼
+         │                         HBM RX: Receive
+         │                         synapse data
+         │                                 │
+         │                     ┌───────────┴──────────┐
+         │                     ▼                      ▼
+         │              IEP: Accumulate         Spike FIFOs:
+         │              synaptic inputs         Collect output
+         │              Update neurons          spikes
+         │              Generate spikes              │
+         │                     │                     │
+         ▼                     ▼                     ▼
+    exec_bram_          exec_iep_              CI TX: Batch
+    phase1_done         phase2_done            spikes, send
+                                               to host
+                             │
+                             ▼
+                        Wait 31 cycles
+                        (safety margin)
+                             │
+                             ▼
+                        execRun_ctr++
+                             │
+                 ┌───────────┴───────────┐
+                 │                       │
+                 ▼                       ▼
+          More timesteps?            All done
+          Loop to CYCLE 0            exec_run_done=1
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="phase-1-pointer-collection-conceptual-flow">
+<h3>Phase 1: Pointer Collection (Conceptual Flow)<a class="headerlink" href="#phase-1-pointer-collection-conceptual-flow" title="Link to this heading">#</a></h3>
+<p><strong>Goal:</strong> Identify which neurons (input and internal) have connectivity data to fetch, collect their HBM addresses.</p>
+<section id="step-1-initiation-cycles-0-3">
+<h4>Step 1: Initiation (Cycles 0-3)<a class="headerlink" href="#step-1-initiation-cycles-0-3" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Command</span> <span class="n">Interpreter</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Receives</span> <span class="n">exec_run</span> <span class="n">pulse</span> <span class="p">(</span><span class="kn">from</span><span class="w"> </span><span class="nn">CMD_EXEC_STEP</span> <span class="ow">or</span> <span class="n">CMD_EXEC_CONT</span> <span class="n">command</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Sets</span> <span class="n">execRun_running</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">-</span> <span class="n">Starts</span> <span class="n">performance</span> <span class="n">timer</span> <span class="p">(</span><span class="n">execRun_timer</span><span class="o">++</span><span class="p">)</span>
+
+<span class="n">External</span> <span class="n">Events</span> <span class="n">Processor</span> <span class="p">(</span><span class="n">EEP</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">Toggles</span> <span class="n">bram_select</span> <span class="p">(</span><span class="n">swap</span> <span class="n">present</span><span class="o">/</span><span class="n">future</span> <span class="n">buffers</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">FILL_PIPE</span> <span class="n">state</span>
+  <span class="o">-</span> <span class="n">Issues</span> <span class="mi">3</span> <span class="n">consecutive</span> <span class="n">BRAM</span> <span class="n">reads</span> <span class="p">(</span><span class="n">addresses</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Fills</span> <span class="mi">3</span><span class="o">-</span><span class="n">stage</span> <span class="n">pipeline</span>
+
+<span class="n">Internal</span> <span class="n">Events</span> <span class="n">Processor</span> <span class="p">(</span><span class="n">IEP</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">Resets</span> <span class="n">uram_raddr</span> <span class="o">=</span> <span class="mi">0</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">FILL_PIPE_PHASE1</span> <span class="n">state</span>
+  <span class="o">-</span> <span class="n">Issues</span> <span class="mi">3</span> <span class="n">consecutive</span> <span class="n">URAM</span> <span class="n">reads</span> <span class="p">(</span><span class="n">addresses</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Fills</span> <span class="mi">3</span><span class="o">-</span><span class="n">stage</span> <span class="n">pipeline</span>
+
+<span class="n">HBM</span> <span class="n">Processor</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">TX</span> <span class="n">clears</span> <span class="n">completion</span> <span class="n">flags</span> <span class="p">(</span><span class="n">tx_done_rst</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">TX</span> <span class="n">enters</span> <span class="n">STATE_SEND_INPUT_READ_COMMANDS</span>
+  <span class="o">-</span> <span class="n">RX</span> <span class="n">enters</span> <span class="n">STATE_WAIT_BRAM_PIPELINE</span>
+  <span class="o">-</span> <span class="n">Both</span> <span class="n">wait</span> <span class="k">for</span> <span class="n">pipeline</span> <span class="n">ready</span> <span class="n">signals</span>
+</pre></div>
+</div>
+<p><strong>Why 3 cycles?</strong> BRAM and URAM have 3-cycle read latency. The pipeline must be “primed” before continuous reading can begin.</p>
+</section>
+<section id="step-2-bram-pipeline-ready-cycle-4">
+<h4>Step 2: BRAM Pipeline Ready (Cycle 4+)<a class="headerlink" href="#step-2-bram-pipeline-ready-cycle-4" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">EEP</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Pipeline</span> <span class="n">filled</span><span class="p">,</span> <span class="n">data</span> <span class="kn">from</span><span class="w"> </span><span class="nn">address</span> <span class="mi">0</span> <span class="n">now</span> <span class="n">available</span>
+  <span class="o">-</span> <span class="n">Sets</span> <span class="n">exec_bram_phase1_ready</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_READ_INPUTS</span> <span class="p">(</span><span class="n">continuous</span> <span class="n">streaming</span> <span class="n">mode</span><span class="p">)</span>
+
+<span class="n">HBM</span> <span class="n">RX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Sees</span> <span class="n">exec_bram_phase1_ready</span> <span class="n">signal</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_READ_INPUT_POINTERS</span>
+  <span class="o">-</span> <span class="n">Ready</span> <span class="n">to</span> <span class="n">receive</span> <span class="n">pointer</span> <span class="n">data</span> <span class="kn">from</span><span class="w"> </span><span class="nn">HBM</span>
+
+<span class="n">HBM</span> <span class="n">TX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Already</span> <span class="n">sending</span> <span class="n">read</span> <span class="n">commands</span> <span class="n">to</span> <span class="n">HBM</span>
+  <span class="o">-</span> <span class="n">Address</span> <span class="nb">format</span><span class="p">:</span> <span class="p">{</span><span class="mi">8</span><span class="s1">&#39;d0, 1&#39;</span><span class="n">b0</span><span class="p">,</span> <span class="n">tx_addr</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="s1">&#39;d0, 5&#39;</span><span class="n">d0</span><span class="p">}</span>
+  <span class="o">-</span> <span class="n">tx_addr</span> <span class="n">increments</span> <span class="kn">from</span><span class="w"> </span><span class="mi">0</span> <span class="n">to</span> <span class="n">INPUT_ADDR_LIMIT</span>
+  <span class="o">-</span> <span class="n">Burst</span> <span class="n">length</span> <span class="o">=</span> <span class="mi">15</span> <span class="p">(</span><span class="n">reads</span> <span class="mi">16</span> <span class="n">consecutive</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">words</span> <span class="n">per</span> <span class="n">address</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Synchronized Streaming:</strong> EEP reads next BRAM address only when <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span> <span class="pre">=</span> <span class="pre">1</span></code>, ensuring HBM keeps up.</p>
+</section>
+<section id="step-3-input-pointer-collection-cycles-5-200">
+<h4>Step 3: Input Pointer Collection (Cycles 5-200+)<a class="headerlink" href="#step-3-input-pointer-collection-cycles-5-200" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Parallel</span> <span class="n">Operation</span><span class="p">:</span>
+
+<span class="n">EEP</span> <span class="p">(</span><span class="n">Foreground</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">bramPresent_rden</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">when</span> <span class="n">HBM</span> <span class="n">signals</span> <span class="n">ready</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Reads</span> <span class="n">neuron</span> <span class="n">group</span> <span class="kn">from</span><span class="w"> </span><span class="nn">BRAM</span>
+  <span class="o">-</span> <span class="n">Outputs</span> <span class="n">exec_bram_spiked</span> <span class="p">(</span><span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">mask</span> <span class="n">showing</span> <span class="n">which</span> <span class="n">groups</span> <span class="n">spiked</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Sends</span> <span class="n">to</span> <span class="n">pointer_fifo_controller</span>
+  <span class="o">-</span> <span class="n">Simultaneously</span><span class="p">:</span> <span class="n">bramPresent_wren</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">clears</span> <span class="n">read</span> <span class="n">data</span> <span class="n">to</span> <span class="n">zero</span><span class="p">)</span>
+
+<span class="n">HBM</span> <span class="n">TX</span> <span class="p">(</span><span class="n">Sending</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">Loops</span> <span class="n">through</span> <span class="n">tx_addr</span> <span class="o">=</span> <span class="mi">0</span> <span class="n">to</span> <span class="n">INPUT_ADDR_LIMIT</span>
+  <span class="o">-</span> <span class="n">Sends</span> <span class="n">burst</span> <span class="n">read</span> <span class="n">requests</span> <span class="n">to</span> <span class="n">HBM</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">request</span> <span class="n">fetches</span> <span class="mi">16</span> <span class="n">consecutive</span> <span class="n">pointer</span> <span class="n">words</span>
+
+<span class="n">HBM</span> <span class="n">RX</span> <span class="p">(</span><span class="n">Receiving</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">Receives</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">pointer</span> <span class="n">words</span> <span class="kn">from</span><span class="w"> </span><span class="nn">HBM</span>
+  <span class="o">-</span> <span class="n">Each</span> <span class="n">word</span> <span class="n">contains</span> <span class="mi">8</span> <span class="n">pointers</span><span class="p">:</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">23</span><span class="p">]</span><span class="o">=</span><span class="n">length</span><span class="p">,</span> <span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span><span class="o">=</span><span class="n">address</span>
+  <span class="o">-</span> <span class="n">Forwards</span> <span class="n">to</span> <span class="n">pointer_fifo_controller</span>
+  <span class="o">-</span> <span class="n">pointer_fifo_controller</span> <span class="n">demuxes</span> <span class="n">to</span> <span class="mi">16</span> <span class="n">ptrFIFOs</span> <span class="n">based</span> <span class="n">on</span> <span class="n">spike</span> <span class="n">mask</span>
+
+<span class="n">Completion</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">When</span> <span class="n">bramPresent_waddr</span> <span class="o">==</span> <span class="n">BRAM_ADDR_LIMIT</span>
+  <span class="o">-</span> <span class="n">EEP</span> <span class="n">sets</span> <span class="n">exec_bram_phase1_done</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+</div>
+<p><strong>Why Demuxing?</strong> The 16 ptrFIFOs correspond to the 16 neuron groups (URAM banks). Each FIFO receives only the pointers for neurons in its group that spiked.</p>
+</section>
+<section id="step-4-uram-pipeline-ready-after-bram-complete">
+<h4>Step 4: URAM Pipeline Ready (After BRAM Complete)<a class="headerlink" href="#step-4-uram-pipeline-ready-after-bram-complete" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IEP</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Waits</span> <span class="k">for</span> <span class="n">exec_bram_phase1_done</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">-</span> <span class="n">Transitions</span> <span class="n">to</span> <span class="n">STATE_PUSH_PTR_FIFO</span>
+  <span class="o">-</span> <span class="n">Continues</span> <span class="n">incrementing</span> <span class="n">uram_raddr</span>
+  <span class="o">-</span> <span class="n">Sets</span> <span class="n">exec_uram_phase1_ready</span> <span class="o">=</span> <span class="mi">1</span>
+  <span class="o">-</span> <span class="n">Outputs</span> <span class="n">neuron</span> <span class="n">pointers</span> <span class="k">for</span> <span class="n">internal</span> <span class="n">neurons</span> <span class="n">that</span> <span class="n">have</span> <span class="n">connections</span>
+
+<span class="n">HBM</span> <span class="n">RX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_WAIT_URAM_PIPELINE</span>
+  <span class="o">-</span> <span class="n">Waits</span> <span class="k">for</span> <span class="n">exec_uram_phase1_ready</span> <span class="n">signal</span>
+  <span class="o">-</span> <span class="n">Then</span> <span class="n">enters</span> <span class="n">STATE_READ_OUTPUT_POINTERS</span>
+
+<span class="n">HBM</span> <span class="n">TX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">When</span> <span class="n">tx_addr</span> <span class="o">==</span> <span class="n">INPUT_ADDR_LIMIT</span> <span class="p">(</span><span class="n">inputs</span> <span class="n">complete</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Sets</span> <span class="n">tx_select_inc</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">switch</span> <span class="kn">from</span><span class="w"> </span><span class="nn">inputs</span> <span class="n">to</span> <span class="n">outputs</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_SEND_OUTPUT_READ_COMMANDS</span>
+  <span class="o">-</span> <span class="n">Address</span> <span class="nb">format</span> <span class="n">changes</span><span class="p">:</span> <span class="p">{</span><span class="mi">8</span><span class="s1">&#39;d0, 1&#39;</span><span class="n">b1</span><span class="p">,</span> <span class="n">tx_addr</span><span class="p">[</span><span class="mi">9</span><span class="p">:</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="s1">&#39;d0, 5&#39;</span><span class="n">d0</span><span class="p">}</span>
+  <span class="o">-</span> <span class="n">tx_select</span> <span class="n">bit</span> <span class="p">[</span><span class="mi">18</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="n">indicates</span> <span class="n">internal</span> <span class="n">neurons</span>
+</pre></div>
+</div>
+</section>
+<section id="step-5-output-pointer-collection-cycles-200-500">
+<h4>Step 5: Output Pointer Collection (Cycles 200-500)<a class="headerlink" href="#step-5-output-pointer-collection-cycles-200-500" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Similar to input pointer collection:
+
+IEP (Streaming):
+  - Reads from all 16 URAM banks in parallel
+  - For each neuron: checks if it has outgoing connections
+  - Outputs pointer addresses to HBM processor
+
+HBM TX:
+  - Loops through output neuron groups
+  - Sends burst read requests for output pointers
+
+HBM RX:
+  - Receives output pointer data
+  - Forwards to pointer_fifo_controller
+  - Demuxes to 16 ptrFIFOs (now containing both input and output pointers)
+
+Completion:
+  - When rx_addr == {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}
+  - RX sets rx_phase1_done = 1
+  - When tx_addr == OUTPUT_ADDR_LIMIT
+  - TX sets tx_phase1_done = 1
+  - TX toggles tx_phase (0 → 1, entering Phase 2)
+</pre></div>
+</div>
+<p><strong>Result of Phase 1:</strong> The 16 ptrFIFOs now contain all HBM addresses for synaptic data that needs to be fetched.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="phase-2-synapse-processing-conceptual-flow">
+<h3>Phase 2: Synapse Processing (Conceptual Flow)<a class="headerlink" href="#phase-2-synapse-processing-conceptual-flow" title="Link to this heading">#</a></h3>
+<p><strong>Goal:</strong> Fetch synaptic data from HBM, accumulate inputs in neurons, detect threshold crossings, generate output spikes.</p>
+<section id="step-1-phase-transition-cycle-500">
+<h4>Step 1: Phase Transition (Cycle ~500)<a class="headerlink" href="#step-1-phase-transition-cycle-500" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">HBM</span> <span class="n">TX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_POP_POINTER_FIFO</span>
+  <span class="o">-</span> <span class="n">Waits</span> <span class="k">for</span> <span class="n">rx_phase1_done</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">already</span> <span class="nb">set</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Waits</span> <span class="k">for</span> <span class="n">ptrFIFO</span> <span class="ow">not</span> <span class="n">empty</span> <span class="p">(</span><span class="n">OR</span> <span class="n">safety</span> <span class="n">timer</span> <span class="n">expires</span><span class="p">)</span>
+
+<span class="n">HBM</span> <span class="n">RX</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Enters</span> <span class="n">STATE_PHASE1_DONE</span> <span class="n">briefly</span>
+  <span class="o">-</span> <span class="n">Then</span> <span class="n">STATE_READ_SYNAPSE_DATA</span>
+  <span class="o">-</span> <span class="n">Sets</span> <span class="n">rx_phase1_done</span> <span class="o">=</span> <span class="mi">1</span> <span class="p">(</span><span class="n">enables</span> <span class="n">TX</span> <span class="n">to</span> <span class="n">proceed</span><span class="p">)</span>
+
+<span class="n">IEP</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Transitions</span> <span class="n">to</span> <span class="n">Phase</span> <span class="mi">2</span> <span class="n">processing</span> <span class="n">state</span>
+  <span class="o">-</span> <span class="n">Ready</span> <span class="n">to</span> <span class="n">receive</span> <span class="n">synaptic</span> <span class="n">inputs</span> <span class="kn">from</span><span class="w"> </span><span class="nn">HBM</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-pointer-driven-synapse-fetching-cycles-500-1500">
+<h4>Step 2: Pointer-Driven Synapse Fetching (Cycles 500-1500)<a class="headerlink" href="#step-2-pointer-driven-synapse-fetching-cycles-500-1500" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HBM TX (Loop):
+  For each non-empty ptrFIFO:
+    1. ptrFIFO_rden = 1 (pop next pointer)
+    2. ptr_addr_set = 1 (load pointer into registers)
+       - ptr_addr = pointer.base_address [22:0]
+       - ptr_len = pointer.length [8:0] (number of synapse rows)
+       - ptr_ctr = 0 (progress counter)
+
+    3. Calculate burst length:
+       - ptr_burst = (remaining synapse rows &lt; 16) ? remainder : 15
+
+    4. Send HBM read command:
+       - hbm_arvalid = 1
+       - hbm_araddr = {5&#39;d0, ptr_addr[22:0], 5&#39;d0}
+       - hbm_arlen = ptr_burst (0-15)
+
+    5. When HBM accepts (hbm_arready = 1):
+       - ptr_addr_inc = 1
+       - ptr_addr += (ptr_burst + 1)
+       - ptr_ctr += (ptr_burst + 1)
+
+    6. If ptr_ctr[8:4] == ptr_len[8:4]:
+       - Current pointer exhausted
+       - Return to step 1 (get next pointer)
+
+  Continue until:
+    - All ptrFIFOs empty
+    - Safety timer (wait_clks_cnt = 255) expires
+
+HBM TX Completion:
+  - Sets tx_phase2_done = 1
+  - tx_ptr_ctr = total 256-bit words requested
+</pre></div>
+</div>
+<p><strong>Why Round-Robin?</strong> The pointer_fifo_controller uses round-robin arbitration to fairly select from the 16 ptrFIFOs, ensuring all neuron groups get processed.</p>
+</section>
+<section id="step-3-synapse-data-reception-and-distribution-parallel">
+<h4>Step 3: Synapse Data Reception and Distribution (Parallel)<a class="headerlink" href="#step-3-synapse-data-reception-and-distribution-parallel" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HBM RX:
+  - hbm_rready = 1 (always accept synapse data)
+  - When hbm_rvalid = 1 (data arrives from HBM):
+
+    Step 3a: Assemble 512-bit packets
+      - 1st 256-bit word: Store in hbm_rdata_lower
+      - 2nd 256-bit word: Current hbm_rdata
+      - Combined = 512-bit exec_hbm_rdata
+      - Set hbm_count = 1 (second word marker)
+      - Assert exec_hbm_rvalidready = 1 (packet ready)
+
+    Step 3b: Route to IEP
+      - IEP sees exec_hbm_rvalidready = 1
+      - Reads exec_hbm_rdata (512 bits = 16 groups × 32 bits each)
+      - Extracts 16 synaptic input values
+      - For each group with input ≠ 0:
+          • Read current neuron potential from URAM
+          • Add synaptic input: new_V = old_V + input
+          • Apply neuron model (leak, reset, etc.)
+          • Check: if new_V &gt; threshold → spike!
+          • Write updated potential back to URAM
+          • Set bit in exec_uram_spiked if spiked
+
+    Step 3c: Route to Spike FIFOs
+      - Extract 8 synapse entries from 256-bit word
+      - For synapse 0-7:
+          • Check spike_flag = hbm_rdata[N*32 + 31]
+          • If flag = 1:
+            - Extract neuron_address = hbm_rdata[N*32 + 16:N*32]
+            - Route to spike FIFO based on address[2:0]
+            - spkN_wren = 1, spkN_din = neuron_address
+
+    Step 3d: Count progress
+      - rx_ptr_ctr++ (count 256-bit words received)
+
+HBM RX Completion:
+  - When tx_phase2_done = 1 AND rx_ptr_ctr == tx_ptr_ctr
+  - All synapse data received and processed
+  - Sets rx_phase2_done = 1
+</pre></div>
+</div>
+<p><strong>Dual Distribution:</strong> Each 256-bit HBM word is used for TWO purposes:</p>
+<ol class="arabic simple">
+<li><p>Synaptic inputs routed to IEP (for neuron updates)</p></li>
+<li><p>Spike flags routed to spike FIFOs (for output collection)</p></li>
+</ol>
+</section>
+<section id="step-4-spike-output-aggregation-parallel-with-step-3">
+<h4>Step 4: Spike Output Aggregation (Parallel with Step 3)<a class="headerlink" href="#step-4-spike-output-aggregation-parallel-with-step-3" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Spike FIFO Controller:
+  - Receives spikes from 8 parallel spike FIFOs (spk0-7)
+  - Round-robin reads from non-empty FIFOs
+  - Forwards to spk2ciFIFO (single aggregated FIFO)
+
+Command Interpreter TX:
+  - State: TX_STATE_WAIT_FOR_SPIKES
+  - While execRun_running = 1:
+      • spk2ciFIFO_rden = 1 (when spike available)
+      • spike_inc = 1 (add to batch)
+      • Batch size = 14 spikes
+
+  - When spike_ctr == 14:
+      • Send 512-bit packet to host:
+        [511:480] = 0xEEEEEEEE (opcode)
+        [479:32]  = 14 × 32-bit spike events
+        [31:0]    = execRun_ctr (timestamp)
+      • spike_rst = 1 (clear batch)
+</pre></div>
+</div>
+</section>
+<section id="step-5-phase-2-completion-and-timestep-finalization">
+<h4>Step 5: Phase 2 Completion and Timestep Finalization<a class="headerlink" href="#step-5-phase-2-completion-and-timestep-finalization" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IEP:
+  - When exec_hbm_rx_phase2_done = 1
+  - Sets exec_iep_phase2_done = 1
+  - Neuron updates complete
+
+Command Interpreter RX:
+  - State: RX_STATE_WAIT_RUN
+  - Checks completion conditions:
+      • exec_iep_phase2_done = 1
+      • spk2ciFIFO_empty = 1 (all spikes drained)
+      • wait_clks_cnt == 31 (safety margin)
+
+  - When all satisfied:
+      • exec_run_inc = 1
+      • execRun_ctr++ (increment timestep counter)
+
+      • If execRun_ctr &lt; execRun_limit:
+        - Load next timestep input data
+        - Loop back to CYCLE 0
+
+      • Else:
+        - exec_run_done = 1
+        - execRun_running = 0
+        - All timesteps complete!
+</pre></div>
+</div>
+<p><strong>Safety Margin:</strong> The 31-cycle wait ensures all spikes have propagated through the round-robin arbiters and FIFOs before starting the next timestep.</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-2-technical-reference">
+<h2>Part 2: Technical Reference<a class="headerlink" href="#part-2-technical-reference" title="Link to this heading">#</a></h2>
+<section id="execution-control-signals-reference">
+<h3>Execution Control Signals Reference<a class="headerlink" href="#execution-control-signals-reference" title="Link to this heading">#</a></h3>
+<p>Complete table of all <code class="docutils literal notranslate"><span class="pre">exec_*</span></code> signals that coordinate the state machines:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Origin</p></th>
+<th class="head"><p>Destination(s)</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Asserted When</p></th>
+<th class="head"><p>Cleared When</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>EEP, IEP, HBM TX/RX</p></td>
+<td><p>Initiate new timestep</p></td>
+<td><p>CI parses CMD_EXEC_STEP or starts timestep in CMD_EXEC_CONT</p></td>
+<td><p>Automatically (pulse signal)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>External Events Processor</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>BRAM pipeline filled, ready to stream</p></td>
+<td><p>EEP enters STATE_READ_INPUTS (after FILL_PIPE)</p></td>
+<td><p>EEP enters STATE_FILL_PIPE (next timestep)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>External Events Processor</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>External spike processing complete</p></td>
+<td><p>bramPresent_waddr == BRAM_ADDR_LIMIT</p></td>
+<td><p>EEP enters STATE_FILL_PIPE</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_ready</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>URAM pipeline filled, ready to output</p></td>
+<td><p>IEP enters STATE_PUSH_PTR_FIFO</p></td>
+<td><p>IEP enters FILL_PIPE_PHASE1</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>HBM Processor TX</p></td>
+<td><p>Internal neuron pointer output complete</p></td>
+<td><p>uram_raddr == URAM_ADDR_LIMIT</p></td>
+<td><p>Next exec_run</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase1_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>HBM Processor TX</p></td>
+<td><p>HBM Processor RX (internal)</p></td>
+<td><p>All pointer read commands sent</p></td>
+<td><p>tx_curr_state == TX_STATE_PHASE1_DONE</p></td>
+<td><p>tx_done_rst on next exec_run</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase2_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>HBM Processor TX</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>All synapse read commands sent</p></td>
+<td><p>tx_curr_state == TX_STATE_PHASE2_DONE</p></td>
+<td><p>tx_done_rst on next exec_run</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase1_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>HBM Processor TX, Spike routing logic</p></td>
+<td><p>All pointers received from HBM</p></td>
+<td><p>rx_next_state == RX_STATE_READ_SYNAPSE_DATA</p></td>
+<td><p>rx_done_rst on next exec_run</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase2_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>Internal Events Processor, CI TX</p></td>
+<td><p>All synapse data received and processed</p></td>
+<td><p>rx_curr_state == RX_STATE_PHASE2_DONE</p></td>
+<td><p>rx_done_rst on next exec_run</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>EEP, IEP</p></td>
+<td><p>HBM data valid (512-bit packet complete)</p></td>
+<td><p>hbm_rvalid &amp; hbm_rready &amp; hbm_count &amp; ~hbmFIFO_full</p></td>
+<td><p>Every other 256-bit HBM read</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata</span></code></strong></p></td>
+<td><p>512 bits</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>Synaptic input data (2 × 256-bit HBM words)</p></td>
+<td><p>When exec_hbm_rvalidready = 1</p></td>
+<td><p>Continuous data stream</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span></code></strong></p></td>
+<td><p>16 bits</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>Pointer FIFO Controller</p></td>
+<td><p>Bit mask of neuron groups that spiked</p></td>
+<td><p>Any neuron in group exceeds threshold</p></td>
+<td><p>Cleared each timestep</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code></strong></p></td>
+<td><p>8 bits</p></td>
+<td><p>External Events Processor</p></td>
+<td><p>Pointer FIFO Controller</p></td>
+<td><p>Spike mask from BRAM (8 groups)</p></td>
+<td><p>Read from bramPresent_rdata</p></td>
+<td><p>Continuous stream during Phase 1</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">exec_iep_phase2_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Neuron updates complete</p></td>
+<td><p>IEP finishes processing all synaptic inputs</p></td>
+<td><p>Next exec_run</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">execRun_running</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>Execution active flag</p></td>
+<td><p>exec_run_rst in CI RX</p></td>
+<td><p>exec_run_done in CI RX</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">execRun_done</span></code></strong></p></td>
+<td><p>1 bit</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>All timesteps complete</p></td>
+<td><p>execRun_ctr == execRun_limit</p></td>
+<td><p>Next execution sequence</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">execRun_ctr</span></code></strong></p></td>
+<td><p>32 bits</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>Current timestep number</p></td>
+<td><p>exec_run_inc after each timestep</p></td>
+<td><p>exec_run_rst at start</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong><code class="docutils literal notranslate"><span class="pre">execRun_limit</span></code></strong></p></td>
+<td><p>32 bits</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Target number of timesteps</p></td>
+<td><p>exec_run_set from CMD_EXEC_CONT</p></td>
+<td><p>Next execution</p></td>
+</tr>
+<tr class="row-even"><td><p><strong><code class="docutils literal notranslate"><span class="pre">execRun_timer</span></code></strong></p></td>
+<td><p>64 bits</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Debug/monitoring</p></td>
+<td><p>Performance counter (clock cycles)</p></td>
+<td><p>Every cycle while execRun_running = 1</p></td>
+<td><p>exec_run_rst at start</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="module-by-module-state-machine-details">
+<h3>Module-by-Module State Machine Details<a class="headerlink" href="#module-by-module-state-machine-details" title="Link to this heading">#</a></h3>
+<section id="command-interpreter-the-orchestrator">
+<h4>1. Command Interpreter - The Orchestrator<a class="headerlink" href="#command-interpreter-the-orchestrator" title="Link to this heading">#</a></h4>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">command_interpreter.v</span></code></p>
+<section id="rx-state-machine-command-processing-and-timestep-control">
+<h5>RX State Machine (Command Processing and Timestep Control)<a class="headerlink" href="#rx-state-machine-command-processing-and-timestep-control" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RX_STATE_RESET (0)                   → Initialization
+RX_STATE_IDLE (1)                    → Waiting for command from rxFIFO
+RX_STATE_REGISTER_PCIE_AXON_DATA (2) → Loading external event data
+RX_STATE_SET_AXON_DATA (3)           → Unpacking and sending to EEP
+RX_STATE_EXEC_STEP (4)               → Pulse exec_run signal
+RX_STATE_WAIT_RUN (5)                → Wait for timestep completion
+RX_STATE_EXEC_DONE (6)               → Execution finished
+</pre></div>
+</div>
+<p><strong>Key Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IDLE → REGISTER_PCIE_AXON_DATA:
+  When: rx_command == CMD_EEP_W
+  Action: axon_addr_rst = 1, rxFIFO_rden = 1
+
+IDLE → EXEC_STEP:
+  When: rx_command == CMD_EXEC_STEP
+  Action: axon_addr_rst = 1, exec_run_rst = 1, rxFIFO_rden = 1
+
+IDLE → REGISTER_PCIE_AXON_DATA:
+  When: rx_command == CMD_EXEC_CONT
+  Action: axon_addr_rst = 1, exec_run_rst = 1, exec_run_set = 1, rxFIFO_rden = 1
+
+EXEC_STEP → WAIT_RUN:
+  When: Always (after pulsing exec_run = 1)
+  Action: exec_run = 1 (pulse)
+
+WAIT_RUN → EXEC_DONE:
+  When: wait_clks_cnt == 31 AND execRun_ctr == execRun_limit
+  Action: exec_run_done = 1
+
+WAIT_RUN → REGISTER_PCIE_AXON_DATA:
+  When: wait_clks_cnt == 31 AND execRun_ctr &lt; execRun_limit
+  Action: exec_run_inc = 1, axon_addr_rst = 1
+
+EXEC_DONE → IDLE:
+  When: Always
+  Action: exec_run_done = 1 (latched)
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_ctr</span></code></p></td>
+<td><p>32 bits</p></td>
+<td><p>Current timestep (0 to limit)</p></td>
+<td><p>exec_run_inc = 1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_limit</span></code></p></td>
+<td><p>32 bits</p></td>
+<td><p>Total timesteps to execute</p></td>
+<td><p>exec_run_set = 1, loaded from rxFIFO_dout[31:0]</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_timer</span></code></p></td>
+<td><p>64 bits</p></td>
+<td><p>Performance counter (cycles)</p></td>
+<td><p>Every cycle while execRun_running = 1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_running</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Execution active flag</p></td>
+<td><p>Set by exec_run_rst, cleared by exec_run_done</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_done</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Completion flag</p></td>
+<td><p>Set when execRun_ctr == execRun_limit</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">wait_clks_cnt</span></code></p></td>
+<td><p>5 bits</p></td>
+<td><p>Safety margin counter (0-31)</p></td>
+<td><p>Increments in WAIT_RUN when conditions met</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">axonEvent_addr</span></code></p></td>
+<td><p>13 bits</p></td>
+<td><p>Current axon row address</p></td>
+<td><p>Increments in SET_AXON_DATA state</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">axon_data_sr</span></code></p></td>
+<td><p>512 bits</p></td>
+<td><p>Shift register for axon data</p></td>
+<td><p>Loaded in REGISTER state, shifted in SET state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Wait Conditions in WAIT_RUN:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">wait_clks_limit</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// Safety margin reached (31 cycles)</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">execRun_ctr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">execRun_limit</span><span class="p">)</span>
+<span class="w">        </span><span class="c1">// All timesteps complete</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">EXEC_DONE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="c1">// More timesteps to process</span>
+<span class="w">        </span><span class="n">exec_run_inc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">REGISTER_PCIE_AXON_DATA</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">// Increment counter when:</span>
+<span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">curr_state</span><span class="o">==</span><span class="n">WAIT_RUN</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_iep_phase2_done</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">spk2ciFIFO_empty</span><span class="p">)</span>
+<span class="w">    </span><span class="n">wait_clks_cnt</span><span class="o">++</span><span class="p">;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+<section id="tx-state-machine-response-and-spike-batching">
+<h5>TX State Machine (Response and Spike Batching)<a class="headerlink" href="#tx-state-machine-response-and-spike-batching" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>TX_STATE_RESET (0)           → Initialization
+TX_STATE_IDLE (1)            → Check for data to send
+TX_STATE_WAIT_FOR_SPIKES (2) → Accumulate spike batch
+TX_STATE_SEND_SPIKES (3)     → Send 512-bit spike packet
+</pre></div>
+</div>
+<p><strong>Key Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IDLE → WAIT_FOR_SPIKES:
+  When: execRun_running = 1
+  Action: spike_rst = 1 (reset batch counter)
+
+WAIT_FOR_SPIKES → SEND_SPIKES:
+  When: spike_ctr == 14 (batch full)
+  Action: Prepare 512-bit packet
+
+WAIT_FOR_SPIKES → IDLE:
+  When: execRun_done = 1 AND spikes_sent = 1
+  Action: All spikes transmitted
+
+WAIT_FOR_SPIKES → SEND_SPIKES:
+  When: execRun_done = 1 AND spikes_sent = 0
+  Action: Send final partial batch
+
+SEND_SPIKES → WAIT_FOR_SPIKES:
+  When: !txFIFO_full
+  Action: txFIFO_wren = 1, spike_rst = 1
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spike_sr</span></code></p></td>
+<td><p>448 bits</p></td>
+<td><p>Spike batch shift register (14 × 32 bits)</p></td>
+<td><p>spike_inc = 1, shifted left</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spike_ctr</span></code></p></td>
+<td><p>4 bits</p></td>
+<td><p>Current batch size (0-14)</p></td>
+<td><p>Increments with spike_inc</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spikes_sent</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Final batch sent flag</p></td>
+<td><p>Cleared by spike_inc, set by spike_rst</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Spike Packet Format (512 bits):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[511:480] = 32&#39;hEEEE_EEEE       // Opcode (identifies spike packet)
+[479:32]  = 448-bit spike batch // 14 × 32-bit spike events
+[31:0]    = execRun_ctr         // Timestamp (current timestep number)
+
+Each 32-bit spike event:
+[31:24] = execRun_ctr[7:0]      // Sub-timestamp (lower 8 bits of timestep)
+[23:17] = 7&#39;d0                  // Padding
+[16:0]  = neuron_address        // Which neuron spiked
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hbm-processor-the-memory-access-engine">
+<h4>2. HBM Processor - The Memory Access Engine<a class="headerlink" href="#hbm-processor-the-memory-access-engine" title="Link to this heading">#</a></h4>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor.v</span></code></p>
+<section id="tx-state-machine-memory-read-command-generator">
+<h5>TX State Machine (Memory Read Command Generator)<a class="headerlink" href="#tx-state-machine-memory-read-command-generator" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>TX_STATE_RESET (0)                          → Initialization
+TX_STATE_IDLE (1)                           → Wait for work
+TX_STATE_SEND_INPUT_READ_COMMANDS (2)       → Phase 1a: Read input pointers
+TX_STATE_SEND_OUTPUT_READ_COMMANDS (3)      → Phase 1b: Read output pointers
+TX_STATE_PHASE1_DONE (4)                    → Phase 1 complete, prepare Phase 2
+TX_STATE_POP_POINTER_FIFO (5)               → Phase 2: Get next pointer
+TX_STATE_SEND_POINTER_READ_COMMANDS (6)     → Phase 2: Read synapse data
+TX_STATE_PHASE2_DONE (7)                    → Phase 2 complete
+TX_STATE_READ_HBM_ADDR (8)                  → Host read command
+TX_STATE_WRITE_HBM_ADDR (9)                 → Host write address phase
+TX_STATE_WRITE_HBM_DATA (10)                → Host write data phase
+TX_STATE_WRITE_HBM_RESP (11)                → Host write response phase
+</pre></div>
+</div>
+<p><strong>Key Transitions (Execution Path):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IDLE → SEND_INPUT_READ_COMMANDS:
+  When: exec_run = 1
+  Action: tx_done_rst = 1, tx_addr_rst = 1
+
+SEND_INPUT_READ_COMMANDS → SEND_OUTPUT_READ_COMMANDS:
+  When: hbm_arready = 1 AND tx_addr == INPUT_ADDR_LIMIT
+  Action: tx_addr_inc = 1, tx_addr_rst = 1, tx_select_inc = 1
+
+SEND_OUTPUT_READ_COMMANDS → PHASE1_DONE:
+  When: hbm_arready = 1 AND tx_addr == OUTPUT_ADDR_LIMIT
+  Action: tx_addr_inc = 1
+
+PHASE1_DONE → POP_POINTER_FIFO:
+  When: Always
+  Action: tx_phase_inc = 1 (toggle to Phase 2), tx_ptr_ctr_rst = 1
+
+POP_POINTER_FIFO → SEND_POINTER_READ_COMMANDS:
+  When: !ptrFIFO_empty AND rx_phase1_done = 1
+  Action: ptr_addr_set = 1, ptrFIFO_rden = 1
+
+POP_POINTER_FIFO → PHASE2_DONE:
+  When: wait_clks_cnt == 255 AND ptrFIFO_empty
+  Action: Safety timer expired, all pointers processed
+
+SEND_POINTER_READ_COMMANDS → POP_POINTER_FIFO:
+  When: hbm_arready = 1 AND ptr_ctr[8:4] == ptr_len[8:4]
+  Action: ptr_addr_inc = 1 (current pointer exhausted)
+
+PHASE2_DONE → IDLE:
+  When: Always
+  Action: tx_phase_inc = 1 (toggle back to Phase 1)
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+<th class="head"><p>Range</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_phase</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase selector (0=pointers, 1=synapses)</p></td>
+<td><p>tx_phase_inc = 1</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_select</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase 1: input (0) or output (1)</p></td>
+<td><p>tx_select_inc = 1</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_addr</span></code></p></td>
+<td><p>10 bits</p></td>
+<td><p>Phase 1: group address counter</p></td>
+<td><p>tx_addr_inc = 1</p></td>
+<td><p>0-1023</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptr_addr</span></code></p></td>
+<td><p>23 bits</p></td>
+<td><p>Phase 2: synapse block address</p></td>
+<td><p>ptr_addr_inc, ptr_addr_set</p></td>
+<td><p>0-8M</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptr_len</span></code></p></td>
+<td><p>9 bits</p></td>
+<td><p>Phase 2: synapses in current pointer</p></td>
+<td><p>ptr_addr_set (from ptrFIFO)</p></td>
+<td><p>0-511</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptr_ctr</span></code></p></td>
+<td><p>9 bits</p></td>
+<td><p>Phase 2: progress within pointer</p></td>
+<td><p>ptr_addr_inc</p></td>
+<td><p>0-511</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptr_burst</span></code></p></td>
+<td><p>4 bits</p></td>
+<td><p>Phase 2: current burst length</p></td>
+<td><p>Calculated</p></td>
+<td><p>0-15</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_ptr_ctr</span></code></p></td>
+<td><p>23 bits</p></td>
+<td><p>Phase 2: total synapse blocks sent</p></td>
+<td><p>ptr_addr_inc</p></td>
+<td><p>0-8M</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tx_phase1_done</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase 1 commands complete flag</p></td>
+<td><p>State = PHASE1_DONE</p></td>
+<td><p>0-1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tx_phase2_done</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase 2 commands complete flag</p></td>
+<td><p>State = PHASE2_DONE</p></td>
+<td><p>0-1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>HBM Read Address Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1 (Pointer Reads):</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">tx_phase</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_araddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">tx_select</span><span class="p">,</span><span class="w"> </span><span class="n">tx_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">},</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+<span class="w">    </span><span class="c1">// Breakdown:</span>
+<span class="w">    </span><span class="c1">// [32:28] = 5&#39;d0           (upper padding)</span>
+<span class="w">    </span><span class="c1">// [27:20] = 8&#39;d0           (padding)</span>
+<span class="w">    </span><span class="c1">// [19]    = tx_select      (0=inputs, 1=outputs)</span>
+<span class="w">    </span><span class="c1">// [18:9]  = tx_addr[9:0]   (group address)</span>
+<span class="w">    </span><span class="c1">// [8:5]   = 4&#39;d0           (within-group offset)</span>
+<span class="w">    </span><span class="c1">// [4:0]   = 5&#39;d0           (32-byte alignment)</span>
+<span class="k">end</span>
+
+<span class="c1">// Phase 2 (Synapse Reads):</span>
+<span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_araddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">],</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+<span class="w">    </span><span class="c1">// Breakdown:</span>
+<span class="w">    </span><span class="c1">// [32:28] = 5&#39;d0           (upper padding)</span>
+<span class="w">    </span><span class="c1">// [27:5]  = ptr_addr       (synapse block address)</span>
+<span class="w">    </span><span class="c1">// [4:0]   = 5&#39;d0           (32-byte alignment)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Burst Length Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1:</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">tx_phase</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">tx_select</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Reading input pointers</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tx_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">INPUT_ADDR_LIMIT</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">INPUT_ADDR_MOD</span><span class="p">;</span><span class="w">  </span><span class="c1">// Last burst (partial)</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4&#39;hF</span><span class="p">;</span><span class="w">  </span><span class="c1">// 15 = 16 words (full burst)</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Reading output pointers</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">tx_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">OUTPUT_ADDR_LIMIT</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OUTPUT_ADDR_MOD</span><span class="p">;</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4&#39;hF</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Phase 2:</span>
+<span class="k">else</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">hbm_arlen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptr_burst</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Where ptr_burst = (ptr_ctr[8:4] == ptr_len[8:4]) ? ptr_len[3:0] : 4&#39;hf</span>
+<span class="w">    </span><span class="c1">// Meaning: Last burst gets remainder, others get 15 (16 words)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+<section id="rx-state-machine-memory-read-response-handler">
+<h5>RX State Machine (Memory Read Response Handler)<a class="headerlink" href="#rx-state-machine-memory-read-response-handler" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RX_STATE_RESET (0)                → Initialization
+RX_STATE_IDLE (1)                 → Wait for work
+RX_STATE_WAIT_BRAM_PIPELINE (2)   → Wait for EEP ready
+RX_STATE_READ_INPUT_POINTERS (3)  → Phase 1a: Receive input pointers
+RX_STATE_WAIT_URAM_PIPELINE (4)   → Wait for IEP ready
+RX_STATE_READ_OUTPUT_POINTERS (5) → Phase 1b: Receive output pointers
+RX_STATE_PHASE1_DONE (6)          → Phase 1 complete
+RX_STATE_READ_SYNAPSE_DATA (7)    → Phase 2: Receive synapse data
+RX_STATE_PHASE2_DONE (8)          → Phase 2 complete
+RX_STATE_READ_HBM_RESP (9)        → Host read response
+</pre></div>
+</div>
+<p><strong>Key Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>IDLE → WAIT_BRAM_PIPELINE:
+  When: exec_run = 1
+  Action: rx_done_rst = 1, rx_addr_rst = 1
+
+WAIT_BRAM_PIPELINE → READ_INPUT_POINTERS:
+  When: exec_bram_phase1_ready = 1
+  Action: None (just wait for EEP pipeline to fill)
+
+READ_INPUT_POINTERS → WAIT_URAM_PIPELINE:
+  When: hbm_rvalid = 1 AND rx_addr == {INPUT_ADDR_LIMIT, INPUT_ADDR_MOD}
+  Action: rx_addr_inc = 1, rx_addr_rst = 1
+
+WAIT_URAM_PIPELINE → READ_OUTPUT_POINTERS:
+  When: exec_uram_phase1_ready = 1
+  Action: None (wait for IEP pipeline to fill)
+
+READ_OUTPUT_POINTERS → PHASE1_DONE:
+  When: hbm_rvalid = 1 AND rx_addr == {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}
+  Action: rx_addr_inc = 1
+
+PHASE1_DONE → READ_SYNAPSE_DATA:
+  When: Always
+  Action: rx_phase1_done = 1
+
+READ_SYNAPSE_DATA → PHASE2_DONE:
+  When: tx_phase2_done = 1 AND rx_ptr_ctr == tx_ptr_ctr
+  Action: All synapse data received
+
+PHASE2_DONE → IDLE:
+  When: Always
+  Action: rx_phase2_done = 1
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_addr</span></code></p></td>
+<td><p>14 bits</p></td>
+<td><p>Phase 1: pointer word counter</p></td>
+<td><p>rx_addr_inc = 1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_ptr_ctr</span></code></p></td>
+<td><p>23 bits</p></td>
+<td><p>Phase 2: synapse blocks received</p></td>
+<td><p>Increments with each hbm_rvalid</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rx_phase1_done</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase 1 complete flag</p></td>
+<td><p>State = READ_SYNAPSE_DATA</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rx_phase2_done</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Phase 2 complete flag</p></td>
+<td><p>State = PHASE2_DONE</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_count</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>512-bit packet assembly (0=1st word, 1=2nd word)</p></td>
+<td><p>Toggles with each hbm_rvalid</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rdata_lower</span></code></p></td>
+<td><p>256 bits</p></td>
+<td><p>Stores 1st 256-bit word for packet</p></td>
+<td><p>hbm_count = 0</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Flow in RX:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>hbm_rdata (256 bits from HBM)
+    │
+    ├─&gt; (If hbm_count = 0) Store in hbm_rdata_lower
+    │
+    └─&gt; (If hbm_count = 1) Combine with hbm_rdata_lower
+            │
+            ▼
+        exec_hbm_rdata (512 bits) = {hbm_rdata, hbm_rdata_lower}
+            │
+            ├─&gt; Internal Events Processor (synaptic inputs)
+            │   └─&gt; 16 groups × 32 bits each
+            │
+            └─&gt; Spike Routing Logic (extract spike flags)
+                └─&gt; 8 synapse entries × spike_flag bit
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="external-events-processor-the-input-handler">
+<h4>3. External Events Processor - The Input Handler<a class="headerlink" href="#external-events-processor-the-input-handler" title="Link to this heading">#</a></h4>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">external_events_processor.v</span></code></p>
+<section id="bram-pipeline-state-machine">
+<h5>BRAM Pipeline State Machine<a class="headerlink" href="#bram-pipeline-state-machine" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>STATE_RESET (0)       → Initialization
+STATE_IDLE (1)        → Wait for exec_run
+STATE_FILL_PIPE (2)   → Fill 3-stage BRAM read pipeline
+STATE_READ_INPUTS (3) → Stream spike data to HBM
+STATE_PHASE1_DONE (4) → Processing complete
+</pre></div>
+</div>
+<p><strong>Key Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE:
+  When: Always
+  Action: bramPresent_addr_rst = 1
+
+IDLE → FILL_PIPE:
+  When: exec_run = 1
+  Action: bramPresent_addr_rst = 1, bram_select toggles
+
+FILL_PIPE → READ_INPUTS:
+  When: bramPresent_raddr &gt;= PIPE_DEPTH (3)
+  Action: exec_bram_phase1_ready = 1
+
+READ_INPUTS → PHASE1_DONE:
+  When: exec_hbm_rvalidready = 1 AND bramPresent_waddr == BRAM_ADDR_LIMIT
+  Action: exec_bram_phase1_done = 1
+
+PHASE1_DONE → IDLE:
+  When: Always
+  Action: None
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram_select</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Double-buffer toggle (0=bram0 present, 1=bram1 present)</p></td>
+<td><p>Toggles on exec_run</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bramPresent_raddr</span></code></p></td>
+<td><p>14 bits</p></td>
+<td><p>Read address (leads by PIPE_DEPTH)</p></td>
+<td><p>Increments during FILL_PIPE and READ_INPUTS</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bramPresent_waddr</span></code></p></td>
+<td><p>14 bits</p></td>
+<td><p>Write address (clears after reading)</p></td>
+<td><p>Lags behind raddr by 3 cycles</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bramFuture_waddr[2:0]</span></code></p></td>
+<td><p>14 bits × 3</p></td>
+<td><p>3-stage write pipeline for incoming spikes</p></td>
+<td><p>Shifts each cycle when setArray_go = 1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bramFuture_wdata[2:0]</span></code></p></td>
+<td><p>8 bits × 3</p></td>
+<td><p>Spike mask data in pipeline</p></td>
+<td><p>Shifts each cycle, OR on collision</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Double-Buffering Mechanism:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Timestep</span> <span class="n">N</span><span class="p">:</span>
+  <span class="n">Present</span> <span class="n">BRAM</span> <span class="o">=</span> <span class="n">bram0</span> <span class="p">(</span><span class="n">reading</span> <span class="ow">and</span> <span class="n">clearing</span><span class="p">)</span>
+  <span class="n">Future</span> <span class="n">BRAM</span> <span class="o">=</span> <span class="n">bram1</span> <span class="p">(</span><span class="n">receiving</span> <span class="n">new</span> <span class="n">spikes</span> <span class="k">for</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">exec_run</span> <span class="n">pulse</span><span class="p">:</span>
+  <span class="n">bram_select</span> <span class="n">toggles</span>
+
+<span class="n">Timestep</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span>
+  <span class="n">Present</span> <span class="n">BRAM</span> <span class="o">=</span> <span class="n">bram1</span> <span class="p">(</span><span class="n">now</span> <span class="n">reading</span> <span class="n">what</span> <span class="n">was</span> <span class="n">written</span> <span class="n">during</span> <span class="n">N</span><span class="p">)</span>
+  <span class="n">Future</span> <span class="n">BRAM</span> <span class="o">=</span> <span class="n">bram0</span> <span class="p">(</span><span class="n">now</span> <span class="n">receiving</span> <span class="n">new</span> <span class="n">spikes</span> <span class="k">for</span> <span class="n">N</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Pipeline Hazard Resolution:</strong></p>
+<p>The 3-stage write pipeline prevents data loss when multiple spikes arrive for the same address while a write is in progress:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_go</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// Check for address collisions in pipeline</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span>
+<span class="w">        </span><span class="c1">// Collision at stage 2: OR new spike with pending</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span>
+<span class="w">        </span><span class="c1">// Collision at stage 1: OR new spike</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">setArray_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">bramFuture_waddr</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span>
+<span class="w">        </span><span class="c1">// Collision at stage 0: will be ORed at BRAM level</span>
+<span class="w">        </span><span class="c1">// (commented logic in production code)</span>
+
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="c1">// No collision: add new entry to pipeline</span>
+<span class="w">        </span><span class="n">bramFuture_wdata</span><span class="p">[</span><span class="mh">2</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">setArray_data</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="internal-events-processor-the-neuron-state-manager">
+<h4>4. Internal Events Processor - The Neuron State Manager<a class="headerlink" href="#internal-events-processor-the-neuron-state-manager" title="Link to this heading">#</a></h4>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">internal_events_processor.v</span></code></p>
+<section id="uram-state-machine">
+<h5>URAM State Machine<a class="headerlink" href="#uram-state-machine" title="Link to this heading">#</a></h5>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>STATE_RESET (0)              → Initialization
+STATE_IDLE (1)               → Wait for exec_run
+STATE_FILL_PIPE_PHASE1 (2)   → Fill URAM read pipeline
+STATE_WAIT_BRAM_PHASE1_DONE (3) → Wait for external events complete
+STATE_PUSH_PTR_FIFO (4)      → Output neuron pointers
+STATE_PHASE1_DONE (5)        → Phase 1 complete
+STATE_POP_PTR_FIFO (6)       → Get pointer from FIFO (Phase 2)
+STATE_WAIT_SYNAPSE (7)       → Wait for synapse data
+STATE_PHASE2_DONE (8)        → Phase 2 complete, updates written
+</pre></div>
+</div>
+<p><strong>Key Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE:
+  When: Always
+  Action: uram_raddr = 0
+
+IDLE → FILL_PIPE_PHASE1:
+  When: exec_run = 1
+  Action: uram_raddr_rst = 1
+
+FILL_PIPE_PHASE1 → WAIT_BRAM_PHASE1_DONE:
+  When: uram_raddr &gt;= PIPE_DEPTH (3)
+  Action: exec_uram_phase1_ready = 1
+
+WAIT_BRAM_PHASE1_DONE → PUSH_PTR_FIFO:
+  When: exec_bram_phase1_done = 1
+  Action: None (can start outputting pointers)
+
+PUSH_PTR_FIFO → PHASE1_DONE:
+  When: uram_raddr == URAM_ADDR_LIMIT
+  Action: exec_uram_phase1_done = 1
+
+PHASE1_DONE → WAIT_SYNAPSE (or continuous processing):
+  When: Always
+  Action: Prepare for Phase 2
+
+WAIT_SYNAPSE → PHASE2_DONE:
+  When: exec_hbm_rx_phase2_done = 1
+  Action: exec_uram_phase2_done = 1, exec_iep_phase2_done = 1
+
+PHASE2_DONE → IDLE:
+  When: Always
+  Action: Ready for next timestep
+</pre></div>
+</div>
+<p><strong>Key Variables:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Update Condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uram_raddr</span></code></p></td>
+<td><p>13 bits</p></td>
+<td><p>Global read address (all 16 groups)</p></td>
+<td><p>Increments during Phase 1</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uram_rden</span></code></p></td>
+<td><p>1 bit</p></td>
+<td><p>Global read enable</p></td>
+<td><p>1 during Phase 1</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uram_waddr[15:0]</span></code></p></td>
+<td><p>12 bits × 16</p></td>
+<td><p>Individual write addresses per group</p></td>
+<td><p>Set during Phase 2 updates</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">uram_wren[15:0]</span></code></p></td>
+<td><p>1 bit × 16</p></td>
+<td><p>Individual write enables per group</p></td>
+<td><p>1 when updating group</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">uram_wdata_reg[15:0]</span></code></p></td>
+<td><p>72 bits × 16</p></td>
+<td><p>Updated neuron data (2 neurons per word)</p></td>
+<td><p>Calculated during Phase 2</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span></code></p></td>
+<td><p>16 bits</p></td>
+<td><p>Spike mask (bit per group)</p></td>
+<td><p>Set when neuron exceeds threshold</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Neuron Update Process (Phase 2):</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">When</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="o">:</span>
+<span class="w">    </span><span class="c1">// Extract 16 group inputs from 512-bit packet</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">group</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="mh">15</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">input_upper</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="n">group</span><span class="o">*</span><span class="mh">32</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">31</span><span class="o">:</span><span class="n">group</span><span class="o">*</span><span class="mh">32</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">16</span><span class="p">];</span>
+<span class="w">        </span><span class="n">input_lower</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="n">group</span><span class="o">*</span><span class="mh">32</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">15</span><span class="o">:</span><span class="n">group</span><span class="o">*</span><span class="mh">32</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">0</span><span class="p">];</span>
+
+<span class="w">        </span><span class="c1">// Read current neuron potential from URAM</span>
+<span class="w">        </span><span class="n">old_potential</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uram_rdata</span><span class="p">[</span><span class="n">group</span><span class="p">];</span>
+
+<span class="w">        </span><span class="c1">// Add synaptic input</span>
+<span class="w">        </span><span class="n">new_potential_upper</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">old_potential</span><span class="p">[</span><span class="mh">71</span><span class="o">:</span><span class="mh">36</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sign_extend</span><span class="p">(</span><span class="n">input_upper</span><span class="p">);</span>
+<span class="w">        </span><span class="n">new_potential_lower</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">old_potential</span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">  </span><span class="o">+</span><span class="w"> </span><span class="n">sign_extend</span><span class="p">(</span><span class="n">input_lower</span><span class="p">);</span>
+
+<span class="w">        </span><span class="c1">// Apply neuron model (leak, reset, etc.)</span>
+<span class="w">        </span><span class="c1">// Model 0: Memoryless</span>
+<span class="w">        </span><span class="c1">// Model 1: Incremental</span>
+<span class="w">        </span><span class="c1">// Model 2: Leaky I&amp;F</span>
+<span class="w">        </span><span class="c1">// Model 3: Non-leaky I&amp;F</span>
+
+<span class="w">        </span><span class="c1">// Check threshold</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">new_potential_upper</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span>
+<span class="w">            </span><span class="n">exec_uram_spiked</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">new_potential_lower</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span>
+<span class="w">            </span><span class="n">exec_uram_spiked</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1">// Write back</span>
+<span class="w">        </span><span class="n">uram_wdata_reg</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">new_potential_upper</span><span class="p">,</span><span class="w"> </span><span class="n">new_potential_lower</span><span class="p">};</span>
+<span class="w">        </span><span class="n">uram_wren</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="fifo-usage-and-data-flow">
+<h3>FIFO Usage and Data Flow<a class="headerlink" href="#fifo-usage-and-data-flow" title="Link to this heading">#</a></h3>
+<p>Complete reference of all FIFOs in the system:</p>
+<section id="input-path-host-fpga">
+<h4>Input Path (Host → FPGA)<a class="headerlink" href="#input-path-host-fpga" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>FIFO Name</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Depth</p></th>
+<th class="head"><p>Source</p></th>
+<th class="head"><p>Consumer</p></th>
+<th class="head"><p>Format</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>rxFIFO</strong></p></td>
+<td><p>512 bits</p></td>
+<td><p>512</p></td>
+<td><p>pcie2fifos (Host PC)</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>[511:504]=opcode, [503:0]=payload</p></td>
+<td><p>Incoming command queue</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ci2hbm</strong></p></td>
+<td><p>280 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>HBM Processor TX</p></td>
+<td><p>[279]=R/W, [278:256]=addr, [255:0]=data</p></td>
+<td><p>Host HBM access commands</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ci2iep</strong></p></td>
+<td><p>54 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>Command Interpreter RX</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>[53]=R/W, [52:36]=addr, [35:0]=data</p></td>
+<td><p>Host neuron access commands</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="internal-data-pipes">
+<h4>Internal Data Pipes<a class="headerlink" href="#internal-data-pipes" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>FIFO Name</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Depth</p></th>
+<th class="head"><p>Source</p></th>
+<th class="head"><p>Consumer</p></th>
+<th class="head"><p>Format</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>ptrFIFO[0-15]</strong></p></td>
+<td><p>32 bits</p></td>
+<td><p>512 each</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>HBM Processor TX</p></td>
+<td><p>[31:23]=length, [22:0]=address</p></td>
+<td><p>16 parallel pointer queues (one per neuron group)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>hbmFIFO</strong></p></td>
+<td><p>512 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>16 groups × 32 bits</p></td>
+<td><p>Synaptic inputs to neurons</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pointer FIFO Details:</strong></p>
+<ul class="simple">
+<li><p>16 independent FIFOs, one per neuron group (URAM bank)</p></li>
+<li><p>Populated during Phase 1 by pointer_fifo_controller demuxing</p></li>
+<li><p>Consumed during Phase 2 by HBM TX using round-robin selection</p></li>
+<li><p>Pointer format: <code class="docutils literal notranslate"><span class="pre">{synapse_count[8:0],</span> <span class="pre">hbm_base_address[22:0]}</span></code></p></li>
+</ul>
+</section>
+<section id="output-path-fpga-host">
+<h4>Output Path (FPGA → Host)<a class="headerlink" href="#output-path-fpga-host" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>FIFO Name</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Depth</p></th>
+<th class="head"><p>Source</p></th>
+<th class="head"><p>Consumer</p></th>
+<th class="head"><p>Format</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>spk0-7</strong></p></td>
+<td><p>17 bits</p></td>
+<td><p>512 each</p></td>
+<td><p>HBM Processor RX spike logic</p></td>
+<td><p>Spike FIFO Controller</p></td>
+<td><p>Neuron address (17 bits)</p></td>
+<td><p>8 parallel spike distribution FIFOs</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>spk2ciFIFO</strong></p></td>
+<td><p>17 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>Spike FIFO Controller</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>Neuron address</p></td>
+<td><p>Aggregated spike queue</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>txFIFO</strong></p></td>
+<td><p>512 bits</p></td>
+<td><p>512</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>pcie2fifos (Host PC)</p></td>
+<td><p>[511:480]=opcode, [479:0]=payload</p></td>
+<td><p>Outgoing response queue</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>hbm2ci</strong></p></td>
+<td><p>256 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>HBM Processor RX</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>HBM read data</p></td>
+<td><p>Host HBM read responses</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>iep2ci</strong></p></td>
+<td><p>53 bits</p></td>
+<td><p>Variable</p></td>
+<td><p>Internal Events Processor</p></td>
+<td><p>Command Interpreter TX</p></td>
+<td><p>[52:36]=addr, [35:0]=data</p></td>
+<td><p>Host neuron read responses</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Spike FIFO Routing:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HBM RX extracts 8 synapses from 256-bit word
+    │
+    ├─&gt; Synapse 0 (addr[2:0]=0) → spk0
+    ├─&gt; Synapse 1 (addr[2:0]=1) → spk1
+    ├─&gt; Synapse 2 (addr[2:0]=2) → spk2
+    ├─&gt; Synapse 3 (addr[2:0]=3) → spk3
+    ├─&gt; Synapse 4 (addr[2:0]=4) → spk4
+    ├─&gt; Synapse 5 (addr[2:0]=5) → spk5
+    ├─&gt; Synapse 6 (addr[2:0]=6) → spk6
+    └─&gt; Synapse 7 (addr[2:0]=7) → spk7
+            │
+            ▼
+    Spike FIFO Controller (round-robin arbitration)
+            │
+            ▼
+        spk2ciFIFO (aggregated)
+            │
+            ▼
+    Command Interpreter TX (batch into 14-spike packets)
+            │
+            ▼
+        txFIFO → Host PC
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="complete-timing-sequence">
+<h3>Complete Timing Sequence<a class="headerlink" href="#complete-timing-sequence" title="Link to this heading">#</a></h3>
+<p>Cycle-by-cycle breakdown of a complete timestep execution:</p>
+<section id="setup-and-phase-1-initiation-cycles-0-3">
+<h4>Setup and Phase 1 Initiation (Cycles 0-3)<a class="headerlink" href="#setup-and-phase-1-initiation-cycles-0-3" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE 0: HOST PC → exec_run command received
+    │
+    ├─&gt; Command Interpreter RX:
+    │   • Parses CMD_EXEC_STEP or starts timestep loop in CMD_EXEC_CONT
+    │   • exec_run_rst = 1 (reset counters)
+    │   • execRun_ctr = 0
+    │   • execRun_timer = 0
+    │   • execRun_running = 1 (next cycle)
+    │
+    ├─&gt; External Events Processor:
+    │   • bram_select toggles (swap present/future buffers)
+    │   • bramPresent_addr_rst = 1
+    │   • bramPresent_raddr = 0
+    │   • State → FILL_PIPE
+    │
+    ├─&gt; Internal Events Processor:
+    │   • uram_raddr_rst = 1
+    │   • uram_raddr = 0
+    │   • State → FILL_PIPE_PHASE1
+    │
+    └─&gt; HBM Processor:
+        • TX: tx_done_rst = 1, tx_addr_rst = 1
+              State → SEND_INPUT_READ_COMMANDS
+        • RX: rx_done_rst = 1, rx_addr_rst = 1
+              State → WAIT_BRAM_PIPELINE
+
+CYCLE 1: Pipeline Filling Begins
+    │
+    ├─&gt; EEP: FILL_PIPE state
+    │   • bramPresent_rden = 1
+    │   • bramPresent_raddr = 0 (reading address 0)
+    │   • BRAM latency = 3 cycles (data arrives cycle 4)
+    │
+    ├─&gt; IEP: FILL_PIPE_PHASE1 state
+    │   • uram_rden_0-15 = 1 (all groups in parallel)
+    │   • uram_raddr = 0
+    │   • URAM latency = 3 cycles
+    │
+    └─&gt; HBM TX: SEND_INPUT_READ_COMMANDS
+        • hbm_arvalid = 1 (send first read request)
+        • hbm_araddr = {5&#39;d0, 8&#39;d0, 1&#39;b0, 10&#39;d0, 4&#39;d0, 5&#39;d0}
+        • hbm_arlen = 15 (request 16 words)
+        • tx_addr = 0
+
+CYCLE 2: Pipeline Filling (2nd address)
+    │
+    ├─&gt; EEP: bramPresent_raddr = 1
+    ├─&gt; IEP: uram_raddr = 1
+    └─&gt; HBM TX:
+        • If hbm_arready = 1: tx_addr_inc, tx_addr = 1
+        • Send next read command
+
+CYCLE 3: Pipeline Filling (3rd address)
+    │
+    ├─&gt; EEP: bramPresent_raddr = 2
+    ├─&gt; IEP: uram_raddr = 2
+    └─&gt; HBM TX: tx_addr = 2
+</pre></div>
+</div>
+</section>
+<section id="phase-1a-input-pointer-collection-cycles-4-200">
+<h4>Phase 1a: Input Pointer Collection (Cycles 4-200)<a class="headerlink" href="#phase-1a-input-pointer-collection-cycles-4-200" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE 4: Pipelines Ready, Synchronized Streaming Begins
+    │
+    ├─&gt; EEP:
+    │   • Data from BRAM address 0 now valid (after 3-cycle latency)
+    │   • bramPresent_raddr &gt;= PIPE_DEPTH (3)
+    │   • exec_bram_phase1_ready = 1 ✓ (SIGNAL TO HBM)
+    │   • State → READ_INPUTS
+    │   • bramPresent_rden = 1 (when exec_hbm_rvalidready = 1)
+    │   • exec_bram_spiked = bramPresent_rdata (8-bit spike mask)
+    │   • bramPresent_wren = 1 (clear BRAM address 0 to zero)
+    │
+    ├─&gt; HBM RX:
+    │   • Sees exec_bram_phase1_ready = 1
+    │   • State → READ_INPUT_POINTERS
+    │   • hbm_rready = 1 (ready to accept pointer data)
+    │
+    └─&gt; HBM TX:
+        • Continues sending read commands
+        • tx_addr increments each cycle (when hbm_arready = 1)
+        • Loop: tx_addr = 0 → INPUT_ADDR_LIMIT
+
+CYCLES 5-100+: HBM Data Arrives (High Latency)
+    │
+    ├─&gt; HBM Memory:
+    │   • First pointer data arrives after ~100 cycles
+    │   • Each HBM read returns 256-bit word
+    │   • Each 256-bit word contains 8 pointers
+    │   • Burst of 16 words arrives consecutively
+    │
+    └─&gt; HBM RX:
+        • hbm_rvalid = 1 (data valid)
+        • hbm_rready = 1 (accept data)
+        • rx_addr_inc = 1
+        • Forward pointer word to pointer_fifo_controller
+
+        Pointer Format (32 bits per pointer):
+        • [31:23] = length (number of synapse rows, 0-511)
+        • [22:0]  = base_address (HBM location, 0-8M)
+
+CYCLES 100-200: Parallel Streaming
+    │
+    ├─&gt; EEP:
+    │   • bramPresent_rden = 1 (synchronized with exec_hbm_rvalidready)
+    │   • Incrementing bramPresent_raddr and bramPresent_waddr
+    │   • exec_bram_spiked continuously updated
+    │   • When bramPresent_waddr == BRAM_ADDR_LIMIT:
+    │     exec_bram_phase1_done = 1 ✓
+    │
+    ├─&gt; HBM RX:
+    │   • Receiving pointer data bursts from HBM
+    │   • Forwarding to pointer_fifo_controller
+    │
+    └─&gt; Pointer FIFO Controller:
+        • Demuxes pointers to 16 ptrFIFOs based on exec_bram_spiked
+        • Example: exec_bram_spiked = 0b00000111
+          → Groups 0, 1, 2 have spikes
+          → Distribute pointers accordingly
+        • ptrFIFO[0-15] fill up with addresses
+</pre></div>
+</div>
+</section>
+<section id="phase-1b-output-pointer-collection-cycles-200-500">
+<h4>Phase 1b: Output Pointer Collection (Cycles 200-500)<a class="headerlink" href="#phase-1b-output-pointer-collection-cycles-200-500" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE ~200: Transition to Output Pointers
+    │
+    ├─&gt; EEP:
+    │   • exec_bram_phase1_done = 1 (latched)
+    │   • State → PHASE1_DONE → IDLE
+    │
+    ├─&gt; IEP:
+    │   • Sees exec_bram_phase1_done = 1
+    │   • State → PUSH_PTR_FIFO
+    │   • exec_uram_phase1_ready = 1 ✓
+    │   • Continues reading URAM (uram_raddr incrementing)
+    │   • Outputs neuron pointers for internal connections
+    │
+    ├─&gt; HBM RX:
+    │   • Finishes receiving input pointers
+    │   • rx_addr == {INPUT_ADDR_LIMIT, INPUT_ADDR_MOD}
+    │   • State → WAIT_URAM_PIPELINE
+    │   • Waits for exec_uram_phase1_ready = 1
+    │
+    └─&gt; HBM TX:
+        • tx_addr == INPUT_ADDR_LIMIT
+        • tx_select_inc = 1 (toggle to outputs)
+        • tx_addr_rst = 1
+        • State → SEND_OUTPUT_READ_COMMANDS
+
+CYCLES 201-500: Output Pointer Streaming
+    │
+    ├─&gt; IEP:
+    │   • uram_rden_0-15 = 1 (all 16 groups in parallel)
+    │   • Reads neuron potentials from URAM
+    │   • For each neuron: check if has outgoing connections
+    │   • Output pointers to HBM processor
+    │   • When uram_raddr == URAM_ADDR_LIMIT:
+    │     exec_uram_phase1_done = 1 ✓
+    │
+    ├─&gt; HBM RX:
+    │   • Sees exec_uram_phase1_ready = 1
+    │   • State → READ_OUTPUT_POINTERS
+    │   • Receives output pointer data from HBM
+    │   • Forwards to pointer_fifo_controller
+    │   • When rx_addr == {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}:
+    │     State → PHASE1_DONE
+    │     rx_phase1_done = 1 ✓
+    │
+    ├─&gt; HBM TX:
+    │   • Sends output pointer read commands
+    │   • tx_addr loops: 0 → OUTPUT_ADDR_LIMIT
+    │   • When complete:
+    │     State → PHASE1_DONE
+    │     tx_phase1_done = 1 ✓
+    │     tx_phase_inc = 1 (toggle tx_phase: 0 → 1)
+    │     State → POP_POINTER_FIFO
+    │
+    └─&gt; Pointer FIFO Controller:
+        • Continues demuxing output pointers to ptrFIFOs
+        • ptrFIFO[0-15] now contain both input and output pointers
+</pre></div>
+</div>
+<p><strong>Phase 1 Complete:</strong></p>
+<ul class="simple">
+<li><p>EEP: exec_bram_phase1_done = 1</p></li>
+<li><p>IEP: exec_uram_phase1_done = 1</p></li>
+<li><p>HBM TX: tx_phase1_done = 1, tx_phase = 1 (Phase 2 mode)</p></li>
+<li><p>HBM RX: rx_phase1_done = 1</p></li>
+<li><p>All 16 ptrFIFOs filled with connectivity pointers</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="phase-2-synapse-data-fetching-and-processing-cycles-500-1500">
+<h4>Phase 2: Synapse Data Fetching and Processing (Cycles 500-1500)<a class="headerlink" href="#phase-2-synapse-data-fetching-and-processing-cycles-500-1500" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE ~500: Phase 2 Initiation
+    │
+    ├─&gt; HBM TX:
+    │   • State = POP_POINTER_FIFO
+    │   • Checks: rx_phase1_done = 1 ✓
+    │   • Checks: ptrFIFO not empty (at least one group has pointers)
+    │   • ptrFIFO_rden = 1 (pop first pointer)
+    │   • ptr_addr_set = 1 (load pointer)
+    │   • ptr_addr = ptrFIFO_dout[22:0]
+    │   • ptr_len = ptrFIFO_dout[31:23]
+    │   • ptr_ctr = 0
+    │   • State → SEND_POINTER_READ_COMMANDS
+    │
+    ├─&gt; HBM RX:
+    │   • State = READ_SYNAPSE_DATA
+    │   • hbm_rready = 1 (always accept synapse data)
+    │   • rx_ptr_ctr = 0
+    │
+    └─&gt; IEP:
+        • State = Phase 2 processing
+        • Ready to receive synaptic inputs
+
+CYCLES 501-1500: Pointer-Driven Synapse Fetch Loop
+    │
+    └─&gt; For each pointer in ptrFIFOs:
+
+        HBM TX:
+        • Calculate burst length:
+          ptr_burst = (ptr_ctr[8:4] == ptr_len[8:4]) ? ptr_len[3:0] : 4&#39;hf
+        • Send HBM read command:
+          hbm_arvalid = 1
+          hbm_araddr = {5&#39;d0, ptr_addr[22:0], 5&#39;d0}
+          hbm_arlen = ptr_burst
+        • When hbm_arready = 1:
+          ptr_addr_inc = 1
+          ptr_addr += (ptr_burst + 1)
+          ptr_ctr += (ptr_burst + 1)
+          tx_ptr_ctr += (ptr_burst + 1)
+
+        • If ptr_ctr[8:4] == ptr_len[8:4]:
+          Current pointer exhausted
+          State → POP_POINTER_FIFO (get next)
+
+        • Else:
+          Continue fetching remaining bursts for current pointer
+
+        HBM RX (Parallel):
+        • Receives 256-bit synapse words from HBM
+        • Assembles into 512-bit packets:
+          Cycle N:   hbm_count = 0, store in hbm_rdata_lower
+          Cycle N+1: hbm_count = 1, combine with current hbm_rdata
+                     exec_hbm_rdata = {hbm_rdata, hbm_rdata_lower}
+                     exec_hbm_rvalidready = 1 ✓
+
+        • Extract spike flags and route to spike FIFOs:
+          For synapse 0-7:
+            spike_flag = hbm_rdata[N*32 + 31]
+            If spike_flag = 1:
+              neuron_addr = hbm_rdata[N*32 + 16:N*32]
+              Route to spkN based on neuron_addr[2:0]
+              spkN_wren = 1, spkN_din = neuron_addr
+
+        • rx_ptr_ctr++ (count 256-bit words)
+
+        IEP (Parallel):
+        • When exec_hbm_rvalidready = 1:
+
+          Extract 16 group inputs:
+          For group 0-15:
+            input_upper = exec_hbm_rdata[group*32 + 31:group*32 + 16]
+            input_lower = exec_hbm_rdata[group*32 + 15:group*32 + 0]
+
+          Read current neuron potential from URAM:
+            old_potential = uram_rdata[group]
+
+          Accumulate synaptic input:
+            new_V_upper = old_potential[71:36] + sign_extend(input_upper)
+            new_V_lower = old_potential[35:0]  + sign_extend(input_lower)
+
+          Apply neuron model (leak, reset, etc.):
+            (depends on exec_neuron_model setting)
+
+          Check threshold:
+            if (new_V_upper &gt; threshold):
+              exec_uram_spiked[group] = 1
+              new_V_upper = reset_value (depending on model)
+            if (new_V_lower &gt; threshold):
+              exec_uram_spiked[group] = 1
+              new_V_lower = reset_value
+
+          Write updated potential back to URAM:
+            uram_waddr[group] = current_word_address
+            uram_wdata_reg[group] = {new_V_upper, new_V_lower}
+            uram_wren[group] = 1
+
+        Spike FIFO Controller (Parallel):
+        • Round-robin reads from spk0-7
+        • Aggregates to spk2ciFIFO
+
+        Command Interpreter TX (Parallel):
+        • Batches spikes from spk2ciFIFO
+        • When spike_ctr == 14:
+          Send 512-bit packet:
+          [511:480] = 0xEEEEEEEE
+          [479:32]  = 14 × 32-bit spikes
+          [31:0]    = execRun_ctr
+          txFIFO_wren = 1
+          spike_rst = 1
+
+CYCLE ~1500: Phase 2 Completion
+    │
+    ├─&gt; HBM TX:
+    │   • All ptrFIFOs empty (or safety timer expired)
+    │   • wait_clks_cnt == 255 AND ptrFIFO_empty
+    │   • State → PHASE2_DONE
+    │   • tx_phase2_done = 1 ✓
+    │   • tx_ptr_ctr = final count (e.g., 5000 synapse blocks)
+    │
+    ├─&gt; HBM RX:
+    │   • Checks: tx_phase2_done = 1 ✓
+    │   • Checks: rx_ptr_ctr == tx_ptr_ctr ✓
+    │   • State → PHASE2_DONE
+    │   • rx_phase2_done = 1 ✓
+    │
+    └─&gt; IEP:
+        • Sees exec_hbm_rx_phase2_done = 1
+        • All neuron updates complete
+        • exec_uram_phase2_done = 1 ✓
+        • exec_iep_phase2_done = 1 ✓
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="timestep-finalization-cycles-1500-1535">
+<h4>Timestep Finalization (Cycles 1500-1535)<a class="headerlink" href="#timestep-finalization-cycles-1500-1535" title="Link to this heading">#</a></h4>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>CYCLE 1501: Command Interpreter Checks Completion
+    │
+    └─&gt; CI RX (State = WAIT_RUN):
+        • Checks: exec_iep_phase2_done = 1 ✓
+        • Checks: spk2ciFIFO_empty = 1 (all spikes drained)
+        • wait_clks_cnt starts incrementing
+
+CYCLES 1502-1531: Safety Margin
+    │
+    └─&gt; CI RX:
+        • wait_clks_cnt increments each cycle
+        • Ensures all spikes propagated through arbiters
+        • Ensures FIFOs fully drained
+
+CYCLE 1532: Timestep Complete (wait_clks_cnt == 31)
+    │
+    └─&gt; CI RX:
+        • exec_run_inc = 1
+        • execRun_ctr++ (e.g., 0 → 1)
+        • execRun_timer continues counting
+
+        Check continuation:
+        • If execRun_ctr &lt; execRun_limit:
+          axon_addr_rst = 1
+          State → REGISTER_PCIE_AXON_DATA
+          Load next timestep&#39;s input data
+          Loop back to CYCLE 0 (exec_run pulse)
+
+        • Else (execRun_ctr == execRun_limit):
+          State → EXEC_DONE
+          exec_run_done = 1
+          execRun_running = 0 (stop timer)
+          All timesteps complete!
+</pre></div>
+</div>
+<p><strong>Typical Timing Summary:</strong></p>
+<ul class="simple">
+<li><p>Phase 1 (Pointer Collection): ~200-500 cycles</p></li>
+<li><p>Phase 2 (Synapse Processing): ~300-1000 cycles</p></li>
+<li><p>Safety Margin: 31 cycles</p></li>
+<li><p><strong>Total per Timestep: ~500-1500 cycles</strong></p></li>
+<li><p>At 225 MHz: <strong>2.2-6.7 microseconds per timestep</strong></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="handshake-protocols">
+<h3>Handshake Protocols<a class="headerlink" href="#handshake-protocols" title="Link to this heading">#</a></h3>
+<p>Detailed sequence diagrams for each inter-module handshake:</p>
+<section id="eep-hbm-input-spike-coordination">
+<h4>1. EEP ↔ HBM: Input Spike Coordination<a class="headerlink" href="#eep-hbm-input-spike-coordination" title="Link to this heading">#</a></h4>
+<p><strong>Problem:</strong> HBM needs to know when EEP is ready to stream spike data.</p>
+<p><strong>Solution:</strong> 3-stage handshake</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Step 1: Pipeline Initialization
+    EEP: Receives exec_run pulse
+    EEP: Toggles bram_select (swap buffers)
+    EEP: Enters FILL_PIPE state
+    EEP: Issues 3 consecutive BRAM reads
+
+Step 2: Pipeline Ready Signal
+    EEP: After 3 cycles (bramPresent_raddr &gt;= 3)
+    EEP: exec_bram_phase1_ready = 1 ✓
+    HBM RX: Waiting in WAIT_BRAM_PIPELINE
+    HBM RX: Sees exec_bram_phase1_ready = 1
+    HBM RX: State → READ_INPUT_POINTERS
+
+Step 3: Synchronized Streaming
+    EEP: bramPresent_rden = 1 ONLY when exec_hbm_rvalidready = 1
+    EEP: Reads next BRAM address
+    EEP: Outputs exec_bram_spiked
+    HBM: Receives pointer data from HBM memory
+    HBM: Forwards to pointer_fifo_controller
+    HBM: Sets exec_hbm_rvalidready = 1 on every 2nd 256-bit word
+
+    Loop: Synchronized 1:1 until BRAM exhausted
+
+Step 4: Completion
+    EEP: When bramPresent_waddr == BRAM_ADDR_LIMIT
+    EEP: exec_bram_phase1_done = 1 ✓
+    IEP: Waiting for this signal before proceeding
+</pre></div>
+</div>
+<p><strong>Key Signal Timing:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         exec_run
+             │
+CYCLE 0      ▼
+             ├─ bram_select toggles
+             │
+CYCLE 1-3    ├─ FILL_PIPE (reading addresses 0, 1, 2)
+             │
+CYCLE 4      ├─ exec_bram_phase1_ready = 1
+             │  └─&gt; HBM RX sees signal, enters READ_INPUT_POINTERS
+             │
+CYCLE 5-200  ├─ Synchronized streaming:
+             │  • bramPresent_rden = exec_hbm_rvalidready
+             │  • exec_bram_spiked updated each valid cycle
+             │
+CYCLE 200    └─ exec_bram_phase1_done = 1
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="iep-hbm-output-neuron-coordination">
+<h4>2. IEP ↔ HBM: Output Neuron Coordination<a class="headerlink" href="#iep-hbm-output-neuron-coordination" title="Link to this heading">#</a></h4>
+<p><strong>Problem:</strong> HBM must wait for IEP URAM pipeline to fill AND for EEP to finish before reading output pointers.</p>
+<p><strong>Solution:</strong> 4-stage handshake</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Step 1: Wait for External Events Complete
+    IEP: State = WAIT_BRAM_PHASE1_DONE
+    IEP: Waits for exec_bram_phase1_done = 1
+    IEP: Cannot proceed until external spikes processed
+
+Step 2: URAM Pipeline Filling
+    IEP: After exec_bram_phase1_done received
+    IEP: State → PUSH_PTR_FIFO
+    IEP: uram_rden_0-15 = 1 (all groups reading in parallel)
+    IEP: Reads neuron potentials, outputs pointers
+
+Step 3: URAM Ready Signal
+    IEP: After uram_raddr &gt;= PIPE_DEPTH (3)
+    IEP: exec_uram_phase1_ready = 1 ✓
+    HBM RX: Waiting in WAIT_URAM_PIPELINE
+    HBM RX: Sees exec_uram_phase1_ready = 1
+    HBM RX: State → READ_OUTPUT_POINTERS
+
+Step 4: Pointer Streaming
+    IEP: Continues reading URAM (uram_raddr incrementing)
+    IEP: Outputs neuron pointers
+    HBM: Receives pointer data from HBM memory
+    HBM: Forwards to pointer_fifo_controller
+
+    Loop: Until uram_raddr == URAM_ADDR_LIMIT
+
+Step 5: Completion
+    IEP: exec_uram_phase1_done = 1 ✓
+    HBM RX: When rx_addr == {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}
+    HBM RX: rx_phase1_done = 1 ✓
+</pre></div>
+</div>
+<p><strong>Dependency Chain:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>exec_run
+   │
+   ├─&gt; EEP starts (immediate)
+   │   └─&gt; exec_bram_phase1_done = 1
+   │       └─&gt; IEP can proceed
+   │           └─&gt; exec_uram_phase1_ready = 1
+   │               └─&gt; HBM RX can read output pointers
+   │                   └─&gt; rx_phase1_done = 1
+   │                       └─&gt; HBM TX can start Phase 2
+   │
+   └─&gt; HBM TX starts sending input pointer commands (immediate)
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="hbm-tx-rx-phase-coordination">
+<h4>3. HBM TX ↔ RX: Phase Coordination<a class="headerlink" href="#hbm-tx-rx-phase-coordination" title="Link to this heading">#</a></h4>
+<p><strong>Problem:</strong> RX must know when TX finishes Phase 1 to enable Phase 2. TX must know when RX finishes Phase 1 to start popping ptrFIFO.</p>
+<p><strong>Solution:</strong> Cross-phase completion flags</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Phase 1:
+    TX: Sends input pointer read commands
+    TX: When tx_addr == INPUT_ADDR_LIMIT:
+        tx_select_inc = 1, State → SEND_OUTPUT_READ_COMMANDS
+    TX: Sends output pointer read commands
+    TX: When tx_addr == OUTPUT_ADDR_LIMIT:
+        State → PHASE1_DONE
+        tx_phase1_done = 1 ✓
+        tx_phase_inc = 1 (toggle tx_phase: 0 → 1)
+        State → POP_POINTER_FIFO
+
+    RX: Receives input pointer data
+    RX: When rx_addr == {INPUT_ADDR_LIMIT, INPUT_ADDR_MOD}:
+        State → WAIT_URAM_PIPELINE
+    RX: Waits for exec_uram_phase1_ready = 1
+    RX: Receives output pointer data
+    RX: When rx_addr == {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}:
+        State → PHASE1_DONE
+        rx_phase1_done = 1 ✓
+
+Phase 1 → Phase 2 Transition:
+    TX: State = POP_POINTER_FIFO
+    TX: Checks: rx_phase1_done = 1 (RX finished receiving pointers)
+    TX: Checks: ptrFIFO not empty (has pointers to fetch)
+    TX: If both conditions met:
+        ptrFIFO_rden = 1, ptr_addr_set = 1
+        State → SEND_POINTER_READ_COMMANDS
+
+    RX: State = READ_SYNAPSE_DATA
+    RX: hbm_rready = 1 (always accept synapse data)
+
+Phase 2:
+    TX: Loops through all ptrFIFO pointers
+    TX: Sends synapse read commands
+    TX: tx_ptr_ctr increments with each burst
+    TX: When all ptrFIFOs empty (or timer expires):
+        State → PHASE2_DONE
+        tx_phase2_done = 1 ✓
+
+    RX: Receives synapse data
+    RX: rx_ptr_ctr increments with each 256-bit word
+    RX: When tx_phase2_done = 1 AND rx_ptr_ctr == tx_ptr_ctr:
+        State → PHASE2_DONE
+        rx_phase2_done = 1 ✓
+
+Phase 2 Complete:
+    Both TX and RX return to IDLE
+    Ready for next exec_run pulse
+</pre></div>
+</div>
+<p><strong>Counter Synchronization:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TX</span> <span class="n">maintains</span><span class="p">:</span> <span class="n">tx_ptr_ctr</span> <span class="p">(</span><span class="n">total</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">words</span> <span class="n">requested</span><span class="p">)</span>
+<span class="n">RX</span> <span class="n">maintains</span><span class="p">:</span> <span class="n">rx_ptr_ctr</span> <span class="p">(</span><span class="n">total</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">words</span> <span class="n">received</span><span class="p">)</span>
+
+<span class="n">Completion</span> <span class="n">condition</span><span class="p">:</span> <span class="p">(</span><span class="n">tx_phase2_done</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="n">AND</span> <span class="p">(</span><span class="n">rx_ptr_ctr</span> <span class="o">==</span> <span class="n">tx_ptr_ctr</span><span class="p">)</span>
+
+<span class="n">This</span> <span class="n">ensures</span> <span class="n">ALL</span> <span class="n">synapse</span> <span class="n">data</span> <span class="n">has</span> <span class="n">been</span> <span class="n">received</span> <span class="n">before</span> <span class="n">proceeding</span><span class="o">.</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="hbm-iep-synaptic-data-streaming">
+<h4>4. HBM ↔ IEP: Synaptic Data Streaming<a class="headerlink" href="#hbm-iep-synaptic-data-streaming" title="Link to this heading">#</a></h4>
+<p><strong>Problem:</strong> IEP needs continuous stream of synaptic inputs, synchronized with HBM data arrival.</p>
+<p><strong>Solution:</strong> Data-valid handshake with automatic flow control</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HBM RX Phase 2:
+    • State = READ_SYNAPSE_DATA
+    • hbm_rready = 1 (always ready to accept from HBM)
+    • When hbm_rvalid = 1 (HBM data arrives):
+
+        Packet Assembly:
+        Cycle N:   hbm_count = 0
+                   hbm_rdata_lower = hbm_rdata (256 bits)
+        Cycle N+1: hbm_count = 1
+                   exec_hbm_rdata = {hbm_rdata, hbm_rdata_lower} (512 bits)
+                   exec_hbm_rvalidready = 1 ✓
+
+        • Check backpressure: !hbmFIFO_full
+        • If full: wait (stall pipeline)
+
+IEP Phase 2:
+    • Continuously monitors exec_hbm_rvalidready
+    • When exec_hbm_rvalidready = 1:
+
+        hbm2iep_rden = 1 (consume packet)
+
+        Extract 16 group inputs:
+        • exec_hbm_rdata[31:0]    → group 0 (upper/lower)
+        • exec_hbm_rdata[63:32]   → group 1
+        • ...
+        • exec_hbm_rdata[511:480] → group 15
+
+        For each group:
+        • Read URAM (current neuron potential)
+        • Add synaptic input
+        • Apply neuron model
+        • Check threshold → spike?
+        • Write updated potential back to URAM
+
+        • If spike: exec_uram_spiked[group] = 1
+
+Completion:
+    HBM RX: exec_hbm_rx_phase2_done = 1
+    IEP: Sees signal, sets exec_iep_phase2_done = 1
+</pre></div>
+</div>
+<p><strong>Timing Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>HBM Memory             HBM RX                 IEP
+    │                     │                    │
+    ├─ 256-bit word ────&gt; ├─ Store lower      │
+    │   (hbm_rvalid=1)    │   hbm_count=0     │
+    │                     │                    │
+    ├─ 256-bit word ────&gt; ├─ Combine          │
+    │   (hbm_rvalid=1)    │   hbm_count=1     │
+    │                     │   exec_hbm_rdata  │
+    │                     │   rvalidready=1 ──&gt;├─ Process 16 groups
+    │                     │                    │   Read URAM
+    │                     │                    │   Update neurons
+    │                     │                    │   Write URAM
+    │                     │                    │   hbm2iep_rden=1
+    │                     │                    │
+    ├─ 256-bit word ────&gt; ├─ Store lower      │
+    │                     │   hbm_count=0     │
+    │                     │                    │
+    └─ Continuous...      └─ Continuous...    └─ Continuous...
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="quick-reference-tables">
+<h3>Quick Reference Tables<a class="headerlink" href="#quick-reference-tables" title="Link to this heading">#</a></h3>
+<section id="control-signal-summary">
+<h4>Control Signal Summary<a class="headerlink" href="#control-signal-summary" title="Link to this heading">#</a></h4>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Asserted By</p></th>
+<th class="head"><p>Consumed By</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Typical Cycle</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></td>
+<td><p>Pulse</p></td>
+<td><p>CI RX</p></td>
+<td><p>All modules</p></td>
+<td><p>Start new timestep</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>EEP</p></td>
+<td><p>HBM RX</p></td>
+<td><p>BRAM pipeline filled</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>EEP</p></td>
+<td><p>IEP</p></td>
+<td><p>External spikes processed</p></td>
+<td><p>200</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_ready</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>IEP</p></td>
+<td><p>HBM RX</p></td>
+<td><p>URAM pipeline filled</p></td>
+<td><p>210</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>IEP</p></td>
+<td><p>HBM TX</p></td>
+<td><p>Internal pointers output</p></td>
+<td><p>500</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase1_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>HBM TX</p></td>
+<td><p>Internal</p></td>
+<td><p>Pointer commands sent</p></td>
+<td><p>500</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase1_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>HBM RX</p></td>
+<td><p>HBM TX, Spike logic</p></td>
+<td><p>Pointers received</p></td>
+<td><p>500</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase2_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>HBM TX</p></td>
+<td><p>HBM RX</p></td>
+<td><p>Synapse commands sent</p></td>
+<td><p>1500</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase2_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>HBM RX</p></td>
+<td><p>IEP, CI</p></td>
+<td><p>Synapses received</p></td>
+<td><p>1500</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></p></td>
+<td><p>Pulse</p></td>
+<td><p>HBM RX</p></td>
+<td><p>EEP, IEP</p></td>
+<td><p>512-bit packet ready</p></td>
+<td><p>Every 2nd HBM read</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_iep_phase2_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>IEP</p></td>
+<td><p>CI RX</p></td>
+<td><p>Neuron updates complete</p></td>
+<td><p>1500</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_running</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>CI RX</p></td>
+<td><p>CI TX</p></td>
+<td><p>Execution active</p></td>
+<td><p>1-1530</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_done</span></code></p></td>
+<td><p>Level</p></td>
+<td><p>CI RX</p></td>
+<td><p>CI TX</p></td>
+<td><p>All timesteps complete</p></td>
+<td><p>After last timestep</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="state-transition-summary">
+<h4>State Transition Summary<a class="headerlink" href="#state-transition-summary" title="Link to this heading">#</a></h4>
+<p><strong>Command Interpreter RX:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → (on command) → REGISTER_AXON_DATA → SET_AXON_DATA → IDLE
+                            → EXEC_STEP → WAIT_RUN → EXEC_DONE → IDLE
+                                               └─→ (loop) REGISTER_AXON_DATA
+</pre></div>
+</div>
+<p><strong>Command Interpreter TX:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → WAIT_FOR_SPIKES ⟷ SEND_SPIKES → IDLE
+</pre></div>
+</div>
+<p><strong>HBM Processor TX:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → SEND_INPUT_CMDS → SEND_OUTPUT_CMDS → PHASE1_DONE
+             → POP_PTR_FIFO ⟷ SEND_PTR_CMDS → PHASE2_DONE → IDLE
+</pre></div>
+</div>
+<p><strong>HBM Processor RX:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → WAIT_BRAM_PIPE → READ_INPUT_PTRS → WAIT_URAM_PIPE
+             → READ_OUTPUT_PTRS → PHASE1_DONE → READ_SYNAPSE_DATA
+             → PHASE2_DONE → IDLE
+</pre></div>
+</div>
+<p><strong>External Events Processor:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → FILL_PIPE → READ_INPUTS → PHASE1_DONE → IDLE
+</pre></div>
+</div>
+<p><strong>Internal Events Processor:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>RESET → IDLE → FILL_PIPE_PH1 → WAIT_BRAM_DONE → PUSH_PTR
+             → PHASE1_DONE → (Phase 2 processing) → PHASE2_DONE → IDLE
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="variable-reference-by-module">
+<h4>Variable Reference by Module<a class="headerlink" href="#variable-reference-by-module" title="Link to this heading">#</a></h4>
+<p><strong>Command Interpreter:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Initialize</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>execRun_ctr</p></td>
+<td><p>32</p></td>
+<td><p>0 (exec_run_rst)</p></td>
+<td><p>exec_run_inc</p></td>
+<td><p>Current timestep</p></td>
+</tr>
+<tr class="row-odd"><td><p>execRun_limit</p></td>
+<td><p>32</p></td>
+<td><p>0</p></td>
+<td><p>exec_run_set</p></td>
+<td><p>Target timesteps</p></td>
+</tr>
+<tr class="row-even"><td><p>execRun_timer</p></td>
+<td><p>64</p></td>
+<td><p>0</p></td>
+<td><p>+1 each cycle</p></td>
+<td><p>Performance counter</p></td>
+</tr>
+<tr class="row-odd"><td><p>wait_clks_cnt</p></td>
+<td><p>5</p></td>
+<td><p>0</p></td>
+<td><p>+1 in WAIT_RUN</p></td>
+<td><p>Safety margin</p></td>
+</tr>
+<tr class="row-even"><td><p>spike_ctr</p></td>
+<td><p>4</p></td>
+<td><p>0 (spike_rst)</p></td>
+<td><p>spike_inc</p></td>
+<td><p>Batch size</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>HBM Processor TX:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Initialize</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>tx_phase</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>tx_phase_inc</p></td>
+<td><p>Phase selector</p></td>
+</tr>
+<tr class="row-odd"><td><p>tx_select</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>tx_select_inc</p></td>
+<td><p>Input/output toggle</p></td>
+</tr>
+<tr class="row-even"><td><p>tx_addr</p></td>
+<td><p>10</p></td>
+<td><p>0 (tx_addr_rst)</p></td>
+<td><p>tx_addr_inc</p></td>
+<td><p>Group address</p></td>
+</tr>
+<tr class="row-odd"><td><p>ptr_addr</p></td>
+<td><p>23</p></td>
+<td><p>0</p></td>
+<td><p>ptr_addr_set/inc</p></td>
+<td><p>Synapse address</p></td>
+</tr>
+<tr class="row-even"><td><p>ptr_len</p></td>
+<td><p>9</p></td>
+<td><p>0</p></td>
+<td><p>ptr_addr_set</p></td>
+<td><p>Synapse count</p></td>
+</tr>
+<tr class="row-odd"><td><p>ptr_ctr</p></td>
+<td><p>9</p></td>
+<td><p>0</p></td>
+<td><p>ptr_addr_inc</p></td>
+<td><p>Progress counter</p></td>
+</tr>
+<tr class="row-even"><td><p>tx_ptr_ctr</p></td>
+<td><p>23</p></td>
+<td><p>0</p></td>
+<td><p>ptr_addr_inc</p></td>
+<td><p>Total sent</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>HBM Processor RX:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Initialize</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rx_addr</p></td>
+<td><p>14</p></td>
+<td><p>0 (rx_addr_rst)</p></td>
+<td><p>rx_addr_inc</p></td>
+<td><p>Pointer word count</p></td>
+</tr>
+<tr class="row-odd"><td><p>rx_ptr_ctr</p></td>
+<td><p>23</p></td>
+<td><p>0</p></td>
+<td><p>+1 per hbm_rvalid</p></td>
+<td><p>Synapse blocks received</p></td>
+</tr>
+<tr class="row-even"><td><p>hbm_count</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>Toggle</p></td>
+<td><p>Packet assembly</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>External Events Processor:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Initialize</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>bram_select</p></td>
+<td><p>1</p></td>
+<td><p>0</p></td>
+<td><p>Toggle on exec_run</p></td>
+<td><p>Buffer selector</p></td>
+</tr>
+<tr class="row-odd"><td><p>bramPresent_raddr</p></td>
+<td><p>14</p></td>
+<td><p>0</p></td>
+<td><p>+1</p></td>
+<td><p>Read address (leading)</p></td>
+</tr>
+<tr class="row-even"><td><p>bramPresent_waddr</p></td>
+<td><p>14</p></td>
+<td><p>0</p></td>
+<td><p>+1</p></td>
+<td><p>Write address (lagging)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Internal Events Processor:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Variable</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Initialize</p></th>
+<th class="head"><p>Update</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>uram_raddr</p></td>
+<td><p>13</p></td>
+<td><p>0</p></td>
+<td><p>+1</p></td>
+<td><p>Global read address</p></td>
+</tr>
+<tr class="row-odd"><td><p>exec_uram_spiked</p></td>
+<td><p>16</p></td>
+<td><p>0</p></td>
+<td><p>Set per group</p></td>
+<td><p>Spike mask output</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>The state machine coordination in this neuromorphic system is a carefully orchestrated dance of four independent modules, synchronized through handshake signals and completion flags. The key insights are:</p>
+<ol class="arabic simple">
+<li><p><strong>Pipeline Priming:</strong> BRAM and URAM require 3-cycle pipeline fills before streaming can begin</p></li>
+<li><p><strong>Two-Phase Architecture:</strong> Phase 1 collects connectivity pointers, Phase 2 processes synaptic data</p></li>
+<li><p><strong>Handshake Synchronization:</strong> Modules wait for <code class="docutils literal notranslate"><span class="pre">exec_*_ready</span></code> and <code class="docutils literal notranslate"><span class="pre">exec_*_done</span></code> signals</p></li>
+<li><p><strong>FIFO Buffering:</strong> Pointer FIFOs and spike FIFOs decouple pipeline stages</p></li>
+<li><p><strong>Safety Margins:</strong> Wait counters prevent race conditions and ensure complete data drainage</p></li>
+</ol>
+<p>Understanding this coordination is essential for:</p>
+<ul class="simple">
+<li><p><strong>Debugging:</strong> Knowing where to look when execution stalls</p></li>
+<li><p><strong>Optimization:</strong> Identifying bottlenecks in the pipeline</p></li>
+<li><p><strong>Extension:</strong> Adding new modules or modifying behavior</p></li>
+<li><p><strong>Verification:</strong> Ensuring timing requirements are met</p></li>
+</ul>
+<p><strong>Related Documentation:</strong></p>
+<ul class="simple">
+<li><p><a class="reference internal" href="Chapter_2_1.html"><span class="std std-doc">Chapter 2.1</span></a> - Conceptual overview of execution flow</p></li>
+<li><p><a class="reference internal" href="#"><span class="std std-doc">Chapter 2.2</span></a> - Python and Verilog code walkthrough</p></li>
+<li><p><a class="reference internal" href="../chapter_3.html"><span class="std std-doc">Chapter 3: Verilog Files Review</span></a> - Module-specific implementation details</p></li>
+<li><p><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html"><span class="std std-doc">command_interpreter.v</span></a> - Orchestrator details</p></li>
+<li><p><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html"><span class="std std-doc">hbm_processor.v</span></a> - Memory access details</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Total Duration:</strong> ~500-1500 cycles per timestep (2.2-6.7 μs &#64; 225 MHz)</p>
+<p><strong>Key Performance Factors:</strong></p>
+<ul class="simple">
+<li><p>HBM latency (~100 cycles for first word)</p></li>
+<li><p>Synaptic fanout (more connections = more Phase 2 time)</p></li>
+<li><p>Spike rate (more spikes = more pointer fetches)</p></li>
+<li><p>FIFO depths (prevent backpressure stalls)</p></li>
+</ul>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#introduction">Introduction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-four-state-machines">The Four State Machines</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-coordination-is-critical">Why Coordination Is Critical</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-1-conceptual-overview">Part 1: Conceptual Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-symphony-orchestra-analogy">The Symphony Orchestra Analogy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#visual-timeline-of-a-complete-timestep">Visual Timeline of a Complete Timestep</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1-pointer-collection-conceptual-flow">Phase 1: Pointer Collection (Conceptual Flow)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-initiation-cycles-0-3">Step 1: Initiation (Cycles 0-3)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-bram-pipeline-ready-cycle-4">Step 2: BRAM Pipeline Ready (Cycle 4+)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-input-pointer-collection-cycles-5-200">Step 3: Input Pointer Collection (Cycles 5-200+)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-uram-pipeline-ready-after-bram-complete">Step 4: URAM Pipeline Ready (After BRAM Complete)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-output-pointer-collection-cycles-200-500">Step 5: Output Pointer Collection (Cycles 200-500)</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-synapse-processing-conceptual-flow">Phase 2: Synapse Processing (Conceptual Flow)</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-phase-transition-cycle-500">Step 1: Phase Transition (Cycle ~500)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-pointer-driven-synapse-fetching-cycles-500-1500">Step 2: Pointer-Driven Synapse Fetching (Cycles 500-1500)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-synapse-data-reception-and-distribution-parallel">Step 3: Synapse Data Reception and Distribution (Parallel)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-spike-output-aggregation-parallel-with-step-3">Step 4: Spike Output Aggregation (Parallel with Step 3)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-phase-2-completion-and-timestep-finalization">Step 5: Phase 2 Completion and Timestep Finalization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-2-technical-reference">Part 2: Technical Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-control-signals-reference">Execution Control Signals Reference</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-by-module-state-machine-details">Module-by-Module State Machine Details</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#command-interpreter-the-orchestrator">1. Command Interpreter - The Orchestrator</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#rx-state-machine-command-processing-and-timestep-control">RX State Machine (Command Processing and Timestep Control)</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#tx-state-machine-response-and-spike-batching">TX State Machine (Response and Spike Batching)</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-processor-the-memory-access-engine">2. HBM Processor - The Memory Access Engine</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#tx-state-machine-memory-read-command-generator">TX State Machine (Memory Read Command Generator)</a></li>
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#rx-state-machine-memory-read-response-handler">RX State Machine (Memory Read Response Handler)</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#external-events-processor-the-input-handler">3. External Events Processor - The Input Handler</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-pipeline-state-machine">BRAM Pipeline State Machine</a></li>
+</ul>
+</li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-events-processor-the-neuron-state-manager">4. Internal Events Processor - The Neuron State Manager</a><ul class="nav section-nav flex-column">
+<li class="toc-h5 nav-item toc-entry"><a class="reference internal nav-link" href="#uram-state-machine">URAM State Machine</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-usage-and-data-flow">FIFO Usage and Data Flow</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#input-path-host-fpga">Input Path (Host → FPGA)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-data-pipes">Internal Data Pipes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#output-path-fpga-host">Output Path (FPGA → Host)</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#complete-timing-sequence">Complete Timing Sequence</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-and-phase-1-initiation-cycles-0-3">Setup and Phase 1 Initiation (Cycles 0-3)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1a-input-pointer-collection-cycles-4-200">Phase 1a: Input Pointer Collection (Cycles 4-200)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1b-output-pointer-collection-cycles-200-500">Phase 1b: Output Pointer Collection (Cycles 200-500)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-synapse-data-fetching-and-processing-cycles-500-1500">Phase 2: Synapse Data Fetching and Processing (Cycles 500-1500)</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#timestep-finalization-cycles-1500-1535">Timestep Finalization (Cycles 1500-1535)</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#handshake-protocols">Handshake Protocols</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#eep-hbm-input-spike-coordination">1. EEP ↔ HBM: Input Spike Coordination</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#iep-hbm-output-neuron-coordination">2. IEP ↔ HBM: Output Neuron Coordination</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-tx-rx-phase-coordination">3. HBM TX ↔ RX: Phase Coordination</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-iep-synaptic-data-streaming">4. HBM ↔ IEP: Synaptic Data Streaming</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-tables">Quick Reference Tables</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#control-signal-summary">Control Signal Summary</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#state-transition-summary">State Transition Summary</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#variable-reference-by-module">Variable Reference by Module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_2.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

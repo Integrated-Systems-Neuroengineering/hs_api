@@ -1,0 +1,2008 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>hbm_processor.v &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/hbm_processor';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="input_data_handler.v" href="input_data_handler.html" />
+    <link rel="prev" title="External Events Processor Module Family" href="external_events_processor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">hbm_processor.v</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="hbm-processor-v">
+<h1>hbm_processor.v<a class="headerlink" href="#hbm-processor-v" title="Link to this heading">#</a></h1>
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading">#</a></h2>
+<section id="purpose-and-role-in-stack">
+<h3>Purpose and Role in Stack<a class="headerlink" href="#purpose-and-role-in-stack" title="Link to this heading">#</a></h3>
+<p>The <strong>hbm_processor</strong> is the <strong>HBM (High Bandwidth Memory) controller and synapse data manager</strong>, responsible for fetching synaptic connectivity data from off-chip HBM. This module:</p>
+<ul class="simple">
+<li><p><strong>Implements AXI4 master interface</strong> to HBM (256-bit data width)</p></li>
+<li><p><strong>Orchestrates two-phase data retrieval:</strong></p>
+<ul>
+<li><p><strong>Phase 1:</strong> Fetch pointer data for external inputs (BRAM) and internal neurons (URAM)</p></li>
+<li><p><strong>Phase 2:</strong> Follow pointer chains to fetch actual synapse data</p></li>
+</ul>
+</li>
+<li><p><strong>Manages pointer FIFO</strong> for synapse chain traversal</p></li>
+<li><p><strong>Provides CI access</strong> for reading/writing HBM during configuration</p></li>
+<li><p><strong>Coordinates with spike generation</strong> by writing spike addresses directly to spike FIFOs</p></li>
+<li><p><strong>Combines 256-bit HBM reads into 512-bit packets</strong> for 16 neuron groups</p></li>
+</ul>
+<p>In the software/hardware stack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Command Interpreter ──► HBM read/write requests
+                         │
+External Events Proc ──► Triggers Phase 1 execution
+Internal Events Proc ──► Receives pointer/synapse data
+                         │
+                         ▼
+                   hbm_processor
+                   (AXI4 Master)
+                         │
+                         ▼
+                    HBM Memory
+                  (Synapse Storage)
+                         │
+                         ▼
+           Pointer FIFO ◄─ Pointer chains
+                         │
+                         ▼
+              Spike FIFOs ◄─ Spike addresses
+</pre></div>
+</div>
+<p>This module is critical for <strong>network connectivity</strong>, translating sparse synaptic connections into efficient memory accesses.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<section id="high-level-block-diagram">
+<h3>High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    hbm_processor
+    ┌─────────────────────────────────────────────────────────┐
+    │                                                         │
+    │  ┌───────────────────────────────────────────────┐     │
+    │  │   TX (Transmit) State Machine                 │     │
+    │  │   - Sends read/write commands to HBM          │     │
+    │  │   - Manages address generation                │     │
+    │  └────────────┬──────────────────────────────────┘     │
+    │               │                                         │
+    │  ┌────────────▼────────────────────────────────────┐   │
+    │  │   Address Multiplexer                           │   │
+    │  │   Phase 0: {0, tx_select, tx_addr, 4&#39;b0}       │   │
+    │  │   Phase 1: {ptr_addr, 5&#39;b0}                    │   │
+    │  │   CI mode: {ci2hbm_dout[278:256], 5&#39;b0}        │   │
+    │  └────────────┬────────────────────────────────────┘   │
+    │               │                                         │
+    │  ┌────────────▼────────────────────────────────────┐   │
+HBM │  │   AXI4 Master Interface                         │   │
+AXI4│◄─┤   - araddr, arvalid, arready (Read Address)    │   │
+    │  │   - rdata, rvalid, rready (Read Data)          │   │
+    │  │   - awaddr, awvalid, awready (Write Address)   │   │
+    │  │   - wdata, wvalid, wready (Write Data)         │   │
+    │  │   - bvalid, bready (Write Response)            │   │
+    │  │   - Burst mode: INCR, size=256-bit             │   │
+    │  └────────────┬────────────────────────────────────┘   │
+    │               │                                         │
+    │  ┌────────────▼────────────────────────────────────┐   │
+    │  │   RX (Receive) State Machine                    │   │
+    │  │   - Collects HBM read responses                 │   │
+    │  │   - Routes data to appropriate destination      │   │
+    │  └─┬──────┬──────────┬────────┬──────┬────────────┘   │
+    │    │      │          │        │      │                │
+    │    │      │          │        │      │                │
+Pointer   │      │          │        │      │ Spikes (Phase 1)
+FIFO      │      │          │        │      └──► spk0-7_wren
+    ◄─────┘      │          │        │
+                 │          │        │
+Command          │          │        └──► hbm2ci (CI responses)
+Interpreter      │          │
+                 │          │
+                 │          └──► exec_hbm_rdata (512-bit)
+Internal/        │                  [511:0] = {upper256, lower256}
+External         │                  Phase 1: Pointer data
+Events Procs     │                  Phase 2: Synapse data
+                 │
+                 ▼
+          ┌────────────────────────────────┐
+          │   256→512 bit Converter         │
+          │   - hbm_count toggles           │
+          │   - Combines 2 × 256-bit reads  │
+          │   - Outputs on 2nd read         │
+          └────────────────────────────────┘
+    │                                                         │
+    │  ┌───────────────────────────────────────────────┐     │
+    │  │   Pointer Chain Management                    │     │
+    │  │   - ptrFIFO_dout[31:23]: Length (9 bits)      │     │
+    │  │   - ptrFIFO_dout[22:0]:  Address (23 bits)    │     │
+    │  │   - ptr_burst: Dynamic burst calculation      │     │
+    │  │   - ptr_ctr: Tracks progress through chain   │     │
+    │  └───────────────────────────────────────────────┘     │
+    │                                                         │
+    └─────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="module-parameters">
+<h3>Module Parameters<a class="headerlink" href="#module-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_ADDR_BITS</span></code></p></td>
+<td><p>33</p></td>
+<td><p>HBM address width (8 GB addressable)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_DATA_WIDTH</span></code></p></td>
+<td><p>256</p></td>
+<td><p>HBM data bus width</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_BYTE_COUNT</span></code></p></td>
+<td><p>32</p></td>
+<td><p>Bytes per transaction (256/8)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>225 MHz system clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low synchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="network-configuration">
+<h3>Network Configuration<a class="headerlink" href="#network-configuration" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_inputs</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>17</p></td>
+<td><p>Number of input axons (external events)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_outputs</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>17</p></td>
+<td><p>Number of output neurons (internal events)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">core_number</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>5</p></td>
+<td><p>Core identifier (0-31) for multi-core systems</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="execution-control">
+<h3>Execution Control<a class="headerlink" href="#execution-control" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Start new timestep execution</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>External events processor pipeline filled</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_ready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Internal events processor pipeline filled</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>HBM data valid for IEP/EEP (every 2nd read)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase1_done</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>TX completed Phase 1 command sending</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_tx_phase2_done</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>TX completed Phase 2 command sending</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase1_done</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>RX completed Phase 1 data collection</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase2_done</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>RX completed Phase 2 data collection</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="hbm-data-output">
+<h3>HBM Data Output<a class="headerlink" href="#hbm-data-output" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>512</p></td>
+<td><p>Combined HBM data for 16 neuron groups</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbmFIFO_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Backpressure from downstream FIFO</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Format (<code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata[511:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[511:256] = Upper 256-bit read (most recent)
+[255:0]   = Lower 256-bit read (latched from previous cycle)
+
+Each 256-bit word contains data for 8 neuron groups (32 bits each)
+Two 256-bit reads → 16 neuron groups → 512-bit output
+</pre></div>
+</div>
+</section>
+<section id="pointer-fifo-interface">
+<h3>Pointer FIFO Interface<a class="headerlink" href="#pointer-fifo-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Pointer FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>32</p></td>
+<td><p>Pointer FIFO data output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_rden</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Pointer FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pointer Format (<code class="docutils literal notranslate"><span class="pre">ptrFIFO_dout[31:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">23</span><span class="p">]</span> <span class="o">=</span> <span class="n">Chain</span> <span class="n">length</span> <span class="p">(</span><span class="mi">9</span> <span class="n">bits</span><span class="p">,</span> <span class="nb">max</span> <span class="mi">511</span> <span class="n">synapses</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <span class="n">HBM</span> <span class="n">address</span> <span class="p">(</span><span class="mi">23</span> <span class="n">bits</span><span class="p">,</span> <span class="n">byte</span> <span class="n">address</span> <span class="o">&gt;&gt;</span> <span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="command-interpreter-interface">
+<h3>Command Interpreter Interface<a class="headerlink" href="#command-interpreter-interface" title="Link to this heading">#</a></h3>
+<p><strong>Input (CI to HBM):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>280</p></td>
+<td><p>Command data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_rden</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Command Format (<code class="docutils literal notranslate"><span class="pre">ci2hbm_dout[279:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">279</span><span class="p">]</span>       <span class="o">=</span> <span class="n">R</span><span class="o">/</span><span class="n">W</span> <span class="p">(</span><span class="mi">0</span><span class="o">=</span><span class="n">read</span><span class="p">,</span> <span class="mi">1</span><span class="o">=</span><span class="n">write</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">278</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span>   <span class="o">=</span> <span class="n">HBM</span> <span class="n">address</span> <span class="p">(</span><span class="mi">23</span> <span class="n">bits</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="n">Write</span> <span class="n">data</span> <span class="p">(</span><span class="mi">256</span> <span class="n">bits</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output (HBM to CI):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_din</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>256</p></td>
+<td><p>Response data (= hbm_rdata)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_wren</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="spike-fifo-interface-8-fifos">
+<h3>Spike FIFO Interface (8 FIFOs)<a class="headerlink" href="#spike-fifo-interface-8-fifos" title="Link to this heading">#</a></h3>
+<p><strong>Per FIFO (0-7):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spkN_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Spike FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spkN_din</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>17</p></td>
+<td><p>Spike neuron address</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spkN_wren</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>Spike FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Spike Data Extraction:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">spk0_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">[</span><span class="mh">016</span><span class="o">:</span><span class="mh">000</span><span class="p">];</span><span class="w">  </span><span class="c1">// 17-bit neuron address</span>
+<span class="n">spk0_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">spk0_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_hbm_rx_phase1_done</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">            </span><span class="n">exec_hbm_rvalidready_2x</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">[</span><span class="mh">031</span><span class="p">];</span><span class="w">  </span><span class="c1">// Spike flag</span>
+
+<span class="c1">// Similar for spk1-7 from hbm_rdata[048:032] through [240:224]</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> Spike data embedded in HBM pointer reads during Phase 1.</p>
+</section>
+<section id="hbm-axi4-master-interface">
+<h3>HBM AXI4 Master Interface<a class="headerlink" href="#hbm-axi4-master-interface" title="Link to this heading">#</a></h3>
+<p><strong>Read Address Channel:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_araddr</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>33</p></td>
+<td><p>Read address</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arburst</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>2</p></td>
+<td><p>Burst type (2’b01 = INCR)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arid</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>6</p></td>
+<td><p>Transaction ID (always 6’d0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arlen</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>4</p></td>
+<td><p>Burst length (beats - 1)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Address channel ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arsize</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>3</p></td>
+<td><p>Beat size (3’d5 = 32 bytes = 256 bits)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_arvalid</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Address valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Read Data Channel:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rdata</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>256</p></td>
+<td><p>Read data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>6</p></td>
+<td><p>Transaction ID</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rlast</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Last beat of burst</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rready</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Data channel ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rresp</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>2</p></td>
+<td><p>Read response (ignored)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_rvalid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Read data valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Write Address Channel:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awaddr</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>33</p></td>
+<td><p>Write address (from ci2hbm)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awburst</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>2</p></td>
+<td><p>Burst type (2’b01 = INCR)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awid</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>6</p></td>
+<td><p>Transaction ID (always 6’d0)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awlen</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>4</p></td>
+<td><p>Burst length (always 4’d0 = 1 beat)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Address channel ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awsize</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>3</p></td>
+<td><p>Beat size (3’d5 = 256 bits)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_awvalid</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Address valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Write Data Channel:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_wdata</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>256</p></td>
+<td><p>Write data (from ci2hbm)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_wlast</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>1</p></td>
+<td><p>Last beat (always 1 for single-beat)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_wready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Data channel ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_wstrb</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>32</p></td>
+<td><p>Write strobes (all 1’s)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_wvalid</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Write data valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Write Response Channel:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_bid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>6</p></td>
+<td><p>Transaction ID</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_bready</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Response channel ready</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_bresp</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>2</p></td>
+<td><p>Write response (ignored)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_bvalid</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Response valid</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="debug-interface">
+<h3>Debug Interface<a class="headerlink" href="#debug-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm_curr_state</span></code></p></td>
+<td><p>Output (wire)</p></td>
+<td><p>4</p></td>
+<td><p>TX state machine state (for VIO)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="tx-transmit-state-machine">
+<h3>TX (Transmit) State Machine<a class="headerlink" href="#tx-transmit-state-machine" title="Link to this heading">#</a></h3>
+<p><strong>States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">TX_STATE_RESET</span><span class="w">                          </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">)</span>
+<span class="n">TX_STATE_IDLE</span><span class="w">                           </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d1</span><span class="p">)</span>
+<span class="n">TX_STATE_SEND_INPUT_READ_COMMANDS</span><span class="w">       </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d2</span><span class="p">)</span><span class="w">  </span><span class="c1">// Phase 1a</span>
+<span class="n">TX_STATE_SEND_OUTPUT_READ_COMMANDS</span><span class="w">      </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d3</span><span class="p">)</span><span class="w">  </span><span class="c1">// Phase 1b</span>
+<span class="n">TX_STATE_PHASE1_DONE</span><span class="w">                    </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d4</span><span class="p">)</span>
+<span class="n">TX_STATE_POP_POINTER_FIFO</span><span class="w">               </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d5</span><span class="p">)</span><span class="w">  </span><span class="c1">// Phase 2 prep</span>
+<span class="n">TX_STATE_SEND_POINTER_READ_COMMANDS</span><span class="w">     </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d6</span><span class="p">)</span><span class="w">  </span><span class="c1">// Phase 2</span>
+<span class="n">TX_STATE_PHASE2_DONE</span><span class="w">                    </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d7</span><span class="p">)</span>
+<span class="n">TX_STATE_READ_HBM_ADDR</span><span class="w">                  </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d8</span><span class="p">)</span><span class="w">  </span><span class="c1">// CI read</span>
+<span class="n">TX_STATE_WRITE_HBM_ADDR</span><span class="w">                 </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d9</span><span class="p">)</span><span class="w">  </span><span class="c1">// CI write address</span>
+<span class="n">TX_STATE_WRITE_HBM_DATA</span><span class="w">                 </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d10</span><span class="p">)</span><span class="w"> </span><span class="c1">// CI write data</span>
+<span class="n">TX_STATE_WRITE_HBM_RESP</span><span class="w">                 </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d11</span><span class="p">)</span><span class="w"> </span><span class="c1">// CI write response</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌──────────────┐
+        │ TX_RESET     │
+        └──────┬───────┘
+               │
+               ▼
+        ┌──────────────┐
+    ┌──▶│ TX_IDLE      │◄─────────────────────────────┐
+    │   └──┬───────┬───┘                              │
+    │      │       │                                  │
+    │ exec │       │ !ci2hbm_empty                    │
+    │ _run │       ├─ R/W=0 ──&gt; READ_HBM_ADDR ────────┤
+    │      │       │                                  │
+    │      │       └─ R/W=1 ──&gt; WRITE_HBM_ADDR ──&gt;   │
+    │      │                      WRITE_HBM_DATA ──&gt;  │
+    │      │                      WRITE_HBM_RESP ─────┘
+    │      │
+    │      ▼
+    │ SEND_INPUT_READ_COMMANDS
+    │  (Phase 1a: External inputs)
+    │  tx_addr: 0 → INPUT_ADDR_LIMIT
+    │      │
+    │      ▼
+    │ SEND_OUTPUT_READ_COMMANDS
+    │  (Phase 1b: Internal neurons)
+    │  tx_addr: 0 → OUTPUT_ADDR_LIMIT
+    │      │
+    │      ▼
+    │ PHASE1_DONE
+    │  (toggle tx_phase, tx_select)
+    │      │
+    │      ▼
+    │ POP_POINTER_FIFO
+    │  (wait for ptrFIFO data)
+    │  (255-cycle timeout)
+    │      │
+    │      ├─ !empty ──&gt; SEND_POINTER_READ_COMMANDS
+    │      │              (follow pointer chain)
+    │      │                      │
+    │      │              ptr_ctr reaches ptr_len
+    │      │                      │
+    │      │              ◄───────┘ (loop for next pointer)
+    │      │
+    │      └─ timeout ──&gt; PHASE2_DONE
+    │                          │
+    └──────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Phase 1 Addressing:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 0 (tx_phase = 0):</span>
+<span class="n">hbm_araddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="p">{</span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">tx_select</span><span class="p">,</span><span class="w"> </span><span class="n">tx_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">},</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+
+<span class="nl">Breakdown:</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">32</span><span class="o">:</span><span class="mh">28</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="w"> </span><span class="p">(</span><span class="n">upper</span><span class="w"> </span><span class="n">padding</span><span class="p">)</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">27</span><span class="o">:</span><span class="mh">5</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">tx_select</span><span class="p">,</span><span class="w"> </span><span class="n">tx_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">}</span>
+<span class="w">            </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">15</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="w"> </span><span class="p">(</span><span class="n">reserved</span><span class="o">/</span><span class="n">bank</span><span class="w"> </span><span class="n">select</span><span class="p">)</span>
+<span class="w">            </span><span class="p">[</span><span class="mh">14</span><span class="p">]</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">tx_select</span><span class="w"> </span><span class="p">(</span><span class="mh">0</span><span class="o">=</span><span class="n">inputs</span><span class="o">/</span><span class="n">BRAM</span><span class="p">,</span><span class="w"> </span><span class="mh">1</span><span class="o">=</span><span class="n">outputs</span><span class="o">/</span><span class="n">URAM</span><span class="p">)</span>
+<span class="w">            </span><span class="p">[</span><span class="mh">13</span><span class="o">:</span><span class="mh">4</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">tx_addr</span><span class="w"> </span><span class="p">(</span><span class="mh">10</span><span class="w"> </span><span class="n">bits</span><span class="p">)</span>
+<span class="w">            </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="w"> </span><span class="p">(</span><span class="mh">8</span><span class="w"> </span><span class="n">pointers</span><span class="w"> </span><span class="n">per</span><span class="w"> </span><span class="n">row</span><span class="w"> </span><span class="err">×</span><span class="w"> </span><span class="mh">4</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32</span><span class="w"> </span><span class="n">bytes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="w"> </span><span class="n">bits</span><span class="p">)</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">4</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="w"> </span><span class="p">(</span><span class="kt">byte</span><span class="w"> </span><span class="n">offset</span><span class="w"> </span><span class="n">within</span><span class="w"> </span><span class="mh">32</span><span class="o">-</span><span class="kt">byte</span><span class="w"> </span><span class="n">row</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Phase 2 Addressing:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Phase 1 (tx_phase = 1):</span>
+<span class="n">hbm_araddr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">};</span>
+
+<span class="nl">Breakdown:</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">32</span><span class="o">:</span><span class="mh">28</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">27</span><span class="o">:</span><span class="mh">5</span><span class="p">]</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">ptr_addr</span><span class="w"> </span><span class="p">(</span><span class="mh">23</span><span class="w"> </span><span class="n">bits</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="n">ptrFIFO_dout</span><span class="p">)</span>
+<span class="w">  </span><span class="p">[</span><span class="mh">4</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span>
+</pre></div>
+</div>
+</section>
+<section id="rx-receive-state-machine">
+<h3>RX (Receive) State Machine<a class="headerlink" href="#rx-receive-state-machine" title="Link to this heading">#</a></h3>
+<p><strong>States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">RX_STATE_RESET</span><span class="w">                </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">)</span>
+<span class="n">RX_STATE_IDLE</span><span class="w">                 </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d1</span><span class="p">)</span>
+<span class="n">RX_STATE_WAIT_BRAM_PIPELINE</span><span class="w">   </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d2</span><span class="p">)</span><span class="w">  </span><span class="c1">// Wait for EEP ready</span>
+<span class="n">RX_STATE_READ_INPUT_POINTERS</span><span class="w">  </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d3</span><span class="p">)</span><span class="w">  </span><span class="c1">// Collect external pointer data</span>
+<span class="n">RX_STATE_WAIT_URAM_PIPELINE</span><span class="w">   </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d4</span><span class="p">)</span><span class="w">  </span><span class="c1">// Wait for IEP ready</span>
+<span class="n">RX_STATE_READ_OUTPUT_POINTERS</span><span class="w"> </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d5</span><span class="p">)</span><span class="w">  </span><span class="c1">// Collect internal pointer data</span>
+<span class="n">RX_STATE_PHASE1_DONE</span><span class="w">          </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d6</span><span class="p">)</span>
+<span class="n">RX_STATE_READ_SYNAPSE_DATA</span><span class="w">    </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d7</span><span class="p">)</span><span class="w">  </span><span class="c1">// Collect synapse data (Phase 2)</span>
+<span class="n">RX_STATE_PHASE2_DONE</span><span class="w">          </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d8</span><span class="p">)</span>
+<span class="n">RX_STATE_READ_HBM_RESP</span><span class="w">        </span><span class="p">(</span><span class="mh">4</span><span class="mi">&#39;d9</span><span class="p">)</span><span class="w">  </span><span class="c1">// CI read response</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        ┌──────────────┐
+        │ RX_RESET     │
+        └──────┬───────┘
+               │
+               ▼
+        ┌──────────────┐
+    ┌──▶│ RX_IDLE      │◄────────────────────────┐
+    │   └──┬───────┬───┘                         │
+    │      │       │                             │
+    │ exec │       │ TX → READ_HBM_ADDR          │
+    │ _run │       └──&gt; READ_HBM_RESP ───────────┘
+    │      │
+    │      ▼
+    │ WAIT_BRAM_PIPELINE
+    │  (wait exec_bram_phase1_ready)
+    │      │
+    │      ▼
+    │ READ_INPUT_POINTERS
+    │  (collect HBM reads for inputs)
+    │  rx_addr: 0 → {INPUT_ADDR_LIMIT, INPUT_ADDR_MOD}
+    │      │
+    │      ▼
+    │ WAIT_URAM_PIPELINE
+    │  (wait exec_uram_phase1_ready)
+    │      │
+    │      ▼
+    │ READ_OUTPUT_POINTERS
+    │  (collect HBM reads for outputs)
+    │  rx_addr: 0 → {OUTPUT_ADDR_LIMIT, OUTPUT_ADDR_MOD}
+    │      │
+    │      ▼
+    │ PHASE1_DONE
+    │      │
+    │      ▼
+    │ READ_SYNAPSE_DATA
+    │  (collect Phase 2 reads)
+    │  wait: rx_ptr_ctr == tx_ptr_ctr
+    │      │
+    │      ▼
+    │ PHASE2_DONE
+    │      │
+    └──────┘
+</pre></div>
+</div>
+</section>
+<section id="pointer-chain-management">
+<h3>Pointer Chain Management<a class="headerlink" href="#pointer-chain-management" title="Link to this heading">#</a></h3>
+<p><strong>Pointer FIFO Data Structure:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ptrFIFO_dout[31:0]:
+  [31:23] = Length (9 bits) → max 511 synapses in chain
+  [22:0]  = Start address (23 bits) → HBM address &gt;&gt; 5
+</pre></div>
+</div>
+<p><strong>Burst Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Determine burst length for AXI transaction</span>
+<span class="n">ptr_burst</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">ptr_ctr</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">4</span><span class="p">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">ptr_len</span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">4</span><span class="p">])</span><span class="w"> </span><span class="o">?</span>
+<span class="w">            </span><span class="n">ptr_len</span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w">  </span><span class="c1">// Last burst (partial)</span>
+<span class="w">            </span><span class="mh">4&#39;hF</span><span class="p">;</span><span class="w">           </span><span class="c1">// Full burst (16 beats)</span>
+
+<span class="c1">// Example:</span>
+<span class="c1">// ptr_len = 9&#39;d35 (36 synapses)</span>
+<span class="c1">// Burst 1: ptr_ctr=0,  burst=15 (16 synapses)</span>
+<span class="c1">// Burst 2: ptr_ctr=16, burst=15 (16 synapses)</span>
+<span class="c1">// Burst 3: ptr_ctr=32, burst=3  (4 synapses, total=36)</span>
+</pre></div>
+</div>
+<p><strong>Address Increment:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// After each burst completes:</span>
+<span class="n">ptr_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ptr_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ptr_burst</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="n">ptr_ctr</span><span class="w">  </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ptr_ctr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">ptr_burst</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="c1">// When ptr_ctr[8:4] == ptr_len[8:4], chain complete</span>
+<span class="c1">// Pop next pointer from ptrFIFO</span>
+</pre></div>
+</div>
+</section>
+<section id="bit-converter">
+<h3>256 → 512 Bit Converter<a class="headerlink" href="#bit-converter" title="Link to this heading">#</a></h3>
+<p><strong>Purpose:</strong> HBM provides 256-bit data, but 16 neuron groups require 512 bits.</p>
+<p><strong>Logic:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="n">hbm_count</span><span class="p">;</span><span class="w">  </span><span class="c1">// Toggles between 0 and 1</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">hbm_rdata_lower</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_rvalid</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">hbm_rready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">hbm_count</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="o">~</span><span class="n">hbm_count</span><span class="p">;</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">hbm_count</span><span class="p">)</span>
+<span class="w">            </span><span class="n">hbm_rdata_lower</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm_rdata</span><span class="p">;</span><span class="w">  </span><span class="c1">// Latch 1st read</span>
+<span class="w">        </span><span class="c1">// else: 2nd read available on hbm_rdata</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Output combines latched and current data</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">hbm_rdata</span><span class="p">,</span><span class="w"> </span><span class="n">hbm_rdata_lower</span><span class="p">};</span>
+
+<span class="c1">// Assert rvalidready only on 2nd read</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hbm_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">hbm_rready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">hbm_count</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">hbmFIFO_full</span><span class="p">;</span>
+
+<span class="c1">// For spike writes (need both reads)</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">exec_hbm_rvalidready_2x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hbm_rvalid</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">hbm_rready</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Timeline:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle: 0      1      2      3      4      5
+       │      │      │      │      │      │
+rvalid ▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+       │      │      │      │      │      │
+rdata  DATA_L│      │DATA_U│      │DATA_L&#39;│
+       │      │      │      │      │      │
+hbm_   0      │1      │0      │1      │0     │
+count  │      │      │      │      │      │
+       │      │      │      │      │      │
+rdata  XXXX   │DATA_L│DATA_L│DATA_U│DATA_U│
+_lower │      │      │      │      │      │
+       │      │      │      │      │      │
+exec_  XXXX   │XXXX  │{U,L} │{U,L} │{U&#39;,L&#39;}│
+hbm_   │      │      │      │      │      │
+rdata  │      │      │      │      │      │
+       │      │      │      │      │      │
+rvalid ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+ready  │      │      │      │      │      │
+</pre></div>
+</div>
+</section>
+<section id="wait-clock-counter-phase-2-timeout">
+<h3>Wait Clock Counter (Phase 2 Timeout)<a class="headerlink" href="#wait-clock-counter-phase-2-timeout" title="Link to this heading">#</a></h3>
+<p><strong>Purpose:</strong> Ensure all pointers transmitted from ptrFIFO before ending Phase 2.</p>
+<p><strong>Implementation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">wait_clks_cnt</span><span class="p">;</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">wait_clks_limit</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d255</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">   </span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">tx_curr_state</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">TX_STATE_POP_POINTER_FIFO</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span>
+<span class="w">       </span><span class="n">rx_phase1_done</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">ptrFIFO_empty</span><span class="p">)</span>
+<span class="w">      </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">   </span><span class="k">else</span>
+<span class="w">      </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">// Transition to PHASE2_DONE when timeout reached</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">wait_clks_limit</span><span class="p">)</span>
+<span class="w">   </span><span class="n">tx_next_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">TX_STATE_PHASE2_DONE</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Rationale:</strong></p>
+<ul class="simple">
+<li><p>Round-robin pointer FIFO controller may take up to 16 cycles to send last pointer</p></li>
+<li><p>255-cycle wait provides generous margin</p></li>
+<li><p>Prevents premature phase completion</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-map">
+<h2>Memory Map<a class="headerlink" href="#memory-map" title="Link to this heading">#</a></h2>
+<section id="hbm-address-space">
+<h3>HBM Address Space<a class="headerlink" href="#hbm-address-space" title="Link to this heading">#</a></h3>
+<p><strong>Total:</strong> 8 GB (33-bit address)</p>
+<p><strong>Layout:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────┐
+│  Address Range        │  Purpose                        │
+├───────────────────────┼─────────────────────────────────┤
+│  [32:28] (upper 5)    │  Padding (always 0)             │
+├───────────────────────┼─────────────────────────────────┤
+│  [27:5]  (23 bits)    │  Row address                     │
+│                       │  - Phase 0: Structured layout    │
+│                       │  - Phase 1: Pointer chain addr   │
+├───────────────────────┼─────────────────────────────────┤
+│  [4:0]   (lower 5)    │  Byte offset (always 0 for      │
+│                       │  32-byte aligned accesses)      │
+└─────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Phase 0 Address Structure (<code class="docutils literal notranslate"><span class="pre">[27:5]</span></code> = 23 bits):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[27:20] = Reserved / Bank select (8 bits, unused)
+[19]    = Input/Output select (tx_select)
+          0 = External inputs (BRAM)
+          1 = Internal neurons (URAM)
+[18:9]  = Address within input/output space (tx_addr, 10 bits)
+[8:5]   = Padding (4 bits, for pointer granularity)
+
+Example:
+  Input row 100:   {8&#39;d0, 1&#39;b0, 10&#39;d100, 4&#39;d0} → Addr 0x006400
+  Output row 500:  {8&#39;d0, 1&#39;b1, 10&#39;d500, 4&#39;d0} →0x087D00
+</pre></div>
+</div>
+<p><strong>Pointer Data Structure (256-bit HBM row):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Per pointer (32 bits × 8 pointers = 256 bits):
+  [31:23] = Next pointer length (9 bits)
+  [22:0]  = Next pointer address (23 bits)
+
+Row contains 8 pointers, indexed by [8:5] of address
+</pre></div>
+</div>
+<p><strong>Synapse Data Structure (256-bit HBM row):</strong></p>
+<p>Depends on network configuration, but typically:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Per</span> <span class="n">synapse</span> <span class="p">(</span><span class="n">variable</span> <span class="n">size</span><span class="p">,</span> <span class="n">often</span> <span class="mi">16</span><span class="o">-</span><span class="mi">32</span> <span class="n">bits</span><span class="p">):</span>
+  <span class="o">-</span> <span class="n">Weight</span> <span class="p">(</span><span class="n">signed</span><span class="p">,</span> <span class="mi">8</span><span class="o">-</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Target</span> <span class="n">neuron</span> <span class="n">ID</span> <span class="p">(</span><span class="mi">13</span><span class="o">-</span><span class="mi">17</span> <span class="n">bits</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Delay</span> <span class="p">(</span><span class="n">optional</span><span class="p">)</span>
+  <span class="o">-</span> <span class="n">Other</span> <span class="n">metadata</span>
+</pre></div>
+</div>
+<p>During Phase 2, pointer chains lead to synapse data rows.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="phase-1a-input-pointer-reads">
+<h3>Phase 1a: Input Pointer Reads<a class="headerlink" href="#phase-1a-input-pointer-reads" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:   0      1      2      3      4      5      ...
+         │      │      │      │      │      │      │
+TX State IDLE   │SEND_ │SEND_ │SEND_ │SEND_ │SEND_ │
+         │      │INPUT │INPUT │INPUT │INPUT │INPUT │
+         │      │      │      │      │      │      │
+hbm_     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│
+arvalid  │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+hbm_     ▔▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│
+arready  │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+tx_addr  0      │1      │2      │3      │4      │5      │
+         │      │      │      │      │      │      │
+hbm_     0x0000 │0x0100 │0x0200 │0x0300 │0x0400 │0x0500 │
+araddr   │      │      │      │      │      │      │
+(low23)  │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+hbm_     15     │15     │15     │15     │15     │15     │
+arlen    │(16   │(16   │(16   │(16   │(16   │(16   │
+(burst-1)│beats)│beats)│beats)│beats)│beats)│beats)│
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Each araddr issues a burst of 16 beats (4’hF + 1)</p></li>
+<li><p>tx_addr increments on each arready handshake</p></li>
+<li><p>Continues until tx_addr == INPUT_ADDR_LIMIT</p></li>
+</ul>
+</section>
+<section id="phase-1b-phase-2-transition">
+<h3>Phase 1b → Phase 2 Transition<a class="headerlink" href="#phase-1b-phase-2-transition" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:   N      N+1    N+2    N+3    N+4    N+5
+         │      │      │      │      │      │
+TX State SEND   │PHASE1│POP   │POP   │SEND  │
+         OUTPUT │_DONE │_PTR  │_PTR  │_PTR  │
+         │      │      │      │      │      │
+tx_phase 0      │0      │1      │1      │1     │
+         │      │      │      │      │      │
+ptrFIFO  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁
+_empty   │      │      │      │      │      │
+         │      │      │      │      │      │
+ptrFIFO  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁
+_rden    │      │      │      │      │      │
+         │      │      │      │      │      │
+ptr_addr XXXX   │XXXX  │XXXX  │ADDR1 │ADDR1 │
+         │      │      │      │(set) │      │
+         │      │      │      │      │      │
+hbm_     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│
+arvalid  │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>PHASE1_DONE toggles tx_phase to 1</p></li>
+<li><p>POP_PTR waits for ptrFIFO not empty</p></li>
+<li><p>ptr_addr loaded from ptrFIFO_dout</p></li>
+<li><p>SEND_PTR issues AXI read with ptr_burst length</p></li>
+</ul>
+</section>
+<section id="phase-2-pointer-chain-traversal">
+<h3>Phase 2: Pointer Chain Traversal<a class="headerlink" href="#phase-2-pointer-chain-traversal" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:   0      1      2      ...    16     17     18
+         │      │      │      │      │      │      │
+TX State SEND   │SEND  │SEND  │SEND  │POP   │SEND  │
+         _PTR   │_PTR  │_PTR  │_PTR  │_PTR  │_PTR  │
+         │      │      │      │      │      │      │
+hbm_     ▔▔▔▔▔▔▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁
+arvalid  │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+ptr_ctr  0      │16     │32     │48     │48     │48    │
+         │      │      │      │      │      │      │
+ptr_len  35     │35     │35     │35     │35     │100   │
+         │      │      │      │      │      │(new) │
+         │      │      │      │      │      │      │
+ptr_     15     │15     │3      │15     │15     │15    │
+burst    │      │      │(final)│(new   │      │      │
+         │      │      │       │chain) │      │      │
+         │      │      │      │      │      │      │
+ptrFIFO  ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁
+_rden    │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>First chain: 36 synapses (len=35) → 3 bursts</p></li>
+<li><p>Burst 1: 16 beats, Burst 2: 16 beats, Burst 3: 4 beats</p></li>
+<li><p>After completion, pop next pointer and start new chain</p></li>
+<li><p>Continues until ptrFIFO empty for 255 cycles</p></li>
+</ul>
+</section>
+<section id="rx-data-collection-with-256512-conversion">
+<h3>RX: Data Collection with 256→512 Conversion<a class="headerlink" href="#rx-data-collection-with-256512-conversion" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:   0      1      2      3      4      5      6
+         │      │      │      │      │      │      │
+hbm_     ▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+rvalid   │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+hbm_     DATA0L│      │DATA0U│      │DATA1L│      │
+rdata    │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+hbm_     0      │1      │0      │1      │0      │1     │
+count    │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+rdata_   XXXX   │DATA0L│DATA0L│DATA0U│DATA0U│DATA1L│
+lower    │      │      │      │      │      │      │
+         │      │      │      │      │      │      │
+exec_hbm XXXX   │XXXX  │{0U,0L│{0U,0L│{1L,0U│{1L,0U│
+_rdata   │      │      │}     │}     │}     │}     │
+         │      │      │      │      │      │      │
+exec_hbm ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+_rvalid  │      │      │      │      │      │      │
+ready    │      │      │(2nd) │      │(2nd) │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Only every 2nd read triggers exec_hbm_rvalidready</p></li>
+<li><p>Data latched on odd reads, combined on even reads</p></li>
+<li><p>Downstream modules receive 512-bit packets</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="related-modules">
+<h3>Related Modules<a class="headerlink" href="#related-modules" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Relationship</p></th>
+<th class="head"><p>Interface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>command_interpreter.v</strong></p></td>
+<td><p>Bidirectional</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_*</span></code> and <code class="docutils literal notranslate"><span class="pre">hbm2ci_*</span></code> FIFOs for CI access</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>external_events_processor.v</strong></p></td>
+<td><p>Coordination</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_ready</span></code> signal</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>internal_events_processor.v</strong></p></td>
+<td><p>Downstream</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata</span></code>, <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>pointer_fifo_controller.v</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>Provides <code class="docutils literal notranslate"><span class="pre">ptrFIFO_*</span></code> interface</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>spike_fifo_controller.v</strong></p></td>
+<td><p>Downstream</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">spk0-7_*</span></code> spike outputs</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>HBM (Xilinx IP)</strong></p></td>
+<td><p>Memory</p></td>
+<td><p>AXI4 master interface</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="software-integration">
+<h3>Software Integration<a class="headerlink" href="#software-integration" title="Link to this heading">#</a></h3>
+<p><strong>Python (hs_bridge):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">compile_network.compile()</span></code> → Generates HBM memory layout</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">network.load_weights()</span></code> → Writes synapse data via CI to HBM</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">network.read_hbm(address)</span></code> → Debug HBM contents</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">utils.create_pointer_chains()</span></code> → Organizes synapses into linked lists</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>HBM</strong></p></td>
+<td><p>High Bandwidth Memory - Off-chip DRAM with 400+ GB/s bandwidth</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Pointer Chain</strong></p></td>
+<td><p>Linked-list structure storing variable-length synapse lists</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Phase 0 / Phase 1</strong></p></td>
+<td><p>TX phases: 0=fetch pointers, 1=fetch synapses</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>tx_phase</strong></p></td>
+<td><p>Toggles between Phase 0 and Phase 1</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>tx_select</strong></p></td>
+<td><p>In Phase 0: 0=inputs (BRAM), 1=outputs (URAM)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ptr_addr</strong></p></td>
+<td><p>HBM address for synapse data (from ptrFIFO)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>ptr_len</strong></p></td>
+<td><p>Number of synapses in chain (from ptrFIFO)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ptr_burst</strong></p></td>
+<td><p>AXI burst length for current read (max 16 beats)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>hbm_count</strong></p></td>
+<td><p>Toggles 0/1 to combine two 256-bit reads into 512-bit output</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>exec_hbm_rvalidready</strong></p></td>
+<td><p>Data valid signal (asserts every 2nd HBM read)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>exec_hbm_rvalidready_2x</strong></p></td>
+<td><p>Data valid at HBM rate (every read)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>AXI4</strong></p></td>
+<td><p>ARM Advanced eXtensible Interface - High-performance protocol</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Burst</strong></p></td>
+<td><p>Multi-beat AXI transaction (up to 16 beats)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>INCR</strong></p></td>
+<td><p>Incrementing burst type (addresses increment by size)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="throughput">
+<h3>Throughput<a class="headerlink" href="#throughput" title="Link to this heading">#</a></h3>
+<p><strong>HBM Bandwidth:</strong></p>
+<ul class="simple">
+<li><p><strong>Interface:</strong> 256-bit &#64; 225 MHz = 57.6 Gb/s = 7.2 GB/s per channel</p></li>
+<li><p><strong>System Total:</strong> 32 channels (HBM2) × 7.2 GB/s = 230 GB/s theoretical</p></li>
+</ul>
+<p><strong>Pointer Fetch Rate (Phase 1):</strong></p>
+<ul class="simple">
+<li><p><strong>Burst size:</strong> 16 beats × 256 bits = 4096 bits = 512 bytes</p></li>
+<li><p><strong>Pointers per burst:</strong> 512 bytes / 32 bytes = 16 pointers</p></li>
+<li><p><strong>Rate:</strong> 16 pointers per ~20 cycles (burst + overhead) = ~180M pointers/sec</p></li>
+</ul>
+<p><strong>Synapse Fetch Rate (Phase 2):</strong></p>
+<ul class="simple">
+<li><p><strong>Variable:</strong> Depends on ptr_len (chain length)</p></li>
+<li><p><strong>Typical:</strong> 1-10 synapses per neuron</p></li>
+<li><p><strong>Rate:</strong> Limited by network connectivity, not HBM bandwidth</p></li>
+</ul>
+</section>
+<section id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>Cycles</p></th>
+<th class="head"><p>Time &#64; 225 MHz</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>AXI Address Handshake</p></td>
+<td><p>1</p></td>
+<td><p>4.4 ns</p></td>
+</tr>
+<tr class="row-odd"><td><p>HBM Read Latency</p></td>
+<td><p>~100-200</p></td>
+<td><p>0.4-0.9 µs</p></td>
+</tr>
+<tr class="row-even"><td><p>16-beat Burst Transfer</p></td>
+<td><p>16</p></td>
+<td><p>71 ns</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total per burst</p></td>
+<td><p>~120-220</p></td>
+<td><p>0.5-1.0 µs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Phase 1 Duration:</strong></p>
+<ul class="simple">
+<li><p>Depends on <code class="docutils literal notranslate"><span class="pre">num_inputs</span></code> and <code class="docutils literal notranslate"><span class="pre">num_outputs</span></code></p></li>
+<li><p>Typical: 1000-10,000 cycles = 4-44 µs</p></li>
+</ul>
+<p><strong>Phase 2 Duration:</strong></p>
+<ul class="simple">
+<li><p>Depends on total synapses across all active neurons</p></li>
+<li><p>Typical: 10,000-1,000,000 cycles = 44 µs - 4.4 ms</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="problem-stuck-in-pop-pointer-fifo-state">
+<h3>Problem: Stuck in POP_POINTER_FIFO State<a class="headerlink" href="#problem-stuck-in-pop-pointer-fifo-state" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> TX never reaches PHASE2_DONE</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">ptrFIFO_empty</span></code> - should eventually assert</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">wait_clks_cnt</span></code> - should increment when empty</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> is writing to ptrFIFO</p></li>
+</ol>
+<p><strong>Common Cause:</strong> Pointer FIFO controller not generating pointers (upstream issue)</p>
+</section>
+<section id="problem-exec-hbm-rvalidready-never-asserts">
+<h3>Problem: exec_hbm_rvalidready Never Asserts<a class="headerlink" href="#problem-exec-hbm-rvalidready-never-asserts" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> IEP/EEP waiting indefinitely for HBM data</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">hbm_rvalid</span></code> - should pulse from HBM</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">hbm_count</span></code> - should toggle 0→1→0</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">hbmFIFO_full</span></code> - may be blocking output</p></li>
+<li><p>Verify RX state machine in correct state</p></li>
+</ol>
+<p><strong>Common Cause:</strong> HBM not responding, or FIFO backpressure</p>
+</section>
+<section id="problem-spike-fifos-not-receiving-data">
+<h3>Problem: Spike FIFOs Not Receiving Data<a class="headerlink" href="#problem-spike-fifos-not-receiving-data" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> No spikes generated during Phase 1</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">exec_hbm_rx_phase1_done</span></code> - should assert during Phase 1 reads</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">hbm_rdata[31,</span> <span class="pre">63,</span> <span class="pre">95,</span> <span class="pre">...]</span></code> - spike flags should be set</p></li>
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">spkN_full</span></code> - may be blocking writes</p></li>
+<li><p>Verify pointer data contains spike information</p></li>
+</ol>
+<p><strong>Common Cause:</strong> HBM pointer data doesn’t include spike flags</p>
+</section>
+<section id="vio-ila-probes-recommended">
+<h3>VIO/ILA Probes (Recommended)<a class="headerlink" href="#vio-ila-probes-recommended" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tx_curr_state</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rx_curr_state</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr_addr</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">8</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr_len</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rx_ptr_ctr</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">22</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">tx_ptr_ctr</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">ptrFIFO_empty</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">hbm_rvalid</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">hbm_count</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="reset-behavior">
+<h3>Reset Behavior<a class="headerlink" href="#reset-behavior" title="Link to this heading">#</a></h3>
+<p>On <code class="docutils literal notranslate"><span class="pre">resetn</span></code> deassertion:</p>
+<ul class="simple">
+<li><p>All state machines → RESET → IDLE</p></li>
+<li><p>Phase flags → done (ready for exec_run)</p></li>
+<li><p>Counters → 0</p></li>
+<li><p>Address registers → 0</p></li>
+</ul>
+</section>
+<section id="burst-length-edge-cases">
+<h3>Burst Length Edge Cases<a class="headerlink" href="#burst-length-edge-cases" title="Link to this heading">#</a></h3>
+<p><strong>Last Burst in Chain:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ptr_burst</span></code> calculated as <code class="docutils literal notranslate"><span class="pre">ptr_len[3:0]</span></code> when on final segment</p></li>
+<li><p>Ensures exact number of synapses read, no over-fetch</p></li>
+</ul>
+<p><strong>Empty Input/Output:</strong></p>
+<ul class="simple">
+<li><p>If <code class="docutils literal notranslate"><span class="pre">num_inputs=0</span></code> or <code class="docutils literal notranslate"><span class="pre">num_outputs=0</span></code>, respective phase skipped</p></li>
+<li><p>Address limit check immediately true</p></li>
+</ul>
+</section>
+<section id="axi-protocol-compliance">
+<h3>AXI Protocol Compliance<a class="headerlink" href="#axi-protocol-compliance" title="Link to this heading">#</a></h3>
+<p><strong>Write Transactions:</strong></p>
+<ul class="simple">
+<li><p>Single-beat only (awlen=0, wlast=1)</p></li>
+<li><p>No burst writes implemented</p></li>
+</ul>
+<p><strong>Read Transactions:</strong></p>
+<ul class="simple">
+<li><p>Supports bursts up to 16 beats</p></li>
+<li><p>No support for wrap or fixed-address bursts (only INCR)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="future-enhancement-opportunities">
+<h2>Future Enhancement Opportunities<a class="headerlink" href="#future-enhancement-opportunities" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Prefetching:</strong> Begin Phase 2 pointer fetches before Phase 1 completes</p></li>
+<li><p><strong>Burst Optimization:</strong> Merge adjacent pointer chains into single burst</p></li>
+<li><p><strong>Multi-Channel HBM:</strong> Distribute addresses across HBM channels for parallelism</p></li>
+<li><p><strong>Error Detection:</strong> Monitor <code class="docutils literal notranslate"><span class="pre">hbm_rresp</span></code> and <code class="docutils literal notranslate"><span class="pre">hbm_bresp</span></code> for errors</p></li>
+<li><p><strong>Performance Counters:</strong> Track HBM utilization, stall cycles</p></li>
+<li><p><strong>Adaptive Timeout:</strong> Adjust wait_clks_limit based on ptrFIFO depth</p></li>
+<li><p><strong>Write Bursts:</strong> Support multi-beat writes for faster HBM initialization</p></li>
+</ol>
+<hr class="docutils" />
+<p><strong>Document Version:</strong> 1.0
+<strong>Last Updated:</strong> December 2025
+<strong>Module File:</strong> <code class="docutils literal notranslate"><span class="pre">hbm_processor.v</span></code>
+<strong>Module Location:</strong> <code class="docutils literal notranslate"><span class="pre">CRI_proj/cri_fpga/code/new/hyddenn2/vivado/single_core.srcs/sources_1/new/</span></code>
+<strong>Purpose:</strong> HBM memory controller and synapse data manager
+<strong>HBM Bandwidth:</strong> 400+ GB/s (theoretical)
+<strong>AXI4 Interface:</strong> 256-bit data width, 33-bit address
+<strong>Clock Frequency:</strong> 225 MHz</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-overview">Module Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-role-in-stack">Purpose and Role in Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-block-diagram">High-Level Block Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-parameters">Module Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-configuration">Network Configuration</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-control">Execution Control</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-data-output">HBM Data Output</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-fifo-interface">Pointer FIFO Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-interpreter-interface">Command Interpreter Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-fifo-interface-8-fifos">Spike FIFO Interface (8 FIFOs)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-axi4-master-interface">HBM AXI4 Master Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-interface">Debug Interface</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tx-transmit-state-machine">TX (Transmit) State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rx-receive-state-machine">RX (Receive) State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-chain-management">Pointer Chain Management</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bit-converter">256 → 512 Bit Converter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wait-clock-counter-phase-2-timeout">Wait Clock Counter (Phase 2 Timeout)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-map">Memory Map</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-address-space">HBM Address Space</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1a-input-pointer-reads">Phase 1a: Input Pointer Reads</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1b-phase-2-transition">Phase 1b → Phase 2 Transition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-pointer-chain-traversal">Phase 2: Pointer Chain Traversal</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rx-data-collection-with-256512-conversion">RX: Data Collection with 256→512 Conversion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-modules">Related Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#software-integration">Software Integration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-stuck-in-pop-pointer-fifo-state">Problem: Stuck in POP_POINTER_FIFO State</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-exec-hbm-rvalidready-never-asserts">Problem: exec_hbm_rvalidready Never Asserts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-spike-fifos-not-receiving-data">Problem: Spike FIFOs Not Receiving Data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vio-ila-probes-recommended">VIO/ILA Probes (Recommended)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reset-behavior">Reset Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst-length-edge-cases">Burst Length Edge Cases</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axi-protocol-compliance">AXI Protocol Compliance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-enhancement-opportunities">Future Enhancement Opportunities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/hbm_processor.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

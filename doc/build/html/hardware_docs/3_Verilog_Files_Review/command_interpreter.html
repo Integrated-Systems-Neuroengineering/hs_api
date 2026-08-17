@@ -1,0 +1,1910 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>command_interpreter.v &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/command_interpreter';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="External Events Processor Module Family" href="external_events_processor.html" />
+    <link rel="prev" title="3 Verilog Files Review" href="../chapter_3.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">command_interpreter.v</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="command-interpreter-v">
+<h1>command_interpreter.v<a class="headerlink" href="#command-interpreter-v" title="Link to this heading">#</a></h1>
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading">#</a></h2>
+<section id="purpose-and-role-in-stack">
+<h3>Purpose and Role in Stack<a class="headerlink" href="#purpose-and-role-in-stack" title="Link to this heading">#</a></h3>
+<p>The <strong>command_interpreter</strong> module serves as the central command router and execution controller for the neuromorphic FPGA core. It acts as the primary interface between the host computer (via PCIe) and all internal processing modules. This module:</p>
+<ul class="simple">
+<li><p><strong>Decodes and routes PCIe commands</strong> to appropriate processors (HBM, external events, internal events)</p></li>
+<li><p><strong>Manages network execution flow</strong> including time-step sequencing and execution counters</p></li>
+<li><p><strong>Handles axon event distribution</strong> by parsing 512-bit PCIe packets into individual axon events</p></li>
+<li><p><strong>Collects and batches spike outputs</strong> for transmission back to the host</p></li>
+<li><p><strong>Maintains execution statistics</strong> including time-step counters and FPGA cycle timers</p></li>
+</ul>
+<p>In the software/hardware stack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Host (Python hs_bridge) → PCIe DMA → pcie2fifos → command_interpreter → Processing Modules
+                                                   ↓
+                                         [External Events Processor]
+                                         [HBM Processor]
+                                         [Internal Events Processor]
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<section id="high-level-block-diagram">
+<h3>High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    ┌────────────────────────────────────────────────┐
+                    │         command_interpreter                    │
+                    │                                                 │
+    PCIe RX FIFO    │  ┌──────────────────────────────────────┐     │
+    512-bit         │  │      RX State Machine                │     │
+    ────────────────┼──►  Command Decoder &amp; Router            │     │
+                    │  │  - CMD_EEP_W: Load axon events       │     │
+                    │  │  - CMD_HBM_RW: R/W synapses         │     │
+                    │  │  - CMD_IEP_RW: R/W neurons          │     │
+                    │  │  - CMD_NTWK_PARAM_W: Set params     │     │
+                    │  │  - CMD_EXEC_STEP: Run 1 timestep    │     │
+                    │  │  - CMD_EXEC_CONT: Continuous run    │     │
+                    │  └────┬─────────────┬──────────┬────────┘     │
+                    │       │             │          │               │
+                    │   ┌───▼────┐   ┌───▼────┐  ┌─▼────────┐      │
+                    │   │ Axon   │   │  HBM   │  │ Internal │      │
+                    │   │ Event  │   │  FIFO  │  │  Events  │      │
+                    │   │ Shifter│   │ ci2hbm │  │   FIFO   │      │
+    External Events │   └────┬───┘   └───┬────┘  │ ci2iep   │      │
+    Processor       │        │           │       └─┬────────┘      │
+    ◄───────────────┼────────┘           │         │               │
+                    │                    │         │               │
+    HBM Processor   │                    │         │               │
+    ◄───────────────┼────────────────────┘         │               │
+                    │                              │               │
+    Internal Events │                              │               │
+    Processor       │                              │               │
+    ◄───────────────┼──────────────────────────────┘               │
+                    │                                               │
+                    │  ┌──────────────────────────────────────┐    │
+                    │  │      TX State Machine                │    │
+    PCIe TX FIFO    │  │  Spike Collection &amp; Batching         │    │
+    512-bit         │  │  - Batches 14 spikes per packet      │◄───┼── Spike FIFO
+    ◄───────────────┼──┤  - Includes timestamp (execRun_ctr)  │    │   (from spike_
+                    │  │  - Opcode: 0xEEEE_EEEE               │    │    fifo_controller)
+                    │  └──────────────────────────────────────┘    │
+                    │                                               │
+                    │  ┌──────────────────────────────────────┐    │
+                    │  │   Execution Control Registers        │    │
+                    │  │  - execRun_ctr (time-step counter)   │    │
+                    │  │  - execRun_limit (max timesteps)     │    │
+                    │  │  - execRun_timer (FPGA cycle count)  │    │
+                    │  │  - execRun_running / execRun_done    │    │
+                    │  └──────────────────────────────────────┘    │
+                    └────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="module-parameters">
+<h3>Module Parameters<a class="headerlink" href="#module-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Default</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">AXI_ADDR_BITS</span></code></p></td>
+<td><p>-</p></td>
+<td><p>32</p></td>
+<td><p>AXI address width (currently unused)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">AXI_DATA_WIDTH</span></code></p></td>
+<td><p>-</p></td>
+<td><p>32</p></td>
+<td><p>AXI data width (currently unused)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_ADDR_BITS</span></code></p></td>
+<td><p>-</p></td>
+<td><p>33</p></td>
+<td><p>HBM address width (8 GB addressable)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_DATA_WIDTH</span></code></p></td>
+<td><p>-</p></td>
+<td><p>256</p></td>
+<td><p>HBM data width</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">HBM_BYTE_COUNT</span></code></p></td>
+<td><p>-</p></td>
+<td><p>32</p></td>
+<td><p>HBM bytes per transaction (256 bits / 8)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">aclk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>225 MHz system clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">aresetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low asynchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="pcie-interface-via-pcie2fifos">
+<h3>PCIe Interface (via pcie2fifos)<a class="headerlink" href="#pcie-interface-via-pcie2fifos" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>RX FIFO (Host → Card)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rxFIFO_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">rxFIFO_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>512</p></td>
+<td><p>RX FIFO data output</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rxFIFO_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>RX FIFO read enable</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>TX FIFO (Card → Host)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">txFIFO_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">txFIFO_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>512</p></td>
+<td><p>TX FIFO data input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">txFIFO_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>TX FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>PCIe Data Format:</strong></p>
+<p>RX FIFO (512-bit packet from host):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">504</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span><span class="o">-</span><span class="n">bit</span> <span class="n">command</span> <span class="n">opcode</span>
+<span class="p">[</span><span class="mi">503</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Command</span><span class="o">-</span><span class="n">specific</span> <span class="n">data</span> <span class="n">payload</span>
+</pre></div>
+</div>
+<p>TX FIFO (512-bit packet to host):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Spike packet:
+  [511:480] = 0xEEEE_EEEE (spike opcode)
+  [479:32]  = 14 × 32-bit spike events (448 bits)
+              Each spike: [31:24]=sub-timestamp, [23]=flag, [22:16]=zeros, [15:0]=neuron addr
+  [31:0]    = execRun_ctr (timestep counter)
+
+HBM read response:
+  [511:496] = 0xBBBB
+  [495:256] = zeros (240 bits)
+  [255:0]   = HBM data
+
+Neuron read response:
+  [511:496] = 0xCCCC
+  [495:53]  = zeros (443 bits)
+  [52:0]    = Neuron data (36-bit value + 17-bit address)
+</pre></div>
+</div>
+</section>
+<section id="external-events-processor-interface">
+<h3>External Events Processor Interface<a class="headerlink" href="#external-events-processor-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">axonEvent_set</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Axon event valid/write enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">axonEvent_addr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>13</p></td>
+<td><p>Row address in BRAM (0 to 8191)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">axonEvent_data</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>16</p></td>
+<td><p>Data mask (1 bit per neuron group)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Address Calculation:</strong></p>
+<ul class="simple">
+<li><p>16 neuron groups → 16 axons per row</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">num_inputs[16:4]</span></code> = number of rows (ignoring lower 4 bits)</p></li>
+<li><p>Each 512-bit PCIe packet contains 512/16 = 32 axon events</p></li>
+</ul>
+</section>
+<section id="hbm-processor-interface">
+<h3>HBM Processor Interface<a class="headerlink" href="#hbm-processor-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Command Interface (CI → HBM)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO full flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>280</p></td>
+<td><p>Command data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2hbm_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Command write enable</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Response Interface (HBM → CI)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>256</p></td>
+<td><p>Response data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2ci_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Response read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Command Format (<code class="docutils literal notranslate"><span class="pre">ci2hbm_din[279:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">279</span><span class="p">]</span>     <span class="o">=</span> <span class="n">R</span><span class="o">/</span><span class="n">W</span> <span class="n">command</span> <span class="p">(</span><span class="mi">0</span><span class="o">=</span><span class="n">read</span><span class="p">,</span> <span class="mi">1</span><span class="o">=</span><span class="n">write</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">278</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span> <span class="o">=</span> <span class="mi">23</span><span class="o">-</span><span class="n">bit</span> <span class="n">row</span> <span class="n">address</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">data</span> <span class="p">(</span><span class="k">for</span> <span class="n">writes</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="internal-events-processor-interface">
+<h3>Internal Events Processor Interface<a class="headerlink" href="#internal-events-processor-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Command Interface (CI → IEP)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2iep_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Command FIFO full flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2iep_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>54</p></td>
+<td><p>Command data</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2iep_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Command write enable</p></td>
+</tr>
+<tr class="row-even"><td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Response Interface (IEP → CI)</strong></p></td>
+<td><p></p></td>
+<td><p></p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">iep2ci_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Response FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">iep2ci_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>53</p></td>
+<td><p>Response data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">iep2ci_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Response read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Command Format (<code class="docutils literal notranslate"><span class="pre">ci2iep_din[53:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">53</span><span class="p">]</span>      <span class="o">=</span> <span class="n">R</span><span class="o">/</span><span class="n">W</span> <span class="n">command</span> <span class="p">(</span><span class="mi">0</span><span class="o">=</span><span class="n">read</span><span class="p">,</span> <span class="mi">1</span><span class="o">=</span><span class="n">write</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">52</span><span class="p">:</span><span class="mi">36</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">17</span><span class="o">-</span><span class="n">bit</span> <span class="n">neuron</span> <span class="n">address</span> <span class="p">(</span><span class="mi">128</span><span class="n">K</span> <span class="n">neurons</span> <span class="n">addressable</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">35</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="mi">36</span><span class="o">-</span><span class="n">bit</span> <span class="n">neuron</span> <span class="n">data</span> <span class="p">(</span><span class="n">membrane</span> <span class="n">potential</span> <span class="ow">or</span> <span class="n">other</span> <span class="n">state</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> Comments in code show previous 16-bit data format; upgraded to 36-bit.</p>
+</section>
+<section id="spike-event-interface">
+<h3>Spike Event Interface<a class="headerlink" href="#spike-event-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>17</p></td>
+<td><p>Spiked neuron address</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Spike FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Spike FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="network-execution-control">
+<h3>Network Execution Control<a class="headerlink" href="#network-execution-control" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_iep_phase2_done</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Internal events processor phase 2 completion flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Execute time-step command (1-cycle pulse)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_running</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Execution in progress flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_done</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Execution completed flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_limit</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>32</p></td>
+<td><p>Maximum time steps (0 = single step)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_ctr</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>32</p></td>
+<td><p>Current time-step counter</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">execRun_timer</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>64</p></td>
+<td><p>FPGA clock cycle counter during execution</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="network-parameters">
+<h3>Network Parameters<a class="headerlink" href="#network-parameters" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_inputs</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>17</p></td>
+<td><p>Number of input axons (131,072 max)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_outputs</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>17</p></td>
+<td><p>Number of output neurons to monitor</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>36</p></td>
+<td><p>Neuron spike threshold (signed)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_neuron_model</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>2</p></td>
+<td><p>Neuron model selection (0-3)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="debug-interface">
+<h3>Debug Interface<a class="headerlink" href="#debug-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">vio_rx_curr_state</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>3</p></td>
+<td><p>RX state machine state (for VIO debugging)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">vio_tx_curr_state</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>2</p></td>
+<td><p>TX state machine state (for VIO debugging)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="command-opcodes">
+<h3>Command Opcodes<a class="headerlink" href="#command-opcodes" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_EEP_W</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write axon events to BRAM</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_HBM_RW</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Read/write HBM synapse data</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_IEP_RW</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d3</span><span class="p">;</span><span class="w">  </span><span class="c1">// Read/write neuron state</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_NTWK_PARAM_W</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d4</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write network parameters</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_EXEC_STEP</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d6</span><span class="p">;</span><span class="w">  </span><span class="c1">// Execute single time step</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">7</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">CMD_EXEC_CONT</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d7</span><span class="p">;</span><span class="w">  </span><span class="c1">// Execute continuous (multiple timesteps)</span>
+</pre></div>
+</div>
+<p>Command extracted from: <code class="docutils literal notranslate"><span class="pre">rx_command</span> <span class="pre">=</span> <span class="pre">rxFIFO_dout[511:504]</span></code></p>
+</section>
+<section id="rx-state-machine">
+<h3>RX State Machine<a class="headerlink" href="#rx-state-machine" title="Link to this heading">#</a></h3>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">RX_STATE_RESET</span>                   <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d0) - Reset state</span>
+<span class="n">RX_STATE_IDLE</span>                    <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d1) - Wait for commands</span>
+<span class="n">RX_STATE_REGISTER_PCIE_AXON_DATA</span> <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d2) - Register 512-bit axon packet</span>
+<span class="n">RX_STATE_SET_AXON_DATA</span>           <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d3) - Shift and distribute axon events</span>
+<span class="n">RX_STATE_EXEC_STEP</span>               <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d4) - Execute time step</span>
+<span class="n">RX_STATE_WAIT_RUN</span>                <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d5) - Wait for execution completion</span>
+<span class="n">RX_STATE_EXEC_DONE</span>               <span class="p">(</span><span class="mi">3</span><span class="s1">&#39;d6) - Execution finished</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                   ┌─────────────┐
+                   │ RX_RESET    │
+                   └──────┬──────┘
+                          │
+                          v
+      ┌───────────────────────────────────────────┐
+      │          RX_IDLE                          │
+      │   Wait for rxFIFO commands                │
+      └──┬──┬──┬──┬──┬──────────────────────────┬─┘
+         │  │  │  │  │                          │
+    EEP_W│  │  │  │  │EXEC_STEP                │
+      ───┼──┼──┼──┼──┼──                        │
+         │  │  │  │  │  │                       │
+         │  │  │  │  v  v                       │
+         │  │  │  │  RX_EXEC_STEP               │
+         │  │  │  │      │                      │
+         │  │  │  │      v                      │
+         │  │  │  │  RX_WAIT_RUN                │
+         │  │  │  │   (wait_clks_cnt)           │
+         │  │  │  │      │                      │
+         │  │  │  │      ├─ ctr&lt;limit ──────────┘
+         │  │  │  │      │
+         │  │  │  │      └─ ctr==limit
+         │  │  │  │            │
+         │  │  │  │            v
+         │  │  │  │      RX_EXEC_DONE
+         │  │  │  │            │
+         │  │  │  └────────────┴────────────┐
+         │  │  │                            │
+         │  │  │HBM_RW / IEP_RW / NTWK_W    │
+         │  │  └───(immediate)──────────────┤
+         │  │                               │
+         │  │EXEC_CONT                      │
+         v  v                               v
+    RX_REGISTER_PCIE_AXON_DATA         RX_IDLE
+         │
+         v
+    RX_SET_AXON_DATA
+      (shift &amp; increment)
+         │
+         ├─ addr[4:0]==31 ─────&gt; loop to REGISTER
+         │
+         └─ addr==limit ───┬─ !running ──&gt; RX_IDLE
+                           │
+                           └─  running ──&gt; RX_EXEC_STEP
+</pre></div>
+</div>
+<p><strong>Key Logic:</strong></p>
+<ol class="arabic">
+<li><p><strong>CMD_EEP_W (Write Axon Events):</strong></p>
+<ul class="simple">
+<li><p>Resets <code class="docutils literal notranslate"><span class="pre">axonEvent_addr</span></code> to 0</p></li>
+<li><p>Fetches 512-bit packet into <code class="docutils literal notranslate"><span class="pre">axon_data_sr</span></code></p></li>
+<li><p>Shifts out 16 bits at a time, incrementing address</p></li>
+<li><p>After every 32 events (one packet), fetches next packet</p></li>
+<li><p>Continues until <code class="docutils literal notranslate"><span class="pre">axonEvent_addr</span> <span class="pre">==</span> <span class="pre">num_inputs[16:4]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>CMD_HBM_RW / CMD_IEP_RW:</strong></p>
+<ul class="simple">
+<li><p>Direct passthrough to respective FIFOs</p></li>
+<li><p>Waits for FIFO not full before writing</p></li>
+<li><p>Returns to IDLE immediately</p></li>
+</ul>
+</li>
+<li><p><strong>CMD_NTWK_PARAM_W:</strong></p>
+<ul>
+<li><p>Writes network parameters from PCIe packet:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">num_inputs</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>        <span class="o">=</span> <span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">num_outputs</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>       <span class="o">=</span> <span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mi">33</span><span class="p">:</span><span class="mi">17</span><span class="p">]</span>
+<span class="n">threshold</span><span class="p">[</span><span class="mi">35</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>         <span class="o">=</span> <span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mi">69</span><span class="p">:</span><span class="mi">34</span><span class="p">]</span>
+<span class="n">exec_neuron_model</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <span class="n">rxFIFO_dout</span><span class="p">[</span><span class="mi">71</span><span class="p">:</span><span class="mi">70</span><span class="p">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</li>
+<li><p><strong>CMD_EXEC_STEP / CMD_EXEC_CONT:</strong></p>
+<ul class="simple">
+<li><p>Resets execution counters and timer</p></li>
+<li><p>CMD_EXEC_CONT sets <code class="docutils literal notranslate"><span class="pre">execRun_limit</span></code> from packet <code class="docutils literal notranslate"><span class="pre">[31:0]</span></code></p></li>
+<li><p>Loads axon events (if EXEC_CONT) then executes</p></li>
+<li><p>Waits for <code class="docutils literal notranslate"><span class="pre">exec_iep_phase2_done</span></code> signal</p></li>
+<li><p>Additional 31-cycle wait to ensure all spikes collected</p></li>
+<li><p>Repeats until <code class="docutils literal notranslate"><span class="pre">execRun_ctr</span> <span class="pre">==</span> <span class="pre">execRun_limit</span></code></p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="tx-state-machine">
+<h3>TX State Machine<a class="headerlink" href="#tx-state-machine" title="Link to this heading">#</a></h3>
+<p><strong>States:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">TX_STATE_RESET</span>           <span class="p">(</span><span class="mi">2</span><span class="s1">&#39;d0) - Reset state</span>
+<span class="n">TX_STATE_IDLE</span>            <span class="p">(</span><span class="mi">2</span><span class="s1">&#39;d1) - Check execution status &amp; FIFOs</span>
+<span class="n">TX_STATE_WAIT_FOR_SPIKES</span> <span class="p">(</span><span class="mi">2</span><span class="s1">&#39;d2) - Collect spikes during execution</span>
+<span class="n">TX_STATE_SEND_SPIKES</span>     <span class="p">(</span><span class="mi">2</span><span class="s1">&#39;d3) - Send batched spikes to host</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>         ┌─────────────┐
+         │  TX_RESET   │
+         └──────┬──────┘
+                │
+                v
+         ┌────────────────────────────────┐
+         │  TX_IDLE                       │
+         │  Check execution &amp; FIFOs       │
+         └──┬──────┬──────────────────────┘
+            │      │
+execRun     │      │ !execRun &amp; !txFIFO_full
+  ──────────┘      └───────┬──────────────
+            │              │
+            v              ├─ !hbm2ci_empty ──&gt; send HBM data ──┐
+   TX_WAIT_FOR_SPIKES      │                                    │
+      Collect spikes       └─ !iep2ci_empty ──&gt; send IEP data ─┤
+            │                                                   │
+            ├─ spike_ctr==14 ──────────────────────────────────┤
+            │                                                   │
+            ├─ !spk2ciFIFO_empty ─&gt; spike_inc (read &amp; shift)   │
+            │                                                   │
+            └─ execRun_done ────┬─ spikes_sent ────────────────┤
+                                │                               │
+                                └─ !spikes_sent                 │
+                                        │                       │
+                                        v                       │
+                                TX_SEND_SPIKES                  │
+                                  (batch of 14)                 │
+                                        │                       │
+                                        └───────────────────────┘
+                                                                │
+                                                                v
+                                                            TX_IDLE
+</pre></div>
+</div>
+<p><strong>Spike Collection Logic:</strong></p>
+<ul>
+<li><p>Spikes stored in 448-bit shift register <code class="docutils literal notranslate"><span class="pre">spike_sr</span></code></p></li>
+<li><p>Counter <code class="docutils literal notranslate"><span class="pre">spike_ctr</span></code> tracks number of spikes (max 14)</p></li>
+<li><p>Each spike formatted as 32 bits:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>[31:24] = execRun_ctr[7:0]  (sub-timestamp)
+[23]    = 1&#39;b1              (valid flag)
+[22:16] = 7&#39;d0              (padding)
+[15:0]  = spk2ciFIFO_dout   (17-bit neuron address truncated?)
+</pre></div>
+</div>
+<p><strong>Note:</strong> Bit allocation seems inconsistent (17-bit addr in 16 bits + 1 flag?)</p>
+</li>
+<li><p>Batch sent when:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">spike_ctr</span> <span class="pre">==</span> <span class="pre">14</span></code>, OR</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">execRun_done</span></code> and spikes pending</p></li>
+</ul>
+</li>
+<li><p>Final packet format (512 bits):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;hEEEE_EEEE (opcode)</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>  <span class="o">=</span> <span class="n">spike_sr</span><span class="p">[</span><span class="mi">447</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="p">(</span><span class="mi">14</span> <span class="n">spikes</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="n">execRun_ctr</span> <span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</section>
+<section id="axon-event-shifter">
+<h3>Axon Event Shifter<a class="headerlink" href="#axon-event-shifter" title="Link to this heading">#</a></h3>
+<p><strong>Purpose:</strong> Convert 512-bit PCIe packets into sequential 16-bit axon events.</p>
+<p><strong>Registers:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">axon_data_sr[511:0]</span></code> - Shift register holding PCIe packet</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">axonEvent_addr[12:0]</span></code> - Current row address (0 to 8191)</p></li>
+</ul>
+<p><strong>Operation:</strong></p>
+<ol class="arabic">
+<li><p><strong>Load:</strong> <code class="docutils literal notranslate"><span class="pre">axon_data_set</span></code> loads <code class="docutils literal notranslate"><span class="pre">rxFIFO_dout</span></code> into <code class="docutils literal notranslate"><span class="pre">axon_data_sr</span></code></p></li>
+<li><p><strong>Shift &amp; Increment:</strong> <code class="docutils literal notranslate"><span class="pre">axon_addr_inc</span></code> triggers:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">axonEvent_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">axonEvent_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="n">axon_data_sr</span><span class="w">   </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">16</span><span class="mi">&#39;d0</span><span class="p">,</span><span class="w"> </span><span class="n">axon_data_sr</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">16</span><span class="p">]};</span><span class="w">  </span><span class="c1">// Right shift 16 bits</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Output:</strong> <code class="docutils literal notranslate"><span class="pre">axonEvent_data</span> <span class="pre">=</span> <span class="pre">axon_data_sr[15:0]</span></code> (LSBs)</p></li>
+<li><p><strong>Limit:</strong> <code class="docutils literal notranslate"><span class="pre">axon_addr_limit</span> <span class="pre">=</span> <span class="pre">num_inputs[16:4]</span></code></p>
+<ul class="simple">
+<li><p>Divide by 16 since each row handles 16 axons</p></li>
+</ul>
+</li>
+<li><p><strong>Reload:</strong> After 32 shifts (one packet exhausted), fetch next packet</p></li>
+</ol>
+<p><strong>Timeline Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0: Load packet → axon_data_sr = [511:0]
+Cycle 1: Shift #1    → axonEvent_addr=0, data=sr[15:0]
+Cycle 2: Shift #2    → axonEvent_addr=1, data=sr[31:16] (original)
+...
+Cycle 32: Shift #32  → axonEvent_addr=31, data=sr[511:496] (original)
+Cycle 33: Load next packet
+</pre></div>
+</div>
+</section>
+<section id="execution-control-registers">
+<h3>Execution Control Registers<a class="headerlink" href="#execution-control-registers" title="Link to this heading">#</a></h3>
+<p><strong>Controlled Signals:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>execRun_limit[31:0]:</strong></p>
+<ul class="simple">
+<li><p>Set by <code class="docutils literal notranslate"><span class="pre">exec_run_set</span></code> from <code class="docutils literal notranslate"><span class="pre">rxFIFO_dout[31:0]</span></code></p></li>
+<li><p>Reset by <code class="docutils literal notranslate"><span class="pre">exec_run_rst</span></code> (when not simultaneously setting)</p></li>
+<li><p>Value of 0 means single time step</p></li>
+</ul>
+</li>
+<li><p><strong>execRun_ctr[31:0]:</strong></p>
+<ul class="simple">
+<li><p>Reset by <code class="docutils literal notranslate"><span class="pre">exec_run_rst</span></code></p></li>
+<li><p>Incremented by <code class="docutils literal notranslate"><span class="pre">exec_run_inc</span></code></p></li>
+<li><p>Represents current time step</p></li>
+</ul>
+</li>
+<li><p><strong>execRun_timer[63:0]:</strong></p>
+<ul class="simple">
+<li><p>Reset by <code class="docutils literal notranslate"><span class="pre">exec_run_rst</span></code></p></li>
+<li><p>Increments every cycle while <code class="docutils literal notranslate"><span class="pre">execRun_running==1</span></code></p></li>
+<li><p>Provides FPGA cycle count for performance measurement</p></li>
+</ul>
+</li>
+<li><p><strong>execRun_running:</strong></p>
+<ul class="simple">
+<li><p>Set by <code class="docutils literal notranslate"><span class="pre">exec_run_rst</span></code></p></li>
+<li><p>Cleared by <code class="docutils literal notranslate"><span class="pre">exec_run_done</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>execRun_done:</strong></p>
+<ul class="simple">
+<li><p>Set by <code class="docutils literal notranslate"><span class="pre">exec_run_done</span></code></p></li>
+<li><p>Cleared by <code class="docutils literal notranslate"><span class="pre">exec_run_rst</span></code></p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Control Flow:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>exec_run_rst  ──┬──&gt; execRun_ctr = 0
+                ├──&gt; execRun_timer = 0
+                ├──&gt; execRun_running = 1
+                └──&gt; execRun_done = 0
+
+exec_run_set  ──&gt; execRun_limit = rxFIFO_dout[31:0]
+
+exec_run_inc  ──&gt; execRun_ctr++
+
+execRun_running ──&gt; execRun_timer++ (every cycle)
+
+exec_run_done ──┬──&gt; execRun_running = 0
+                └──&gt; execRun_done = 1
+</pre></div>
+</div>
+</section>
+<section id="wait-clock-counter">
+<h3>Wait Clock Counter<a class="headerlink" href="#wait-clock-counter" title="Link to this heading">#</a></h3>
+<p><strong>Purpose:</strong> Ensure all intermediate spikes have been transmitted before advancing to next time step.</p>
+<p><strong>Register:</strong> <code class="docutils literal notranslate"><span class="pre">wait_clks_cnt[4:0]</span></code>
+<strong>Limit:</strong> 31 cycles (5’d31)</p>
+<p><strong>Logic:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">((</span><span class="n">rx_curr_state</span><span class="o">==</span><span class="n">RX_STATE_WAIT_RUN</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">    </span><span class="n">exec_iep_phase2_done</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">    </span><span class="n">spk2ciFIFO_empty</span><span class="p">)</span>
+<span class="w">   </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">else</span>
+<span class="w">   </span><span class="n">wait_clks_cnt</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">5</span><span class="mi">&#39;d0</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Rationale:</strong></p>
+<ul class="simple">
+<li><p>Spike FIFO controller uses round-robin across 8 FIFOs</p></li>
+<li><p>Up to 8 cycles for a spike to propagate to <code class="docutils literal notranslate"><span class="pre">spk2ciFIFO</span></code></p></li>
+<li><p>31-cycle wait provides safety margin (4× worst case)</p></li>
+<li><p>Only starts counting when phase 2 done AND spike FIFO empty</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-map">
+<h2>Memory Map<a class="headerlink" href="#memory-map" title="Link to this heading">#</a></h2>
+<section id="network-parameter-registers">
+<h3>Network Parameter Registers<a class="headerlink" href="#network-parameter-registers" title="Link to this heading">#</a></h3>
+<p>These parameters are configured via <code class="docutils literal notranslate"><span class="pre">CMD_NTWK_PARAM_W</span></code> command:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Register</p></th>
+<th class="head"><p>Bits</p></th>
+<th class="head"><p>Address in PCIe Packet</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">num_inputs</span></code></p></td>
+<td><p>17</p></td>
+<td><p>[16:0]</p></td>
+<td><p>Number of input axons (0 to 131,071)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">num_outputs</span></code></p></td>
+<td><p>17</p></td>
+<td><p>[33:17]</p></td>
+<td><p>Number of output neurons to monitor</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">threshold</span></code></p></td>
+<td><p>36 (signed)</p></td>
+<td><p>[69:34]</p></td>
+<td><p>Neuron spike threshold</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_neuron_model</span></code></p></td>
+<td><p>2</p></td>
+<td><p>[71:70]</p></td>
+<td><p>Neuron model selection</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Neuron Model Encoding:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="s1">&#39;b00 = Model 0 (e.g., Leaky Integrate-and-Fire)</span>
+<span class="mi">2</span><span class="s1">&#39;b01 = Model 1 (e.g., Izhikevich)</span>
+<span class="mi">2</span><span class="s1">&#39;b10 = Model 2 (e.g., Hodgkin-Huxley approximation)</span>
+<span class="mi">2</span><span class="s1">&#39;b11 = Model 3 (reserved/custom)</span>
+</pre></div>
+</div>
+<p><em>Note: Actual model semantics defined in internal_events_processor</em></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="cmd-eep-w-writing-axon-events">
+<h3>CMD_EEP_W: Writing Axon Events<a class="headerlink" href="#cmd-eep-w-writing-axon-events" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:    0      1      2      3      4      5      6      7      8      9
+          │      │      │      │      │      │      │      │      │      │
+aclk    ──┘▔▔▔▔▔▔└┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔┐    ┌▔
+          │      │▔▔▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│▔│▔▔▔▔│
+State     IDLE   │REG_D │SET_D │SET_D │SET_D │SET_D │SET_D │SET_D │SET_D │
+          │      │      │      │      │      │      │      │      │      │
+rxFIFO    ▔▔CMD▔▔▔X▔▔PKT1▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔
+_dout     │      │      │      │      │      │      │      │      │      │
+          │      │      │      │      │      │      │      │      │      │
+rxFIFO    ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+_rden     │      │      │      │      │      │      │      │      │      │
+          │      │      │      │      │      │      │      │      │      │
+axon_data ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+_set      │      │      │      │      │      │      │      │      │      │
+          │      │      │      │      │      │      │      │      │      │
+axon_addr ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│
+_inc      │      │      │      │      │      │      │      │      │      │
+          │      │      │      │      │      │      │      │      │      │
+axonEvent ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│
+_set      │      │      │      │      │      │      │      │      │      │
+          │      │      │      │      │      │      │      │      │      │
+axonEvent 0x0000 │0x0000 │D[15:0│D[31:16│D[47:32│D[63:48│D[79:64│D[95:80│
+_data     │      │      │]     │]     │]     │]     │]     │]     │
+          │      │      │      │      │      │      │      │      │      │
+axonEvent 0      │0      │0     │1     │2     │3     │4     │5     │6     │
+_addr     │      │      │      │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>IDLE state: Command detected (CMD_EEP_W)</p></li>
+<li><p>REG_D state: Register 512-bit PCIe packet</p></li>
+<li><p>SET_D state: Shift out 16 bits per cycle, increment address</p></li>
+<li><p>After 32 shifts, return to REG_D to fetch next packet</p></li>
+</ul>
+</section>
+<section id="cmd-exec-step-single-time-step-execution">
+<h3>CMD_EXEC_STEP: Single Time-Step Execution<a class="headerlink" href="#cmd-exec-step-single-time-step-execution" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3     ...    N     N+1    N+2   ...  N+32  N+33   N+34
+           │      │      │      │      │      │      │      │      │      │      │
+State      IDLE   │EXEC_ │WAIT_ │WAIT_ │WAIT_ │WAIT_ │WAIT_ │WAIT_ │WAIT_ │IDLE  │
+           │      │STEP  │RUN   │RUN   │RUN   │RUN   │RUN   │RUN   │RUN   │      │
+           │      │      │      │      │      │      │      │      │      │      │
+exec_run   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+           │      │      │      │      │      │      │      │      │      │      │
+execRun    ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁
+_running   │      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │      │
+exec_iep   ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁
+_phase2    │      │      │      │      │      │      │      │      │      │      │
+_done      │      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │      │
+spk2ci     ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔
+FIFO_empty │      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │      │
+wait_clks  0      │0      │0      │0      │0      │0      │1      │2      │31    │0
+_cnt       │      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │      │
+execRun    0      │0      │0      │0      │0      │0      │0      │0      │0      │0
+_timer     │      │      │      │      │      │N     │N+1   │N+2   │N+32  │N+32  │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>N cycles: Time for external + internal event processing</p></li>
+<li><p>Phase 2 done: Internal events processor completes neuron updates</p></li>
+<li><p>31-cycle wait: Ensures all spikes collected before next time step</p></li>
+<li><p>Single time step: <code class="docutils literal notranslate"><span class="pre">execRun_limit=0</span></code>, no increment of <code class="docutils literal notranslate"><span class="pre">execRun_ctr</span></code></p></li>
+</ul>
+</section>
+<section id="spike-batching-and-transmission">
+<h3>Spike Batching and Transmission<a class="headerlink" href="#spike-batching-and-transmission" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3     ...    14     15     16     17     18
+           │      │      │      │      │      │      │      │      │      │
+TX State   WAIT   │WAIT  │WAIT  │WAIT  │WAIT  │SEND  │WAIT  │WAIT  │WAIT  │
+           _SPIKES│_SPKS │_SPKS │_SPKS │_SPKS │_SPKS │_SPIKES│_SPKS │_SPKS │
+           │      │      │      │      │      │      │      │      │      │
+spk2ciFIFO ▔▔▔▔▔▔▔│▁▁▁▁▁▁│▔▔▔▔▔▔│▁▁▁▁▁▁│▁▁▁▁▁▁│▁▁▁▁▁▁│▁▁▁▁▁▁│▔▔▔▔▔▔│▁▁▁▁▁▁│
+_empty     │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │
+spk2ciFIFO ▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁
+_rden      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │
+spike_inc  ▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁
+           │      │      │      │      │      │      │      │      │      │
+spike_ctr  0      │1      │1      │2      │2      │14     │0      │1      │1
+           │      │      │      │      │      │      │      │      │      │
+spike_sr   XXXX   │SPK1  │SPK1  │SPK2  │SPK2  │SPK14 │0     │SPK1&#39; │SPK1&#39; │
+           │      │      │      │      │      │      │      │      │      │
+txFIFO     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁
+_wren      │      │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │      │
+txFIFO     XXXXXX │XXXXXX│XXXXXX│XXXXXX│XXXXXX│0xEEEE│XXXXXX│XXXXXX│XXXXXX│
+_din       │      │      │      │      │      │_EEEE │      │      │      │
+           │      │      │      │      │      │+14SPK│      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Spikes collected as they arrive (non-empty FIFO)</p></li>
+<li><p>After 14 spikes: Transition to SEND_SPIKES</p></li>
+<li><p>Packet sent with opcode 0xEEEE_EEEE</p></li>
+<li><p>Counter and shift register reset after send</p></li>
+<li><p>Process repeats for next batch</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="related-modules">
+<h3>Related Modules<a class="headerlink" href="#related-modules" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Relationship</p></th>
+<th class="head"><p>Interface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>pcie2fifos.v</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>Provides rxFIFO/txFIFO interfaces from PCIe AXI4</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>external_events_processor.v</strong></p></td>
+<td><p>Downstream</p></td>
+<td><p>Receives axon events via <code class="docutils literal notranslate"><span class="pre">axonEvent_*</span></code> signals</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>hbm_processor.v</strong></p></td>
+<td><p>Bidirectional</p></td>
+<td><p>Commands via <code class="docutils literal notranslate"><span class="pre">ci2hbm_*</span></code>, responses via <code class="docutils literal notranslate"><span class="pre">hbm2ci_*</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>internal_events_processor.v</strong></p></td>
+<td><p>Bidirectional</p></td>
+<td><p>Commands via <code class="docutils literal notranslate"><span class="pre">ci2iep_*</span></code>, responses via <code class="docutils literal notranslate"><span class="pre">iep2ci_*</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>spike_fifo_controller.v</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>Provides spike events via <code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_*</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="software-integration">
+<h3>Software Integration<a class="headerlink" href="#software-integration" title="Link to this heading">#</a></h3>
+<p><strong>Python (hs_bridge) Functions:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.write_axon_events()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_EEP_W</span></code> commands</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.read_hbm()</span></code> / <code class="docutils literal notranslate"><span class="pre">write_hbm()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_HBM_RW</span></code> commands</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.read_neuron()</span></code> / <code class="docutils literal notranslate"><span class="pre">write_neuron()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_IEP_RW</span></code> commands</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.set_network_params()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_NTWK_PARAM_W</span></code> command</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.execute_step()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_EXEC_STEP</span></code> command</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.execute_continuous()</span></code> → Sends <code class="docutils literal notranslate"><span class="pre">CMD_EXEC_CONT</span></code> command</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fpga_controller.read_spikes()</span></code> → Reads TX FIFO for spike packets (opcode 0xEEEE_EEEE)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Command Opcode</strong></p></td>
+<td><p>8-bit identifier in PCIe packet <code class="docutils literal notranslate"><span class="pre">[511:504]</span></code> specifying operation type</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Axon Event</strong></p></td>
+<td><p>External input spike represented as row address + 16-bit mask</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Time Step</strong></p></td>
+<td><p>One iteration of network simulation (external events → internal updates)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>execRun_ctr</strong></p></td>
+<td><p>Time-step counter, incremented after each iteration</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>execRun_timer</strong></p></td>
+<td><p>FPGA clock cycle counter for performance profiling</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Spike Batching</strong></p></td>
+<td><p>Grouping 14 spikes into single 512-bit PCIe packet for efficiency</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Sub-timestamp</strong></p></td>
+<td><p>Lower 8 bits of <code class="docutils literal notranslate"><span class="pre">execRun_ctr</span></code>, provides intra-timestep spike ordering</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Round-Robin</strong></p></td>
+<td><p>Fair scheduling used in spike FIFO controller (external to this module)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Wait Clock Counter</strong></p></td>
+<td><p>31-cycle delay ensuring all spikes transmitted before next time step</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Shift Register</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">axon_data_sr</span></code> and <code class="docutils literal notranslate"><span class="pre">spike_sr</span></code> used for serial data conversion</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Phase 2</strong></p></td>
+<td><p>Internal events processor phase updating neuron states</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>FWFT</strong></p></td>
+<td><p>First-Word Fall-Through FIFO mode (used in pcie2fifos)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="design-evolution-and-commented-code">
+<h2>Design Evolution and Commented Code<a class="headerlink" href="#design-evolution-and-commented-code" title="Link to this heading">#</a></h2>
+<section id="evidence-of-scaling-8-16-neuron-groups">
+<h3>Evidence of Scaling (8 → 16 Neuron Groups)<a class="headerlink" href="#evidence-of-scaling-8-16-neuron-groups" title="Link to this heading">#</a></h3>
+<p><strong>Axon Event Data Width:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// OLD (8 groups):  output [7:0] axonEvent_data</span>
+<span class="c1">// NEW (16 groups): output [15:0] axonEvent_data</span>
+
+<span class="c1">// OLD shift: axon_data_sr &lt;= {8&#39;d0, axon_data_sr[511:8]};</span>
+<span class="c1">// NEW shift: axon_data_sr &lt;= {16&#39;d0, axon_data_sr[511:16]};</span>
+</pre></div>
+</div>
+<p><strong>Address Calculation:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// OLD: wire [13:0] axon_addr_limit = num_inputs[16:3];  // 8 axons per row</span>
+<span class="c1">// NEW: wire [12:0] axon_addr_limit = num_inputs[16:4];  // 16 axons per row</span>
+</pre></div>
+</div>
+<p><strong>Shift Detection:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// OLD: if (axonEvent_addr[5:0]==6&#39;d63)  // 64 x 8-bit events per packet</span>
+<span class="c1">// NEW: if (axonEvent_addr[4:0]==5&#39;d31)  // 32 x 16-bit events per packet</span>
+</pre></div>
+</div>
+</section>
+<section id="neuron-data-width-upgrade">
+<h3>Neuron Data Width Upgrade<a class="headerlink" href="#neuron-data-width-upgrade" title="Link to this heading">#</a></h3>
+<p><strong>Internal Events Processor Interface:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// OLD (16-bit neuron data):</span>
+<span class="c1">// output [1+17+15:0] ci2iep_din   // 34 bits total</span>
+<span class="c1">// input  [17+15:0]   iep2ci_dout  // 33 bits total</span>
+
+<span class="c1">// NEW (36-bit neuron data):</span>
+<span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">+</span><span class="mh">17</span><span class="o">+</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ci2iep_din</span><span class="w">   </span><span class="c1">// 54 bits total</span>
+<span class="k">input</span><span class="w">  </span><span class="p">[</span><span class="mh">17</span><span class="o">+</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w">   </span><span class="n">iep2ci_dout</span><span class="w">  </span><span class="c1">// 53 bits total</span>
+</pre></div>
+</div>
+<p>This suggests upgrade to higher-precision membrane potentials or additional neuron state variables.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-considerations">
+<h2>Performance Considerations<a class="headerlink" href="#performance-considerations" title="Link to this heading">#</a></h2>
+<section id="throughput">
+<h3>Throughput<a class="headerlink" href="#throughput" title="Link to this heading">#</a></h3>
+<p><strong>Axon Event Loading:</strong></p>
+<ul class="simple">
+<li><p>32 events per 512-bit PCIe packet</p></li>
+<li><p>1 event per FPGA cycle (225 MHz)</p></li>
+<li><p>32 cycles to exhaust packet + 1-2 cycles fetch overhead</p></li>
+<li><p><strong>Throughput:</strong> ~6.75M axon events/second per core</p></li>
+</ul>
+<p><strong>Spike Output:</strong></p>
+<ul class="simple">
+<li><p>14 spikes per 512-bit PCIe packet</p></li>
+<li><p>Batching amortizes packet overhead</p></li>
+<li><p><strong>Throughput:</strong> Depends on spike rate; typically 1-10% of neurons spike per time step</p></li>
+</ul>
+<p><strong>Time Step Execution:</strong></p>
+<ul class="simple">
+<li><p>Variable duration based on:</p>
+<ul>
+<li><p>Number of active axons (external events phase)</p></li>
+<li><p>HBM access latency for synapse fetching</p></li>
+<li><p>Number of neurons to update (internal events phase)</p></li>
+<li><p>31-cycle safety margin for spike collection</p></li>
+</ul>
+</li>
+<li><p>Typical: 1000-10,000 FPGA cycles per time step</p></li>
+</ul>
+</section>
+<section id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Link to this heading">#</a></h3>
+<p><strong>Command Response:</strong></p>
+<ul class="simple">
+<li><p>HBM read: ~100-200 ns (HBM latency + processing)</p></li>
+<li><p>Neuron read: ~50-100 ns (URAM access + FIFO transfer)</p></li>
+</ul>
+<p><strong>Execution Completion:</strong></p>
+<ul class="simple">
+<li><p>Minimum: ~5 µs (1000 cycles &#64; 225 MHz)</p></li>
+<li><p>Typical: ~20-50 µs depending on network activity</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="debugging-and-verification">
+<h2>Debugging and Verification<a class="headerlink" href="#debugging-and-verification" title="Link to this heading">#</a></h2>
+<section id="vio-signals">
+<h3>VIO Signals<a class="headerlink" href="#vio-signals" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">vio_rx_curr_state</span><span class="p">,</span><span class="w">  </span><span class="c1">// Monitor RX state machine</span>
+<span class="k">output</span><span class="w"> </span><span class="p">[</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">vio_tx_curr_state</span><span class="p">,</span><span class="w">  </span><span class="c1">// Monitor TX state machine</span>
+</pre></div>
+</div>
+<p><strong>State Encodings for Debugging:</strong></p>
+<p>RX States:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">3</span><span class="s1">&#39;d0 = RESET</span>
+<span class="mi">3</span><span class="s1">&#39;d1 = IDLE</span>
+<span class="mi">3</span><span class="s1">&#39;d2 = REGISTER_PCIE_AXON_DATA</span>
+<span class="mi">3</span><span class="s1">&#39;d3 = SET_AXON_DATA</span>
+<span class="mi">3</span><span class="s1">&#39;d4 = EXEC_STEP</span>
+<span class="mi">3</span><span class="s1">&#39;d5 = WAIT_RUN</span>
+<span class="mi">3</span><span class="s1">&#39;d6 = EXEC_DONE</span>
+</pre></div>
+</div>
+<p>TX States:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">2</span><span class="s1">&#39;d0 = RESET</span>
+<span class="mi">2</span><span class="s1">&#39;d1 = IDLE</span>
+<span class="mi">2</span><span class="s1">&#39;d2 = WAIT_FOR_SPIKES</span>
+<span class="mi">2</span><span class="s1">&#39;d3 = SEND_SPIKES</span>
+</pre></div>
+</div>
+</section>
+<section id="common-debugging-scenarios">
+<h3>Common Debugging Scenarios<a class="headerlink" href="#common-debugging-scenarios" title="Link to this heading">#</a></h3>
+<p><strong>Problem:</strong> Network doesn’t execute</p>
+<ul class="simple">
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">execRun_running</span></code> should assert after <code class="docutils literal notranslate"><span class="pre">CMD_EXEC_*</span></code> command</p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">exec_iep_phase2_done</span></code> should eventually assert</p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">wait_clks_cnt</span></code> should count to 31</p></li>
+</ul>
+<p><strong>Problem:</strong> Spikes not received by host</p>
+<ul class="simple">
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">spk2ciFIFO_empty</span></code> - should toggle during execution</p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">spike_ctr</span></code> - should increment when spikes detected</p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">txFIFO_wren</span></code> - should pulse when batches sent</p></li>
+</ul>
+<p><strong>Problem:</strong> Axon events not loaded</p>
+<ul class="simple">
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">rxFIFO_dout[511:504]</span></code> == <code class="docutils literal notranslate"><span class="pre">CMD_EEP_W</span></code> (8’d1)</p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">axonEvent_addr</span></code> should increment from 0 to <code class="docutils literal notranslate"><span class="pre">num_inputs[16:4]</span></code></p></li>
+<li><p>Check: <code class="docutils literal notranslate"><span class="pre">axonEvent_set</span></code> should pulse for each event</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="reset-behavior">
+<h3>Reset Behavior<a class="headerlink" href="#reset-behavior" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>All counters and state machines reset to safe states</p></li>
+<li><p>Asynchronous reset (<code class="docutils literal notranslate"><span class="pre">~aresetn</span></code>) ensures immediate response</p></li>
+<li><p>Execution flags cleared to prevent spurious runs</p></li>
+</ul>
+</section>
+<section id="fifo-full-empty-handling">
+<h3>FIFO Full/Empty Handling<a class="headerlink" href="#fifo-full-empty-handling" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>RX state machine waits for <code class="docutils literal notranslate"><span class="pre">!ci2hbm_full</span></code>, <code class="docutils literal notranslate"><span class="pre">!ci2iep_full</span></code> before writing</p></li>
+<li><p>TX state machine waits for <code class="docutils literal notranslate"><span class="pre">!txFIFO_full</span></code> before writing</p></li>
+<li><p>Spike collection waits for <code class="docutils literal notranslate"><span class="pre">!spk2ciFIFO_empty</span></code> before reading</p></li>
+</ul>
+</section>
+<section id="execution-limit-edge-case">
+<h3>Execution Limit Edge Case<a class="headerlink" href="#execution-limit-edge-case" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">execRun_limit</span> <span class="pre">==</span> <span class="pre">0</span></code>: Single time step execution</p></li>
+<li><p>Comparison <code class="docutils literal notranslate"><span class="pre">execRun_ctr</span> <span class="pre">==</span> <span class="pre">execRun_limit</span></code> correctly handles both cases</p></li>
+</ul>
+</section>
+<section id="axon-address-limit">
+<h3>Axon Address Limit<a class="headerlink" href="#axon-address-limit" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Prevents writing beyond allocated BRAM rows</p></li>
+<li><p>Correctly handles non-multiple-of-16 input counts (rounds down via <code class="docutils literal notranslate"><span class="pre">[16:4]</span></code>)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="future-enhancement-opportunities">
+<h2>Future Enhancement Opportunities<a class="headerlink" href="#future-enhancement-opportunities" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Pipelined Command Processing:</strong> Currently processes one command at a time; could overlap execution with data loading</p></li>
+<li><p><strong>Variable Spike Batch Size:</strong> Fixed 14-spike batches may be inefficient for low spike rates; adaptive sizing could reduce latency</p></li>
+<li><p><strong>Compression:</strong> Sparse spike patterns could benefit from run-length encoding or similar compression</p></li>
+<li><p><strong>Multi-Core Coordination:</strong> For N_cores implementation, add inter-core communication commands</p></li>
+<li><p><strong>Error Reporting:</strong> Add status/error codes to TX packets for invalid commands or failed operations</p></li>
+<li><p><strong>Performance Counters:</strong> Instrument critical paths (HBM access time, execution phase durations) for profiling</p></li>
+</ol>
+<hr class="docutils" />
+<p><strong>Document Version:</strong> 1.0
+<strong>Last Updated:</strong> December 2025
+<strong>Module File:</strong> <code class="docutils literal notranslate"><span class="pre">command_interpreter.v</span></code>
+<strong>Module Location:</strong> <code class="docutils literal notranslate"><span class="pre">CRI_proj/cri_fpga/code/new/hyddenn2/vivado/single_core.srcs/sources_1/new/</span></code></p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-overview">Module Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-role-in-stack">Purpose and Role in Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-block-diagram">High-Level Block Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-parameters">Module Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-interface-via-pcie2fifos">PCIe Interface (via pcie2fifos)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-events-processor-interface">External Events Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-processor-interface">HBM Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-events-processor-interface">Internal Events Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-event-interface">Spike Event Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-execution-control">Network Execution Control</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-parameters">Network Parameters</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#debug-interface">Debug Interface</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-opcodes">Command Opcodes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rx-state-machine">RX State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tx-state-machine">TX State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axon-event-shifter">Axon Event Shifter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-control-registers">Execution Control Registers</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wait-clock-counter">Wait Clock Counter</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-map">Memory Map</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#network-parameter-registers">Network Parameter Registers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cmd-eep-w-writing-axon-events">CMD_EEP_W: Writing Axon Events</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cmd-exec-step-single-time-step-execution">CMD_EXEC_STEP: Single Time-Step Execution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-batching-and-transmission">Spike Batching and Transmission</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-modules">Related Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#software-integration">Software Integration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-evolution-and-commented-code">Design Evolution and Commented Code</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evidence-of-scaling-8-16-neuron-groups">Evidence of Scaling (8 → 16 Neuron Groups)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#neuron-data-width-upgrade">Neuron Data Width Upgrade</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-considerations">Performance Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#debugging-and-verification">Debugging and Verification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vio-signals">VIO Signals</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#common-debugging-scenarios">Common Debugging Scenarios</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reset-behavior">Reset Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-full-empty-handling">FIFO Full/Empty Handling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-limit-edge-case">Execution Limit Edge Case</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#axon-address-limit">Axon Address Limit</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-enhancement-opportunities">Future Enhancement Opportunities</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/command_interpreter.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

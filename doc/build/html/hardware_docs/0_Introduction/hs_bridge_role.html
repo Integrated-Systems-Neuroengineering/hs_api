@@ -1,0 +1,1023 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>hs_bridge Role and Responsibilities &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/0_Introduction/hs_bridge_role';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="1 Initializing the Network" href="../chapter_1.html" />
+    <link rel="prev" title="Hardware Component Definitions (Low-Level)" href="hardware_component_definitions.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../introduction.html" class="nav-link">0 Introduction</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">hs_bridge Role and Responsibilities</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="hs-bridge-role-and-responsibilities">
+<h1>hs_bridge Role and Responsibilities<a class="headerlink" href="#hs-bridge-role-and-responsibilities" title="Link to this heading">#</a></h1>
+<p>This document clarifies what <code class="docutils literal notranslate"><span class="pre">hs_bridge</span></code> (the Python software library) actually controls versus what is handled by standard hardware/OS mechanisms.</p>
+<hr class="docutils" />
+<section id="what-is-hs-bridge">
+<h2>What is hs_bridge?<a class="headerlink" href="#what-is-hs-bridge" title="Link to this heading">#</a></h2>
+<p><strong>hs_bridge</strong> is a Python software library that provides a high-level interface for communicating with the FPGA-based spiking neural network simulator.</p>
+<p><strong>What it is:</strong></p>
+<ul class="simple">
+<li><p>Python code running on the host computer (CPU)</p></li>
+<li><p>Part of the software stack, not hardware</p></li>
+<li><p>Provides functions like <code class="docutils literal notranslate"><span class="pre">fpga_compiler</span></code>, <code class="docutils literal notranslate"><span class="pre">dmadump</span></code>, <code class="docutils literal notranslate"><span class="pre">fpga_controller</span></code></p></li>
+</ul>
+<p><strong>What it is NOT:</strong></p>
+<ul class="simple">
+<li><p>Not a communication protocol (uses existing protocols)</p></li>
+<li><p>Not part of the operating system</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="the-three-communication-paths">
+<h2>The Three Communication Paths<a class="headerlink" href="#the-three-communication-paths" title="Link to this heading">#</a></h2>
+<p>To understand hs_bridge’s role, we need to understand the three communication paths in the system:</p>
+<section id="path-1-cpu-system-memory-ddr4">
+<h3><strong>Path 1: CPU ↔ System Memory (DDR4)</strong><a class="headerlink" href="#path-1-cpu-system-memory-ddr4" title="Link to this heading">#</a></h3>
+<p><strong>What happens here:</strong></p>
+<ul class="simple">
+<li><p>CPU writes data to RAM</p></li>
+<li><p>CPU reads data from RAM</p></li>
+<li><p>This is standard memory operations</p></li>
+</ul>
+<p><strong>Protocol used:</strong> DDR4 (industry standard)</p>
+<p><strong>Controlled by:</strong></p>
+<ul class="simple">
+<li><p>CPU hardware (memory controller)</p></li>
+<li><p>Operating system (Linux kernel)</p></li>
+<li><p>Memory management unit (MMU)</p></li>
+</ul>
+<p><strong>hs_bridge’s role:</strong> <strong>NONE</strong></p>
+<ul class="simple">
+<li><p>hs_bridge just makes normal Python memory writes</p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">array[0]</span> <span class="pre">=</span> <span class="pre">0x12345678</span></code> is a standard memory operation</p></li>
+<li><p>The OS and CPU handle how this actually gets to DDR4</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│ Path 1: CPU ↔ System Memory                                │
+│ Protocol: DDR4 (industry standard)                          │
+│ Controlled by: CPU hardware + OS kernel                     │
+│ hs_bridge involvement: NONE (just makes normal writes)      │
+│                                                              │
+│ ┌─────┐  DDR4 protocol  ┌──────────┐                       │
+│ │ CPU │ ════════════════│ DDR4 RAM │                       │
+│ └─────┘  (no packets)   └──────────┘                       │
+│                                                              │
+│ When hs_bridge does:                                        │
+│   command_array[0] = 0x12345678                             │
+│                                                              │
+│ Under the hood (hs_bridge has NO control):                  │
+│ 1. Python → CPU STORE instruction                           │
+│ 2. CPU MMU: virtual address → physical address              │
+│ 3. CPU puts address on DDR4 bus                             │
+│ 4. Memory controller: ACTIVATE, WRITE, PRECHARGE            │
+│ 5. Data written to DDR4 chips                               │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="path-2-host-fpga-via-pcie-mmio">
+<h3><strong>Path 2: Host ↔ FPGA (via PCIe MMIO)</strong><a class="headerlink" href="#path-2-host-fpga-via-pcie-mmio" title="Link to this heading">#</a></h3>
+<p><strong>What happens here:</strong></p>
+<ul class="simple">
+<li><p>CPU sends control commands to FPGA</p></li>
+<li><p>CPU writes to FPGA registers</p></li>
+<li><p>This uses Memory-Mapped I/O (MMIO)</p></li>
+</ul>
+<p><strong>Protocol used:</strong> PCIe TLPs (Transaction Layer Packets - industry standard)</p>
+<p><strong>Controlled by:</strong></p>
+<ul class="simple">
+<li><p>PCIe hardware (in both CPU and FPGA)</p></li>
+<li><p>PCIe specification (industry standard)</p></li>
+</ul>
+<p><strong>hs_bridge’s role:</strong> <strong>DEFINES the register map and command meanings</strong></p>
+<p>What hs_bridge DOES define:</p>
+<ul class="simple">
+<li><p>✅ Which MMIO addresses map to which FPGA registers</p></li>
+<li><p>✅ What writing to register 0xD0000000 means</p></li>
+<li><p>✅ What writing to register 0xD0000004 means</p></li>
+<li><p>✅ The command format and opcodes</p></li>
+</ul>
+<p>What hs_bridge does NOT define:</p>
+<ul class="simple">
+<li><p>❌ PCIe packet format (uses standard PCIe TLPs)</p></li>
+<li><p>❌ How MMIO works (standard mechanism)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│ Path 2: Host ↔ FPGA (MMIO)                                 │
+│ Protocol: PCIe TLPs (industry standard)                     │
+│ Controlled by: PCIe hardware                                │
+│ hs_bridge involvement: DEFINES register map, meanings       │
+│                                                              │
+│ ┌──────────┐  PCIe TLPs  ┌──────┐                          │
+│ │ Host CPU │ ════════════│ FPGA │                          │
+│ └──────────┘  (packets)  └──────┘                          │
+│                                                              │
+│ What hs_bridge DEFINES:                                     │
+│ - Register 0xD0000000 = DMA buffer address                  │
+│ - Register 0xD0000004 = DMA control (start/stop)            │
+│ - Register 0xD0000008 = Execution control                   │
+│ - Writing value 0x1 to control reg = &quot;start&quot;                │
+│ - Writing value 0x0 to control reg = &quot;stop&quot;                 │
+│                                                              │
+│ What hs_bridge does NOT define:                             │
+│ - How the write gets turned into a PCIe packet (standard)   │
+│ - The PCIe TLP format (industry standard)                   │
+│ - How PCIe physical layer works (standard)                  │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># hs_bridge defines what this means:</span>
+<span class="n">fpga</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="mh">0xD0000000</span><span class="p">,</span> <span class="n">buffer_address</span><span class="p">)</span>
+<span class="c1"># &quot;Write to register at offset 0x0 = set DMA buffer address&quot;</span>
+
+<span class="c1"># hs_bridge does NOT define how this happens:</span>
+<span class="c1"># - OS kernel driver translates to PCIe write</span>
+<span class="c1"># - PCIe hardware creates Memory Write TLP packet</span>
+<span class="c1"># - Packet travels over PCIe physical lanes</span>
+<span class="c1"># - FPGA PCIe block receives and decodes packet</span>
+<span class="c1"># All of this uses standard PCIe mechanisms</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="path-3-fpga-system-memory-via-dma">
+<h3><strong>Path 3: FPGA ↔ System Memory (via DMA)</strong><a class="headerlink" href="#path-3-fpga-system-memory-via-dma" title="Link to this heading">#</a></h3>
+<p><strong>What happens here:</strong></p>
+<ul class="simple">
+<li><p>FPGA reads data from host DDR4 memory</p></li>
+<li><p>FPGA writes results back to host DDR4 memory</p></li>
+<li><p>Uses Direct Memory Access (DMA)</p></li>
+</ul>
+<p><strong>Protocol used:</strong></p>
+<ul class="simple">
+<li><p>PCIe TLPs for communication (industry standard)</p></li>
+<li><p>DDR4 for memory access (industry standard)</p></li>
+</ul>
+<p><strong>Controlled by:</strong></p>
+<ul class="simple">
+<li><p>PCIe hardware (standard DMA mechanism)</p></li>
+<li><p>Host memory controller (handles DDR4 access)</p></li>
+</ul>
+<p><strong>hs_bridge’s role:</strong> <strong>DEFINES data structures and sets up the transfer</strong></p>
+<p>What hs_bridge DOES define:</p>
+<ul class="simple">
+<li><p>✅ The format of command structures in memory (512-bit commands)</p></li>
+<li><p>✅ Opcode meanings (0x00 = input, 0x02 = HBM write, etc.)</p></li>
+<li><p>✅ How to tell FPGA where to find the data</p></li>
+</ul>
+<p>What hs_bridge does NOT define:</p>
+<ul class="simple">
+<li><p>❌ PCIe DMA protocol (standard PCIe Memory Read/Write TLPs)</p></li>
+<li><p>❌ How FPGA becomes a bus master (standard PCIe feature)</p></li>
+<li><p>❌ DDR4 access mechanism (standard hardware)</p></li>
+</ul>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│ Path 3: FPGA ↔ System Memory (via DMA)                     │
+│ Protocol: PCIe TLPs (industry standard)                     │
+│ Controlled by: PCIe hardware                                │
+│ hs_bridge involvement: Defines data structures, sets up     │
+│                        transfer, but not the mechanism       │
+│                                                              │
+│ ┌──────┐  PCIe TLPs  ┌────────────┐  DDR4  ┌──────────┐   │
+│ │ FPGA │ ═══════════&gt;│ Memory Ctrl│ ═════=&gt;│ DDR4 RAM │   │
+│ └──────┘  (packets)  └────────────┘  (raw) └──────────┘   │
+│                                                              │
+│ What hs_bridge DOES:                                        │
+│ 1. Creates command array in memory (Path 1)                 │
+│ 2. Defines command format:                                  │
+│    [511:504] = opcode (8 bits)                              │
+│    [503:496] = core_id (8 bits)                             │
+│    [495:0]   = payload (496 bits)                           │
+│ 3. Tells FPGA the address via MMIO (Path 2)                 │
+│                                                              │
+│ What hs_bridge does NOT do:                                 │
+│ - FPGA reads via standard PCIe Memory Read TLPs             │
+│ - Host memory controller handles DDR4 access                │
+│ - All using industry standard protocols                     │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="what-hs-bridge-actually-does">
+<h2>What hs_bridge Actually Does<a class="headerlink" href="#what-hs-bridge-actually-does" title="Link to this heading">#</a></h2>
+<section id="data-structure-definitions">
+<h3><strong>1. Data Structure Definitions</strong><a class="headerlink" href="#data-structure-definitions" title="Link to this heading">#</a></h3>
+<p>hs_bridge defines the FORMAT of data that gets stored in memory:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># fpga_compiler.py - part of hs_bridge</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">create_command_packet</span><span class="p">(</span><span class="n">opcode</span><span class="p">,</span> <span class="n">core_id</span><span class="p">,</span> <span class="n">payload</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a 512-bit command packet</span>
+
+<span class="sd">    Format (hs_bridge defines this):</span>
+<span class="sd">    [511:504] = opcode (what operation to perform)</span>
+<span class="sd">    [503:496] = core_id (which FPGA core)</span>
+<span class="sd">    [495:0]   = payload (command-specific data)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="n">payload</span>
+    <span class="k">return</span> <span class="n">packet</span>
+
+<span class="c1"># hs_bridge defines what these opcodes mean:</span>
+<span class="n">OPCODE_INPUT</span> <span class="o">=</span> <span class="mh">0x00</span>        <span class="c1"># Inject external spikes</span>
+<span class="n">OPCODE_EXECUTE</span> <span class="o">=</span> <span class="mh">0x01</span>      <span class="c1"># Run simulation step</span>
+<span class="n">OPCODE_HBM_WRITE</span> <span class="o">=</span> <span class="mh">0x02</span>    <span class="c1"># Write to HBM memory</span>
+<span class="n">OPCODE_HBM_READ</span> <span class="o">=</span> <span class="mh">0x03</span>     <span class="c1"># Read from HBM memory</span>
+</pre></div>
+</div>
+<p><strong>Key point:</strong> hs_bridge defines WHAT the data looks like, not HOW it gets written to memory (that’s standard OS/CPU operations).</p>
+</section>
+<hr class="docutils" />
+<section id="fpga-interface-abstraction">
+<h3><strong>2. FPGA Interface Abstraction</strong><a class="headerlink" href="#fpga-interface-abstraction" title="Link to this heading">#</a></h3>
+<p>hs_bridge provides Python functions that hide the complexity of MMIO register writes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># dmadump.py - part of hs_bridge</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DMADump</span><span class="p">:</span>
+    <span class="c1"># hs_bridge defines this register map:</span>
+    <span class="n">DMA_ADDRESS_REG</span> <span class="o">=</span> <span class="mh">0xD0000000</span>  <span class="c1"># Where to write buffer address</span>
+    <span class="n">DMA_CONTROL_REG</span> <span class="o">=</span> <span class="mh">0xD0000004</span>  <span class="c1"># Where to write control commands</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">dma_dump_write</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer_address</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Tell FPGA to read data from buffer_address using DMA</span>
+
+<span class="sd">        hs_bridge defines:</span>
+<span class="sd">        - Which registers to write to</span>
+<span class="sd">        - What order to write them</span>
+<span class="sd">        - What values mean &quot;start DMA&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Write buffer address to FPGA register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_mmio</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DMA_ADDRESS_REG</span><span class="p">,</span> <span class="n">buffer_address</span><span class="p">)</span>
+
+        <span class="c1"># Write start command to control register</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_write_mmio</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">DMA_CONTROL_REG</span><span class="p">,</span> <span class="mh">0x1</span><span class="p">)</span>  <span class="c1"># 0x1 = start</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_write_mmio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Low-level MMIO write</span>
+
+<span class="sd">        hs_bridge does NOT define how this works:</span>
+<span class="sd">        - Kernel driver handles PCIe access</span>
+<span class="sd">        - PCIe hardware creates TLP packets</span>
+<span class="sd">        - Standard PCIe protocol</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># This uses standard OS system calls</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fpga_device_fd</span><span class="p">,</span> <span class="n">address</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="workflow-orchestration">
+<h3><strong>3. Workflow Orchestration</strong><a class="headerlink" href="#workflow-orchestration" title="Link to this heading">#</a></h3>
+<p>hs_bridge defines the SEQUENCE of operations to communicate with the FPGA:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># fpga_controller.py - part of hs_bridge</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">run_simulation_step</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    hs_bridge orchestrates the workflow</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Step 1: Create command data in system memory</span>
+    <span class="c1"># (Uses Path 1 - standard CPU→Memory writes)</span>
+    <span class="n">commands</span> <span class="o">=</span> <span class="n">fpga_compiler</span><span class="o">.</span><span class="n">compile_commands</span><span class="p">([</span>
+        <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;input&#39;</span><span class="p">,</span> <span class="s1">&#39;spikes&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]},</span>
+        <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span> <span class="s1">&#39;execute&#39;</span><span class="p">,</span> <span class="s1">&#39;timesteps&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">}</span>
+    <span class="p">])</span>
+    <span class="c1"># commands is now an array in DDR4 system memory</span>
+
+    <span class="c1"># Step 2: Get physical address of the buffer</span>
+    <span class="n">physical_addr</span> <span class="o">=</span> <span class="n">get_physical_address</span><span class="p">(</span><span class="n">commands</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Tell FPGA where to find commands</span>
+    <span class="c1"># (Uses Path 2 - MMIO over PCIe)</span>
+    <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">physical_addr</span><span class="p">)</span>
+
+    <span class="c1"># Step 4: FPGA reads commands via DMA</span>
+    <span class="c1"># (Uses Path 3 - FPGA→Memory via PCIe DMA)</span>
+    <span class="c1"># This happens automatically in hardware</span>
+    <span class="c1"># hs_bridge just waits for completion</span>
+
+    <span class="c1"># Step 5: Read results back from FPGA</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">fpga_controller</span><span class="o">.</span><span class="n">flush_spikes</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">results</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="what-hs-bridge-does-not-define">
+<h2>What hs_bridge Does NOT Define<a class="headerlink" href="#what-hs-bridge-does-not-define" title="Link to this heading">#</a></h2>
+<section id="cpu-memory-communication">
+<h3><strong>CPU ↔ Memory Communication</strong><a class="headerlink" href="#cpu-memory-communication" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># When hs_bridge does this:</span>
+<span class="n">command_array</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x12345678</span>  <span class="c1"># Write to memory</span>
+
+<span class="c1"># Under the hood (hs_bridge has NO control over this):</span>
+<span class="c1"># 1. Python interpreter → CPU STORE instruction</span>
+<span class="c1"># 2. CPU&#39;s Memory Management Unit (MMU): virtual → physical address</span>
+<span class="c1"># 3. CPU puts address on DDR4 address bus (electrical signal)</span>
+<span class="c1"># 4. CPU puts data on DDR4 data bus (electrical signal)</span>
+<span class="c1"># 5. Memory controller sends DDR4 commands:</span>
+<span class="c1">#    - ACTIVATE Bank 3, Row 1000</span>
+<span class="c1">#    - WRITE Column 50</span>
+<span class="c1">#    - PRECHARGE</span>
+<span class="c1"># 6. Data gets written to DRAM cells (capacitor charging)</span>
+
+<span class="c1"># All of this is handled by:</span>
+<span class="c1"># - Linux kernel (memory management)</span>
+<span class="c1"># - CPU hardware (memory controller)</span>
+<span class="c1"># - DDR4 protocol (JEDEC standard)</span>
+
+<span class="c1"># hs_bridge just makes a normal Python array write</span>
+</pre></div>
+</div>
+</section>
+<section id="pcie-protocol">
+<h3><strong>PCIe Protocol</strong><a class="headerlink" href="#pcie-protocol" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># When hs_bridge does this:</span>
+<span class="n">fpga</span><span class="o">.</span><span class="n">write_register</span><span class="p">(</span><span class="mh">0xD0000000</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># Under the hood (hs_bridge has NO control over this):</span>
+<span class="c1"># 1. OS kernel driver intercepts the write</span>
+<span class="c1"># 2. Driver creates PCIe Memory Write request</span>
+<span class="c1"># 3. PCIe hardware creates TLP packet:</span>
+<span class="c1">#    Header: [Address: 0xD0000000, Length: 4 bytes, Type: Write]</span>
+<span class="c1">#    Payload: [value]</span>
+<span class="c1"># 4. PCIe link layer adds sequence number, CRC</span>
+<span class="c1"># 5. PCIe physical layer serializes onto differential pairs</span>
+<span class="c1"># 6. Travels over PCIe lanes (16 lanes × 8 Gb/s each)</span>
+<span class="c1"># 7. FPGA PCIe block receives, validates CRC, decodes</span>
+<span class="c1"># 8. FPGA extracts value and writes to internal register</span>
+
+<span class="c1"># All of this uses PCIe specification (PCI-SIG standard)</span>
+<span class="c1"># hs_bridge just makes a system call to write to a device file</span>
+</pre></div>
+</div>
+</section>
+<section id="dma-mechanism">
+<h3><strong>DMA Mechanism</strong><a class="headerlink" href="#dma-mechanism" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># When hs_bridge does this:</span>
+<span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">buffer_address</span><span class="p">)</span>
+
+<span class="c1"># hs_bridge defines:</span>
+<span class="c1"># - Which register to write the address to</span>
+<span class="c1"># - Which register to write the &quot;go&quot; command to</span>
+
+<span class="c1"># hs_bridge does NOT define:</span>
+<span class="c1"># - How FPGA becomes a bus master (standard PCIe feature)</span>
+<span class="c1"># - PCIe Memory Read TLP format (industry standard)</span>
+<span class="c1"># - How memory controller handles the request (standard hardware)</span>
+<span class="c1"># - How data gets packaged in Completion TLP (PCIe standard)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="analogy-email-application">
+<h2>Analogy: Email Application<a class="headerlink" href="#analogy-email-application" title="Link to this heading">#</a></h2>
+<p>Think of hs_bridge like an email application (Gmail, Outlook, etc.):</p>
+<p><strong>What the email app DOES define:</strong></p>
+<ul class="simple">
+<li><p>✅ Email message format (To, From, Subject, Body)</p></li>
+<li><p>✅ User interface (buttons, menus)</p></li>
+<li><p>✅ Workflow (click Send → email goes out)</p></li>
+</ul>
+<p><strong>What the email app does NOT define:</strong></p>
+<ul class="simple">
+<li><p>❌ SMTP protocol (how email travels between servers)</p></li>
+<li><p>❌ TCP/IP (how data travels over the internet)</p></li>
+<li><p>❌ Ethernet/WiFi (physical layer communication)</p></li>
+<li><p>❌ How your router works</p></li>
+</ul>
+<p>Similarly, <strong>hs_bridge:</strong></p>
+<p><strong>DOES define:</strong></p>
+<ul class="simple">
+<li><p>✅ Command data format (opcodes, payload structure)</p></li>
+<li><p>✅ FPGA register map (which addresses do what)</p></li>
+<li><p>✅ Python API (functions to call)</p></li>
+<li><p>✅ Workflow orchestration (sequence of operations)</p></li>
+</ul>
+<p><strong>Does NOT define:</strong></p>
+<ul class="simple">
+<li><p>❌ DDR4 protocol (CPU ↔ Memory)</p></li>
+<li><p>❌ PCIe protocol (Host ↔ FPGA)</p></li>
+<li><p>❌ DMA mechanism (standard PCIe feature)</p></li>
+<li><p>❌ How memory controllers work</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="summary-table">
+<h2>Summary Table<a class="headerlink" href="#summary-table" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Communication Path</p></th>
+<th class="head"><p>Protocol Used</p></th>
+<th class="head"><p>Controlled By</p></th>
+<th class="head"><p>hs_bridge Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>CPU ↔ System Memory</strong></p></td>
+<td><p>DDR4 (JEDEC standard)</p></td>
+<td><p>CPU hardware + OS kernel</p></td>
+<td><p><strong>None</strong> - just makes normal memory writes</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Host ↔ FPGA (MMIO)</strong></p></td>
+<td><p>PCIe TLPs (PCI-SIG standard)</p></td>
+<td><p>PCIe hardware</p></td>
+<td><p><strong>Defines</strong> register map, command meanings</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>FPGA ↔ System Memory (DMA)</strong></p></td>
+<td><p>PCIe TLPs (PCI-SIG standard)</p></td>
+<td><p>PCIe hardware + memory controller</p></td>
+<td><p><strong>Defines</strong> data structures, sets up transfer</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="key-takeaway">
+<h2>Key Takeaway<a class="headerlink" href="#key-takeaway" title="Link to this heading">#</a></h2>
+<p><strong>hs_bridge is application software that:</strong></p>
+<ol class="arabic simple">
+<li><p>Defines the data format and command structure</p></li>
+<li><p>Provides a Python API for FPGA communication</p></li>
+<li><p>Orchestrates the workflow of operations</p></li>
+</ol>
+<p><strong>hs_bridge relies on standard mechanisms:</strong></p>
+<ol class="arabic simple">
+<li><p>OS and CPU hardware for memory access</p></li>
+<li><p>PCIe standard protocol for device communication</p></li>
+<li><p>Standard DMA mechanism for efficient data transfer</p></li>
+</ol>
+<p><strong>Analogy:</strong> hs_bridge is like a chef writing a recipe (defines what ingredients and steps). The kitchen equipment (CPU, memory controller, PCIe hardware) is what actually cooks the food, using standard techniques (protocols).</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-hs-bridge">What is hs_bridge?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-three-communication-paths">The Three Communication Paths</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#path-1-cpu-system-memory-ddr4"><strong>Path 1: CPU ↔ System Memory (DDR4)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#path-2-host-fpga-via-pcie-mmio"><strong>Path 2: Host ↔ FPGA (via PCIe MMIO)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#path-3-fpga-system-memory-via-dma"><strong>Path 3: FPGA ↔ System Memory (via DMA)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-hs-bridge-actually-does">What hs_bridge Actually Does</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#data-structure-definitions"><strong>1. Data Structure Definitions</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-interface-abstraction"><strong>2. FPGA Interface Abstraction</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#workflow-orchestration"><strong>3. Workflow Orchestration</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-hs-bridge-does-not-define">What hs_bridge Does NOT Define</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cpu-memory-communication"><strong>CPU ↔ Memory Communication</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-protocol"><strong>PCIe Protocol</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dma-mechanism"><strong>DMA Mechanism</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#analogy-email-application">Analogy: Email Application</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-table">Summary Table</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-takeaway">Key Takeaway</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/0_Introduction/hs_bridge_role.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

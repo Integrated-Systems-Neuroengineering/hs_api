@@ -1,0 +1,1478 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Hardware Component Definitions (Low-Level) &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/0_Introduction/hardware_component_definitions';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="hs_bridge Role and Responsibilities" href="hs_bridge_role.html" />
+    <link rel="prev" title="Basic Hardware Architecture Map - Low-Level Physical Organization" href="hardware_map.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../introduction.html" class="nav-link">0 Introduction</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Hardware Component Definitions (Low-Level)</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="hardware-component-definitions-low-level">
+<h1>Hardware Component Definitions (Low-Level)<a class="headerlink" href="#hardware-component-definitions-low-level" title="Link to this heading">#</a></h1>
+<p>This guide introduces hardware components from the ground up, starting with basic concepts and building toward more complex systems. Each section assumes only knowledge from previous sections. The rest of the chapters are also set up to introduce these ideas in the context of a network.</p>
+<hr class="docutils" />
+<section id="part-1-foundational-concepts">
+<h2>Part 1: Foundational Concepts<a class="headerlink" href="#part-1-foundational-concepts" title="Link to this heading">#</a></h2>
+<section id="essential-terminology">
+<h3><strong>Essential Terminology</strong><a class="headerlink" href="#essential-terminology" title="Link to this heading">#</a></h3>
+<p>Before diving into hardware components, let’s define some fundamental terms you’ll see throughout:</p>
+<p><strong>CPU (Central Processing Unit):</strong></p>
+<ul class="simple">
+<li><p>The “brain” of the computer - the chip that executes instructions</p></li>
+<li><p>Example: AMD EPYC 7502 (our host CPU)</p></li>
+</ul>
+<p><strong>System Memory (RAM):</strong></p>
+<ul class="simple">
+<li><p>The large storage area where the CPU keeps data it’s working on</p></li>
+<li><p>Example: DDR4 memory sticks you plug into the motherboard</p></li>
+</ul>
+<p><strong>System Memory In our hs_bridge system:</strong></p>
+<ul class="simple">
+<li><p>Stores <strong>command packets</strong> that tell the FPGA what to do (e.g., “inject spike from axon 5”, “run simulation for 10 timesteps”)</p></li>
+<li><p>Stores <strong>network configuration data</strong> during initialization (before being transferred to FPGA’s HBM)</p></li>
+<li><p>Serves as a <strong>staging area</strong> for data transfer: CPU writes data here, then FPGA reads it via DMA</p></li>
+<li><p>The FPGA communicates with system memory because:</p>
+<ul>
+<li><p>It’s where the CPU prepares data for the FPGA</p></li>
+<li><p>Large capacity (gigabytes) - can hold entire network configurations</p></li>
+<li><p>Shared between CPU and FPGA - both can access it (CPU via normal writes, FPGA via DMA)</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Buffer:</strong></p>
+<ul class="simple">
+<li><p>A temporary holding area for data</p></li>
+<li><p>Like a waiting room for data in transit</p></li>
+<li><p><strong>Types we’ll see:</strong></p>
+<ul>
+<li><p><strong>Row buffer:</strong> Built into memory chips, holds one row’s worth of data for fast repeated access</p></li>
+<li><p><strong>DMA buffer:</strong> Region of system memory set aside for transfers between devices</p></li>
+<li><p><strong>FIFO buffer:</strong> Hardware queue (First-In-First-Out) for data moving between components</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Bus:</strong></p>
+<ul class="simple">
+<li><p>A set of electrical wires that carry signals between components</p></li>
+<li><p>Like a highway connecting two locations</p></li>
+<li><p><strong>Examples:</strong></p>
+<ul>
+<li><p><strong>DDR4 bus:</strong> Wires connecting CPU to memory chips (64 bits wide)</p></li>
+<li><p><strong>PCIe bus:</strong> Wires connecting CPU to FPGA (512 bits wide in our case)</p></li>
+<li><p><strong>AXI bus:</strong> Wires inside the FPGA connecting modules</p></li>
+</ul>
+</li>
+<li><p><strong>Width:</strong> How many bits can travel in parallel (like highway lanes)</p></li>
+</ul>
+<p><strong>Bus Master:</strong></p>
+<ul class="simple">
+<li><p>A device that can initiate (start) transfers on a bus</p></li>
+<li><p>Normally: CPU is the master, everything else responds</p></li>
+<li><p>With DMA: FPGA can also be a bus master (can request data without CPU help)</p></li>
+<li><p>Like: Normally only the manager can request files, but with DMA the assistant can too</p></li>
+</ul>
+<p><strong>Packet:</strong></p>
+<ul class="simple">
+<li><p>A chunk of data wrapped with control information (headers)</p></li>
+<li><p>Like an envelope: has destination address, sender info, and the actual message inside</p></li>
+<li><p><strong>Examples:</strong></p>
+<ul>
+<li><p><strong>PCIe TLP (Transaction Layer Packet):</strong> Data moving over PCIe includes address, length, type</p></li>
+<li><p><strong>Network packet:</strong> Data over Ethernet/WiFi</p></li>
+</ul>
+</li>
+<li><p><strong>Not all communication uses packets:</strong> CPU talking to memory uses raw electrical signals, not packets</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="what-is-memory">
+<h3><strong>What is Memory?</strong><a class="headerlink" href="#what-is-memory" title="Link to this heading">#</a></h3>
+<p>At its core, memory is a place to store digital information (bits: 0s and 1s). Think of it like a massive array of mailboxes, where each mailbox has:</p>
+<ul class="simple">
+<li><p>An <strong>address</strong> (which mailbox)</p></li>
+<li><p><strong>Contents</strong> (what’s stored in it)</p></li>
+</ul>
+<p>When we say “read from memory,” we’re asking: “What’s in mailbox #12345?”
+When we say “write to memory,” we’re saying: “Put this value in mailbox #12345.”</p>
+<p>The two key questions for any memory technology are:</p>
+<ol class="arabic simple">
+<li><p><strong>How much can it store?</strong> (capacity)</p></li>
+<li><p><strong>How fast can we access it?</strong> (bandwidth and latency)</p></li>
+</ol>
+<p>Different types of memory make different trade-offs between these properties.</p>
+</section>
+<hr class="docutils" />
+<section id="host-ddr4-sdram-system-memory-the-basics">
+<h3><strong>Host DDR4 SDRAM (System Memory) - The Basics</strong><a class="headerlink" href="#host-ddr4-sdram-system-memory-the-basics" title="Link to this heading">#</a></h3>
+<p><strong>Full name:</strong> DDR4 SDRAM = <strong>D</strong>ouble <strong>D</strong>ata <strong>R</strong>ate <strong>4</strong>th generation <strong>S</strong>ynchronous <strong>D</strong>ynamic <strong>R</strong>andom <strong>A</strong>ccess <strong>M</strong>emory</p>
+<p><strong>What it is:</strong> This is the main memory in your computer - the RAM that stores your programs and data while running.</p>
+<p><strong>Why it exists:</strong> CPUs (and other processors) need a place to store data they’re working on. This data is too large to fit inside the processor itself, so we use external memory chips.</p>
+<p><strong>Library building analogy:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>DIMM (memory stick)</strong> - The entire building. This is what you physically plug into the motherboard.</p></li>
+<li><p><strong>Rank</strong> - One floor of the building. Most DIMMs have chips on both sides; each side is a “rank.”</p></li>
+<li><p><strong>Chip</strong> - One bookshelf on that floor. Each DIMM has 8-16 memory chips.</p></li>
+<li><p><strong>Bank</strong> - One section of a bookshelf. Each chip has 8 banks (like having 8 separate card catalogs).</p></li>
+<li><p><strong>Row</strong> - One shelf in that section. Each bank has ~65,000 rows.</p></li>
+<li><p><strong>Column</strong> - One book on that shelf. Each row has ~1,000 columns.</p></li>
+<li><p><strong>DRAM cell</strong> - A single page in a book. This is the smallest storage unit (1 transistor + 1 capacitor storing 1 bit).</p></li>
+</ol>
+<p>So the full hierarchy: <strong>Building → Floor → Bookshelf → Section → Shelf → Book → Page</strong>
+Or in hardware terms: <strong>DIMM → Rank → Chip → Bank → Row → Column → DRAM cell</strong></p>
+<p>When you read memory at <a class="reference internal" href="../supplementary_information/addresses_explained.html"><span class="std std-doc">address</span></a> 0x12345678, the memory controller breaks it down:</p>
+<ul class="simple">
+<li><p>“Go to DIMM #2, Rank #1, Chip #5, Bank #3, Row #42, Column #100”</p></li>
+<li><p>Like saying: “Building 2, Floor 1, Bookshelf 5, Section 3, Shelf 42, Book 100”</p></li>
+</ul>
+<p><strong>Physical Organization:</strong>
+Think of memory like a filing system:</p>
+<ul class="simple">
+<li><p><strong>DIMMs (memory sticks):</strong> The physical modules you plug into your motherboard</p></li>
+<li><p><strong>Chips:</strong> Each DIMM has 8-16 chips</p></li>
+<li><p><strong>Banks:</strong> Each chip has 8 banks (like having 8 separate filing cabinets)</p></li>
+<li><p><strong>Rows and Columns:</strong> Each bank is organized as a grid (e.g., 65,000 rows × 1,000 columns)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="pcie-peripheral-component-interconnect-express-the-basics">
+<h3><strong>PCIe (Peripheral Component Interconnect Express) - The Basics</strong><a class="headerlink" href="#pcie-peripheral-component-interconnect-express-the-basics" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A high-speed highway that connects your CPU/memory to peripheral devices like graphics cards, network cards, and FPGAs.</p>
+<p><strong>Think of it like a highway system:</strong></p>
+<ul class="simple">
+<li><p><strong>Lanes:</strong> Data travels in lanes (typically 1, 4, 8, or 16 lanes)</p></li>
+<li><p><strong>Bidirectional:</strong> Each lane has traffic going both directions (transmit and receive)</p></li>
+<li><p><strong>Point-to-point:</strong> Each device has its own dedicated connection (not a shared bus)</p></li>
+</ul>
+<p><strong>Speed:</strong></p>
+<ul class="simple">
+<li><p>PCIe Gen3: 8 gigabits/second per lane</p></li>
+<li><p>An x16 configuration (16 lanes): 16 × 8 = 128 Gb/s raw bandwidth</p></li>
+<li><p>After encoding overhead (128b/130b encoding): ~15.75 GB/s effective</p></li>
+</ul>
+<p><strong>Key takeaway:</strong> PCIe is the data highway connecting your main computer (CPU + memory) to specialized devices like our FPGA. It’s fast, reliable, and provides dedicated connections.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-2-moving-data-between-components">
+<h2>Part 2: Moving Data Between Components<a class="headerlink" href="#part-2-moving-data-between-components" title="Link to this heading">#</a></h2>
+<p>Now that we understand basic memory (DDR4) and connections (PCIe), we need to understand <em>how</em> data moves between them.</p>
+<section id="memory-mapped-i-o-mmio">
+<h3><strong>Memory-Mapped I/O (MMIO)</strong><a class="headerlink" href="#memory-mapped-i-o-mmio" title="Link to this heading">#</a></h3>
+<p><strong>MMIO = Memory-Mapped Input/Output</strong></p>
+<ul class="simple">
+<li><p>“Input/Output” (I/O) means communication with devices (keyboard, disk, FPGA, etc.)</p></li>
+<li><p>“Memory-Mapped” means we use memory addresses to talk to these devices</p></li>
+</ul>
+<p><strong>The concept:</strong> Make hardware devices look like memory.</p>
+<p><strong>How it works:</strong></p>
+<ul class="simple">
+<li><p>The system has a <strong>global address space</strong> (like our mailbox analogy) - typically billions of addresses</p>
+<ul>
+<li><p>From the <strong>CPU’s perspective:</strong> It can access any address via load/store instructions</p></li>
+<li><p>From the <strong>FPGA’s perspective:</strong> When acting as a bus master (during DMA), it can also generate addresses to access system memory</p></li>
+<li><p>The <strong>memory controller</strong> routes each address to the correct destination (RAM vs device registers)</p></li>
+</ul>
+</li>
+<li><p><strong>Some addresses</strong> refer to RAM (actual memory where data is stored)</p></li>
+<li><p><strong>Other addresses</strong> refer to device registers (special control locations in hardware devices)</p></li>
+<li><p><strong>Who defines addresses:</strong> The system designer/OS assigns address ranges (e.g., “addresses 0xD0000000-0xD0000FFF go to FPGA registers”). Individual FPGA modules don’t generate their own address ranges - they respond to the ranges assigned to them.</p></li>
+</ul>
+<p><strong>Example address map:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Address</span> <span class="mh">0x00000000</span> <span class="o">-</span> <span class="mh">0x7FFFFFFF</span><span class="p">:</span> <span class="n">System</span> <span class="n">RAM</span> <span class="p">(</span><span class="n">actual</span> <span class="n">DDR4</span> <span class="n">memory</span><span class="p">)</span>
+<span class="n">Address</span> <span class="mh">0xD0000000</span> <span class="o">-</span> <span class="mh">0xD0000FFF</span><span class="p">:</span> <span class="n">FPGA</span> <span class="n">control</span> <span class="n">registers</span> <span class="p">(</span><span class="n">inside</span> <span class="n">FPGA</span> <span class="n">chip</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What happens when you write to an MMIO address:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CPU</span> <span class="n">executes</span><span class="p">:</span> <span class="n">memory</span><span class="p">[</span><span class="mh">0xD0000000</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00000001</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>CPU puts address 0xD0000000 on the address bus</p></li>
+<li><p>CPU puts value 0x00000001 on the data bus</p></li>
+<li><p>Memory controller sees this address is NOT in RAM range</p></li>
+<li><p>Memory controller routes this over PCIe to the FPGA</p></li>
+<li><p>PCIe wraps it in a TLP packet (Memory Write)</p></li>
+<li><p>FPGA receives the packet, extracts the value</p></li>
+<li><p>FPGA’s hardware register at offset 0x0 gets the value 0x00000001</p></li>
+<li><p>This might trigger: start simulation, stop simulation, reset, etc.</p></li>
+</ol>
+<p><strong>In our system (hs_bridge):</strong></p>
+<ul class="simple">
+<li><p>Host software uses MMIO to send control commands to FPGA</p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">fpga.write_register(0xD0000000,</span> <span class="pre">start_flag=1)</span></code></p></li>
+<li><p>This gets translated to a PCIe write that lands in FPGA control logic</p></li>
+</ul>
+<p><strong>Key takeaway:</strong> MMIO lets us control hardware devices using normal memory read/write operations. The CPU doesn’t know (or care) if an address goes to RAM or a device - it just reads/writes, and the hardware routes it correctly.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-3-specialized-hardware">
+<h2>Part 3: Specialized Hardware<a class="headerlink" href="#part-3-specialized-hardware" title="Link to this heading">#</a></h2>
+<p>Now we understand how the host system works (DDR4 memory, PCIe connections, etc). Let’s look at specialized hardware that can process data much faster than a CPU.</p>
+<section id="fpga-field-programmable-gate-array-the-basics">
+<h3><strong>FPGA (Field-Programmable Gate Array) - The Basics</strong><a class="headerlink" href="#fpga-field-programmable-gate-array-the-basics" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> An FPGA is a chip full of reconfigurable logic. Think of it as a blank canvas of digital circuits that you can reprogram to do whatever you want.</p>
+<p><strong>Our FPGA:</strong> Xilinx XCVU37p (VU37P)</p>
+<ul class="simple">
+<li><p><strong>Technology:</strong> 20nm FinFET manufacturing process</p></li>
+<li><p><strong>Die size:</strong> ~800 mm²</p></li>
+<li><p><strong>Power:</strong> 50-100W typical (varies with design and clock speed)</p></li>
+<li><p><strong>Building Blocks:</strong></p>
+<ul>
+<li><p>Configurable Logic Blocks (CLBs)</p></li>
+<li><p>Programmable connection matrix for the CLBs</p></li>
+<li><p>Global clock driving technology (to allow modules to run on the same clock and allow us define a clean state machine)</p></li>
+<li><p>Block RAM</p></li>
+<li><p>UltraRAM</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fpga-internal-structure">
+<h3><strong>FPGA Internal Structure</strong><a class="headerlink" href="#fpga-internal-structure" title="Link to this heading">#</a></h3>
+<p><strong>Configurable Logic Blocks (CLBs):</strong></p>
+<p>The FPGA fabric is an array of CLBs connected by programmable routing.</p>
+<p><strong>What’s in a CLB?</strong></p>
+<ul class="simple">
+<li><p><strong>8 LUTs</strong> (Look-Up Tables) - implement logic functions</p></li>
+<li><p><strong>16 Flip-Flops</strong> - store state/register values</p></li>
+<li><p><strong>Carry logic</strong> - for efficient arithmetic</p></li>
+</ul>
+<p><strong>LUT (Look-Up Table):</strong></p>
+<p><strong>Physical implementation:</strong> 64-bit SRAM (Static Random Access Memory)</p>
+<ul class="simple">
+<li><p><strong>SRAM</strong> = memory that holds data as long as power is on (see Appendix for full definition)</p></li>
+<li><p><strong>“Static”</strong> means the module’s behavior is fixed once programmed (doesn’t change during execution)</p>
+<ul>
+<li><p>The LUT configuration is loaded when you program the FPGA (upload the bitstream)</p></li>
+<li><p>During execution, the LUT’s function stays constant - it just evaluates its programmed logic</p></li>
+<li><p>To change behavior, you must reprogram the entire FPGA</p></li>
+</ul>
+</li>
+<li><p><strong>64-bit</strong> = 64 memory cells storing 0s and 1s</p></li>
+</ul>
+<p><strong>Function:</strong> Can implement any 6-input Boolean function</p>
+<p><strong>How it works - detailed explanation:</strong></p>
+<p>Think of a LUT as a tiny lookup table with 64 entries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌──────────────┬────────┐
+│   Address    │ Output │
+│  (6 bits =   │ (1 bit)│
+│   inputs)    │        │
+├──────────────┼────────┤
+│ 0b000000 (0) │   ?    │
+│ 0b000001 (1) │   ?    │
+│ 0b000010 (2) │   ?    │
+│     ...      │  ...   │
+│ 0b111110 (62)│   ?    │
+│ 0b111111 (63)│   ?    │
+└──────────────┴────────┘
+</pre></div>
+</div>
+<p>The 6 input wires form a binary address that selects which of the 64 entries to read.</p>
+<p><strong>Example: Programming a 2-input AND gate (simplified to 2 inputs for clarity)</strong></p>
+<p>An AND gate outputs 1 only when BOTH inputs are 1:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Truth table for AND:
+  A B │ Output
+  ────┼────────
+  0 0 │   0
+  0 1 │   0
+  1 0 │   0
+  1 1 │   1    ← Only this outputs 1
+</pre></div>
+</div>
+<p>To implement this in a LUT:</p>
+<ol class="arabic simple">
+<li><p>Use inputs A and B as the address (ignoring the other 4 input bits)</p></li>
+<li><p>Program the SRAM contents to match the truth table:</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Address (A,B) │ SRAM Contents │ Meaning
+──────────────┼───────────────┼─────────────────
+0b000000 (00) │      0        │ 0 AND 0 = 0
+0b000001 (01) │      0        │ 0 AND 1 = 0
+0b000010 (10) │      0        │ 1 AND 0 = 0
+0b000011 (11) │      1        │ 1 AND 1 = 1 ✓
+0b000100-111  │      0        │ (unused inputs)
+</pre></div>
+</div>
+<p><strong>In Verilog:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// This Verilog code:</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">;</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w">  </span><span class="c1">// AND gate</span>
+
+<span class="c1">// Gets synthesized into a LUT where:</span>
+<span class="c1">// - Inputs a, b connect to LUT input pins</span>
+<span class="c1">// - LUT is programmed with the AND truth table above</span>
+<span class="c1">// - LUT output connects to wire &#39;out&#39;</span>
+<span class="c1">// - When a=1, b=1: address=0b11, LUT outputs 1</span>
+<span class="c1">// - When a=0, b=1: address=0b01, LUT outputs 0</span>
+</pre></div>
+</div>
+<p><strong>For a full 6-input example (like OR gate):</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">out</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">f</span><span class="p">;</span><span class="w">  </span><span class="c1">// 6-input OR gate</span>
+
+<span class="c1">// LUT programmed so:</span>
+<span class="c1">// - Address 0b000000: outputs 0  (all inputs zero)</span>
+<span class="c1">// - Address 0b000001: outputs 1  (at least one input is 1)</span>
+<span class="c1">// - Address 0b000010: outputs 1</span>
+<span class="c1">// - ...</span>
+<span class="c1">// - Address 0b111111: outputs 1  (all inputs one)</span>
+<span class="c1">// Total: 1 zero entry, 63 one entries</span>
+</pre></div>
+</div>
+<p><strong>Key insight:</strong> The SRAM stores a complete lookup table mapping every possible input combination to the desired output. This is why LUTs can implement ANY 6-input Boolean function - just program the SRAM with the right truth table!</p>
+<p><strong>Example:</strong> <code class="docutils literal notranslate"><span class="pre">assign</span> <span class="pre">out</span> <span class="pre">=</span> <span class="pre">a</span> <span class="pre">&amp;</span> <span class="pre">b;</span></code></p>
+<ul class="simple">
+<li><p>Synthesis tool maps this to a LUT</p></li>
+<li><p>LUT is programmed (via SRAM bits) to implement the AND function</p></li>
+<li><p>Inputs a and b connect to LUT inputs</p></li>
+<li><p>LUT output connects to signal out</p></li>
+</ul>
+<p><strong>Flip-Flop (Register):</strong></p>
+<ul class="simple">
+<li><p><strong>Physical implementation:</strong> D-type register (master-slave latch pair)</p></li>
+<li><p><strong>Function:</strong> Stores 1 bit, updates on clock edge</p></li>
+<li><p><strong>Inputs:</strong></p>
+<ul>
+<li><p>D: Data input (value to store)</p></li>
+<li><p>CLK: Clock (when to update)</p></li>
+<li><p>CE: Clock Enable (enable updating)</p></li>
+<li><p>RST: Reset (force to 0)</p></li>
+</ul>
+</li>
+<li><p><strong>Operation:</strong> On rising edge of CLK: if CE=1, then Q &lt;= D</p></li>
+</ul>
+<p><strong>Example:</strong> <code class="docutils literal notranslate"><span class="pre">always</span> <span class="pre">&#64;(posedge</span> <span class="pre">clk)</span> <span class="pre">q</span> <span class="pre">&lt;=</span> <span class="pre">d;</span></code></p>
+<ul class="simple">
+<li><p>This Verilog creates a flip-flop</p></li>
+<li><p>On each clock edge, q gets the value of d</p></li>
+</ul>
+<p><strong>Synthesis flow:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Verilog code → Logic gates → Map to LUTs + FFs
+
+Example:
+  Combinational logic: `assign out = a &amp; b;` → Maps to LUTs
+  Registers: `always @(posedge clk) q &lt;= d;` → Maps to Flip-Flops
+
+  (Text in `backticks` is actual Verilog code)
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="fpga-routing-and-timing">
+<h3><strong>FPGA Routing and Timing</strong><a class="headerlink" href="#fpga-routing-and-timing" title="Link to this heading">#</a></h3>
+<p><strong>Programmable Interconnect:</strong></p>
+<ul class="simple">
+<li><p><strong>Problem:</strong> We have thousands of LUTs and FFs that need to connect together</p></li>
+<li><p><strong>Solution:</strong> Programmable switches (like a telephone switchboard)</p>
+<ul>
+<li><p><strong>Switch matrix:</strong> Crossbar at each routing junction</p></li>
+<li><p><strong>Implementation:</strong> Transistor pass gates controlled by SRAM bits</p></li>
+<li><p><strong>Configuration:</strong> SRAM bits determine which wires connect</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Routing delay:</strong></p>
+<ul class="simple">
+<li><p>Signals take time to travel through wires and switches</p></li>
+<li><p>Typical: 0.5-2 nanoseconds depending on distance</p></li>
+<li><p>This adds to the logic delay (time for LUTs to compute)</p></li>
+</ul>
+<p><strong>Timing closure:</strong>
+Our design runs at 225 MHz (4.4 ns period). This means:</p>
+<ul class="simple">
+<li><p><strong>Critical path:</strong> The longest path from one flip-flop to another must complete in &lt; 4.4 ns</p></li>
+<li><p>Critical path time = LUT delay + routing delay + flip-flop setup time</p></li>
+<li><p>If too long: Must add pipeline registers (breaks path into shorter segments)</p>
+<ul>
+<li><p>Tradeoff: Adds latency (more clock cycles) but meets timing</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fpga-clock-distribution">
+<h3><strong>FPGA Clock Distribution</strong><a class="headerlink" href="#fpga-clock-distribution" title="Link to this heading">#</a></h3>
+<p><strong>Challenge:</strong> We have thousands of flip-flops that all need to see the clock edge at the same time.</p>
+<p><strong>Solution: Global clock tree</strong></p>
+<ul class="simple">
+<li><p><strong>H-tree topology:</strong> Balanced routing that fans out to all regions</p>
+<ul>
+<li><p>Ensures all flip-flops see the clock edge within ~100 picoseconds (skew)</p></li>
+</ul>
+</li>
+<li><p><strong>Clock buffers (BUFG):</strong> Special high-fanout buffers</p>
+<ul>
+<li><p>Can drive thousands of flip-flops without degradation</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>PLLs and MMCMs (Clock generation):</strong></p>
+<ul class="simple">
+<li><p><strong>Input:</strong> 100 MHz reference clock</p></li>
+<li><p><strong>Output:</strong> 225 MHz and 450 MHz for our design</p></li>
+<li><p><strong>How they work:</strong></p>
+<ul>
+<li><p>PLL: Phase-Locked Loop tracks input and generates multiples</p></li>
+<li><p>VCO: Voltage-Controlled Oscillator runs at high frequency (900-2000 MHz)</p></li>
+<li><p>Dividers: Divide VCO output to get desired frequencies</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fpga-memory-block-ram-bram">
+<h3><strong>FPGA Memory: Block RAM (BRAM)</strong><a class="headerlink" href="#fpga-memory-block-ram-bram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Dedicated memory blocks built into the FPGA (separate from logic fabric)</p>
+<p><strong>Why BRAMs exist:</strong></p>
+<ul class="simple">
+<li><p>Could build memory using LUTs (they’re SRAMs after all)</p></li>
+<li><p>But: Inefficient - wastes logic resources</p></li>
+<li><p>Better: Dedicated memory blocks optimized for storage</p></li>
+</ul>
+<p><strong>BRAM technology:</strong></p>
+<ul class="simple">
+<li><p><strong>6-transistor SRAM cell:</strong> 2 cross-coupled inverters + 2 access transistors</p></li>
+<li><p><strong>Static storage:</strong> Unlike DRAM, no refresh needed (data persists as long as powered)</p></li>
+<li><p><strong>Trade-off:</strong> More transistors per bit than DRAM, but faster</p></li>
+</ul>
+<p><strong>RAMB36E2 primitive (basic BRAM block):</strong></p>
+<ul class="simple">
+<li><p><strong>Capacity:</strong> 36 Kilobits (36 Kb = 4.5 KB)</p></li>
+<li><p><strong>Configurable width:</strong> 1 to 72 bits wide</p>
+<ul>
+<li><p>Width × Depth = 36K bits</p></li>
+<li><p>Examples: 36K×1, 18K×2, 9K×4, …, 512×72</p></li>
+</ul>
+</li>
+<li><p><strong>Dual-port:</strong> Can read and write simultaneously on two independent ports</p></li>
+</ul>
+<p><strong>Access timing:</strong></p>
+<ul class="simple">
+<li><p><strong>Synchronous:</strong> Operates on clock edges (not asynchronous like CPU cache)</p></li>
+<li><p><strong>Latency:</strong> 2-3 clock cycles</p>
+<ul>
+<li><p>Cycle 0: Present address</p></li>
+<li><p>Cycle 1: Internal row decode</p></li>
+<li><p>Cycle 2: Data valid on output</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Our usage:</strong></p>
+<ul class="simple">
+<li><p>Configuration: 32,768 addresses × 256 bits wide</p></li>
+<li><p>Uses: 256 RAMB36 primitives (each configured and then address-mapped together)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fpga-memory-ultraram-uram">
+<h3><strong>FPGA Memory: UltraRAM (URAM)</strong><a class="headerlink" href="#fpga-memory-ultraram-uram" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> Higher-density memory blocks (like BRAM but bigger)</p>
+<p><strong>Technology:</strong></p>
+<ul class="simple">
+<li><p><strong>1T1C DRAM-like cell:</strong> 1 transistor + 1 capacitor (similar to DDR4 cells)</p></li>
+<li><p><strong>On-chip:</strong> Integrated into FPGA die (not external)</p></li>
+<li><p><strong>Advantage:</strong> 4× density vs BRAM (288 Kb vs 36 Kb per primitive)</p></li>
+<li><p><strong>Trade-off:</strong> Requires refresh (but automatic, handled by primitive logic)</p></li>
+</ul>
+<p><strong>URAM288 primitive:</strong></p>
+<ul class="simple">
+<li><p><strong>Capacity:</strong> 288 Kilobits (36 KB)</p></li>
+<li><p><strong>Configuration:</strong> 4096 words × 72 bits (typical for our design)</p></li>
+</ul>
+<p><strong>Access timing:</strong></p>
+<ul class="simple">
+<li><p><strong>Synchronous:</strong> Operates on clock edges</p></li>
+<li><p><strong>Latency:</strong> 1 clock cycle &#64; 450 MHz (faster than BRAM!)</p>
+<ul>
+<li><p>Cycle N: Address presented</p></li>
+<li><p>Cycle N+1: Data valid</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Refresh:</strong></p>
+<ul class="simple">
+<li><p>Automatic and transparent to user logic</p></li>
+<li><p>Built into the primitive controller</p></li>
+</ul>
+<p><strong>Our usage:</strong></p>
+<ul class="simple">
+<li><p>16 banks × 288 Kb = 4.5 Megabits total</p></li>
+<li><p>Stores neuron state information</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fpga-hard-ip-blocks">
+<h3><strong>FPGA Hard IP Blocks</strong><a class="headerlink" href="#fpga-hard-ip-blocks" title="Link to this heading">#</a></h3>
+<p><strong>What are “Hard IP” blocks?</strong></p>
+<ul class="simple">
+<li><p>Most of the FPGA is reconfigurable fabric (LUTs, FFs, routing)</p></li>
+<li><p>Some functions are implemented as fixed silicon (not programmable)</p></li>
+<li><p>These are “Hard IP” blocks</p></li>
+</ul>
+<p><strong>Why hard IP?</strong></p>
+<ul class="simple">
+<li><p><strong>Performance:</strong> Dedicated circuits run faster than fabric implementation</p></li>
+<li><p><strong>Efficiency:</strong> Use less power and less die area</p></li>
+<li><p><strong>Interfaces:</strong> Some protocols require precise timing (hard to achieve in fabric)</p></li>
+</ul>
+<p><strong>Our FPGA’s Hard IP:</strong></p>
+<p><strong>1. PCIe block:</strong></p>
+<ul class="simple">
+<li><p><strong>Location:</strong> Fixed position on die corner (near pins)</p></li>
+<li><p><strong>Contains:</strong> SerDes (serializer/deserializer), PHY, MAC layers</p></li>
+<li><p><strong>Advantage:</strong> Meets PCIe Gen3 timing requirements reliably</p></li>
+</ul>
+<p><strong>2. HBM interface controllers:</strong></p>
+<ul class="simple">
+<li><p><strong>Purpose:</strong> Interface to High Bandwidth Memory (see next section)</p></li>
+<li><p><strong>Provides:</strong> 32 independent AXI ports (one per HBM channel)</p></li>
+<li><p><strong>Why hard:</strong> Timing-critical signaling for high-speed memory</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-4-ultra-high-performance-memory">
+<h2>Part 4: Ultra-High-Performance Memory<a class="headerlink" href="#part-4-ultra-high-performance-memory" title="Link to this heading">#</a></h2>
+<p>We’ve covered DDR4 (main system memory, moderate bandwidth). Now let’s look at specialized memory for extreme bandwidth.</p>
+<p><strong>Where HBM fits in the system:</strong></p>
+<ul class="simple">
+<li><p><strong>HBM is physically attached to the FPGA</strong> - they are packaged together on the same silicon interposer</p></li>
+<li><p><strong>It’s a customization/option:</strong> Not all FPGAs have HBM; our XCVU37p model includes 8 GB of HBM2</p></li>
+<li><p><strong>Think of it as:</strong> The FPGA’s “private” high-speed memory, while DDR4 is the host’s “shared” memory</p>
+<ul>
+<li><p>Host DDR4: Shared between CPU and FPGA, accessed via PCIe DMA</p></li>
+<li><p>FPGA HBM2: Exclusive to FPGA, direct connection (no PCIe), much faster</p></li>
+</ul>
+</li>
+</ul>
+<section id="hbm2-high-bandwidth-memory-why-it-exists">
+<h3><strong>HBM2 (High Bandwidth Memory) - Why It Exists</strong><a class="headerlink" href="#hbm2-high-bandwidth-memory-why-it-exists" title="Link to this heading">#</a></h3>
+<p><strong>The bandwidth problem:</strong></p>
+<ul class="simple">
+<li><p>Our neural network simulation needs to read/write neuron states very quickly</p></li>
+<li><p>DDR4 provides ~25 GB/s per channel (good for general-purpose computing)</p></li>
+<li><p>But our application needs ~400-900 GB/s (much higher!)</p></li>
+</ul>
+<p><strong>The solution: HBM2</strong></p>
+<ul class="simple">
+<li><p>Specialized memory technology optimized for bandwidth</p></li>
+<li><p>Trade-offs: More expensive, less capacity than DDR4</p></li>
+<li><p>Achieved bandwidth: ~920 GB/s theoretical, ~400 GB/s practical</p></li>
+</ul>
+<p><strong>How HBM achieves high bandwidth:</strong></p>
+<ul class="simple">
+<li><p><strong>Wide buses:</strong> 1024 bits per stack (vs 64 bits for DDR4) = 16× wider</p></li>
+<li><p><strong>High frequency:</strong> 1800 MT/s (similar to DDR4)</p></li>
+<li><p><strong>Calculation:</strong> 1024 bits × 1800 MT/s = 230 GB/s per stack</p></li>
+<li><p><strong>4 stacks:</strong> 230 GB/s × 4 = 920 GB/s total</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="hbm2-memory-organization">
+<h3><strong>HBM2 Memory Organization</strong><a class="headerlink" href="#hbm2-memory-organization" title="Link to this heading">#</a></h3>
+<p><strong>Hierarchy:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Stack (4 total)
+  └─ Channel (8 per stack)
+      └─ Bank (16 per channel)
+          └─ Row (16,384 per bank)
+              └─ Column (1,024 per row)
+</pre></div>
+</div>
+<p><strong>Row buffer concept:</strong></p>
+<ul>
+<li><p>When you activate a row, the entire row (512 bytes) is read into a buffer</p></li>
+<li><p>Subsequent accesses to the same row are fast (~10 ns) - “page hit”</p></li>
+<li><p>Accessing a different row requires:</p>
+<ol class="arabic simple">
+<li><p>Close current row (precharge)</p></li>
+<li><p>Open new row (activate)</p></li>
+</ol>
+<ul class="simple">
+<li><p>This is slower (~50 ns) - “page miss”</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Performance implications:</strong></p>
+<ul class="simple">
+<li><p><strong>Best case (sequential access within row):</strong> Very fast, high bandwidth</p></li>
+<li><p><strong>Worst case (random access across rows):</strong> Slower, reduced bandwidth</p></li>
+<li><p><strong>Our design:</strong> Tries to access memory sequentially to maximize page hits</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="hbm2-axi4-interface">
+<h3><strong>HBM2 AXI4 Interface</strong><a class="headerlink" href="#hbm2-axi4-interface" title="Link to this heading">#</a></h3>
+<p><strong>What is AXI4?</strong></p>
+<ul class="simple">
+<li><p><strong>AXI:</strong> Advanced eXtensible Interface (ARM standard)</p></li>
+<li><p><strong>Purpose:</strong> Standard protocol for connecting memory and devices in hardware</p></li>
+<li><p><strong>Why standard?</strong> Different IP blocks can interoperate (like USB for internal hardware)</p></li>
+</ul>
+<p><strong>Five independent channels:</strong></p>
+<p><strong>1. Write Address (AW):</strong> Master sends where to write</p>
+<ul class="simple">
+<li><p>Signals: AWADDR (address), AWLEN (burst length), AWVALID/AWREADY</p></li>
+</ul>
+<p><strong>2. Write Data (W):</strong> Master sends what to write</p>
+<ul class="simple">
+<li><p>Signals: WDATA (data), WSTRB (byte enables), WVALID/WREADY</p></li>
+</ul>
+<p><strong>3. Write Response (B):</strong> Slave acknowledges completion</p>
+<ul class="simple">
+<li><p>Signals: BRESP (response code), BVALID/BREADY</p></li>
+</ul>
+<p><strong>4. Read Address (AR):</strong> Master requests data</p>
+<ul class="simple">
+<li><p>Signals: ARADDR (address), ARLEN (burst length), ARVALID/ARREADY</p></li>
+</ul>
+<p><strong>5. Read Data (R):</strong> Slave returns data</p>
+<ul class="simple">
+<li><p>Signals: RDATA (data), RRESP (response), RVALID/RREADY</p></li>
+</ul>
+<p><strong>Key features:</strong></p>
+<p><strong>Decoupling:</strong></p>
+<ul class="simple">
+<li><p>Address and data channels are independent</p></li>
+<li><p>Can send multiple read addresses, then receive data later</p></li>
+<li><p>Enables pipelining and out-of-order completion</p></li>
+</ul>
+<p><strong>Handshake protocol (VALID/READY):</strong></p>
+<ul class="simple">
+<li><p><strong>Source asserts VALID:</strong> “My data is ready”</p></li>
+<li><p><strong>Destination asserts READY:</strong> “I can accept data”</p></li>
+<li><p><strong>Transfer occurs when:</strong> VALID AND READY (both high)</p></li>
+<li><p>This allows flow control (receiver can apply backpressure)</p></li>
+</ul>
+<p><strong>Bursts:</strong></p>
+<ul class="simple">
+<li><p>Single address can request multiple data beats (up to 256)</p></li>
+<li><p>Example: Address=0x1000, Length=16 → returns 16 consecutive words</p></li>
+<li><p>Amortizes address overhead (one address, many data)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="hbm2-access-latency">
+<h3><strong>HBM2 Access Latency</strong><a class="headerlink" href="#hbm2-access-latency" title="Link to this heading">#</a></h3>
+<p><strong>Best case (row hit): ~50 ns</strong></p>
+<ul class="simple">
+<li><p>Address decode: 5 ns</p></li>
+<li><p>Column select: 10 ns</p></li>
+<li><p>Sense amplifier: 10 ns</p></li>
+<li><p>Data serialization: 10 ns</p></li>
+<li><p>AXI handshake: 15 ns</p></li>
+</ul>
+<p><strong>Worst case (row miss): ~200 ns</strong></p>
+<ul class="simple">
+<li><p>Precharge old row: 30 ns</p></li>
+<li><p>Activate new row: 50 ns</p></li>
+<li><p>Column access: 50 ns</p></li>
+<li><p>(rest as above)</p></li>
+</ul>
+<p><strong>Optimization in our design:</strong></p>
+<ul class="simple">
+<li><p>Prefetch next row during processing current data</p></li>
+<li><p>Pipelines operations to hide latency</p></li>
+<li><p>Access patterns designed for row locality</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="part-5-data-movement-primitives">
+<h2>Part 5: Data Movement Primitives<a class="headerlink" href="#part-5-data-movement-primitives" title="Link to this heading">#</a></h2>
+<p>Finally, we need ways to move data between all these components (host memory, PCIe, FPGA logic, HBM). FIFOs are the basic building block.</p>
+<section id="fifo-first-in-first-out-buffer">
+<h3><strong>FIFO (First-In-First-Out Buffer)</strong><a class="headerlink" href="#fifo-first-in-first-out-buffer" title="Link to this heading">#</a></h3>
+<p><strong>What it is:</strong> A hardware queue - data comes out in the same order it went in.</p>
+<p><strong>Why FIFOs exist:</strong></p>
+<ul class="simple">
+<li><p><strong>Problem 1:</strong> Different components run at different speeds</p>
+<ul>
+<li><p>Example: PCIe sends data in bursts, FPGA processing is continuous</p></li>
+<li><p>FIFO smooths out the rate mismatch</p></li>
+</ul>
+</li>
+<li><p><strong>Problem 2:</strong> Different components run on different clocks</p>
+<ul>
+<li><p>Example: PCIe side at 225 MHz, HBM side at 450 MHz</p></li>
+<li><p>FIFO safely transfers data between clock domains</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Think of it like:</strong></p>
+<ul class="simple">
+<li><p>A line at a coffee shop (first person in line is first served)</p></li>
+<li><p>A pipe (data flows through, can’t jump ahead or reorder)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fifo-implementation-xilinx-fifo36e2">
+<h3><strong>FIFO Implementation (Xilinx FIFO36E2)</strong><a class="headerlink" href="#fifo-implementation-xilinx-fifo36e2" title="Link to this heading">#</a></h3>
+<p><strong>Storage:</strong> Uses BRAM36 primitive (36 Kb SRAM block)</p>
+<p><strong>Pointers:</strong></p>
+<ul class="simple">
+<li><p><strong>Write pointer (WP):</strong> Points to next location to write</p></li>
+<li><p><strong>Read pointer (RP):</strong> Points to next location to read</p></li>
+<li><p>Both are counters that increment with each operation</p></li>
+</ul>
+<p><strong>Status signals:</strong></p>
+<ul class="simple">
+<li><p><strong>Empty:</strong> WP == RP (no data to read)</p></li>
+<li><p><strong>Full:</strong> (WP + 1) mod DEPTH == RP (no space to write)</p></li>
+<li><p>Software/hardware checks these before reading/writing</p></li>
+</ul>
+<p><strong>FWFT mode (First-Word Fall-Through):</strong></p>
+<ul class="simple">
+<li><p>Normal FIFO: Must assert RD_EN, wait 1 cycle, then data appears</p></li>
+<li><p>FWFT FIFO: Data appears on output port as soon as EMPTY goes low</p></li>
+<li><p>Implementation: Extra output register + bypass mux</p></li>
+<li><p>Advantage: Zero-latency read (useful for streaming pipelines)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="asynchronous-fifo-clock-domain-crossing">
+<h3><strong>Asynchronous FIFO (Clock Domain Crossing)</strong><a class="headerlink" href="#asynchronous-fifo-clock-domain-crossing" title="Link to this heading">#</a></h3>
+<p><strong>The problem:</strong></p>
+<ul class="simple">
+<li><p>Write side: 225 MHz clock</p></li>
+<li><p>Read side: 450 MHz clock</p></li>
+<li><p>Cannot directly compare pointers (in different clock domains!)</p></li>
+</ul>
+<p><strong>Why this is hard:</strong></p>
+<ul class="simple">
+<li><p>If a signal changes in one clock domain and is read in another, <strong>metastability</strong> can occur</p></li>
+<li><p>Metastability: Flip-flop input violates setup/hold time → output voltage stuck between 0 and 1</p></li>
+<li><p>Can take nanoseconds (or longer!) to resolve to a valid logic level</p></li>
+<li><p>During metastability, output can oscillate or produce glitches</p></li>
+</ul>
+<p><strong>The solution: Gray code + 2-FF synchronizer</strong></p>
+<p><strong>Gray code:</strong></p>
+<ul class="simple">
+<li><p>Special binary encoding where only 1 bit changes per increment</p></li>
+<li><p>Examples:</p>
+<ul>
+<li><p>Binary: 3→4 is 011→100 (3 bits change)</p></li>
+<li><p>Gray: 3→4 is 010→110 (only 1 bit changes)</p></li>
+</ul>
+</li>
+<li><p><strong>Why this helps:</strong> If we catch the pointer mid-transition, we’re only off by ±1 (not random garbage)</p></li>
+</ul>
+<p><strong>2-FF synchronizer:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">rd_clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">  </span><span class="n">wptr_gray_sync1</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">wptr_gray</span><span class="p">;</span><span class="w">      </span><span class="c1">// First FF (may go metastable)</span>
+<span class="w">  </span><span class="n">wptr_gray_sync2</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">wptr_gray_sync1</span><span class="p">;</span><span class="w"> </span><span class="c1">// Second FF (stable output)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>How it works:</strong></p>
+<ol class="arabic simple">
+<li><p>First FF captures signal from other clock domain</p>
+<ul class="simple">
+<li><p>May go metastable (voltage between 0 and 1)</p></li>
+</ul>
+</li>
+<li><p>One full clock period passes (2.2 ns &#64; 450 MHz)</p>
+<ul class="simple">
+<li><p>Metastability has time to resolve</p></li>
+</ul>
+</li>
+<li><p>Second FF captures now-stable value</p>
+<ul class="simple">
+<li><p>Guaranteed valid 0 or 1</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Empty/Full calculation:</strong></p>
+<ul class="simple">
+<li><p><strong>Empty:</strong> Calculated in read domain using synchronized write pointer</p>
+<ul>
+<li><p>“Is the read pointer caught up to where the writer was?”</p></li>
+</ul>
+</li>
+<li><p><strong>Full:</strong> Calculated in write domain using synchronized read pointer</p>
+<ul>
+<li><p>“Is the write pointer about to lap the reader?”</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Timing conservative:</strong></p>
+<ul class="simple">
+<li><p>Due to synchronization, pointers are slightly “old” (2-3 cycles)</p></li>
+<li><p>This makes FIFO appear fuller/emptier than reality (safe direction)</p></li>
+<li><p>Means: Slightly less efficient, but never corrupts data</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="fifos-in-our-system">
+<h3><strong>FIFOs in Our System</strong><a class="headerlink" href="#fifos-in-our-system" title="Link to this heading">#</a></h3>
+<p><strong>Input/Output FIFOs (PCIe ↔ FPGA fabric):</strong></p>
+<ul class="simple">
+<li><p><strong>Width:</strong> 512 bits (64 bytes) - matches PCIe TLP data width</p></li>
+<li><p><strong>Depth:</strong> 512 entries</p></li>
+<li><p><strong>Purpose:</strong> Buffer data transfers between PCIe and processing logic</p></li>
+<li><p><strong>Async:</strong> Crosses clock domain (PCIe clock → fabric clock)</p></li>
+</ul>
+<p><strong>Pointer FIFOs (HBM data → neuron groups):</strong></p>
+<ul class="simple">
+<li><p><strong>Width:</strong> 32 bits</p></li>
+<li><p><strong>Depth:</strong> 512 entries</p></li>
+<li><p><strong>Purpose:</strong> Distribute memory addresses/pointers to different processing units</p></li>
+<li><p><strong>Sync:</strong> Same clock domain (can use simpler FIFO)</p></li>
+</ul>
+<p><strong>Spike FIFOs (neurons → spike controller):</strong></p>
+<ul class="simple">
+<li><p><strong>Width:</strong> 17 bits (neuron ID + metadata)</p></li>
+<li><p><strong>Depth:</strong> 512 entries</p></li>
+<li><p><strong>Purpose:</strong> Collect spike events from processing units</p></li>
+<li><p><strong>Async:</strong> Different processing clocks converge to controller clock</p></li>
+</ul>
+<p><strong>Key insight:</strong></p>
+<ul class="simple">
+<li><p>FIFOs are everywhere in the design</p></li>
+<li><p>They buffer, smooth rate mismatches, and cross clock domains</p></li>
+<li><p>Simple concept, but essential for making everything work together</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="summary-how-it-all-fits-together">
+<h2>Summary: How It All Fits Together<a class="headerlink" href="#summary-how-it-all-fits-together" title="Link to this heading">#</a></h2>
+<p><strong>Data flow example: Host sends commands to FPGA</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Host preparation:</strong></p>
+<ul class="simple">
+<li><p>Software creates command array in DDR4 memory (system RAM)</p></li>
+<li><p>Gets physical address of buffer (e.g., 0x123456000)</p></li>
+</ul>
+</li>
+<li><p><strong>MMIO handoff:</strong></p>
+<ul class="simple">
+<li><p>Software writes address to FPGA register via PCIe MMIO</p></li>
+<li><p>“Here’s the command buffer: 0x123456000”</p></li>
+</ul>
+</li>
+<li><p><strong>DMA transfer:</strong></p>
+<ul class="simple">
+<li><p>FPGA reads descriptor from its register</p></li>
+<li><p>FPGA initiates PCIe memory read transactions</p></li>
+<li><p>Requests data from host memory at 0x123456000</p></li>
+<li><p>Host responds with command data over PCIe</p></li>
+</ul>
+</li>
+<li><p><strong>Buffering:</strong></p>
+<ul class="simple">
+<li><p>PCIe data arrives in bursts → stored in input FIFO</p></li>
+<li><p>FIFO crosses clock domain (225 MHz → 450 MHz)</p></li>
+</ul>
+</li>
+<li><p><strong>Processing:</strong></p>
+<ul class="simple">
+<li><p>FPGA logic reads commands from FIFO</p></li>
+<li><p>Uses commands to coordinate processing</p></li>
+<li><p>Reads/writes neuron data from/to HBM2 via AXI4</p></li>
+</ul>
+</li>
+<li><p><strong>HBM access:</strong></p>
+<ul class="simple">
+<li><p>FPGA sends AXI read request to HBM</p></li>
+<li><p>HBM controller activates row, reads data</p></li>
+<li><p>Data returns via AXI → FPGA processes</p></li>
+</ul>
+</li>
+<li><p><strong>Results:</strong></p>
+<ul class="simple">
+<li><p>Spike events → spike FIFOs</p></li>
+<li><p>Output data → output FIFO → PCIe → host DDR4</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Every component has a role:</strong></p>
+<ul class="simple">
+<li><p><strong>DDR4:</strong> Large staging area for host data</p></li>
+<li><p><strong>PCIe:</strong> High-speed highway connecting host and FPGA</p></li>
+<li><p><strong>FPGA:</strong> Reconfigurable logic for parallel processing</p></li>
+<li><p><strong>BRAM/URAM:</strong> Fast on-chip memory for state</p></li>
+<li><p><strong>HBM2:</strong> Ultra-high-bandwidth memory for large datasets</p></li>
+<li><p><strong>FIFOs:</strong> Buffers and clock domain crossings throughout</p></li>
+</ul>
+<p>This is how modern heterogeneous computing systems work: specialized hardware (FPGA) accelerates specific tasks, while remaining integrated with general-purpose host system via high-speed interconnects.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-1-foundational-concepts">Part 1: Foundational Concepts</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#essential-terminology"><strong>Essential Terminology</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-memory"><strong>What is Memory?</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#host-ddr4-sdram-system-memory-the-basics"><strong>Host DDR4 SDRAM (System Memory) - The Basics</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-peripheral-component-interconnect-express-the-basics"><strong>PCIe (Peripheral Component Interconnect Express) - The Basics</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-2-moving-data-between-components">Part 2: Moving Data Between Components</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-mapped-i-o-mmio"><strong>Memory-Mapped I/O (MMIO)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-3-specialized-hardware">Part 3: Specialized Hardware</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-field-programmable-gate-array-the-basics"><strong>FPGA (Field-Programmable Gate Array) - The Basics</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-internal-structure"><strong>FPGA Internal Structure</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-routing-and-timing"><strong>FPGA Routing and Timing</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-clock-distribution"><strong>FPGA Clock Distribution</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-memory-block-ram-bram"><strong>FPGA Memory: Block RAM (BRAM)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-memory-ultraram-uram"><strong>FPGA Memory: UltraRAM (URAM)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-hard-ip-blocks"><strong>FPGA Hard IP Blocks</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-4-ultra-high-performance-memory">Part 4: Ultra-High-Performance Memory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm2-high-bandwidth-memory-why-it-exists"><strong>HBM2 (High Bandwidth Memory) - Why It Exists</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm2-memory-organization"><strong>HBM2 Memory Organization</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm2-axi4-interface"><strong>HBM2 AXI4 Interface</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm2-access-latency"><strong>HBM2 Access Latency</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#part-5-data-movement-primitives">Part 5: Data Movement Primitives</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-first-in-first-out-buffer"><strong>FIFO (First-In-First-Out Buffer)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-implementation-xilinx-fifo36e2"><strong>FIFO Implementation (Xilinx FIFO36E2)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#asynchronous-fifo-clock-domain-crossing"><strong>Asynchronous FIFO (Clock Domain Crossing)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifos-in-our-system"><strong>FIFOs in Our System</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-how-it-all-fits-together">Summary: How It All Fits Together</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/0_Introduction/hardware_component_definitions.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

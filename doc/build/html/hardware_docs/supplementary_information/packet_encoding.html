@@ -1,0 +1,1399 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Packet Encoding Reference &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/supplementary_information/packet_encoding';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Address Encoding Explained" href="addresses_explained.html" />
+    <link rel="prev" title="Appendix: Hardware Glossary for Software Experts" href="appendix.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../supplementary_information.html" class="nav-link">Supplementary Information</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Packet Encoding Reference</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="packet-encoding-reference">
+<h1>Packet Encoding Reference<a class="headerlink" href="#packet-encoding-reference" title="Link to this heading">#</a></h1>
+<p>This document provides a complete specification of all packet and data structure encodings used throughout the hs_bridge software and FPGA Verilog code. Understanding these formats is essential for debugging, extending the system, or implementing compatible software.</p>
+<hr class="docutils" />
+<section id="table-of-contents">
+<h2>Table of Contents<a class="headerlink" href="#table-of-contents" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#host-to-fpga-packets"><span class="xref myst">Host to FPGA Packets</span></a></p></li>
+<li><p><a class="reference internal" href="#fpga-to-host-packets"><span class="xref myst">FPGA to Host Packets</span></a></p></li>
+<li><p><a class="reference internal" href="#hbm-memory-structures"><span class="xref myst">HBM Memory Structures</span></a></p></li>
+<li><p><a class="reference internal" href="#bram-memory-structures"><span class="xref myst">BRAM Memory Structures</span></a></p></li>
+<li><p><a class="reference internal" href="#pcie-layer"><span class="xref myst">PCIe Layer</span></a></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="host-to-fpga-packets">
+<h2>Host to FPGA Packets<a class="headerlink" href="#host-to-fpga-packets" title="Link to this heading">#</a></h2>
+<p>These are 512-bit command packets created by <code class="docutils literal notranslate"><span class="pre">fpga_compiler.py</span></code> in hs_bridge and sent to the FPGA via DMA.</p>
+<section id="command-packet-format-512-bits">
+<h3><strong>Command Packet Format (512 bits)</strong><a class="headerlink" href="#command-packet-format-512-bits" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   512-bit Command Packet                    │
+├───────────────┬─────────────────────────────────────────────┤
+│ [511:504]     │ Opcode (8 bits)                             │
+│ [503:496]     │ Core ID (8 bits)                            │
+│ [495:0]       │ Payload (496 bits, opcode-specific)         │
+└───────────────┴─────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Field Descriptions:</strong></p>
+<ul class="simple">
+<li><p><strong>Opcode [511:504]:</strong> 8-bit operation type identifier</p></li>
+<li><p><strong>Core ID [503:496]:</strong> Which FPGA core to target (0-31, though typically only core 0 is used)</p></li>
+<li><p><strong>Payload [495:0]:</strong> Operation-specific data (format varies by opcode)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="opcode-definitions">
+<h3><strong>Opcode Definitions</strong><a class="headerlink" href="#opcode-definitions" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Opcode (hex)</p></th>
+<th class="head"><p>Opcode (binary)</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x00</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h00</span></code></p></td>
+<td><p>INPUT_SPIKES</p></td>
+<td><p>Inject external axon spikes into BRAM</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x01</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h01</span></code></p></td>
+<td><p>EXECUTE</p></td>
+<td><p>Run one simulation timestep</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x02</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h02</span></code></p></td>
+<td><p>HBM_WRITE</p></td>
+<td><p>Write data to HBM memory</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x03</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h03</span></code></p></td>
+<td><p>HBM_READ</p></td>
+<td><p>Read data from HBM memory</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x04</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h04</span></code></p></td>
+<td><p>URAM_WRITE</p></td>
+<td><p>Write neuron states to URAM</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x05</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h05</span></code></p></td>
+<td><p>URAM_READ</p></td>
+<td><p>Read neuron states from URAM</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x06</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h06</span></code></p></td>
+<td><p>CONFIG_WRITE</p></td>
+<td><p>Write configuration registers</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x07</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'h07</span></code></p></td>
+<td><p>CONFIG_READ</p></td>
+<td><p>Read configuration registers</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0xC8</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">8'hC8</span></code></p></td>
+<td><p>RESET</p></td>
+<td><p>Reset FPGA state</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="opcode-0x00-input-spikes">
+<h3><strong>Opcode 0x00: INPUT_SPIKES</strong><a class="headerlink" href="#opcode-0x00-input-spikes" title="Link to this heading">#</a></h3>
+<p>Injects external spike events (axon activations) into BRAM for processing.</p>
+<p><strong>Payload Format:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">Axon</span> <span class="n">ID</span> <span class="p">(</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">which</span> <span class="n">axon</span> <span class="ow">is</span> <span class="n">spiking</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">464</span><span class="p">]</span> <span class="o">=</span> <span class="n">Spike</span> <span class="n">time</span> <span class="p">(</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">future</span> <span class="n">timestep</span> <span class="p">(</span><span class="n">optional</span><span class="p">,</span> <span class="n">usually</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">immediate</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">463</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Reserved</span> <span class="p">(</span><span class="nb">set</span> <span class="n">to</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Axon 42 fires at current timestep</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">axon_id</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">spike_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">axon_id</span> <span class="o">&lt;&lt;</span> <span class="mi">480</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">spike_time</span> <span class="o">&lt;&lt;</span> <span class="mi">464</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What happens:</strong></p>
+<ol class="arabic simple">
+<li><p>FPGA’s command_interpreter decodes opcode 0x00</p></li>
+<li><p>Extracts axon_id from payload</p></li>
+<li><p>Writes to BRAM address corresponding to axon_id</p></li>
+<li><p>Sets spike mask bit for this axon</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="opcode-0x01-execute">
+<h3><strong>Opcode 0x01: EXECUTE</strong><a class="headerlink" href="#opcode-0x01-execute" title="Link to this heading">#</a></h3>
+<p>Runs one simulation timestep (processes all pending spikes, updates neurons, generates output spikes).</p>
+<p><strong>Payload Format:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">Number</span> <span class="n">of</span> <span class="n">timesteps</span> <span class="p">(</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">typically</span> <span class="mi">1</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Reserved</span> <span class="p">(</span><span class="nb">set</span> <span class="n">to</span> <span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Execute 1 timestep</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x01</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">num_timesteps</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">num_timesteps</span> <span class="o">&lt;&lt;</span> <span class="mi">480</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What happens:</strong></p>
+<ol class="arabic simple">
+<li><p>FPGA triggers execute state machine</p></li>
+<li><p>Processes all axon spikes (Phase 1: external_events_processor)</p></li>
+<li><p>Processes all neuron spikes (Phase 2: internal_events_processor)</p></li>
+<li><p>Increments execRun_ctr (timestep counter)</p></li>
+<li><p>Returns spike packets to host via output FIFO</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="opcode-0x02-hbm-write">
+<h3><strong>Opcode 0x02: HBM_WRITE</strong><a class="headerlink" href="#opcode-0x02-hbm-write" title="Link to this heading">#</a></h3>
+<p>Writes data directly to HBM memory (for initializing network structure).</p>
+<p><strong>Payload Format:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">464</span><span class="p">]</span> <span class="o">=</span> <span class="n">HBM</span> <span class="n">address</span> <span class="p">(</span><span class="mi">32</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">byte</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">HBM</span>
+<span class="p">[</span><span class="mi">463</span><span class="p">:</span><span class="mi">432</span><span class="p">]</span> <span class="o">=</span> <span class="n">Length</span> <span class="p">(</span><span class="mi">32</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">number</span> <span class="n">of</span> <span class="nb">bytes</span> <span class="n">to</span> <span class="n">write</span>
+<span class="p">[</span><span class="mi">431</span><span class="p">:</span><span class="mi">176</span><span class="p">]</span> <span class="o">=</span> <span class="n">Data</span> <span class="p">(</span><span class="mi">256</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">payload</span> <span class="n">data</span> <span class="p">(</span><span class="n">up</span> <span class="n">to</span> <span class="mi">32</span> <span class="nb">bytes</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">175</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Reserved</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Write synapse data to HBM</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x02</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">hbm_addr</span> <span class="o">=</span> <span class="mh">0x00008000</span>  <span class="c1"># Synapse region start</span>
+<span class="n">length</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># 32 bytes (8 synapses)</span>
+<span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="mh">0x00100064</span><span class="p">,</span> <span class="mh">0x00110064</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span>  <span class="c1"># Synapse entries</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">hbm_addr</span> <span class="o">&lt;&lt;</span> <span class="mi">464</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">length</span> <span class="o">&lt;&lt;</span> <span class="mi">432</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">data</span> <span class="o">&lt;&lt;</span> <span class="mi">176</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What happens:</strong></p>
+<ol class="arabic simple">
+<li><p>command_interpreter routes to HBM write controller</p></li>
+<li><p>Issues AXI write transaction to HBM</p></li>
+<li><p>Writes data at specified address</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="opcode-0x04-uram-write">
+<h3><strong>Opcode 0x04: URAM_WRITE</strong><a class="headerlink" href="#opcode-0x04-uram-write" title="Link to this heading">#</a></h3>
+<p>Writes neuron state (membrane potential) to URAM.</p>
+<p><strong>Payload Format:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">Neuron</span> <span class="n">ID</span> <span class="p">(</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">which</span> <span class="n">neuron</span> <span class="n">to</span> <span class="n">write</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">444</span><span class="p">]</span> <span class="o">=</span> <span class="n">Voltage</span> <span class="p">(</span><span class="mi">36</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">membrane</span> <span class="n">potential</span> <span class="n">value</span> <span class="p">(</span><span class="n">signed</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">443</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Reserved</span>
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set neuron 100 voltage to 1000</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x04</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">neuron_id</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">voltage</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># 36-bit signed value</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">neuron_id</span> <span class="o">&lt;&lt;</span> <span class="mi">480</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">voltage</span> <span class="o">&lt;&lt;</span> <span class="mi">444</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What happens:</strong></p>
+<ol class="arabic simple">
+<li><p>command_interpreter routes to URAM write controller</p></li>
+<li><p>Calculates URAM bank (neuron_id &gt;&gt; 13) and local address (neuron_id &amp; 0x1FFF)</p></li>
+<li><p>Performs read-modify-write to update only target neuron (2 neurons per URAM word)</p></li>
+<li><p>Writes back updated 72-bit URAM word</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="opcode-0x06-config-write">
+<h3><strong>Opcode 0x06: CONFIG_WRITE</strong><a class="headerlink" href="#opcode-0x06-config-write" title="Link to this heading">#</a></h3>
+<p>Writes to configuration registers (threshold, leak parameters, etc.).</p>
+<p><strong>Payload Format:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="n">Register</span> <span class="n">address</span> <span class="p">(</span><span class="mi">16</span> <span class="n">bits</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">416</span><span class="p">]</span> <span class="o">=</span> <span class="n">Value</span> <span class="p">(</span><span class="mi">64</span> <span class="n">bits</span><span class="p">)</span> <span class="o">-</span> <span class="n">configuration</span> <span class="n">value</span>
+<span class="p">[</span><span class="mi">415</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Reserved</span>
+</pre></div>
+</div>
+<p><strong>Register Map:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Address</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x0000</span></code></p></td>
+<td><p>THRESHOLD</p></td>
+<td><p>Spike threshold (36 bits)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x0001</span></code></p></td>
+<td><p>LEAK_ENABLE</p></td>
+<td><p>Enable voltage leak (1 bit)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">0x0002</span></code></p></td>
+<td><p>LEAK_SHIFT</p></td>
+<td><p>Leak divisor (shift amount)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0x0003</span></code></p></td>
+<td><p>RESET_VOLTAGE</p></td>
+<td><p>Voltage after spike</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set threshold to 2000</span>
+<span class="n">opcode</span> <span class="o">=</span> <span class="mh">0x06</span>
+<span class="n">core_id</span> <span class="o">=</span> <span class="mh">0x00</span>
+<span class="n">reg_addr</span> <span class="o">=</span> <span class="mh">0x0000</span>  <span class="c1"># THRESHOLD register</span>
+<span class="n">value</span> <span class="o">=</span> <span class="mi">2000</span>
+
+<span class="n">packet</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&lt;&lt;</span> <span class="mi">504</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">core_id</span> <span class="o">&lt;&lt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">reg_addr</span> <span class="o">&lt;&lt;</span> <span class="mi">480</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">value</span> <span class="o">&lt;&lt;</span> <span class="mi">416</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="fpga-to-host-packets">
+<h2>FPGA to Host Packets<a class="headerlink" href="#fpga-to-host-packets" title="Link to this heading">#</a></h2>
+<p>These are packets sent from FPGA back to the host, retrieved by <code class="docutils literal notranslate"><span class="pre">fpga_controller.flush_spikes()</span></code>.</p>
+<section id="spike-packet-format-512-bits">
+<h3><strong>Spike Packet Format (512 bits)</strong><a class="headerlink" href="#spike-packet-format-512-bits" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   512-bit Spike Packet                      │
+├───────────────┬─────────────────────────────────────────────┤
+│ [511:496]     │ Tag = 0xEEEE (identifies as spike packet)   │
+│ [495:480]     │ Spike count (16 bits) - number of valid     │
+│               │ spikes in this packet (0-14)                │
+│ [479:32]      │ Spike data: 14 slots × 32 bits each         │
+│               │ Each slot: [31:24] = reserved               │
+│               │            [23]    = valid bit              │
+│               │            [22:6]  = neuron ID (17 bits)    │
+│               │            [5:0]   = sub-timestep (6 bits)  │
+│ [31:0]        │ Timestep (32 bits) - execRun_ctr value      │
+└───────────────┴─────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Field Descriptions:</strong></p>
+<ul class="simple">
+<li><p><strong>Tag [511:496]:</strong> Always <code class="docutils literal notranslate"><span class="pre">0xEEEE</span></code> to identify this as a spike packet</p></li>
+<li><p><strong>Spike count [495:480]:</strong> Number of valid spikes in this packet (1-14)</p></li>
+<li><p><strong>Spike slots [479:32]:</strong> Up to 14 spike entries</p>
+<ul>
+<li><p><strong>Valid bit [23]:</strong> 1 = valid spike, 0 = empty slot</p></li>
+<li><p><strong>Neuron ID [22:6]:</strong> Which neuron spiked (0-131,071)</p></li>
+<li><p><strong>Sub-timestep [5:0]:</strong> Fine-grained timing within timestep (usually 0)</p></li>
+</ul>
+</li>
+<li><p><strong>Timestep [31:0]:</strong> When these spikes occurred (execRun_ctr value)</p></li>
+</ul>
+<p><strong>Example Packet:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Tag</span><span class="p">:</span> <span class="mh">0xEEEE</span>
+<span class="n">Spike</span> <span class="n">count</span><span class="p">:</span> <span class="mi">3</span>
+<span class="n">Spike</span> <span class="mi">0</span><span class="p">:</span> <span class="n">neuron_id</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>   <span class="n">valid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub_ts</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Spike</span> <span class="mi">1</span><span class="p">:</span> <span class="n">neuron_id</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">valid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub_ts</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Spike</span> <span class="mi">2</span><span class="p">:</span> <span class="n">neuron_id</span><span class="o">=</span><span class="mi">5123</span><span class="p">,</span> <span class="n">valid</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">sub_ts</span><span class="o">=</span><span class="mi">0</span>
+<span class="n">Spikes</span> <span class="mi">3</span><span class="o">-</span><span class="mi">13</span><span class="p">:</span> <span class="n">valid</span><span class="o">=</span><span class="mi">0</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+<span class="n">Timestep</span><span class="p">:</span> <span class="mi">1500</span>
+</pre></div>
+</div>
+<p><strong>Encoded as:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">511</span><span class="p">:</span><span class="mi">496</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0xEEEE</span>
+<span class="p">[</span><span class="mi">495</span><span class="p">:</span><span class="mi">480</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span> <span class="p">(</span><span class="n">spike</span> <span class="n">count</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">479</span><span class="p">:</span><span class="mi">448</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00800150</span>  <span class="c1"># Spike 0: neuron 42 (0x2A)</span>
+<span class="p">[</span><span class="mi">447</span><span class="p">:</span><span class="mi">416</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00803E80</span>  <span class="c1"># Spike 1: neuron 1000 (0x3E8)</span>
+<span class="p">[</span><span class="mi">415</span><span class="p">:</span><span class="mi">384</span><span class="p">]</span> <span class="o">=</span> <span class="mh">0x00814046</span>  <span class="c1"># Spike 2: neuron 5123 (0x1403)</span>
+<span class="p">[</span><span class="mi">383</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>  <span class="o">=</span> <span class="mi">0</span> <span class="p">(</span><span class="n">empty</span> <span class="n">slots</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="mi">1500</span> <span class="p">(</span><span class="n">timestep</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Python Parsing:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">parse_spike_packet</span><span class="p">(</span><span class="n">packet_512bit</span><span class="p">):</span>
+    <span class="n">tag</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet_512bit</span> <span class="o">&gt;&gt;</span> <span class="mi">496</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="o">!=</span> <span class="mh">0xEEEE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Not a spike packet</span>
+
+    <span class="n">spike_count</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet_512bit</span> <span class="o">&gt;&gt;</span> <span class="mi">480</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+    <span class="n">timestep</span> <span class="o">=</span> <span class="n">packet_512bit</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFFF</span>
+
+    <span class="n">spikes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">14</span><span class="p">):</span>
+        <span class="n">spike_word</span> <span class="o">=</span> <span class="p">(</span><span class="n">packet_512bit</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="mi">32</span> <span class="o">+</span> <span class="n">i</span><span class="o">*</span><span class="mi">32</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFFFFFFFF</span>
+        <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">spike_word</span> <span class="o">&gt;&gt;</span> <span class="mi">23</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1</span>
+        <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+            <span class="n">neuron_id</span> <span class="o">=</span> <span class="p">(</span><span class="n">spike_word</span> <span class="o">&gt;&gt;</span> <span class="mi">6</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1FFFF</span>
+            <span class="n">sub_ts</span> <span class="o">=</span> <span class="n">spike_word</span> <span class="o">&amp;</span> <span class="mh">0x3F</span>
+            <span class="n">spikes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s1">&#39;neuron_id&#39;</span><span class="p">:</span> <span class="n">neuron_id</span><span class="p">,</span> <span class="s1">&#39;timestep&#39;</span><span class="p">:</span> <span class="n">timestep</span><span class="p">,</span> <span class="s1">&#39;sub_ts&#39;</span><span class="p">:</span> <span class="n">sub_ts</span><span class="p">})</span>
+
+    <span class="k">return</span> <span class="n">spikes</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="hbm-memory-structures">
+<h2>HBM Memory Structures<a class="headerlink" href="#hbm-memory-structures" title="Link to this heading">#</a></h2>
+<p>HBM stores the network structure (pointers and synapses). All addresses are byte addresses.</p>
+<section id="memory-map">
+<h3><strong>Memory Map</strong><a class="headerlink" href="#memory-map" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌──────────────────────────────────────────────────────────┐
+│ HBM Memory Layout (8 GB total, 2 GB used)               │
+├────────────────┬─────────────────────────────────────────┤
+│ 0x00000000     │ Region 1: Axon Pointers                 │
+│ - 0x00003FFF   │ Size: 16 KB (16,384 bytes)              │
+│                │ Format: 32-bit pointers × 512 axons     │
+├────────────────┼─────────────────────────────────────────┤
+│ 0x00004000     │ Region 2: Neuron Pointers               │
+│ - 0x00007FFF   │ Size: 512 KB                            │
+│                │ Format: 32-bit pointers × 131,072 neurons│
+├────────────────┼─────────────────────────────────────────┤
+│ 0x00008000     │ Region 3: Synapses                      │
+│ - 0x7FFFFFFF   │ Size: ~2 GB (variable, network-dependent)│
+│                │ Format: Variable-length synapse lists   │
+└────────────────┴─────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="pointer-format-32-bits">
+<h3><strong>Pointer Format (32 bits)</strong><a class="headerlink" href="#pointer-format-32-bits" title="Link to this heading">#</a></h3>
+<p>Pointers are stored in Regions 1 and 2, mapping axon/neuron IDs to their synapse lists.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌───────────────────────────────────────────────────────────┐
+│                  32-bit Pointer Entry                     │
+├────────────────┬──────────────────────────────────────────┤
+│ [31:23]        │ Length (9 bits) - number of synapse rows│
+│ [22:0]         │ Start Address (23 bits) - HBM row index │
+│                │ (actual byte address = 0x8000 + addr×32)│
+└────────────────┴──────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Axon 5 pointer = 0x00201234
+  Length = 0x001 (1 row = 8 synapses)
+  Start address = 0x01234 (row index)
+  Actual HBM address = 0x8000 + (0x1234 × 32) = 0x2A680
+</pre></div>
+</div>
+<p><strong>Python Encoding:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">encode_pointer</span><span class="p">(</span><span class="n">start_row</span><span class="p">,</span> <span class="n">num_rows</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    start_row: Row index in synapse region (not byte address)</span>
+<span class="sd">    num_rows: Number of consecutive rows (each row = 8 synapses)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="n">num_rows</span> <span class="o">&amp;</span> <span class="mh">0x1FF</span>  <span class="c1"># 9 bits</span>
+    <span class="n">address</span> <span class="o">=</span> <span class="n">start_row</span> <span class="o">&amp;</span> <span class="mh">0x7FFFFF</span>  <span class="c1"># 23 bits</span>
+    <span class="n">pointer</span> <span class="o">=</span> <span class="p">(</span><span class="n">length</span> <span class="o">&lt;&lt;</span> <span class="mi">23</span><span class="p">)</span> <span class="o">|</span> <span class="n">address</span>
+    <span class="k">return</span> <span class="n">pointer</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_pointer</span><span class="p">(</span><span class="n">pointer</span><span class="p">):</span>
+    <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="n">pointer</span> <span class="o">&gt;&gt;</span> <span class="mi">23</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1FF</span>
+    <span class="n">start_row</span> <span class="o">=</span> <span class="n">pointer</span> <span class="o">&amp;</span> <span class="mh">0x7FFFFF</span>
+    <span class="n">byte_address</span> <span class="o">=</span> <span class="mh">0x8000</span> <span class="o">+</span> <span class="p">(</span><span class="n">start_row</span> <span class="o">*</span> <span class="mi">32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;num_rows&#39;</span><span class="p">:</span> <span class="n">length</span><span class="p">,</span> <span class="s1">&#39;start_row&#39;</span><span class="p">:</span> <span class="n">start_row</span><span class="p">,</span> <span class="s1">&#39;byte_address&#39;</span><span class="p">:</span> <span class="n">byte_address</span><span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="synapse-format-32-bits">
+<h3><strong>Synapse Format (32 bits)</strong><a class="headerlink" href="#synapse-format-32-bits" title="Link to this heading">#</a></h3>
+<p>Synapses are stored in Region 3, organized as rows of 8 synapses each (256 bits = 32 bytes per row).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌───────────────────────────────────────────────────────────┐
+│                  32-bit Synapse Entry                     │
+├────────────────┬──────────────────────────────────────────┤
+│ [31:29]        │ OpCode (3 bits)                          │
+│                │   000 = Regular synapse                  │
+│                │   100 = Output spike (send to host)      │
+│                │   101 = Recurrent connection             │
+│ [28:16]        │ Target Address (13 bits)                 │
+│                │   For synapse: target neuron ID          │
+│                │   For output: neuron to monitor          │
+│ [15:0]         │ Weight (16 bits, signed fixed-point)     │
+│                │   Interpretation: weight / 32768         │
+└────────────────┴──────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>OpCode Details:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>OpCode</p></th>
+<th class="head"><p>Binary</p></th>
+<th class="head"><p>Meaning</p></th>
+<th class="head"><p>Target Field</p></th>
+<th class="head"><p>Weight Field</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3'b000</span></code></p></td>
+<td><p>Regular synapse</p></td>
+<td><p>Neuron ID (13 bits, 0-8191 within group)</p></td>
+<td><p>Synaptic weight (signed 16-bit)</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3'b100</span></code></p></td>
+<td><p>Output spike</p></td>
+<td><p>Neuron ID to report</p></td>
+<td><p>Unused (set to 0)</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">3'b101</span></code></p></td>
+<td><p>Recurrent</p></td>
+<td><p>Global neuron ID (13 bits)</p></td>
+<td><p>Synaptic weight</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Weight Encoding:</strong></p>
+<p>Weights are 16-bit signed integers representing fixed-point values:</p>
+<ul class="simple">
+<li><p><strong>Range:</strong> -32,768 to +32,767</p></li>
+<li><p><strong>Interpretation:</strong> <code class="docutils literal notranslate"><span class="pre">weight_value</span> <span class="pre">/</span> <span class="pre">32768.0</span></code></p></li>
+<li><p><strong>Examples:</strong></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x7FFF</span></code> (32767) → +0.9999… ≈ +1.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x4000</span></code> (16384) → +0.5</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x0400</span></code> (1024) → +0.03125</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x0000</span></code> (0) → 0.0</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0xFC00</span></code> (-1024) → -0.03125</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0x8000</span></code> (-32768) → -1.0</p></li>
+</ul>
+</li>
+</ul>
+<p><strong>Example Synapses:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Regular synapse: target neuron 42, weight +1000 (≈0.0305)</span>
+<span class="n">synapse_1</span> <span class="o">=</span> <span class="p">(</span><span class="mb">0b000</span> <span class="o">&lt;&lt;</span> <span class="mi">29</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">42</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="mi">1000</span>
+<span class="c1"># = 0x002A03E8</span>
+
+<span class="c1"># Output spike: report neuron 100</span>
+<span class="n">synapse_2</span> <span class="o">=</span> <span class="p">(</span><span class="mb">0b100</span> <span class="o">&lt;&lt;</span> <span class="mi">29</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">100</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="mi">0</span>
+<span class="c1"># = 0x80640000</span>
+
+<span class="c1"># Negative weight synapse: target neuron 10, weight -500 (inhibitory)</span>
+<span class="n">synapse_3</span> <span class="o">=</span> <span class="p">(</span><span class="mb">0b000</span> <span class="o">&lt;&lt;</span> <span class="mi">29</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="mi">10</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="p">((</span><span class="o">-</span><span class="mi">500</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span>
+<span class="c1"># = 0x000AFE0C</span>
+</pre></div>
+</div>
+<p><strong>Python Encoding:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">encode_synapse</span><span class="p">(</span><span class="n">opcode</span><span class="p">,</span> <span class="n">target</span><span class="p">,</span> <span class="n">weight</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    opcode: 0=regular, 4=output, 5=recurrent</span>
+<span class="sd">    target: neuron ID (0-8191 for regular, 0-131071 for global)</span>
+<span class="sd">    weight: signed integer (-32768 to 32767)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">opcode_bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">opcode</span> <span class="o">&amp;</span> <span class="mh">0x7</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">29</span>
+    <span class="n">target_bits</span> <span class="o">=</span> <span class="p">(</span><span class="n">target</span> <span class="o">&amp;</span> <span class="mh">0x1FFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span>
+    <span class="n">weight_bits</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+    <span class="n">synapse</span> <span class="o">=</span> <span class="n">opcode_bits</span> <span class="o">|</span> <span class="n">target_bits</span> <span class="o">|</span> <span class="n">weight_bits</span>
+    <span class="k">return</span> <span class="n">synapse</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_synapse</span><span class="p">(</span><span class="n">synapse</span><span class="p">):</span>
+    <span class="n">opcode</span> <span class="o">=</span> <span class="p">(</span><span class="n">synapse</span> <span class="o">&gt;&gt;</span> <span class="mi">29</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x7</span>
+    <span class="n">target</span> <span class="o">=</span> <span class="p">(</span><span class="n">synapse</span> <span class="o">&gt;&gt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0x1FFF</span>
+    <span class="n">weight</span> <span class="o">=</span> <span class="n">synapse</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+    <span class="c1"># Sign extend weight if necessary</span>
+    <span class="k">if</span> <span class="n">weight</span> <span class="o">&amp;</span> <span class="mh">0x8000</span><span class="p">:</span>  <span class="c1"># Negative</span>
+        <span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span> <span class="o">-</span> <span class="mi">65536</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s1">&#39;opcode&#39;</span><span class="p">:</span> <span class="n">opcode</span><span class="p">,</span> <span class="s1">&#39;target&#39;</span><span class="p">:</span> <span class="n">target</span><span class="p">,</span> <span class="s1">&#39;weight&#39;</span><span class="p">:</span> <span class="n">weight</span><span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Synapse Row (256 bits = 8 synapses):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Row</span> <span class="n">at</span> <span class="n">HBM</span> <span class="n">address</span> <span class="mh">0x8000</span><span class="p">:</span>
+  <span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">224</span><span class="p">]</span> <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">7</span>
+  <span class="p">[</span><span class="mi">223</span><span class="p">:</span><span class="mi">192</span><span class="p">]</span> <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">6</span>
+  <span class="p">[</span><span class="mi">191</span><span class="p">:</span><span class="mi">160</span><span class="p">]</span> <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">5</span>
+  <span class="p">[</span><span class="mi">159</span><span class="p">:</span><span class="mi">128</span><span class="p">]</span> <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">4</span>
+  <span class="p">[</span><span class="mi">127</span><span class="p">:</span><span class="mi">96</span><span class="p">]</span>  <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">3</span>
+  <span class="p">[</span><span class="mi">95</span><span class="p">:</span><span class="mi">64</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">2</span>
+  <span class="p">[</span><span class="mi">63</span><span class="p">:</span><span class="mi">32</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">1</span>
+  <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="n">Synapse</span> <span class="mi">0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="bram-memory-structures">
+<h2>BRAM Memory Structures<a class="headerlink" href="#bram-memory-structures" title="Link to this heading">#</a></h2>
+<p>BRAM stores spike masks for external events (axon spikes).</p>
+<section id="bram-organization">
+<h3><strong>BRAM Organization</strong><a class="headerlink" href="#bram-organization" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌──────────────────────────────────────────────────────────┐
+│ BRAM: 32,768 rows × 256 bits per row = 1 MB             │
+├────────────────┬─────────────────────────────────────────┤
+│ Address        │ Content                                 │
+├────────────────┼─────────────────────────────────────────┤
+│ 0x0000         │ Axon/Event 0 spike mask                 │
+│ 0x0001         │ Axon/Event 1 spike mask                 │
+│ ...            │ ...                                     │
+│ 0x7FFF         │ Axon/Event 32,767 spike mask            │
+└────────────────┴─────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="spike-mask-format-256-bits">
+<h3><strong>Spike Mask Format (256 bits)</strong><a class="headerlink" href="#spike-mask-format-256-bits" title="Link to this heading">#</a></h3>
+<p>Each row contains a 256-bit bitmask indicating which neuron groups should receive this spike.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌───────────────────────────────────────────────────────────┐
+│              256-bit Spike Mask (one BRAM row)            │
+├────────────────┬──────────────────────────────────────────┤
+│ [255:240]      │ Group 15 mask (16 bits)                  │
+│ [239:224]      │ Group 14 mask (16 bits)                  │
+│ ...            │ ...                                      │
+│ [31:16]        │ Group 1 mask (16 bits)                   │
+│ [15:0]         │ Group 0 mask (16 bits)                   │
+└────────────────┴──────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Each 16-bit group mask:</strong></p>
+<ul class="simple">
+<li><p>Bit 0: First neuron in group should receive spike</p></li>
+<li><p>Bit 1: Second neuron in group should receive spike</p></li>
+<li><p>…</p></li>
+<li><p>Bit 15: 16th neuron in group should receive spike</p></li>
+</ul>
+<p><strong>Note:</strong> This is a coarse-grained mask. For fine-grained connectivity, the spike is processed further:</p>
+<ol class="arabic simple">
+<li><p>BRAM mask identifies which groups get the spike</p></li>
+<li><p>For each group, HBM is read to get the full synapse list</p></li>
+<li><p>Synapse list specifies exact target neurons and weights</p></li>
+</ol>
+<p><strong>Example:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Axon</span> <span class="mi">5</span> <span class="n">fires</span><span class="p">,</span> <span class="n">BRAM</span> <span class="n">row</span> <span class="mi">5</span> <span class="n">contains</span><span class="p">:</span>
+  <span class="n">Group</span> <span class="mi">0</span> <span class="n">mask</span><span class="p">:</span> <span class="mh">0x000F</span> <span class="p">(</span><span class="n">neurons</span> <span class="mi">0</span><span class="o">-</span><span class="mi">3</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">0</span><span class="p">)</span>
+  <span class="n">Group</span> <span class="mi">1</span> <span class="n">mask</span><span class="p">:</span> <span class="mh">0x0000</span> <span class="p">(</span><span class="n">no</span> <span class="n">neurons</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">1</span><span class="p">)</span>
+  <span class="n">Group</span> <span class="mi">2</span> <span class="n">mask</span><span class="p">:</span> <span class="mh">0x8000</span> <span class="p">(</span><span class="n">neuron</span> <span class="mi">15</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">2</span><span class="p">)</span>
+  <span class="n">Groups</span> <span class="mi">3</span><span class="o">-</span><span class="mi">15</span><span class="p">:</span> <span class="mh">0x0000</span>
+
+<span class="n">This</span> <span class="n">means</span> <span class="n">axon</span> <span class="mi">5</span> <span class="n">spike</span> <span class="n">should</span> <span class="n">be</span> <span class="n">delivered</span> <span class="n">to</span><span class="p">:</span>
+  <span class="o">-</span> <span class="n">Neurons</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">0</span>
+  <span class="o">-</span> <span class="n">Neuron</span> <span class="mi">15</span> <span class="ow">in</span> <span class="n">group</span> <span class="mi">2</span>
+</pre></div>
+</div>
+<p><strong>Python Encoding:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">encode_bram_mask</span><span class="p">(</span><span class="n">group_masks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    group_masks: list of 16 integers (16-bit masks for each group)</span>
+<span class="sd">    Returns: 256-bit value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">group_mask</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_masks</span><span class="p">):</span>
+        <span class="n">mask</span> <span class="o">|=</span> <span class="p">(</span><span class="n">group_mask</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span><span class="p">)</span> <span class="o">&lt;&lt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">16</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">mask</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">decode_bram_mask</span><span class="p">(</span><span class="n">mask_256bit</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    mask_256bit: 256-bit value</span>
+<span class="sd">    Returns: list of 16 group masks</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">group_masks</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">16</span><span class="p">):</span>
+        <span class="n">group_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">mask_256bit</span> <span class="o">&gt;&gt;</span> <span class="p">(</span><span class="n">i</span> <span class="o">*</span> <span class="mi">16</span><span class="p">))</span> <span class="o">&amp;</span> <span class="mh">0xFFFF</span>
+        <span class="n">group_masks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">group_mask</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">group_masks</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="pcie-layer">
+<h2>PCIe Layer<a class="headerlink" href="#pcie-layer" title="Link to this heading">#</a></h2>
+<p>All communication between host and FPGA travels over PCIe using Transaction Layer Packets (TLPs).</p>
+<section id="pcie-tlp-format">
+<h3><strong>PCIe TLP Format</strong><a class="headerlink" href="#pcie-tlp-format" title="Link to this heading">#</a></h3>
+<p>hs_bridge and the FPGA do NOT directly create PCIe TLPs - the PCIe hardware handles this automatically. However, understanding the format is useful for debugging.</p>
+<p><strong>Memory Write TLP (Host → FPGA MMIO):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   PCIe Memory Write TLP                     │
+├────────────────────┬────────────────────────────────────────┤
+│ Header (3-4 DWords)│                                        │
+│ [127:125]          │ Fmt = 010 (write with data, 32-bit addr)│
+│ [124:120]          │ Type = 00000 (memory write)            │
+│ [95:64]            │ Address (32 bits) - FPGA MMIO address  │
+│ [9:0]              │ Length (10 bits) - DWords to transfer  │
+├────────────────────┼────────────────────────────────────────┤
+│ Data (N DWords)    │ Payload data (up to 4096 bytes)        │
+└────────────────────┴────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Memory Read TLP (FPGA → Host Memory via DMA):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   PCIe Memory Read TLP                      │
+├────────────────────┬────────────────────────────────────────┤
+│ Header (4 DWords)  │                                        │
+│ [127:125]          │ Fmt = 001 (read request, 64-bit addr)  │
+│ [124:120]          │ Type = 00000 (memory read)             │
+│ [95:0]             │ Address (64 bits) - host DDR4 address  │
+│ [9:0]              │ Length (10 bits) - DWords requested    │
+└────────────────────┴────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Completion TLP (Host → FPGA, returning DMA data):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   PCIe Completion TLP                       │
+├────────────────────┬────────────────────────────────────────┤
+│ Header (3 DWords)  │                                        │
+│ [127:125]          │ Fmt = 010 (completion with data)       │
+│ [124:120]          │ Type = 01010 (completion)              │
+│ [9:0]              │ Byte count (10 bits)                   │
+├────────────────────┼────────────────────────────────────────┤
+│ Data (N DWords)    │ Requested data from host memory        │
+└────────────────────┴────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Key Points:</strong></p>
+<ul class="simple">
+<li><p><strong>DWord:</strong> 32-bit (4-byte) word</p></li>
+<li><p><strong>Addressing:</strong> Can be 32-bit or 64-bit depending on format</p></li>
+<li><p><strong>Maximum payload:</strong> 4096 bytes (4 KB) per TLP</p></li>
+<li><p><strong>Ordering:</strong> Memory writes are posted (no response), reads require completions</p></li>
+</ul>
+<p><strong>hs_bridge’s Role:</strong></p>
+<ul class="simple">
+<li><p>hs_bridge does NOT create TLPs directly</p></li>
+<li><p>When hs_bridge writes to an MMIO address, the OS kernel driver and PCIe hardware create the TLP</p></li>
+<li><p>When FPGA does DMA, the FPGA’s PCIe hard block creates Memory Read TLPs automatically</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="summary-packet-flow">
+<h2>Summary: Packet Flow<a class="headerlink" href="#summary-packet-flow" title="Link to this heading">#</a></h2>
+<section id="host-to-fpga-flow">
+<h3><strong>Host to FPGA Flow:</strong><a class="headerlink" href="#host-to-fpga-flow" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Python (hs_bridge):
+   packet = create_512bit_command(opcode=0x01, ...)
+
+2. Write to system memory (DDR4):
+   dma_buffer[0] = packet
+
+3. Tell FPGA via MMIO (creates PCIe Memory Write TLP):
+   fpga.write_register(DMA_ADDR_REG, physical_address)
+
+4. FPGA reads via DMA (creates PCIe Memory Read TLP):
+   FPGA → PCIe: &quot;Send me data from address X&quot;
+
+5. Host responds (PCIe Completion TLP):
+   Host → FPGA: &quot;Here&#39;s the 512-bit packet&quot;
+
+6. FPGA decodes:
+   Extracts opcode, routes to appropriate module
+</pre></div>
+</div>
+</section>
+<section id="fpga-to-host-flow">
+<h3><strong>FPGA to Host Flow:</strong><a class="headerlink" href="#fpga-to-host-flow" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Neuron spikes:
+   URAM threshold check → spike detected
+
+2. Spike collection:
+   Spike FIFO gathers spikes from all neuron groups
+
+3. Packet assembly:
+   spike_fifo_controller creates 512-bit spike packet
+
+4. Write to output FIFO:
+   Buffered in FPGA FIFO
+
+5. DMA to host (creates PCIe Memory Write TLP):
+   FPGA → Host memory: Write spike packet to DMA buffer
+
+6. Host retrieves:
+   fpga_controller.flush_spikes() reads from DMA buffer
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="quick-reference-tables">
+<h2>Quick Reference Tables<a class="headerlink" href="#quick-reference-tables" title="Link to this heading">#</a></h2>
+<section id="command-opcodes">
+<h3><strong>Command Opcodes</strong><a class="headerlink" href="#command-opcodes" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Payload</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0x00</p></td>
+<td><p>INPUT_SPIKES</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[495:480]=axon_id</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x01</p></td>
+<td><p>EXECUTE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[495:480]=num_timesteps</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>0x02</p></td>
+<td><p>HBM_WRITE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[495:464]=addr,</span> <span class="pre">[463:432]=len,</span> <span class="pre">[431:176]=data</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>0x04</p></td>
+<td><p>URAM_WRITE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[495:480]=neuron_id,</span> <span class="pre">[479:444]=voltage</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>0x06</p></td>
+<td><p>CONFIG_WRITE</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[495:480]=reg_addr,</span> <span class="pre">[479:416]=value</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="synapse-opcodes">
+<h3><strong>Synapse OpCodes</strong><a class="headerlink" href="#synapse-opcodes" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Code</p></th>
+<th class="head"><p>Binary</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">000</span></code></p></td>
+<td><p>Regular synapse</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p>Output spike (send to host)</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">101</span></code></p></td>
+<td><p>Recurrent connection</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="memory-regions">
+<h3><strong>Memory Regions</strong><a class="headerlink" href="#memory-regions" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Region</p></th>
+<th class="head"><p>Base Address</p></th>
+<th class="head"><p>Size</p></th>
+<th class="head"><p>Contents</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Axon Ptrs</p></td>
+<td><p>0x00000000</p></td>
+<td><p>16 KB</p></td>
+<td><p>Axon → synapse pointers</p></td>
+</tr>
+<tr class="row-odd"><td><p>Neuron Ptrs</p></td>
+<td><p>0x00004000</p></td>
+<td><p>512 KB</p></td>
+<td><p>Neuron → synapse pointers</p></td>
+</tr>
+<tr class="row-even"><td><p>Synapses</p></td>
+<td><p>0x00008000</p></td>
+<td><p>~2 GB</p></td>
+<td><p>Synapse lists</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<p>This reference should provide all the information needed to encode/decode packets and data structures used throughout the hs_bridge and FPGA implementation.</p>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-of-contents">Table of Contents</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#host-to-fpga-packets">Host to FPGA Packets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-packet-format-512-bits"><strong>Command Packet Format (512 bits)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-definitions"><strong>Opcode Definitions</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-0x00-input-spikes"><strong>Opcode 0x00: INPUT_SPIKES</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-0x01-execute"><strong>Opcode 0x01: EXECUTE</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-0x02-hbm-write"><strong>Opcode 0x02: HBM_WRITE</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-0x04-uram-write"><strong>Opcode 0x04: URAM_WRITE</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opcode-0x06-config-write"><strong>Opcode 0x06: CONFIG_WRITE</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-to-host-packets">FPGA to Host Packets</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-packet-format-512-bits"><strong>Spike Packet Format (512 bits)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-memory-structures">HBM Memory Structures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-map"><strong>Memory Map</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-format-32-bits"><strong>Pointer Format (32 bits)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synapse-format-32-bits"><strong>Synapse Format (32 bits)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-memory-structures">BRAM Memory Structures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-organization"><strong>BRAM Organization</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-mask-format-256-bits"><strong>Spike Mask Format (256 bits)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-layer">PCIe Layer</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-tlp-format"><strong>PCIe TLP Format</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-packet-flow">Summary: Packet Flow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#host-to-fpga-flow"><strong>Host to FPGA Flow:</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fpga-to-host-flow"><strong>FPGA to Host Flow:</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-reference-tables">Quick Reference Tables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-opcodes"><strong>Command Opcodes</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synapse-opcodes"><strong>Synapse OpCodes</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-regions"><strong>Memory Regions</strong></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/supplementary_information/packet_encoding.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

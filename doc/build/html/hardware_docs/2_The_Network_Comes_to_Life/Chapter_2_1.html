@@ -1,0 +1,1442 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>2.1 Visualizing the Network’s Signal Processing in Hardware &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_1';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="2.2 State Machine Coordination and Control Signals" href="Chapter_2_2.html" />
+    <link rel="prev" title="2 The Network Comes to Life" href="../chapter_2.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_2.html" class="nav-link">2 The Network Comes to Life</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">2.1 Visualizing the Network’s Signal Processing in Hardware</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="visualizing-the-network-s-signal-processing-in-hardware">
+<h1>2.1 Visualizing the Network’s Signal Processing in Hardware<a class="headerlink" href="#visualizing-the-network-s-signal-processing-in-hardware" title="Link to this heading">#</a></h1>
+<section id="key-terms">
+<h2>Key Terms<a class="headerlink" href="#key-terms" title="Link to this heading">#</a></h2>
+<p>Before diving into the execution flow, let’s define some important hardware terms used throughout this chapter:</p>
+<p><strong>Group (Neuron Group)</strong>
+A collection of neurons managed by a single URAM bank. The hardware has 16 URAM banks (URAM0-URAM15), so there are 16 groups numbered 0-15. Each group can hold approximately 8,192 neurons (131,072 total ÷ 16 banks). When we say “group 0 has spikes,” we mean neurons stored in URAM bank 0 have spiked.</p>
+<p><strong>Mask (Spike Mask)</strong>
+A bit vector where each bit indicates whether a group has spiking activity. For example, <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked[15:0]</span> <span class="pre">=</span> <span class="pre">0x0007</span></code> means bits 0, 1, and 2 are set, indicating groups 0, 1, and 2 have spiking neurons. Each bit corresponds to one of the 16 URAM banks (neuron groups).</p>
+<p><strong>Muxing/Demuxing (Multiplexing/Demultiplexing)</strong></p>
+<ul class="simple">
+<li><p><strong>Demuxing</strong>: Taking one input and routing it to one of multiple outputs based on a selector. In Phase 1, <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> demuxes HBM data (containing 16 pointers) to 16 separate pointer FIFOs based on the spike mask.</p></li>
+<li><p><strong>Muxing</strong>: Taking multiple inputs and selecting one as the output. In Phase 2, <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> muxes (round-robin reads) from 16 pointer FIFOs to select which pointer to process next.</p></li>
+</ul>
+<p><strong>Round-Robin Reading</strong>
+A fair scheduling algorithm that cycles through resources in sequential order. The <code class="docutils literal notranslate"><span class="pre">pointer_fifo_controller</span></code> reads from ptr0 → ptr1 → ptr2 → … → ptr15 → ptr0 (looping back), ensuring all groups get equal processing time.</p>
+<p><strong>FIFO (First In, First Out)</strong>
+A queue data structure where the first item added is the first item removed. The hardware uses multiple types of FIFOs:</p>
+<ul class="simple">
+<li><p><strong>Pointer FIFOs (ptr0-ptr15)</strong>: 16 FIFOs that store 32-bit HBM addresses pointing to synapse data locations. Each FIFO corresponds to one neuron group.</p></li>
+<li><p><strong>Spike FIFOs (spk0-spk7)</strong>: 8 FIFOs that store 17-bit neuron addresses (neuron IDs that spiked). These aggregate spikes before sending to the host.</p></li>
+<li><p><strong>rxFIFO/txFIFO</strong>: PCIe communication buffers (512-bit wide) for receiving commands from and sending results to the host.</p></li>
+</ul>
+<p><strong>One-Hot / Multi-Hot Encoding</strong>
+A binary representation where bits indicate active states:</p>
+<ul class="simple">
+<li><p><strong>One-hot</strong>: Exactly one bit is set to 1. Example: <code class="docutils literal notranslate"><span class="pre">0x0004</span></code> (only bit 2 set) means only group 2 is active.</p></li>
+<li><p><strong>Multi-hot</strong>: Multiple bits can be set to 1. Example: <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span> <span class="pre">=</span> <span class="pre">0x0007</span></code> (bits 0, 1, 2 set) means groups 0, 1, and 2 all have spiking neurons.
+The spike masks (<code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code>, <code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span></code>) use multi-hot encoding because multiple groups can have spikes simultaneously.</p></li>
+</ul>
+<p><strong>Pointer (HBM Address)</strong>
+A 32-bit value that tells the hardware WHERE to find synapse data in HBM memory. Format: <code class="docutils literal notranslate"><span class="pre">{length[31:23],</span> <span class="pre">base_address[22:0]}</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">length</span></code>: How many 256-bit rows to read (number of synapses ÷ 8)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">base_address</span></code>: Starting location in HBM
+Example: <code class="docutils literal notranslate"><span class="pre">0x02001000</span></code> means “read 2 rows starting at HBM address 0x1000”</p></li>
+</ul>
+<p><strong>Important distinction</strong>: Pointer FIFOs store ADDRESSES (where to find data), NOT the actual synapse data. The synapse data is only read in Phase 2 using these addresses.</p>
+<hr class="docutils" />
+</section>
+<section id="overview-the-two-phase-execution-model">
+<h2>Overview: The Two-Phase Execution Model<a class="headerlink" href="#overview-the-two-phase-execution-model" title="Link to this heading">#</a></h2>
+<p>Every timestep of network execution goes through <strong>two main phases</strong>, with each phase potentially executing multiple times if neurons spike and trigger recurrent processing.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SETUP: INPUT RECEPTION (Host → FPGA)
+┌──────────────────────────────────────────────────────────────┐
+│ Host sends input spikes via network.step([&#39;a0&#39;, &#39;a1&#39;, ...]) │
+│ Written to: BRAM (Future buffer, 256-bit spike masks)       │
+│ Time: ~1-10 microseconds (depends on PCIe transfer)          │
+│ Status: Network is IDLE, waiting for execute command         │
+│ Next: Buffer role reassignment (bram_select flip)            │
+└──────────────────────────────────────────────────────────────┘
+                           │
+                           │ execute() command sent
+                           │ Buffer roles reassigned: Future buffer → Present, Present buffer → Future
+                           ▼
+PHASE 1: POINTER COLLECTION
+┌──────────────────────────────────────────────────────────────┐
+│ Goal: Find which synapses need to be processed               │
+│                                                               │
+│ PHASE 1a: External Events (Axon Spikes)                      │
+│   - external_events_processor reads Present BRAM              │
+│   - Generates exec_bram_spiked[15:0] mask                    │
+│   - hbm_processor reads axon pointers from HBM Region 1      │
+│   - pointer_fifo_controller demuxes pointers → 16 FIFOs      │
+│                                                               │
+│ PHASE 1b: Internal Events (Neuron Spikes from previous cycle)│
+│   - internal_events_processor reads URAM states              │
+│   - Generates exec_uram_spiked[15:0] mask                    │
+│   - hbm_processor reads neuron pointers from HBM Region 2    │
+│   - pointer_fifo_controller continues filling 16 FIFOs       │
+│                                                               │
+│ Output: 16 pointer FIFOs filled with addresses               │
+│ Time: ~1-5 microseconds (depends on # of spiking sources)    │
+└──────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+PHASE 2: SYNAPTIC PROCESSING &amp; NEURON UPDATES
+┌──────────────────────────────────────────────────────────────┐
+│ Goal: Read synapses, accumulate weights, update neurons      │
+│                                                               │
+│ - pointer_fifo_controller: Round-robin read from 16 FIFOs    │
+│ - hbm_processor: Pop pointer → read synapses from Region 3   │
+│ - hbm_processor: Parse synapses → forward to IEP             │
+│ - internal_events_processor: Accumulate weights into neurons │
+│ - internal_events_processor: Apply neuron model (leak, etc.) │
+│ - internal_events_processor: Threshold check → spike?        │
+│ - internal_events_processor: Write updated state to URAM     │
+│ - Spikes → spike_fifo_controller → command_interpreter       │
+│                                                               │
+│ Output: Updated neuron states in URAM, new spikes generated  │
+│ Time: ~1-10 microseconds (depends on # of synapses)          │
+│                                                               │
+│ If neurons spiked: Loop back to Phase 1b                     │
+│ If no more spikes: Timestep complete                         │
+└──────────────────────────────────────────────────────────────┘
+                           │
+                           ▼
+SPIKE OUTPUT (FPGA → Host)
+┌──────────────────────────────────────────────────────────────┐
+│ command_interpreter batches spikes (14 per 512-bit packet)   │
+│ Sends via txFIFO → pcie2fifos → PCIe → Host                  │
+│ Host reads via flush_spikes()                                │
+│ Time: ~1-5 microseconds                                      │
+└──────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Total time per timestep:</strong> ~5-30 microseconds depending on network activity</p>
+<ul class="simple">
+<li><p>Small networks with few spikes: ~5 µs</p></li>
+<li><p>Large networks with many spikes: ~30 µs</p></li>
+<li><p>Target: 1 millisecond per timestep → can run 30-200 timesteps in real-time</p></li>
+</ul>
+<p><strong>Key insight:</strong> Phase 1 collects <em>addresses</em> of synapses to process. Phase 2 fetches and processes those synapses. This two-phase approach allows efficient bulk memory access.</p>
+<hr class="docutils" />
+</section>
+<section id="the-data-journey-what-moves-where">
+<h2>The Data Journey: What Moves Where<a class="headerlink" href="#the-data-journey-what-moves-where" title="Link to this heading">#</a></h2>
+<p>Let’s visualize where data lives at each phase, using our example where <strong>axons a0, a1, a2 fire</strong>.</p>
+<section id="before-setup-network-is-idle">
+<h3>Before Setup: Network is Idle<a class="headerlink" href="#before-setup-network-is-idle" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                        HOST                                 │
+│  Python code:                                               │
+│    network.step([&#39;a0&#39;, &#39;a1&#39;, &#39;a2&#39;])                         │
+│                                                             │
+│  In memory: List of axon names to send                     │
+└─────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────┐
+│                        FPGA                                 │
+│                                                             │
+│  BRAM (Double Buffer):                                     │
+│  ┌───────────────────────────────────────────────────────┐ │
+│  │ Present: [0x00...00] - Processing last timestep      │ │
+│  │ Future:  [0x00...00] - Ready to receive new inputs   │ │
+│  └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│  HBM: Contains network structure (from initialization)     │
+│  ┌───────────────────────────────────────────────────────┐ │
+│  │ Region 1: Axon pointers (where each axon&#39;s synapses) │ │
+│  │ Region 2: Neuron pointers (where each neuron&#39;s outs) │ │
+│  │ Region 3: Synapse data (target addresses + weights)  │ │
+│  └───────────────────────────────────────────────────────┘ │
+│                                                             │
+│  URAM: All neurons at V=0 (just cleared)                   │
+│  ┌───────────────────────────────────────────────────────┐ │
+│  │ h0: V=0, h1: V=0, h2: V=0, h3: V=0, h4: V=0          │ │
+│  │ o0: V=0, o1: V=0, o2: V=0, o3: V=0, o4: V=0          │ │
+│  └───────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+<section id="after-setup-inputs-written-to-bram-future-buffer">
+<h3>After Setup: Inputs Written to BRAM Future Buffer<a class="headerlink" href="#after-setup-inputs-written-to-bram-future-buffer" title="Link to this heading">#</a></h3>
+<p>The host writes a 256-bit spike mask to BRAM Future buffer:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                        FPGA BRAM                            │
+│                                                             │
+│  Future Buffer (Row 0): 256-bit spike mask                 │
+│  ┌─────────────────────────────────────────────────────────┐ │
+│  │  Bit 0 = 1: Axon a0 is firing                          │ │
+│  │  Bit 1 = 1: Axon a1 is firing                          │ │
+│  │  Bit 2 = 1: Axon a2 is firing                          │ │
+│  │  Bit 3 = 0: Axon a3 is silent                          │ │
+│  │  Bit 4 = 0: Axon a4 is silent                          │ │
+│  │  Bits 5-255 = 0: No other axons (network only has 5)   │ │
+│  │                                                          │ │
+│  │  As hex bytes (little-endian):                         │ │
+│  │  Byte [0] = 0x07 = 0b00000111 (bits 0,1,2 set)         │ │
+│  │  Bytes [1]-[31] = 0x00 (all zeros)                     │ │
+│  └─────────────────────────────────────────────────────────┘ │
+│                                                             │
+│  Present Buffer: Still contains last timestep&#39;s data       │
+│  Status: Waiting for execute() command                     │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p>When execute() is called:</p>
+<ol class="arabic simple">
+<li><p>BRAM buffer roles reassigned: <code class="docutils literal notranslate"><span class="pre">bram_select</span></code> flips (no data movement)</p></li>
+<li><p>Future buffer cleared for next timestep</p></li>
+<li><p>Phase 1a begins</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="during-phase-1a-external-event-processing-pointer-collection">
+<h3>During Phase 1a: External Event Processing (Pointer Collection)<a class="headerlink" href="#during-phase-1a-external-event-processing-pointer-collection" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   PHASE 1a DATA FLOW                        │
+│                                                             │
+│  Step 1: external_events_processor reads Present BRAM       │
+│    Row 0 data: 0x00...00000007                             │
+│    Detected: Bits 0,1,2 are set                            │
+│    Output: exec_bram_spiked[15:0] = 0x0007                 │
+│            (Neuron group 0 has 3 active axons)             │
+│                                                             │
+│  Step 2: hbm_processor reads axon pointers from HBM         │
+│                                                             │
+│    HBM Region 1, Row 0 (Axon Pointer Storage):             │
+│    Each pointer = 32 bits: [31:23]=length, [22:0]=address  │
+│                                                             │
+│    ┌─ Axon a0 pointer ─────────────────────────────────┐   │
+│    │ Read HBM[Region1 + 0]:                           │   │
+│    │ Pointer = {length: 1 row, start: 0x8000}         │   │
+│    │ Meaning: &quot;a0&#39;s synapses are at HBM[0x8000]&quot;      │   │
+│    └───────────────────────────────────────────────────┘   │
+│                                                             │
+│    ┌─ Axon a1 pointer ─────────────────────────────────┐   │
+│    │ Read HBM[Region1 + 4 bytes]:                     │   │
+│    │ Pointer = {length: 1 row, start: 0x8001}         │   │
+│    │ Meaning: &quot;a1&#39;s synapses are at HBM[0x8001]&quot;      │   │
+│    └───────────────────────────────────────────────────┘   │
+│                                                             │
+│    ┌─ Axon a2 pointer ─────────────────────────────────┐   │
+│    │ Read HBM[Region1 + 8 bytes]:                     │   │
+│    │ Pointer = {length: 1 row, start: 0x8002}         │   │
+│    └───────────────────────────────────────────────────┘   │
+│                                                             │
+│  Step 3: pointer_fifo_controller demuxes pointers           │
+│                                                             │
+│    Input: 512-bit HBM data with 16 pointers                │
+│    Input: exec_bram_spiked[15:0] = 0x0007 (group 0 only)   │
+│    Action: Write pointers to ptr0 FIFO (others unused)     │
+│                                                             │
+│    Pointer FIFO 0 now contains:                            │
+│    ┌─────────────────────────────────────────────────────┐ │
+│    │ Entry 0: 0x8000 (a0&#39;s synapse row address)         │ │
+│    │ Entry 1: 0x8001 (a1&#39;s synapse row address)         │ │
+│    │ Entry 2: 0x8002 (a2&#39;s synapse row address)         │ │
+│    └─────────────────────────────────────────────────────┘ │
+│                                                             │
+│    Pointer FIFOs 1-15: Empty (no activity in other groups) │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Critical understanding:</strong> Phase 1a ONLY collects addresses (pointers). The actual synapse data (weights, targets) is NOT read yet. This allows efficient batching of memory accesses in Phase 2.</p>
+</section>
+<hr class="docutils" />
+<section id="during-phase-1b-internal-event-processing-if-neurons-spiked">
+<h3>During Phase 1b: Internal Event Processing (If neurons spiked)<a class="headerlink" href="#during-phase-1b-internal-event-processing-if-neurons-spiked" title="Link to this heading">#</a></h3>
+<p>In the first timestep with V=0 everywhere, no neurons have spiked yet, so Phase 1b is skipped initially. But let’s see what happens when neurons DO spike:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                   PHASE 1b DATA FLOW                        │
+│         (Executed when neurons spiked in previous cycle)    │
+│                                                             │
+│  Step 1: internal_events_processor checks for spikes        │
+│    Reads URAM states, applies threshold                    │
+│    If neuron V &gt;= threshold: mark as spiked                │
+│    Output: exec_uram_spiked[15:0] mask                     │
+│                                                             │
+│  Example: If h0, h1, h2, h3, h4 all spiked:                │
+│    exec_uram_spiked[0] = 0x001F (bits 0-4 set)             │
+│    exec_uram_spiked[1-15] = 0x0000 (no neurons in groups)  │
+│                                                             │
+│  Step 2: hbm_processor reads neuron pointers from HBM       │
+│                                                             │
+│    HBM Region 2, Group 0 entries (Neuron Pointer Storage): │
+│                                                             │
+│    ┌─ Neuron h0 pointer ───────────────────────────────┐   │
+│    │ Read HBM[Region2 + h0_offset]:                   │   │
+│    │ Pointer = {length: 1 row, start: 0xA000}         │   │
+│    │ Meaning: &quot;h0&#39;s output synapses at HBM[0xA000]&quot;   │   │
+│    └───────────────────────────────────────────────────┘   │
+│                                                             │
+│    Similarly for h1, h2, h3, h4...                         │
+│                                                             │
+│  Step 3: pointer_fifo_controller adds to FIFOs             │
+│                                                             │
+│    Pointer FIFO 0 now contains (appended):                 │
+│    ┌─────────────────────────────────────────────────────┐ │
+│    │ Entry 0: 0x8000 (a0&#39;s synapses) ← from Phase 1a    │ │
+│    │ Entry 1: 0x8001 (a1&#39;s synapses) ← from Phase 1a    │ │
+│    │ Entry 2: 0x8002 (a2&#39;s synapses) ← from Phase 1a    │ │
+│    │ Entry 3: 0xA000 (h0&#39;s synapses) ← from Phase 1b    │ │
+│    │ Entry 4: 0xA001 (h1&#39;s synapses) ← from Phase 1b    │ │
+│    │ Entry 5: 0xA002 (h2&#39;s synapses) ← from Phase 1b    │ │
+│    │ Entry 6: 0xA003 (h3&#39;s synapses) ← from Phase 1b    │ │
+│    │ Entry 7: 0xA004 (h4&#39;s synapses) ← from Phase 1b    │ │
+│    └─────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Key point:</strong> Phase 1b adds MORE pointers to the same FIFOs. This allows processing both external inputs (axons) and internal recurrent connections (neuron spikes) in a single Phase 2 sweep.</p>
+</section>
+<hr class="docutils" />
+<section id="during-phase-2-synaptic-read-and-neuron-updates">
+<h3>During Phase 2: Synaptic Read and Neuron Updates<a class="headerlink" href="#during-phase-2-synaptic-read-and-neuron-updates" title="Link to this heading">#</a></h3>
+<p>Now the actual work happens:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│              PHASE 2: SYNAPTIC PROCESSING                   │
+│                                                             │
+│  Step 1: pointer_fifo_controller round-robin reads FIFOs    │
+│                                                             │
+│    Cycle 0: Check FIFO 0 → not empty                       │
+│             Pop entry: 0x8000 (a0&#39;s synapse row)           │
+│             Send to hbm_processor                          │
+│                                                             │
+│  Step 2: hbm_processor reads synapse data from HBM Region 3 │
+│                                                             │
+│    ┌─ Read HBM[0x8000] (a0&#39;s synapse row) ──────────────┐  │
+│    │ HBM returns 256-bit data = 8 × 32-bit synapses    │  │
+│    │                                                     │  │
+│    │ Synapse format: [31:29]=OpCode, [28:16]=Target,   │  │
+│    │                 [15:0]=Weight                      │  │
+│    │                                                     │  │
+│    │ Synapse 0: {op=0, target=h0 (addr 0), wt=1000}    │  │
+│    │ Synapse 1: {op=0, target=h1 (addr 1), wt=1000}    │  │
+│    │ Synapse 2: {op=0, target=h2 (addr 2), wt=1000}    │  │
+│    │ Synapse 3: {op=0, target=h3 (addr 3), wt=1000}    │  │
+│    │ Synapse 4: {op=0, target=h4 (addr 4), wt=1000}    │  │
+│    │ Synapses 5-7: Unused (padding)                    │  │
+│    └─────────────────────────────────────────────────────┘  │
+│                                                             │
+│  Step 3: hbm_processor forwards synapse data to IEP         │
+│                                                             │
+│    Signal: exec_hbm_rdata[511:0] (512 bits = 16 synapses)  │
+│    Contains: 5 valid synapses from a0                      │
+│                                                             │
+│  Step 4: internal_events_processor accumulates              │
+│                                                             │
+│    Process Synapse 0: {target=h0, weight=1000}             │
+│    ┌─────────────────────────────────────────────────────┐ │
+│    │ Cycle 0: Read URAM[h0] → V_old = 0                 │ │
+│    │ Cycle 1: Compute V_new = 0 + 1000 = 1000           │ │
+│    │ Cycle 2: Check threshold: 1000 &lt; 2000 → no spike   │ │
+│    │ Cycle 3: Write URAM[h0] = 1000                     │ │
+│    └─────────────────────────────────────────────────────┘ │
+│                                                             │
+│    Process Synapse 1: {target=h1, weight=1000}             │
+│    ┌─────────────────────────────────────────────────────┐ │
+│    │ Cycle 4: Read URAM[h1] → V_old = 0                 │ │
+│    │ Cycle 5: Compute V_new = 0 + 1000 = 1000           │ │
+│    │ Cycle 6: Write URAM[h1] = 1000                     │ │
+│    └─────────────────────────────────────────────────────┘ │
+│                                                             │
+│    ... (similar for h2, h3, h4)                            │
+│                                                             │
+│    After a0&#39;s synapses processed:                          │
+│    URAM: h0=1000, h1=1000, h2=1000, h3=1000, h4=1000       │
+│                                                             │
+│  Step 5: Continue round-robin, pop next pointer            │
+│                                                             │
+│    Cycle N: Pop entry: 0x8001 (a1&#39;s synapse row)          │
+│             Read HBM[0x8001] → 5 more synapses             │
+│             Accumulate into h0-h4                          │
+│                                                             │
+│    Process a1&#39;s Synapse 0: {target=h0, weight=1000}        │
+│    ┌─────────────────────────────────────────────────────┐ │
+│    │ Read URAM[h0] → V_old = 1000                        │ │
+│    │ Compute V_new = 1000 + 1000 = 2000                  │ │
+│    │ Check threshold: 2000 &gt;= 2000 → SPIKE!              │ │
+│    │ Write URAM[h0] = 0 (reset after spike)              │ │
+│    │ Generate spike: neuron_id = h0                      │ │
+│    │ Send to spike FIFO                                  │ │
+│    └─────────────────────────────────────────────────────┘ │
+│                                                             │
+│    Similarly, h1-h4 all reach threshold and spike          │
+│                                                             │
+│    After a1&#39;s synapses processed:                          │
+│    URAM: h0=0, h1=0, h2=0, h3=0, h4=0 (all reset)          │
+│    Spikes: h0, h1, h2, h3, h4 sent to spike FIFOs          │
+│                                                             │
+│  Step 6: Continue with a2&#39;s synapses                       │
+│                                                             │
+│    Cycle M: Pop entry: 0x8002 (a2&#39;s synapse row)          │
+│             Read HBM[0x8002] → 5 more synapses             │
+│             Accumulate into h0-h4                          │
+│                                                             │
+│    After a2&#39;s synapses processed:                          │
+│    URAM: h0=1000, h1=1000, h2=1000, h3=1000, h4=1000       │
+│          (Each got 1 more input after spiking)             │
+│                                                             │
+│  Result after first Phase 2 pass:                          │
+│    - Hidden neurons spiked once (at V=2000)                │
+│    - Now at V=1000 (accumulated 3 inputs total)            │
+│    - Spikes generated: h0, h1, h2, h3, h4                  │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Critical insight:</strong> Neurons can spike in the MIDDLE of Phase 2 processing. When h0 receives input from a0 (V=1000), then from a1 (V=2000 → spike → reset), then from a2 (V=1000 again), all within the same phase.</p>
+</section>
+<hr class="docutils" />
+<section id="recurrent-processing-hidden-neuron-spikes">
+<h3>Recurrent Processing: Hidden Neuron Spikes<a class="headerlink" href="#recurrent-processing-hidden-neuron-spikes" title="Link to this heading">#</a></h3>
+<p>When neurons spike in Phase 2, they trigger another round of Phase 1b → Phase 2:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│         RECURRENT CYCLE (Hidden → Output Layer)             │
+│                                                             │
+│  Hidden neurons h0-h4 spiked during Phase 2                 │
+│  These spikes trigger Phase 1b again                        │
+│                                                             │
+│  ═══════════════════════════════════════════════════════    │
+│  PHASE 1b (Recurrent): Collect neuron output pointers       │
+│  ═══════════════════════════════════════════════════════    │
+│                                                             │
+│  internal_events_processor:                                 │
+│    exec_uram_spiked[0] = 0x001F (h0-h4 spiked)             │
+│                                                             │
+│  hbm_processor reads neuron pointers from HBM Region 2:     │
+│    h0 pointer → 0xA000                                     │
+│    h1 pointer → 0xA001                                     │
+│    h2 pointer → 0xA002                                     │
+│    h3 pointer → 0xA003                                     │
+│    h4 pointer → 0xA004                                     │
+│                                                             │
+│  pointer_fifo_controller writes to FIFOs:                   │
+│    Pointer FIFO 0 gets: 0xA000, 0xA001, 0xA002, 0xA003,    │
+│                         0xA004                              │
+│                                                             │
+│  ═══════════════════════════════════════════════════════    │
+│  PHASE 2 (Recurrent): Process hidden → output synapses      │
+│  ═══════════════════════════════════════════════════════    │
+│                                                             │
+│  Pop 0xA000 from FIFO → Read HBM[0xA000] (h0&#39;s outputs):   │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ Synapse 0: {op=0,   target=o0, weight=1000}        │   │
+│  │ Synapse 1: {op=0,   target=o1, weight=1000}        │   │
+│  │ Synapse 2: {op=0,   target=o2, weight=1000}        │   │
+│  │ Synapse 3: {op=0,   target=o3, weight=1000}        │   │
+│  │ Synapse 4: {op=100, target=o4, weight=1000}        │   │
+│  │    ↑ OpCode 100 = &quot;send spike to host&quot;             │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  internal_events_processor accumulates h0&#39;s outputs:        │
+│    o0: V = 0 + 1000 = 1000  (OpCode 0: just accumulate)    │
+│    o1: V = 0 + 1000 = 1000  (OpCode 0: just accumulate)    │
+│    o2: V = 0 + 1000 = 1000  (OpCode 0: just accumulate)    │
+│    o3: V = 0 + 1000 = 1000  (OpCode 0: just accumulate)    │
+│    o4: V = 0 + 1000 = 1000  (OpCode 100: accumulate)       │
+│                                                             │
+│  Pop 0xA001, read HBM[0xA001] (h1&#39;s outputs):              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ Synapse 0: {op=0,   target=o0, weight=1000}        │   │
+│  │ Synapse 1: {op=0,   target=o1, weight=1000}        │   │
+│  │ Synapse 2: {op=0,   target=o2, weight=1000}        │   │
+│  │ Synapse 3: {op=0,   target=o3, weight=1000}        │   │
+│  │ Synapse 4: {op=100, target=o4, weight=1000}        │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  Processing h1&#39;s synapses:                                  │
+│    o0: V = 1000 + 1000 = 2000 → SPIKE! → V=0               │
+│       OpCode 0: No host output, spike only triggers Phase1b│
+│    o1: V = 1000 + 1000 = 2000 → SPIKE! → V=0               │
+│       OpCode 0: No host output                              │
+│    o2: V = 1000 + 1000 = 2000 → SPIKE! → V=0               │
+│       OpCode 0: No host output                              │
+│    o3: V = 1000 + 1000 = 2000 → SPIKE! → V=0               │
+│       OpCode 0: No host output                              │
+│    o4: V = 1000 + 1000 = 2000 → SPIKE! → V=0               │
+│       OpCode 100: hbm_processor writes to spike FIFO!       │
+│       ┌───────────────────────────────────────────────┐     │
+│       │ spike_id = o4 (17-bit neuron address)        │     │
+│       │ group = o4[16:14] % 8 → spk0                 │     │
+│       │ Write {17&#39;d4} to spk0 FIFO                   │     │
+│       └───────────────────────────────────────────────┘     │
+│                                                             │
+│  Continue with h2, h3, h4 outputs (all similar):           │
+│    Each processes 5 synapses (4 OpCode 0, 1 OpCode 100)    │
+│    When o0-o4 spike again from h2&#39;s input:                  │
+│      o0-o3: OpCode 0 → internal only, no host output       │
+│      o4: OpCode 100 → write to spk0 (second time)          │
+│    When o0-o4 spike again from h3&#39;s input:                  │
+│      o4: OpCode 100 → write to spk0 (third time)           │
+│    When o0-o4 spike again from h4&#39;s input:                  │
+│      o4: OpCode 100 → write to spk0 (fourth time)          │
+│                                                             │
+│  Final state after recurrent processing:                   │
+│    URAM output neurons: o0=3000, o1=3000, o2=3000,         │
+│                         o3=3000, o4=3000                   │
+│    (Each received 5 inputs × 1000 = 5000, spiked at 2000,  │
+│     reset to 0, then accumulated 3 more inputs = 3000)     │
+│                                                             │
+│  Spike FIFOs after recurrent processing:                    │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ spk0: [o4, o4, o4, o4]  (4 spikes from o4)         │   │
+│  │       ↑ o4 spiked 4 times, each recorded            │   │
+│  │ spk1-spk7: Empty (no neurons in those groups)       │   │
+│  │                                                      │   │
+│  │ Note: o0-o3 also spiked 4 times each, but OpCode 0  │   │
+│  │       means &quot;internal only&quot; - not sent to host      │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Key difference from external events:</strong></p>
+<ul class="simple">
+<li><p>External axon spikes → Phase 1a (read from BRAM)</p></li>
+<li><p>Internal neuron spikes → Phase 1b (read from URAM state)</p></li>
+<li><p>Both types feed into the same pointer FIFOs</p></li>
+<li><p>Phase 2 processes them identically</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="spike-aggregation-and-transmission-to-host">
+<h3>Spike Aggregation and Transmission to Host<a class="headerlink" href="#spike-aggregation-and-transmission-to-host" title="Link to this heading">#</a></h3>
+<p>After Phase 2 completes, the spike FIFOs contain all neuron IDs that spiked with OpCode 100. These spikes now need to be aggregated and sent to the host:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│           SPIKE COLLECTION AND HOST TRANSMISSION            │
+│                                                             │
+│  Current state: spk0 contains [o4, o4, o4, o4]             │
+│                 spk1-spk7 are empty                         │
+│                                                             │
+│  Step 1: spike_fifo_controller round-robin aggregation      │
+│                                                             │
+│    Round-robin read from spk0 → spk1 → ... → spk7:        │
+│    ┌─────────────────────────────────────────────────────┐  │
+│    │ Cycle 0: Check spk0 → not empty → pop first o4     │  │
+│    │          Write {17&#39;d4} to spk2ciFIFO                │  │
+│    │ Cycle 1: Check spk1 → empty → skip                 │  │
+│    │ Cycle 2: Check spk2 → empty → skip                 │  │
+│    │ ...                                                  │  │
+│    │ Cycle 7: Check spk7 → empty → skip                 │  │
+│    │ Cycle 8: Check spk0 → not empty → pop second o4    │  │
+│    │          Write {17&#39;d4} to spk2ciFIFO                │  │
+│    │ ...continues for all 4 spikes...                    │  │
+│    └─────────────────────────────────────────────────────┘  │
+│                                                             │
+│    spk2ciFIFO now contains: [o4, o4, o4, o4]               │
+│                                                             │
+│  Step 2: command_interpreter batches spikes into packets    │
+│                                                             │
+│    Reads from spk2ciFIFO and packs into 512-bit packets:    │
+│    ┌─────────────────────────────────────────────────────┐  │
+│    │ Packet format:                                      │  │
+│    │   [511:480] = 0xEEEEEEEE  (spike output opcode)    │  │
+│    │   [479:463] = spike_0  (17-bit neuron ID)          │  │
+│    │   [462:446] = spike_1  (17-bit neuron ID)          │  │
+│    │   ...                                               │  │
+│    │   [241:225] = spike_13 (17-bit neuron ID)          │  │
+│    │   [224:0]   = padding  (unused for &lt; 14 spikes)    │  │
+│    │                                                      │  │
+│    │ Our packet with 4 o4 spikes:                        │  │
+│    │   [511:480] = 0xEEEEEEEE                            │  │
+│    │   [479:463] = 17&#39;d4  (first o4 spike)              │  │
+│    │   [462:446] = 17&#39;d4  (second o4 spike)             │  │
+│    │   [445:429] = 17&#39;d4  (third o4 spike)              │  │
+│    │   [428:412] = 17&#39;d4  (fourth o4 spike)             │  │
+│    │   [411:0]   = 0 (padding, spikes 5-13 unused)      │  │
+│    └─────────────────────────────────────────────────────┘  │
+│                                                             │
+│  Step 3: Transmit packet to host via PCIe                   │
+│                                                             │
+│    command_interpreter → txFIFO → pcie2fifos → PCIe → Host  │
+│                                                             │
+│  Step 4: Host reads spikes with flush_spikes()              │
+│                                                             │
+│    ┌─────────────────────────────────────────────────────┐  │
+│    │ # In Python (hs_bridge/network.py)                 │  │
+│    │ spikes = fpga_controller.flush_spikes(coreID)      │  │
+│    │                                                      │  │
+│    │ # FPGA sends: 512-bit packet with opcode 0xEEEEEEEE│  │
+│    │ # Python unpacks: [17&#39;d4, 17&#39;d4, 17&#39;d4, 17&#39;d4]     │  │
+│    │ # Looks up neuron names: neuron_id=4 → &quot;o4&quot;        │  │
+│    │ # Returns: [&#39;o4&#39;, &#39;o4&#39;, &#39;o4&#39;, &#39;o4&#39;]                │  │
+│    │                                                      │  │
+│    │ # Result: o4 spiked 4 times this timestep          │  │
+│    └─────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Why multiple spikes from the same neuron?</strong>
+Neuron o4 spiked 4 times during this timestep because it received 5 inputs (one from each h0-h4). It spiked when it reached threshold (2000), reset to 0, then accumulated more inputs and potentially spiked again. Each spike is recorded separately, allowing the host to see the temporal spike count.</p>
+<p><strong>Why 8 spike FIFOs?</strong>
+The 8 parallel spike FIFOs (spk0-spk7) allow <code class="docutils literal notranslate"><span class="pre">hbm_processor</span></code> to write spikes from different neuron groups without contention. Neurons are distributed across 16 URAM banks (groups 0-15), and routing them to 8 FIFOs (group % 8) reduces write conflicts when multiple neurons spike simultaneously.</p>
+<p><strong>Why batch 14 spikes per packet?</strong>
+The PCIe interface uses 512-bit packets. With a 32-bit opcode (0xEEEEEEEE) and 17-bit spike IDs, we can fit: (512 - 32) ÷ 17 = 28.2 → 14 spikes per packet (rounded down, with some padding).</p>
+</section>
+<hr class="docutils" />
+<section id="final-state-after-one-complete-timestep">
+<h3>Final State After One Complete Timestep<a class="headerlink" href="#final-state-after-one-complete-timestep" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────────┐
+│                  FINAL STATE (Timestep 0)                   │
+│                                                             │
+│  URAM (Neuron States):                                     │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ h0: V = 1000  (got 3 inputs, spiked at 2000, reset,│   │
+│  │                then 1 more input)                   │   │
+│  │ h1: V = 1000                                        │   │
+│  │ h2: V = 1000                                        │   │
+│  │ h3: V = 1000                                        │   │
+│  │ h4: V = 1000                                        │   │
+│  │                                                      │   │
+│  │ o0: V = 3000  (got 5 inputs, spiked at 2000, reset,│   │
+│  │                then 3 more inputs)                  │   │
+│  │ o1: V = 3000                                        │   │
+│  │ o2: V = 3000                                        │   │
+│  │ o3: V = 3000                                        │   │
+│  │ o4: V = 3000                                        │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                                                             │
+│  Spike Output (sent to host):                              │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │ Host received: [&#39;o4&#39;, &#39;o4&#39;, &#39;o4&#39;, &#39;o4&#39;]             │   │
+│  │                                                      │   │
+│  │ o4 spiked 4 times (OpCode 100 - send to host)       │   │
+│  │ o0-o3 spiked 4 times each (OpCode 0 - internal only)│   │
+│  │                                                      │   │
+│  │ Spike routing summary:                               │   │
+│  │ • Hidden neurons h0-h4: Internal (not sent to host) │   │
+│  │ • Output neurons o0-o3: OpCode 0 (internal only)    │   │
+│  │ • Output neuron o4: OpCode 100 (sent to host)       │   │
+│  └─────────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="timing-how-long-does-this-take">
+<h2>Timing: How Long Does This Take?<a class="headerlink" href="#timing-how-long-does-this-take" title="Link to this heading">#</a></h2>
+<p>Let’s estimate the time for one complete timestep:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>SETUP: Input Writing (Host → FPGA BRAM)
+├─ Python: Convert axon names → 256-bit mask: ~100 ns (CPU)
+├─ DMA command: Queue PCIe write: ~500 ns
+├─ PCIe transfer: 256 bits ÷ 14 GB/s = 2 ns
+├─ BRAM write: 1 cycle @ 225 MHz = 4.4 ns
+└─ Total: ~600 nanoseconds
+
+PHASE 1a: External Events (First Pass - Axon Spikes)
+├─ Buffer role reassignment: 1 cycle = 4.4 ns
+├─ BRAM read pipeline fill: 3 cycles = 13.2 ns
+├─ BRAM read: 1 row @ 225 MHz = 4.4 ns
+├─ Generate exec_bram_spiked: 1 cycle = 4.4 ns
+├─ HBM read axon pointers:
+│   ├─ AXI4 address phase: ~10 ns
+│   ├─ HBM latency: ~100 ns
+│   ├─ AXI4 data phase: ~10 ns
+│   └─ Total per read: ~120 ns
+│   └─ 3 axons (can pipeline): ~150 ns
+├─ Demux to pointer FIFOs: 3 pointers × 4.4ns = 13.2 ns
+└─ Total: ~200 nanoseconds
+
+PHASE 2: First Pass (Process Axon Synapses)
+├─ Round-robin FIFO reads: 3 pointers × 4.4ns = 13.2 ns
+├─ HBM read synapses (Region 3):
+│   ├─ 3 rows × 120ns HBM latency (pipelined) = ~180 ns
+├─ Parse synapse data: 15 synapses × 2.2ns = 33 ns
+├─ Neuron updates @ 450 MHz (URAM operations):
+│   ├─ Each synapse: Read URAM (3 cycles) + Compute (1 cycle)
+│   │                + Write URAM (1 cycle) = 5 cycles
+│   ├─ 5 cycles @ 450 MHz = 11.1 ns per synapse
+│   └─ 15 synapses × 11.1 ns = 167 ns
+│       (Can overlap with HBM reads via pipelining: ~100ns actual)
+├─ Spike detection &amp; FIFO write: 5 spikes × 2.2ns = 11 ns
+└─ Total: ~340 nanoseconds
+
+PHASE 1b: Internal Events (Hidden Neuron Spikes)
+├─ URAM read pipeline fill: 3 cycles @ 450 MHz = 6.7 ns
+├─ URAM reads for spike detection: 10 neurons ÷ 16 banks
+│   ├─ 1 parallel read × 2.2ns = 2.2 ns
+├─ Generate exec_uram_spiked: 1 cycle = 2.2 ns
+├─ HBM read neuron pointers (Region 2):
+│   ├─ 5 neurons × 120ns (pipelined) = ~180 ns
+├─ Write to pointer FIFOs: 5 pointers × 4.4ns = 22 ns
+└─ Total: ~210 nanoseconds
+
+PHASE 2: Second Pass (Process Hidden → Output Synapses)
+├─ Round-robin FIFO reads: 5 pointers × 4.4ns = 22 ns
+├─ HBM read synapses: 5 rows × 120ns (pipelined) = ~200 ns
+├─ Parse synapse data: 25 synapses × 2.2ns = 55 ns
+├─ Neuron updates: 25 synapses × 11.1 ns = 278 ns
+│   (Pipelined with HBM: ~150ns actual)
+├─ Spike detection: 5 output spikes × 2.2ns = 11 ns
+└─ Total: ~440 nanoseconds
+
+SPIKE OUTPUT (FPGA → Host)
+├─ spike_fifo_controller aggregation:
+│   ├─ Round-robin from 8 FIFOs: ~10 ns
+├─ command_interpreter batching:
+│   ├─ Batch 5 spikes into 512-bit packet: ~20 ns
+│   ├─ Add opcode (0xEEEEEEEE): 1 cycle = 4.4 ns
+│   ├─ Write to txFIFO: 1 cycle = 4.4 ns
+├─ PCIe transfer: 512 bits ÷ 14 GB/s = 3.7 ns
+└─ Total: ~40 nanoseconds
+
+═══════════════════════════════════════════════════════════
+TOTAL TIME PER TIMESTEP: ~1.8 microseconds
+═══════════════════════════════════════════════════════════
+</pre></div>
+</div>
+<p><strong>1.8 microseconds per timestep!</strong> This means the hardware can theoretically run <strong>550,000 timesteps per second</strong>.</p>
+<p>For our small network:</p>
+<ul class="simple">
+<li><p>Setup: 0.6 µs</p></li>
+<li><p>Phase 1a: 0.2 µs</p></li>
+<li><p>Phase 2 (pass 1): 0.34 µs</p></li>
+<li><p>Phase 1b: 0.21 µs</p></li>
+<li><p>Phase 2 (pass 2): 0.44 µs</p></li>
+<li><p>Spike output: 0.04 µs</p></li>
+<li><p><strong>Total: ~1.8 µs</strong></p></li>
+</ul>
+<p>In practice, you’re limited by:</p>
+<ul class="simple">
+<li><p>PCIe overhead and host processing: ~5-10 µs per timestep</p></li>
+<li><p>Python overhead in host code: ~100-500 µs per timestep</p></li>
+<li><p>Network size: larger networks take longer (more HBM reads)</p></li>
+</ul>
+<p>But you can easily achieve <strong>1000 timesteps/second</strong> (1 millisecond/timestep) for real-time operation, with room to spare for much larger networks.</p>
+<hr class="docutils" />
+</section>
+<section id="key-hardware-mechanisms-explained">
+<h2>Key Hardware Mechanisms Explained<a class="headerlink" href="#key-hardware-mechanisms-explained" title="Link to this heading">#</a></h2>
+<section id="the-two-phase-architecture">
+<h3>1. The Two-Phase Architecture<a class="headerlink" href="#the-two-phase-architecture" title="Link to this heading">#</a></h3>
+<p><strong>Why separate pointer collection (Phase 1) from synapse processing (Phase 2)?</strong></p>
+<p>This allows <strong>efficient memory coalescing</strong>:</p>
+<ul class="simple">
+<li><p>Phase 1: Collect all addresses we’ll need</p></li>
+<li><p>Phase 2: Batch read from HBM in bursts</p></li>
+</ul>
+<p>Without this separation, we’d have to:</p>
+<ol class="arabic simple">
+<li><p>Read pointer for axon 0</p></li>
+<li><p>Read synapses for axon 0</p></li>
+<li><p>Read pointer for axon 1</p></li>
+<li><p>Read synapses for axon 1</p></li>
+<li><p>…</p></li>
+</ol>
+<p>With two phases, we can:</p>
+<ol class="arabic simple">
+<li><p>Read ALL pointers in one burst</p></li>
+<li><p>Read ALL synapses in one burst</p></li>
+</ol>
+<p>This reduces HBM access latency from ~100ns per pointer to ~20ns amortized (burst mode).</p>
+</section>
+<section id="the-16-pointer-fifos">
+<h3>2. The 16 Pointer FIFOs<a class="headerlink" href="#the-16-pointer-fifos" title="Link to this heading">#</a></h3>
+<p><strong>Why 16 FIFOs instead of one?</strong></p>
+<p>The FPGA has <strong>16 parallel neuron groups</strong> (URAM banks 0-15). Each group can process neurons independently. By maintaining 16 separate pointer queues:</p>
+<ul class="simple">
+<li><p>Each URAM bank can pull work from its own FIFO</p></li>
+<li><p>No contention between groups</p></li>
+<li><p>Allows parallel processing: all 16 groups update neurons simultaneously</p></li>
+</ul>
+<p><strong>Why round-robin instead of priority?</strong></p>
+<p>Round-robin ensures fairness. If we used priority (always read FIFO 0 first), then:</p>
+<ul class="simple">
+<li><p>Group 0 neurons would always be processed first</p></li>
+<li><p>Group 15 neurons might starve if Group 0 is very active</p></li>
+<li><p>Non-uniform latency across groups</p></li>
+</ul>
+<p>Round-robin gives all groups equal opportunity.</p>
+</section>
+<section id="pipeline-latency-and-hazard-detection">
+<h3>3. Pipeline Latency and Hazard Detection<a class="headerlink" href="#pipeline-latency-and-hazard-detection" title="Link to this heading">#</a></h3>
+<p>URAM has a <strong>3-cycle read latency</strong>:</p>
+<ul class="simple">
+<li><p>Cycle 0: Send address</p></li>
+<li><p>Cycle 1: URAM decodes address, accesses memory</p></li>
+<li><p>Cycle 2: Data emerges from URAM</p></li>
+<li><p>Cycle 3: Data available to logic</p></li>
+</ul>
+<p>This creates a <strong>read-modify-write hazard</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0: Start read h0 (for synapse A)
+Cycle 3: Data arrives: V=1000
+Cycle 4: Compute: 1000 + 500 = 1500
+Cycle 5: Write h0: V=1500
+
+But what if another synapse B for h0 starts at Cycle 2?
+
+Cycle 2: Start read h0 (for synapse B)  ← Problem!
+Cycle 5: Data arrives: V=1000           ← Stale! Should be 1500
+Cycle 6: Compute: 1000 + 300 = 1300     ← Wrong!
+Cycle 7: Write h0: V=1300               ← Lost the first update!
+</pre></div>
+</div>
+<p><strong>Solution: Read-after-write bypass</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">internal_events_processor</span></code> tracks recent writes:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Track the last 3 writes</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">16</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">recent_write_addr</span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">35</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">recent_write_data</span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="c1">// When reading, check for bypass</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">recent_write_addr</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">recent_write_data</span><span class="p">[</span><span class="mh">0</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bypass URAM</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">recent_write_addr</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">recent_write_data</span><span class="p">[</span><span class="mh">1</span><span class="p">];</span>
+<span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">read_addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">recent_write_addr</span><span class="p">[</span><span class="mh">2</span><span class="p">])</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">recent_write_data</span><span class="p">[</span><span class="mh">2</span><span class="p">];</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">uram_dout</span><span class="p">;</span><span class="w">  </span><span class="c1">// Normal path</span>
+</pre></div>
+</div>
+<p>This ensures we always get the most recent value.</p>
+</section>
+<section id="double-buffered-bram">
+<h3>4. Double-Buffered BRAM<a class="headerlink" href="#double-buffered-bram" title="Link to this heading">#</a></h3>
+<p><strong>Why two BRAM banks (Present and Future)?</strong></p>
+<p>This allows <strong>seamless timestep transitions</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Timestep N execution:
+├─ Read from Present buffer (contains timestep N inputs)
+└─ Write to Future buffer (receives timestep N+1 inputs)
+
+Timestep N+1 execution:
+├─ Reassign buffer roles: bram_select flips (no data movement)
+├─ Read from Present buffer (was Future, now has N+1 inputs)
+└─ Write to Future buffer (receives timestep N+2 inputs)
+</pre></div>
+</div>
+<p>Without double-buffering:</p>
+<ul class="simple">
+<li><p>Must wait for timestep N to finish</p></li>
+<li><p>Then clear BRAM</p></li>
+<li><p>Then write timestep N+1 inputs</p></li>
+<li><p>Then start execution</p></li>
+</ul>
+<p>With double-buffering:</p>
+<ul class="simple">
+<li><p>Write timestep N+1 inputs while N executes</p></li>
+<li><p>Just flip bram_select when ready (role reassignment)</p></li>
+<li><p>No wait time</p></li>
+</ul>
+<p>This allows <strong>pipelining</strong> of host input preparation and FPGA execution.</p>
+</section>
+<section id="clock-domain-crossing">
+<h3>5. Clock Domain Crossing<a class="headerlink" href="#clock-domain-crossing" title="Link to this heading">#</a></h3>
+<p>The FPGA has two clock domains:</p>
+<ul class="simple">
+<li><p><strong>225 MHz (aclk)</strong>: Used by most modules (HBM, PCIe, pointer controller)</p></li>
+<li><p><strong>450 MHz (aclk450)</strong>: Used by URAM for 2× throughput</p></li>
+</ul>
+<p>Data crosses between domains via <strong>asynchronous FIFOs</strong> that use:</p>
+<ul class="simple">
+<li><p>Gray code counters (prevents glitches during clock crossing)</p></li>
+<li><p>Multi-stage synchronizers (prevents metastability)</p></li>
+<li><p>Full/empty flags synchronized to both clock domains</p></li>
+</ul>
+<p>This is why the pointer FIFOs and spike FIFOs can safely transfer data between 225 MHz modules and the 450 MHz neuron processor.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="summary-the-complete-execution-picture">
+<h2>Summary: The Complete Execution Picture<a class="headerlink" href="#summary-the-complete-execution-picture" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────────────────────────────────────────┐
+│  ONE TIMESTEP = SETUP + (PHASE1 → PHASE2) × N_ROUNDS   │
+└─────────────────────────────────────────────────────────┘
+
+Round 1:
+  Setup: Host writes input spikes to BRAM Future
+  Reassign: bram_select flips (Future buffer → Present, Present buffer → Future)
+  Phase 1a: Read BRAM → Get axon pointers → Fill FIFOs
+  Phase 2:  Read synapses → Accumulate → Hidden neurons spike
+
+Round 2 (if neurons spiked):
+  Phase 1b: Read URAM → Get neuron pointers → Fill FIFOs
+  Phase 2:  Read synapses → Accumulate → Output neurons spike
+
+Round 3 (if neurons spiked again):
+  Phase 1b: Read URAM → Get neuron pointers → Fill FIFOs
+  Phase 2:  Read synapses → Accumulate → More spikes
+
+... Continue until no more spikes ...
+
+Output: Send accumulated spikes to host via PCIe
+</pre></div>
+</div>
+<p><strong>Key insights:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Pointers are addresses, not data</strong> - Phase 1 collects <em>where</em> to look, Phase 2 does the looking</p></li>
+<li><p><strong>FIFOs are queues of HBM addresses</strong> - Not synapse data, just pointers to rows</p></li>
+<li><p><strong>External vs internal events use different paths</strong> - BRAM for axons (Phase 1a), URAM for neurons (Phase 1b)</p></li>
+<li><p><strong>Recurrent processing is automatic</strong> - Neuron spikes trigger Phase 1b → Phase 2 loops</p></li>
+<li><p><strong>Parallelism at every level</strong> - 16 neuron groups, pipelined HBM, concurrent URAM banks</p></li>
+</ol>
+<p>This architecture allows the FPGA to process hundreds of thousands of synapses per microsecond, making real-time spiking neural network simulation possible.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms">Key Terms</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-the-two-phase-execution-model">Overview: The Two-Phase Execution Model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-data-journey-what-moves-where">The Data Journey: What Moves Where</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#before-setup-network-is-idle">Before Setup: Network is Idle</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#after-setup-inputs-written-to-bram-future-buffer">After Setup: Inputs Written to BRAM Future Buffer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#during-phase-1a-external-event-processing-pointer-collection">During Phase 1a: External Event Processing (Pointer Collection)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#during-phase-1b-internal-event-processing-if-neurons-spiked">During Phase 1b: Internal Event Processing (If neurons spiked)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#during-phase-2-synaptic-read-and-neuron-updates">During Phase 2: Synaptic Read and Neuron Updates</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#recurrent-processing-hidden-neuron-spikes">Recurrent Processing: Hidden Neuron Spikes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-aggregation-and-transmission-to-host">Spike Aggregation and Transmission to Host</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#final-state-after-one-complete-timestep">Final State After One Complete Timestep</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-how-long-does-this-take">Timing: How Long Does This Take?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-hardware-mechanisms-explained">Key Hardware Mechanisms Explained</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-phase-architecture">1. The Two-Phase Architecture</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-16-pointer-fifos">2. The 16 Pointer FIFOs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pipeline-latency-and-hazard-detection">3. Pipeline Latency and Hazard Detection</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#double-buffered-bram">4. Double-Buffered BRAM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-domain-crossing">5. Clock Domain Crossing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-the-complete-execution-picture">Summary: The Complete Execution Picture</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/2_The_Network_Comes_to_Life/Chapter_2_1.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

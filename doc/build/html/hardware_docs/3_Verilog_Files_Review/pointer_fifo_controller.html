@@ -1,0 +1,2090 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Pointer FIFO Controller Module &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/pointer_fifo_controller';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Spike FIFO Controller Module" href="spike_fifo_controller.html" />
+    <link rel="prev" title="pcie2fifos.v" href="pcie2fifos.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Pointer FIFO Controller Module</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="pointer-fifo-controller-module">
+<h1>Pointer FIFO Controller Module<a class="headerlink" href="#pointer-fifo-controller-module" title="Link to this heading">#</a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>The <strong>Pointer FIFO Controller</strong> is a critical datapath component that manages the flow of synaptic pointer data during the two-phase neuromorphic execution cycle. It demultiplexes 512-bit HBM pointer data into 16 parallel FIFOs (one per neuron group), then arbitrates between these FIFOs to feed the HBM processor during Phase 2 (synaptic weight fetch).</p>
+<section id="role-in-the-software-hardware-stack">
+<h3>Role in the Software/Hardware Stack<a class="headerlink" href="#role-in-the-software-hardware-stack" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    Phase 1: External/Internal Events
+                           (Spike Detection)
+                                  |
+    ┌─────────────────────────────┼─────────────────────────────┐
+    |                             v                             |
+    |              [External Events Processor]                  |
+    |                      |                                    |
+    |              exec_bram_spiked[15:0]                       |
+    |                      |                                    |
+    |              [Internal Events Processor]                  |
+    |                      |                                    |
+    |              exec_uram_spiked[15:0]                       |
+    |                      |                                    |
+    |                      v                                    |
+    |         ┌────────────────────────────┐                    |
+    |         │ Pointer FIFO Controller    │                    |
+    |         │                            │                    |
+    | HBM ───&gt;│ 512b → 16×32b demux       │                    |
+    |  Data   │ 16 Pointer FIFOs (ptr0-15)│                    |
+    |         │ Round-robin arbiter        │                    |
+    |         └────────────┬───────────────┘                    |
+    |                      |                                    |
+    |                ptrFIFO (32b)                              |
+    |                      |                                    |
+    |                      v                                    |
+    |              [HBM Processor]                              |
+    |                      |                                    |
+    |              Synaptic Weights                             |
+    |                      |                                    |
+    |                      v                                    |
+    |              [Spike FIFOs] ──&gt; Phase 2 Synaptic Updates   |
+    └───────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<p><strong>Function</strong>:</p>
+<ul class="simple">
+<li><p><strong>Demultiplex HBM Pointer Data</strong>: Split 512-bit HBM read into 16×32-bit pointer records</p></li>
+<li><p><strong>Spike-Gated Buffering</strong>: Only store pointers for neurons that spiked (sparse event handling)</p></li>
+<li><p><strong>Fair Arbitration</strong>: Round-robin scheduler ensures all neuron groups get equal service</p></li>
+<li><p><strong>Phase Coordination</strong>: Handle both external (BRAM) and internal (URAM) spike events</p></li>
+</ul>
+<p><strong>Key Innovation</strong>: By buffering pointers in 16 parallel FIFOs, the module decouples HBM read bandwidth from pointer processing, allowing efficient handling of sparse neural activity.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                           HBM Data Path (512 bits)
+                                   |
+                                   v
+                    ┌──────────────────────────────┐
+                    │  exec_hbm_rdata[511:0]       │
+                    │  exec_hbm_rvalidready        │
+                    └──────────────┬───────────────┘
+                                   |
+         ┌─────────────────────────┼─────────────────────────┐
+         |                         v                         |
+         |              Demux to 16 Groups                   |
+         |    [31:0]  [63:32]  [95:64] ... [511:480]        |
+         |       |       |        |            |             |
+         |       v       v        v            v             |
+         |   ┌─────┐ ┌─────┐  ┌─────┐      ┌─────┐         |
+         |   │FIFO0│ │FIFO1│  │FIFO2│ ...  │FIFO15│         |
+         |   │32b  │ │32b  │  │32b  │      │32b   │         |
+         |   │FWFT │ │FWFT │  │FWFT │      │FWFT  │         |
+         |   └──┬──┘ └──┬──┘  └──┬──┘      └──┬───┘         |
+         |      ^        ^        ^             ^            |
+         |      |        |        |             |            |
+         |   wren0    wren1    wren2         wren15         |
+         |      |        |        |             |            |
+         |      └────────┴────────┴─────────────┘            |
+         |                      |                            |
+         |         Spike-Gated Write Enable Logic            |
+         |    (bram_spiked[i] | uram_spiked[i]) &amp; !full     |
+         |                      ^                            |
+         |      ┌───────────────┴───────────────┐            |
+         |      |                               |            |
+         |  exec_bram_spiked[15:0]   exec_uram_spiked[15:0] |
+         |      |                               |            |
+         |  ┌───┴────┐                  ┌───────┴──────┐    |
+         |  │External│                  │  Internal    │    |
+         |  │Events  │                  │  Events      │    |
+         |  │Proc.   │                  │  Proc.       │    |
+         |  └────────┘                  └──────────────┘    |
+         └───────────────────────────────────────────────────┘
+
+                      Round-Robin Arbiter
+                             |
+                   addr[3:0] counter (0→15)
+                             |
+         ┌───────────────────┼───────────────────┐
+         |                   v                   |
+         |        16:1 Multiplexer               |
+         |    (Select ptr_dout[addr])            |
+         |                   |                   |
+         |                   v                   |
+         |            ┌─────────────┐            |
+         |            │  ptrFIFO    │            |
+         |            │  (32-bit)   │            |
+         |            │  To HBM Proc│            |
+         |            └─────────────┘            |
+         └───────────────────────────────────────┘
+</pre></div>
+</div>
+<section id="two-phase-operation">
+<h3>Two-Phase Operation<a class="headerlink" href="#two-phase-operation" title="Link to this heading">#</a></h3>
+<p><strong>Phase 1a: External Events (BRAM Reading)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. bram_reading = 1 (set on exec_run)
+2. For each HBM read (exec_hbm_rvalidready):
+   - Split 512b data into ptr0_din...ptr15_din
+   - Write to FIFO[i] if exec_bram_spiked[i]==1 and !ptr_full[i]
+3. Continue until exec_bram_phase1_done
+4. Transition to Phase 1b
+</pre></div>
+</div>
+<p><strong>Phase 1b: Internal Events (URAM Reading)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. uram_reading = 1 (set on exec_bram_phase1_done)
+2. For each HBM read (exec_hbm_rvalidready):
+   - Split 512b data into ptr0_din...ptr15_din
+   - Write to FIFO[i] if exec_uram_spiked[i]==1 and !ptr_full[i]
+3. Continue until exec_uram_phase1_done
+4. End of Phase 1
+</pre></div>
+</div>
+<p><strong>Phase 2: Pointer Drain (Concurrent with Phase 1)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Round-robin arbiter cycles addr 0→1→2→...→15→0
+2. Every cycle:
+   - If ptr[addr]_empty==0 and ptrFIFO_full==0:
+     * Read from ptr[addr] (rden=1)
+     * Write to ptrFIFO (wren=1, din=ptr_dout)
+3. HBM processor consumes pointers, fetches synapses
+4. Continues until all FIFOs empty
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>System clock (225 MHz typical)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low asynchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="execution-control">
+<h3>Execution Control<a class="headerlink" href="#execution-control" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_run</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Start new time step (sets bram_reading=1)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="external-events-processor-interface">
+<h3>External Events Processor Interface<a class="headerlink" href="#external-events-processor-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_spiked</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>16</p></td>
+<td><p>Spike mask from external events (16 neuron groups)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>External events complete, transition to internal</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="internal-events-processor-interface">
+<h3>Internal Events Processor Interface<a class="headerlink" href="#internal-events-processor-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_spiked</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>16</p></td>
+<td><p>Spike mask from internal events (16 neuron groups)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_done</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Internal events complete, end Phase 1</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="hbm-processor-input-interface">
+<h3>HBM Processor Input Interface<a class="headerlink" href="#hbm-processor-input-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>HBM read data valid and ready</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>512</p></td>
+<td><p>HBM read data (16 pointers × 32 bits)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hbm2pfc_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>FIFO read enable (FWFT mode)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Note</strong>: Comments indicate <code class="docutils literal notranslate"><span class="pre">hbm2pfc_dout</span></code> and <code class="docutils literal notranslate"><span class="pre">hbm2pfc_empty</span></code> are wired at top wrapper level.</p>
+</section>
+<section id="pointer-fifo-interfaces-16-instances-ptr0-ptr15">
+<h3>Pointer FIFO Interfaces (16 instances: ptr0-ptr15)<a class="headerlink" href="#pointer-fifo-interfaces-16-instances-ptr0-ptr15" title="Link to this heading">#</a></h3>
+<p>Each pointer FIFO has identical interface (example for ptr0):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>FIFO full flag (backpressure)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>32</p></td>
+<td><p>Data input to FIFO (pointer record)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Write enable (gated by spike and full)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>FIFO empty flag</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>32</p></td>
+<td><p>Data output from FIFO</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptr0_rden</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Read enable (from arbiter)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Pointer FIFOs</strong>: ptr1, ptr2, …, ptr15 (identical interfaces)</p>
+</section>
+<section id="hbm-processor-output-interface-aggregated-pointer-fifo">
+<h3>HBM Processor Output Interface (Aggregated Pointer FIFO)<a class="headerlink" href="#hbm-processor-output-interface-aggregated-pointer-fifo" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Port</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Aggregated FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>32</p></td>
+<td><p>Pointer data to HBM processor</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ptrFIFO_wren</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>1</p></td>
+<td><p>Write enable (from arbiter)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="phase-tracking-state-machine">
+<h3>Phase Tracking State Machine<a class="headerlink" href="#phase-tracking-state-machine" title="Link to this heading">#</a></h3>
+<p>The module uses two registers to track execution phase:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="n">bram_reading</span><span class="p">;</span><span class="w">  </span><span class="c1">// Phase 1a: External events</span>
+<span class="kt">reg</span><span class="w"> </span><span class="n">uram_reading</span><span class="p">;</span><span class="w">  </span><span class="c1">// Phase 1b: Internal events</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">uram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_run</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Start of new time step: begin external event processing</span>
+<span class="w">        </span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_bram_phase1_done</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">uram_reading</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Transition from external to internal event processing</span>
+<span class="w">        </span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">        </span><span class="n">uram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_uram_phase1_done</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// End of Phase 1</span>
+<span class="w">        </span><span class="n">uram_reading</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>State Transitions:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">IDLE</span> <span class="p">(</span><span class="n">both</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">|</span>
+    <span class="o">|</span> <span class="n">exec_run</span>
+    <span class="n">v</span>
+<span class="n">BRAM_READING</span> <span class="p">(</span><span class="n">bram</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">uram</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="o">|</span>
+    <span class="o">|</span> <span class="n">exec_bram_phase1_done</span>
+    <span class="n">v</span>
+<span class="n">URAM_READING</span> <span class="p">(</span><span class="n">bram</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">uram</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="o">|</span>
+    <span class="o">|</span> <span class="n">exec_uram_phase1_done</span>
+    <span class="n">v</span>
+<span class="n">IDLE</span> <span class="p">(</span><span class="n">both</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: During idle, the round-robin arbiter continues draining pointer FIFOs (Phase 2).</p>
+</section>
+<section id="hbm-data-demultiplexing">
+<h3>HBM Data Demultiplexing<a class="headerlink" href="#hbm-data-demultiplexing" title="Link to this heading">#</a></h3>
+<p>The 512-bit HBM data is split into 16 groups of 32 bits:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Direct bit-slice assignments</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr0_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">031</span><span class="o">:</span><span class="mh">000</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bits 0-31</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr1_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">063</span><span class="o">:</span><span class="mh">032</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bits 32-63</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr2_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">095</span><span class="o">:</span><span class="mh">064</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bits 64-95</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr3_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">096</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bits 96-127</span>
+<span class="c1">// ... (pattern continues)</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr15_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">480</span><span class="p">];</span><span class="w">  </span><span class="c1">// Bits 480-511</span>
+</pre></div>
+</div>
+<p><strong>Data Layout</strong> (each 32-bit pointer):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bits</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">23</span><span class="p">]</span> <span class="o">=</span> <span class="n">Length</span> <span class="p">(</span><span class="mi">9</span> <span class="n">bits</span><span class="p">,</span> <span class="nb">max</span> <span class="mi">511</span> <span class="n">synapses</span><span class="p">)</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">22</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>  <span class="o">=</span> <span class="n">Start</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">HBM</span> <span class="p">(</span><span class="mi">23</span> <span class="n">bits</span><span class="p">,</span> <span class="n">byte</span> <span class="n">address</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exec_hbm_rdata</span> <span class="o">=</span> <span class="mi">512</span><span class="s1">&#39;h...AB12_3456_CD78_9ABC_...</span>
+
+<span class="n">ptr0_din</span>  <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;hCD78_9ABC  → Length=0x1AF, Addr=0x389ABC</span>
+<span class="n">ptr1_din</span>  <span class="o">=</span> <span class="mi">32</span><span class="s1">&#39;hAB12_3456  → Length=0x156, Addr=0x523456</span>
+<span class="o">...</span>
+</pre></div>
+</div>
+</section>
+<section id="spike-gated-write-enable-logic">
+<h3>Spike-Gated Write Enable Logic<a class="headerlink" href="#spike-gated-write-enable-logic" title="Link to this heading">#</a></h3>
+<p>Each pointer FIFO write is conditional on:</p>
+<ol class="arabic simple">
+<li><p>HBM data valid and ready</p></li>
+<li><p>Corresponding spike bit asserted</p></li>
+<li><p>FIFO not full</p></li>
+</ol>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">ptr0_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">ptr0_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">                   </span><span class="p">((</span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_bram_spiked</span><span class="p">[</span><span class="mh">0</span><span class="p">])</span><span class="w"> </span><span class="o">|</span>
+<span class="w">                    </span><span class="p">(</span><span class="n">uram_reading</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_uram_spiked</span><span class="p">[</span><span class="mh">0</span><span class="p">]));</span>
+
+<span class="k">assign</span><span class="w"> </span><span class="n">ptr1_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">!</span><span class="n">ptr1_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="w"> </span><span class="o">&amp;</span>
+<span class="w">                   </span><span class="p">((</span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_bram_spiked</span><span class="p">[</span><span class="mh">1</span><span class="p">])</span><span class="w"> </span><span class="o">|</span>
+<span class="w">                    </span><span class="p">(</span><span class="n">uram_reading</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">exec_uram_spiked</span><span class="p">[</span><span class="mh">1</span><span class="p">]));</span>
+
+<span class="c1">// ... (pattern repeats for ptr2-ptr15)</span>
+</pre></div>
+</div>
+<p><strong>Logic Breakdown</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ptr_wren[i] = !ptr_full[i]           // FIFO has space
+            &amp; exec_hbm_rvalidready   // HBM data available
+            &amp; (
+                (bram_reading &amp; exec_bram_spiked[i])  // External spike
+                |
+                (uram_reading &amp; exec_uram_spiked[i])  // Internal spike
+              )
+</pre></div>
+</div>
+<p><strong>Example Scenarios</strong>:</p>
+<p><strong>Scenario 1: External spike on neuron group 5</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle N:
+  bram_reading = 1
+  exec_bram_spiked = 16&#39;b0000_0000_0010_0000  (bit 5 set)
+  exec_hbm_rvalidready = 1
+  ptr5_full = 0
+
+Result:
+  ptr5_wren = 1  → Write exec_hbm_rdata[191:160] to ptr5 FIFO
+  ptr0-4,6-15_wren = 0  → No write to other FIFOs
+</pre></div>
+</div>
+<p><strong>Scenario 2: Multiple spikes (groups 0, 3, 7)</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle N:
+  uram_reading = 1
+  exec_uram_spiked = 16&#39;b0000_0000_1000_1001  (bits 0,3,7 set)
+  exec_hbm_rvalidready = 1
+  ptr0_full = 0, ptr3_full = 0, ptr7_full = 1  (ptr7 full!)
+
+Result:
+  ptr0_wren = 1  → Write to ptr0
+  ptr3_wren = 1  → Write to ptr3
+  ptr7_wren = 0  → Blocked by full (data lost!)
+  Others = 0
+</pre></div>
+</div>
+<p><strong>Backpressure Handling</strong>: If any FIFO is full when its spike arrives, that pointer is <strong>lost</strong>. System must ensure FIFOs drain fast enough.</p>
+</section>
+<section id="round-robin-arbiter">
+<h3>Round-Robin Arbiter<a class="headerlink" href="#round-robin-arbiter" title="Link to this heading">#</a></h3>
+<p>A 4-bit counter cycles through FIFOs 0-15, servicing one per cycle:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// 4 bits for 16 FIFOs (0-15)</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Wraps 15→0 automatically</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Arbitration Cycle</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle 0:  addr=0  → Check ptr0
+Cycle 1:  addr=1  → Check ptr1
+Cycle 2:  addr=2  → Check ptr2
+...
+Cycle 15: addr=15 → Check ptr15
+Cycle 16: addr=0  → Back to ptr0
+...
+</pre></div>
+</div>
+<p><strong>Arbitration Logic</strong> (combinational):</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="c1">// Default: No reads, no writes</span>
+<span class="w">    </span><span class="n">ptr0_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ptr1_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... (all ptr*_rden = 0)</span>
+<span class="w">    </span><span class="n">ptrFIFO_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">32</span><span class="p">&#39;</span><span class="n">dX</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ptrFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="p">)</span>
+<span class="w">        </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">ptr0_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">ptrFIFO_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">ptr0_rden</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">ptrFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">ptr0_dout</span><span class="p">;</span>
+<span class="w">                </span><span class="n">ptrFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="mh">4</span><span class="mi">&#39;d1</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">ptr1_empty</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">~</span><span class="n">ptrFIFO_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">ptr1_rden</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">ptrFIFO_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">ptr1_dout</span><span class="p">;</span>
+<span class="w">                </span><span class="n">ptrFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">        </span><span class="c1">// ... (pattern repeats for 4&#39;d2 through 4&#39;d15)</span>
+
+<span class="w">        </span><span class="k">default</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// All outputs stay at default (0 or X)</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Arbitration Example</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Cycle</span>  <span class="o">|</span> <span class="n">addr</span> <span class="o">|</span> <span class="n">ptr0_empty</span> <span class="o">|</span> <span class="n">ptr1_empty</span> <span class="o">|</span> <span class="n">ptr5_empty</span> <span class="o">|</span> <span class="n">ptrFIFO_full</span> <span class="o">|</span> <span class="n">Action</span>
+<span class="o">-------|------|------------|------------|------------|--------------|------------------</span>
+   <span class="mi">0</span>   <span class="o">|</span>  <span class="mi">0</span>   <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Read</span> <span class="n">ptr0</span>
+   <span class="mi">1</span>   <span class="o">|</span>  <span class="mi">1</span>   <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Read</span> <span class="n">ptr1</span>
+   <span class="mi">2</span>   <span class="o">|</span>  <span class="mi">2</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+   <span class="mi">3</span>   <span class="o">|</span>  <span class="mi">3</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+   <span class="mi">4</span>   <span class="o">|</span>  <span class="mi">4</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+   <span class="mi">5</span>   <span class="o">|</span>  <span class="mi">5</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Read</span> <span class="n">ptr5</span>
+   <span class="mi">6</span>   <span class="o">|</span>  <span class="mi">6</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+   <span class="mi">7</span>   <span class="o">|</span>  <span class="mi">7</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+  <span class="o">...</span>  <span class="o">|</span> <span class="o">...</span>  <span class="o">|</span>     <span class="o">...</span>    <span class="o">|</span>     <span class="o">...</span>    <span class="o">|</span>     <span class="o">...</span>    <span class="o">|</span>     <span class="o">...</span>      <span class="o">|</span> <span class="o">...</span>
+  <span class="mi">15</span>   <span class="o">|</span> <span class="mi">15</span>   <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Skip</span> <span class="p">(</span><span class="n">empty</span><span class="p">)</span>
+  <span class="mi">16</span>   <span class="o">|</span>  <span class="mi">0</span>   <span class="o">|</span>      <span class="mi">0</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">1</span>     <span class="o">|</span>      <span class="mi">0</span>       <span class="o">|</span> <span class="n">Read</span> <span class="n">ptr0</span> <span class="n">again</span>
+</pre></div>
+</div>
+<p><strong>Fairness</strong>: Each FIFO gets equal opportunity (once per 16 cycles), regardless of occupancy.</p>
+<p><strong>Starvation</strong>: If a FIFO is always full, other FIFOs continue to be serviced. No single FIFO can block others.</p>
+</section>
+<section id="fwft-first-word-fall-through-mode">
+<h3>FWFT (First-Word Fall-Through) Mode<a class="headerlink" href="#fwft-first-word-fall-through-mode" title="Link to this heading">#</a></h3>
+<p>The FIFOs operate in FWFT mode, meaning data appears on <code class="docutils literal notranslate"><span class="pre">dout</span></code> immediately when <code class="docutils literal notranslate"><span class="pre">empty</span></code> deasserts:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Traditional</span> <span class="n">FIFO</span><span class="p">:</span>
+  <span class="n">Cycle</span> <span class="n">N</span><span class="p">:</span>   <span class="n">rden</span><span class="o">=</span><span class="mi">1</span>  <span class="p">(</span><span class="n">issue</span> <span class="n">read</span><span class="p">)</span>
+  <span class="n">Cycle</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span> <span class="n">dout</span> <span class="n">valid</span>  <span class="p">(</span><span class="mi">1</span> <span class="n">cycle</span> <span class="n">latency</span><span class="p">)</span>
+
+<span class="n">FWFT</span> <span class="n">FIFO</span><span class="p">:</span>
+  <span class="n">Cycle</span> <span class="n">N</span><span class="p">:</span>   <span class="n">empty</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dout</span> <span class="n">already</span> <span class="n">valid</span>
+  <span class="n">Cycle</span> <span class="n">N</span><span class="p">:</span>   <span class="n">rden</span><span class="o">=</span><span class="mi">1</span>  <span class="p">(</span><span class="n">consume</span> <span class="n">word</span><span class="p">,</span> <span class="n">advance</span> <span class="n">to</span> <span class="nb">next</span><span class="p">)</span>
+  <span class="n">Cycle</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">:</span> <span class="n">dout</span> <span class="n">shows</span> <span class="nb">next</span> <span class="n">word</span> <span class="p">(</span><span class="k">if</span> <span class="n">available</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Why FWFT?</strong>: Reduces latency - arbiter can read and forward pointer in single cycle.</p>
+<p><strong>HBM FIFO Read Enable</strong>:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">hbm2pfc_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Every time HBM data is consumed (<code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready=1</span></code>), the FIFO is advanced to present next 512-bit word. This assumes FWFT mode on the HBM data FIFO.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="phase-transition-bram-uram">
+<h3>Phase Transition: BRAM → URAM<a class="headerlink" href="#phase-transition-bram-uram" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle    0    1    2    3    4    5    6    7    8    9
+         ────┬────┬────┬────┬────┬────┬────┬────┬────┬────
+exec_run ───┐    ┌─────────────────────────────────────────
+         ───└────┘
+
+bram_reading ────┐                        ┌────────────────
+         ────────└────────────────────────┘
+
+uram_reading ─────────────────────────┐              ┌─────
+         ─────────────────────────────└──────────────┘
+
+exec_bram_phase1_done ────────────┐    ┌─────────────────
+                      ────────────└────┘
+
+exec_uram_phase1_done ─────────────────────────┐    ┌─────
+                      ─────────────────────────└────┘
+
+Phase        IDLE   BRAM  BRAM  BRAM  BRAM URAM URAM URAM IDLE
+</pre></div>
+</div>
+</section>
+<section id="pointer-fifo-write-spike-gated">
+<h3>Pointer FIFO Write (Spike-Gated)<a class="headerlink" href="#pointer-fifo-write-spike-gated" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4    5    6
+             ────┬────┬────┬────┬────┬────┬────
+bram_reading ───────────────────────────────────
+             ───┐
+                └───────────────────────────────
+
+exec_hbm_rvalidready ──┐    ┌───┐    ┌───┐    ┌
+                   ────└────┘   └────┘   └────┘
+
+exec_bram_spiked    0x0005   0x0003   0x0000
+                    (bits 0,2)(bits 0,1) (none)
+
+ptr0_full       ───────────────────────────────  (always room)
+
+ptr0_wren       ───┐         ┌───┐
+                ───└─────────┘   └─────────────  (spike bit 0)
+
+ptr1_wren       ────────────────┐
+                ────────────────└───────────────  (spike bit 1)
+
+ptr2_wren       ───┐
+                ───└───────────────────────────  (spike bit 2)
+
+ptr0_din            P0        P0&#39;
+                    ↓         ↓
+ptr0 FIFO       [empty] → [P0] → [P0,P0&#39;]
+
+Explanation:
+  Cycle 1: exec_bram_spiked=0x0005 (bits 0 and 2)
+           → ptr0_wren=1, ptr2_wren=1
+           → Write to ptr0 and ptr2 FIFOs
+
+  Cycle 3: exec_bram_spiked=0x0003 (bits 0 and 1)
+           → ptr0_wren=1, ptr1_wren=1
+           → Write to ptr0 (again) and ptr1 FIFOs
+
+  Cycle 5: exec_bram_spiked=0x0000 (no spikes)
+           → All ptr*_wren=0
+           → No writes (HBM data ignored)
+</pre></div>
+</div>
+</section>
+<section id="round-robin-arbiter-operation">
+<h3>Round-Robin Arbiter Operation<a class="headerlink" href="#round-robin-arbiter-operation" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle    0    1    2    3    4    5    6    7    8
+         ────┬────┬────┬────┬────┬────┬────┬────┬────
+addr         0    1    2    3    4    5    6    7    8
+
+ptr0_empty   ────┐                             ┌─────
+             ────└─────────────────────────────┘
+             (has data cycles 0-7, empty at 8)
+
+ptr1_empty   ───────────────────────────────────────
+             (empty throughout)
+
+ptr2_empty   ──────────┐                   ┌────────
+             ──────────└───────────────────┘
+             (has data cycles 2-6)
+
+ptrFIFO_full ───────────────────────────────────────
+             (never full)
+
+ptr0_rden    ───┐                             ┌─────
+             ───└─────────────────────────────┘
+
+ptr2_rden    ──────────┐
+             ──────────└───────────────────────────
+
+ptrFIFO_wren ───┐       ┌─────────────────────┐
+             ───└───────┘                     └─────
+
+ptrFIFO_din      D0      D2                    X
+
+Explanation:
+  Cycle 0 (addr=0): ptr0 not empty → read ptr0, write ptrFIFO
+  Cycle 1 (addr=1): ptr1 empty → skip
+  Cycle 2 (addr=2): ptr2 not empty → read ptr2, write ptrFIFO
+  Cycle 3-7: All empty → skip
+  Cycle 8 (addr=8): Continue round-robin (wraps at 15)
+</pre></div>
+</div>
+</section>
+<section id="fifo-full-backpressure">
+<h3>FIFO Full Backpressure<a class="headerlink" href="#fifo-full-backpressure" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle        0    1    2    3    4    5
+             ────┬────┬────┬────┬────┬────
+exec_hbm_rvalidready ┐    ┌───┐    ┌───┐
+                 ────└────┘   └────┘   └
+
+exec_bram_spiked  0x0001 0x0001 0x0001
+                  (bit 0)(bit 0)(bit 0)
+
+ptr0_full     ────────────┐         ┌────
+              ────────────└─────────┘
+              (becomes full at cycle 2)
+
+ptr0_wren     ───┐    ┌───┐         ┌────
+              ───└────┘   └─────────┘
+
+ptr0_din          D0   D1   X     D2
+
+ptr0 contents [D0] [D0,D1] [D0,D1] [D1,D2]
+
+Explanation:
+  Cycle 1: Write D0 to ptr0 (wren=1)
+  Cycle 2: ptr0 becomes full
+  Cycle 3: D1 written, but ptr0_full=1 → wren=0 → D1 LOST!
+  Cycle 4: ptr0 not full again
+  Cycle 5: D2 written (wren=1)
+
+  Result: D1 was lost due to FIFO full condition!
+</pre></div>
+</div>
+<p><strong>Prevention</strong>: Ensure arbiter drains FIFOs faster than they fill, or increase FIFO depth.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="memory-and-resource-usage">
+<h2>Memory and Resource Usage<a class="headerlink" href="#memory-and-resource-usage" title="Link to this heading">#</a></h2>
+<section id="fifo-depth-considerations">
+<h3>FIFO Depth Considerations<a class="headerlink" href="#fifo-depth-considerations" title="Link to this heading">#</a></h3>
+<p><strong>Minimum FIFO Depth</strong> (to avoid loss):</p>
+<p>Assume:</p>
+<ul class="simple">
+<li><p>Max neurons per group: 8192 (131,072 / 16)</p></li>
+<li><p>Worst case: All neurons in one group spike</p></li>
+<li><p>Arbiter services each FIFO once per 16 cycles</p></li>
+</ul>
+<p><strong>Fill Rate</strong> (during bram_reading or uram_reading):</p>
+<ul class="simple">
+<li><p>1 pointer per HBM read (exec_hbm_rvalidready)</p></li>
+<li><p>Max rate: 1 per cycle (if HBM always ready)</p></li>
+</ul>
+<p><strong>Drain Rate</strong>:</p>
+<ul class="simple">
+<li><p>1 pointer per 16 cycles (round-robin)</p></li>
+</ul>
+<p><strong>Net Accumulation</strong>:</p>
+<ul class="simple">
+<li><p>Fill: +1 per cycle (worst case)</p></li>
+<li><p>Drain: +1 per 16 cycles</p></li>
+<li><p>Net: +15 pointers per 16 cycles</p></li>
+</ul>
+<p><strong>Depth Calculation</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Time</span> <span class="n">to</span> <span class="n">process</span> <span class="mi">8192</span> <span class="n">neurons</span> <span class="o">@</span> <span class="mi">225</span> <span class="n">MHz</span><span class="p">:</span>
+  <span class="mi">8192</span> <span class="o">/</span> <span class="mi">16</span> <span class="p">(</span><span class="n">axons</span> <span class="n">per</span> <span class="n">HBM</span> <span class="n">read</span><span class="p">)</span> <span class="o">=</span> <span class="mi">512</span> <span class="n">HBM</span> <span class="n">reads</span>
+  <span class="mi">512</span> <span class="n">cycles</span> <span class="o">@</span> <span class="mi">225</span> <span class="n">MHz</span> <span class="o">=</span> <span class="mf">2.27</span> <span class="n">µs</span>
+
+<span class="n">Pointers</span> <span class="n">accumulated</span> <span class="ow">in</span> <span class="n">one</span> <span class="n">FIFO</span> <span class="p">(</span><span class="n">worst</span> <span class="n">case</span><span class="p">):</span>
+  <span class="n">All</span> <span class="mi">8192</span> <span class="n">neurons</span> <span class="ow">in</span> <span class="n">one</span> <span class="n">group</span> <span class="n">spike</span>
+  <span class="o">=</span> <span class="mi">8192</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">=</span> <span class="mi">512</span> <span class="n">pointers</span>
+  <span class="p">(</span><span class="n">Each</span> <span class="n">HBM</span> <span class="n">read</span> <span class="n">provides</span> <span class="mi">1</span> <span class="n">pointer</span> <span class="k">for</span> <span class="n">that</span> <span class="n">group</span><span class="p">)</span>
+
+<span class="n">Pointers</span> <span class="n">drained</span> <span class="n">during</span> <span class="mi">512</span> <span class="n">cycles</span><span class="p">:</span>
+  <span class="mi">512</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">=</span> <span class="mi">32</span> <span class="n">pointers</span>
+
+<span class="n">Net</span> <span class="n">FIFO</span> <span class="n">occupancy</span><span class="p">:</span>
+  <span class="mi">512</span> <span class="o">-</span> <span class="mi">32</span> <span class="o">=</span> <span class="mi">480</span> <span class="n">pointers</span>
+
+<span class="n">Required</span> <span class="n">FIFO</span> <span class="n">depth</span><span class="p">:</span> <span class="o">~</span><span class="mi">512</span> <span class="p">(</span><span class="n">power</span> <span class="n">of</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">FPGA</span> <span class="n">FIFOs</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Typical FIFO Configuration</strong>:</p>
+<ul class="simple">
+<li><p><strong>Depth</strong>: 512 or 1024 entries</p></li>
+<li><p><strong>Width</strong>: 32 bits</p></li>
+<li><p><strong>Type</strong>: Distributed RAM (for small depth) or Block RAM</p></li>
+<li><p><strong>Mode</strong>: FWFT (First-Word Fall-Through)</p></li>
+</ul>
+</section>
+<section id="resource-estimates">
+<h3>Resource Estimates<a class="headerlink" href="#resource-estimates" title="Link to this heading">#</a></h3>
+<p><strong>Per Pointer FIFO</strong> (16 instances):</p>
+<ul class="simple">
+<li><p><strong>Depth 512 × 32b</strong> = 16 Kb = 0.89 BRAM18K (use 1 BRAM18K)</p></li>
+<li><p><strong>FWFT logic</strong>: ~50 LUTs, ~30 FFs</p></li>
+</ul>
+<p><strong>Total for 16 FIFOs</strong>:</p>
+<ul class="simple">
+<li><p><strong>BRAM18K</strong>: 16 (one per FIFO)</p></li>
+<li><p><strong>LUTs</strong>: ~800 (FIFOs) + ~200 (arbiter) = ~1000</p></li>
+<li><p><strong>FFs</strong>: ~500 (FIFOs) + ~50 (arbiter/control) = ~550</p></li>
+</ul>
+<p><strong>Controller Logic</strong>:</p>
+<ul class="simple">
+<li><p><strong>Demux</strong>: 16 × 32-bit slices (wiring only, ~0 LUTs)</p></li>
+<li><p><strong>Write Enable</strong>: 16 × (4-input AND + OR) = ~96 LUTs</p></li>
+<li><p><strong>Arbiter</strong>: 16-way mux + control = ~150 LUTs</p></li>
+<li><p><strong>Phase Control</strong>: ~20 LUTs, ~3 FFs</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="upstream-modules">
+<h3>Upstream Modules<a class="headerlink" href="#upstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>external_events_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">external_events_processor.md</span></code>):</p>
+<ul>
+<li><p>Provides <code class="docutils literal notranslate"><span class="pre">exec_bram_spiked[15:0]</span></code> (external spike mask)</p></li>
+<li><p>Asserts <code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code> to signal phase transition</p></li>
+</ul>
+</li>
+<li><p><strong>internal_events_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">internal_events_processor.md</span></code>):</p>
+<ul>
+<li><p>Provides <code class="docutils literal notranslate"><span class="pre">exec_uram_spiked[15:0]</span></code> (internal spike mask)</p></li>
+<li><p>Asserts <code class="docutils literal notranslate"><span class="pre">exec_uram_phase1_done</span></code> to signal phase 1 complete</p></li>
+</ul>
+</li>
+<li><p><strong>hbm_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code>):</p>
+<ul>
+<li><p>Provides <code class="docutils literal notranslate"><span class="pre">exec_hbm_rdata[511:0]</span></code> (pointer data from HBM)</p></li>
+<li><p>Provides <code class="docutils literal notranslate"><span class="pre">exec_hbm_rvalidready</span></code> (data valid signal)</p></li>
+<li><p>Receives <code class="docutils literal notranslate"><span class="pre">ptrFIFO_din</span></code>, <code class="docutils literal notranslate"><span class="pre">ptrFIFO_wren</span></code> (aggregated pointers for Phase 2)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="downstream-modules">
+<h3>Downstream Modules<a class="headerlink" href="#downstream-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>hbm_processor.v</strong> (<code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code>):</p>
+<ul>
+<li><p>Consumes pointers from <code class="docutils literal notranslate"><span class="pre">ptrFIFO</span></code></p></li>
+<li><p>Uses pointers to fetch synaptic weights during Phase 2</p></li>
+<li><p>Sends fetched synapses to spike FIFOs</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="peer-modules">
+<h3>Peer Modules<a class="headerlink" href="#peer-modules" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>spike_fifo_controller.v</strong> (<code class="docutils literal notranslate"><span class="pre">spike_fifo_controller.md</span></code>):</p>
+<ul>
+<li><p>Similar architecture (demux + arbiter)</p></li>
+<li><p>Handles synaptic weight data instead of pointers</p></li>
+<li><p>Works in Phase 2 alongside this module’s pointer drain</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="issue-1-pointers-lost-fifo-overflow">
+<h3>Issue 1: Pointers Lost (FIFO Overflow)<a class="headerlink" href="#issue-1-pointers-lost-fifo-overflow" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Neurons don’t receive expected synaptic updates</p></li>
+<li><p>FIFO full flags assert frequently</p></li>
+<li><p>Spike counts don’t match expected connectivity</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Arbiter can’t drain FIFOs fast enough</p></li>
+<li><p>FIFO depth too small for burst activity</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Add probes for FIFO occupancy</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr0_count</span><span class="p">;</span><span class="w">  </span><span class="c1">// Assuming 512-deep FIFO</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w">       </span><span class="n">ptr0_overflow</span><span class="p">;</span>
+
+<span class="c1">// Monitor overflow events</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ptr0_full</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">ptr0_wren</span><span class="p">)</span>
+<span class="w">        </span><span class="n">ptr0_overflow</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Overflow detected!</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Increase FIFO depth (512 → 1024 or 2048)</p></li>
+<li><p>Optimize arbiter (see Enhancement #1 below)</p></li>
+<li><p>Add priority arbitration for fuller FIFOs</p></li>
+</ul>
+</section>
+<section id="issue-2-unfair-arbitration-starvation">
+<h3>Issue 2: Unfair Arbitration (Starvation)<a class="headerlink" href="#issue-2-unfair-arbitration-starvation" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Some neuron groups process much slower than others</p></li>
+<li><p>Uneven latency across different spike patterns</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Round-robin gives equal slots, but some FIFOs have more data</p></li>
+<li><p>FIFO[0] with 100 entries gets same service as FIFO[15] with 1 entry</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Track arbitration wins per FIFO</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">arb_wins</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ptr0_rden</span><span class="p">)</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ptr1_rden</span><span class="p">)</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">arb_wins</span><span class="p">[</span><span class="mh">1</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... (repeat for all FIFOs)</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Implement weighted round-robin (award more slots to fuller FIFOs)</p></li>
+<li><p>Use priority encoder favoring non-empty FIFOs</p></li>
+<li><p>Skip empty FIFOs faster (see Enhancement #2)</p></li>
+</ul>
+</section>
+<section id="issue-3-phase-transition-glitch">
+<h3>Issue 3: Phase Transition Glitch<a class="headerlink" href="#issue-3-phase-transition-glitch" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Pointers written with wrong spike mask during phase boundary</p></li>
+<li><p>Corruption at transition from BRAM to URAM reading</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>Race condition between <code class="docutils literal notranslate"><span class="pre">exec_bram_phase1_done</span></code> and last HBM read</p></li>
+<li><p>Write enable uses old phase flags</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor phase transition timing</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="n">phase_transition</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_bram_phase1_done</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">uram_reading</span><span class="p">)</span>
+<span class="w">        </span><span class="n">phase_transition</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">phase_transition</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">// Check if any writes occur during transition</span>
+<span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span>
+<span class="w">    </span><span class="n">phase_transition</span><span class="w"> </span><span class="o">|-&gt;</span><span class="w"> </span><span class="p">(</span><span class="o">|</span><span class="p">{</span><span class="n">ptr0_wren</span><span class="p">,</span><span class="w"> </span><span class="n">ptr1_wren</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">ptr15_wren</span><span class="p">}</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">0</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Pipeline phase flags by one cycle</p></li>
+<li><p>Add guard time between phases (no writes for 1 cycle)</p></li>
+<li><p>Use registered versions of bram_reading/uram_reading for write enables</p></li>
+</ul>
+</section>
+<section id="issue-4-hbm-fifo-not-advancing">
+<h3>Issue 4: HBM FIFO Not Advancing<a class="headerlink" href="#issue-4-hbm-fifo-not-advancing" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Same HBM data appears multiple times</p></li>
+<li><p>Pointer FIFOs fill with duplicate entries</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">hbm2pfc_rden</span></code> not properly connected or not asserting</p></li>
+<li><p>FWFT mode misconfigured on HBM FIFO</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Verify read enable toggles</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">hbm2pfc_rden</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">;</span>
+
+<span class="c1">// Check for stuck data</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">prev_hbm_rdata</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">exec_hbm_rvalidready</span><span class="p">)</span>
+<span class="w">        </span><span class="n">prev_hbm_rdata</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">exec_hbm_rdata</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c1">// Assert: consecutive reads should have different data (usually)</span>
+<span class="c1">// (unless network connectivity happens to repeat, rare)</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Verify FWFT mode enabled on HBM FIFO IP</p></li>
+<li><p>Check that <code class="docutils literal notranslate"><span class="pre">hbm2pfc_rden</span></code> is wired to FIFO’s read enable</p></li>
+<li><p>Confirm FIFO has data (not empty)</p></li>
+</ul>
+</section>
+<section id="issue-5-address-counter-wrapping-incorrectly">
+<h3>Issue 5: Address Counter Wrapping Incorrectly<a class="headerlink" href="#issue-5-address-counter-wrapping-incorrectly" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong></p>
+<ul class="simple">
+<li><p>Some FIFOs never serviced</p></li>
+<li><p>Arbiter stuck on certain addresses</p></li>
+</ul>
+<p><strong>Root Cause:</strong></p>
+<ul class="simple">
+<li><p>4-bit counter not wrapping correctly (should wrap 15→0)</p></li>
+<li><p>Synthesis optimization error</p></li>
+</ul>
+<p><strong>Debug:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Monitor counter progression</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="w"> </span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">prev_addr</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">prev_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Check for proper increment (with wrap)</span>
+<span class="w">    </span><span class="n">assert</span><span class="w"> </span><span class="p">((</span><span class="n">addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="p">(</span><span class="n">prev_addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">))</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">resetn</span><span class="p">));</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Solution:</strong></p>
+<ul class="simple">
+<li><p>Explicitly handle wrap:</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d15</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Explicit wrap</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="throughput-analysis">
+<h3>Throughput Analysis<a class="headerlink" href="#throughput-analysis" title="Link to this heading">#</a></h3>
+<p><strong>HBM Read Bandwidth</strong>:</p>
+<ul class="simple">
+<li><p><strong>Peak</strong>: 512 bits per cycle &#64; 225 MHz = 14.4 GB/s</p></li>
+<li><p><strong>Typical</strong>: Limited by HBM latency and contention (~50% efficiency) = 7.2 GB/s</p></li>
+<li><p><strong>Pointers per Second</strong>: (7.2 GB/s) / (32 bits) = 1.8 billion pointers/s</p></li>
+</ul>
+<p><strong>Arbiter Throughput</strong>:</p>
+<ul class="simple">
+<li><p><strong>Max</strong>: 1 pointer per cycle &#64; 225 MHz = 225 million pointers/s</p></li>
+<li><p><strong>Typical</strong> (50% FIFO occupancy): ~112 million pointers/s</p></li>
+<li><p><strong>Bottleneck</strong>: Arbiter is <strong>NOT</strong> the bottleneck (HBM fill rate &gt;&gt; drain rate in Phase 1)</p></li>
+</ul>
+<p><strong>Phase 1 Duration</strong> (example: 131,072 neurons):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">External</span> <span class="n">Events</span><span class="p">:</span>
+  <span class="n">Input</span> <span class="n">axons</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span><span class="mi">384</span> <span class="p">(</span><span class="n">assuming</span> <span class="mi">16</span> <span class="n">per</span> <span class="n">HBM</span> <span class="n">read</span><span class="p">)</span>
+  <span class="n">HBM</span> <span class="n">reads</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span><span class="mi">384</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span><span class="mi">024</span> <span class="n">reads</span>
+  <span class="n">Time</span> <span class="o">@</span> <span class="mi">225</span> <span class="n">MHz</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span><span class="mi">024</span> <span class="n">cycles</span> <span class="o">=</span> <span class="mf">4.55</span> <span class="n">µs</span>
+
+<span class="n">Internal</span> <span class="n">Events</span><span class="p">:</span>
+  <span class="n">URAM</span> <span class="n">neurons</span><span class="p">:</span> <span class="mi">131</span><span class="p">,</span><span class="mi">072</span>
+  <span class="n">URAM</span> <span class="n">rows</span><span class="p">:</span> <span class="mi">131</span><span class="p">,</span><span class="mi">072</span> <span class="o">/</span> <span class="mi">2</span> <span class="o">=</span> <span class="mi">65</span><span class="p">,</span><span class="mi">536</span> <span class="p">(</span><span class="mi">2</span> <span class="n">neurons</span> <span class="n">per</span> <span class="n">row</span><span class="p">)</span>
+  <span class="n">URAM</span> <span class="n">banks</span><span class="p">:</span> <span class="mi">16</span>
+  <span class="n">Rows</span> <span class="n">per</span> <span class="n">bank</span><span class="p">:</span> <span class="mi">65</span><span class="p">,</span><span class="mi">536</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span><span class="mi">096</span>
+  <span class="n">HBM</span> <span class="n">reads</span> <span class="n">per</span> <span class="n">bank</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span><span class="mi">096</span> <span class="o">/</span> <span class="mi">16</span> <span class="o">=</span> <span class="mi">256</span> <span class="p">(</span><span class="k">if</span> <span class="mi">16</span> <span class="n">neurons</span> <span class="n">spike</span> <span class="n">per</span> <span class="n">read</span><span class="p">)</span>
+  <span class="n">Total</span> <span class="n">HBM</span> <span class="n">reads</span><span class="p">:</span> <span class="o">~</span><span class="mi">16</span><span class="p">,</span><span class="mi">384</span> <span class="p">(</span><span class="n">worst</span> <span class="n">case</span><span class="p">,</span> <span class="nb">all</span> <span class="n">banks</span> <span class="n">active</span><span class="p">)</span>
+  <span class="n">Time</span> <span class="o">@</span> <span class="mi">225</span> <span class="n">MHz</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span><span class="mi">384</span> <span class="n">cycles</span> <span class="o">=</span> <span class="mf">72.8</span> <span class="n">µs</span>
+
+<span class="n">Total</span> <span class="n">Phase</span> <span class="mi">1</span><span class="p">:</span> <span class="o">~</span><span class="mi">77</span> <span class="n">µs</span>
+</pre></div>
+</div>
+<p><strong>Phase 2 Duration</strong> (pointer drain):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Assume 10% neurons spike (13,107 neurons):
+  Pointers to process: 13,107
+  Arbiter rate: 1 per 16 cycles (round-robin overhead)
+  Effective drain: 225 MHz / 16 = 14.06 million pointers/s
+
+  Time: 13,107 pointers / 14.06M/s = 0.93 ms
+
+But Phase 2 overlaps with next Phase 1!
+  Phase 1 and 2 pipeline, so overall latency = max(Phase1, Phase2)
+  Typical: Phase 2 &gt;&gt; Phase 1, so Phase 2 dominates
+</pre></div>
+</div>
+<p><strong>Latency</strong> (pointer from HBM to ptrFIFO):</p>
+<ul class="simple">
+<li><p><strong>Best Case</strong> (FIFO empty, arbiter on correct address):</p>
+<ul>
+<li><p>FWFT mode: 0 cycles (immediate)</p></li>
+<li><p>Write to ptrFIFO: 1 cycle</p></li>
+<li><p><strong>Total</strong>: 1 cycle &#64; 225 MHz = 4.4 ns</p></li>
+</ul>
+</li>
+<li><p><strong>Worst Case</strong> (FIFO full, arbiter just passed):</p>
+<ul>
+<li><p>Wait for FIFO space: N cycles (depends on drain rate)</p></li>
+<li><p>Wait for arbiter: 15 cycles (worst case, just missed)</p></li>
+<li><p><strong>Total</strong>: ~16 cycles &#64; 225 MHz = 71 ns (ignoring FIFO drain time)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="resource-utilization-summary">
+<h3>Resource Utilization Summary<a class="headerlink" href="#resource-utilization-summary" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Resource</p></th>
+<th class="head"><p>Usage</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>LUTs</p></td>
+<td><p>~1,200</p></td>
+<td><p>Demux, arbiter, control, FIFO logic</p></td>
+</tr>
+<tr class="row-odd"><td><p>FFs</p></td>
+<td><p>~550</p></td>
+<td><p>Phase control, arbiter, FIFO pointers</p></td>
+</tr>
+<tr class="row-even"><td><p>BRAM18K</p></td>
+<td><p>16</p></td>
+<td><p>One per pointer FIFO (512×32b each)</p></td>
+</tr>
+<tr class="row-odd"><td><p>DSPs</p></td>
+<td><p>0</p></td>
+<td><p>No arithmetic operations</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Percentage of Typical FPGA</strong> (e.g., Xilinx UltraScale+ VU9P):</p>
+<ul class="simple">
+<li><p>LUTs: 1,200 / 1,182,240 = 0.1%</p></li>
+<li><p>FFs: 550 / 2,364,480 = 0.02%</p></li>
+<li><p>BRAM18K: 16 / 2,160 = 0.74%</p></li>
+</ul>
+<p><strong>Conclusion</strong>: Very lightweight module, dominated by FIFO storage.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="edge-case-1-all-neurons-spike-simultaneously">
+<h3>Edge Case 1: All Neurons Spike Simultaneously<a class="headerlink" href="#edge-case-1-all-neurons-spike-simultaneously" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: Every neuron in every group spikes in same cycle.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exec_bram_spiked</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;hFFFF  (all bits set)</span>
+<span class="n">All</span> <span class="mi">16</span> <span class="n">pointer</span> <span class="n">FIFOs</span> <span class="n">receive</span> <span class="n">write</span><span class="p">:</span>
+  <span class="n">ptr0_wren</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ptr1_wren</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="o">...</span><span class="p">,</span> <span class="n">ptr15_wren</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="n">Each</span> <span class="n">FIFO</span> <span class="n">receives</span> <span class="mi">1</span> <span class="n">pointer</span> <span class="n">per</span> <span class="n">HBM</span> <span class="n">read</span><span class="o">.</span>
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ All writes occur in parallel (16 separate FIFOs)</p></li>
+<li><p>✅ No conflicts (each FIFO independent)</p></li>
+<li><p>⚠️ FIFO depth must handle burst (512+ pointers)</p></li>
+<li><p>⚠️ Arbiter drain rate becomes critical (1 per 16 cycles)</p></li>
+</ul>
+<p><strong>Result</strong>: System handles correctly if FIFO depth adequate.</p>
+</section>
+<section id="edge-case-2-no-neurons-spike-quiescent-network">
+<h3>Edge Case 2: No Neurons Spike (Quiescent Network)<a class="headerlink" href="#edge-case-2-no-neurons-spike-quiescent-network" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: No spikes in entire time step.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exec_bram_spiked</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;h0000  (all bits clear)</span>
+<span class="n">exec_uram_spiked</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;h0000</span>
+
+<span class="n">All</span> <span class="n">ptr</span><span class="o">*</span><span class="n">_wren</span> <span class="o">=</span> <span class="mi">0</span>  <span class="p">(</span><span class="n">no</span> <span class="n">writes</span> <span class="n">to</span> <span class="nb">any</span> <span class="n">FIFO</span><span class="p">)</span>
+<span class="n">HBM</span> <span class="n">reads</span> <span class="n">still</span> <span class="n">occur</span><span class="p">,</span> <span class="n">but</span> <span class="n">data</span> <span class="n">discarded</span><span class="o">.</span>
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ No FIFO writes (correct behavior)</p></li>
+<li><p>✅ Arbiter continues cycling (no-op, all FIFOs empty)</p></li>
+<li><p>✅ Phase transitions occur normally</p></li>
+<li><p>⚠️ HBM bandwidth wasted (reading data that’s discarded)</p></li>
+</ul>
+<p><strong>Optimization Opportunity</strong>: Gate HBM reads based on spike mask (see Enhancements).</p>
+</section>
+<section id="edge-case-3-single-bit-spike-minimal-activity">
+<h3>Edge Case 3: Single Bit Spike (Minimal Activity)<a class="headerlink" href="#edge-case-3-single-bit-spike-minimal-activity" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: Only one neuron in one group spikes.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">exec_bram_spiked</span> <span class="o">=</span> <span class="mi">16</span><span class="s1">&#39;h0001  (only bit 0 set)</span>
+
+<span class="n">Only</span> <span class="n">ptr0_wren</span> <span class="o">=</span> <span class="mi">1</span>  <span class="p">(</span><span class="n">one</span> <span class="n">FIFO</span> <span class="n">active</span><span class="p">)</span>
+<span class="n">Other</span> <span class="mi">15</span> <span class="n">FIFOs</span> <span class="n">idle</span><span class="o">.</span>
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ Correct - only relevant FIFO updated</p></li>
+<li><p>✅ Arbiter cycles through all, only reads from ptr0</p></li>
+<li><p>✅ Minimal resource usage</p></li>
+</ul>
+<p><strong>Result</strong>: Efficient sparse event handling.</p>
+</section>
+<section id="edge-case-4-ptrfifo-full-downstream-backpressure">
+<h3>Edge Case 4: ptrFIFO Full (Downstream Backpressure)<a class="headerlink" href="#edge-case-4-ptrfifo-full-downstream-backpressure" title="Link to this heading">#</a></h3>
+<p><strong>Scenario</strong>: HBM processor can’t consume pointers fast enough.</p>
+<p><strong>Behavior</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>ptrFIFO_full = 1
+
+Arbiter logic:
+  if (~ptr[addr]_empty &amp; ~ptrFIFO_full)  → Condition false!
+    ptr[addr]_rden = 0  (no read)
+    ptrFIFO_wren = 0    (no write)
+</pre></div>
+</div>
+<p><strong>Safety</strong>:</p>
+<ul class="simple">
+<li><p>✅ Arbiter stalls (doesn’t read from any pointer FIFO)</p></li>
+<li><p>✅ Upstream pointer FIFOs continue to fill</p></li>
+<li><p>⚠️ If pointer FIFOs also fill, writes are lost (see Issue 1)</p></li>
+</ul>
+<p><strong>Required</strong>: System must ensure ptrFIFO drains faster than it fills.</p>
+</section>
+<section id="safety-check-write-enable-conflicts">
+<h3>Safety Check: Write Enable Conflicts<a class="headerlink" href="#safety-check-write-enable-conflicts" title="Link to this heading">#</a></h3>
+<p><strong>Assertion</strong>: Verify only one arbiter read per cycle</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">rdens</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">ptr15_rden</span><span class="p">,</span><span class="w"> </span><span class="n">ptr14_rden</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">ptr0_rden</span><span class="p">};</span>
+
+<span class="n">property</span><span class="w"> </span><span class="n">one_hot_rdens</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="n">$onehot0</span><span class="p">(</span><span class="n">rdens</span><span class="p">);</span><span class="w">  </span><span class="c1">// At most one bit set</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_rdens:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">one_hot_rdens</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="safety-check-phase-mutual-exclusion">
+<h3>Safety Check: Phase Mutual Exclusion<a class="headerlink" href="#safety-check-phase-mutual-exclusion" title="Link to this heading">#</a></h3>
+<p><strong>Assertion</strong>: Ensure bram_reading and uram_reading never both asserted</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="n">property</span><span class="w"> </span><span class="n">phases_mutex</span><span class="p">;</span>
+<span class="w">    </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">disable</span><span class="w"> </span><span class="n">iff</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">    </span><span class="o">!</span><span class="p">(</span><span class="n">bram_reading</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">uram_reading</span><span class="p">);</span>
+<span class="n">endproperty</span>
+<span class="nl">assert_phases:</span><span class="w"> </span><span class="n">assert</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="p">(</span><span class="n">phases_mutex</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="future-enhancement-opportunities">
+<h2>Future Enhancement Opportunities<a class="headerlink" href="#future-enhancement-opportunities" title="Link to this heading">#</a></h2>
+<section id="priority-arbiter">
+<h3>1. Priority Arbiter<a class="headerlink" href="#priority-arbiter" title="Link to this heading">#</a></h3>
+<p>Replace round-robin with priority-based arbitration:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Calculate occupancy for each FIFO (requires rd_data_count from FIFO IP)</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">9</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptr0_count</span><span class="p">,</span><span class="w"> </span><span class="n">ptr1_count</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">ptr15_count</span><span class="p">;</span>
+
+<span class="c1">// Find fullest FIFO (priority encoder)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">priority_addr</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w">      </span><span class="p">(</span><span class="n">ptr0_count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">ptr1_count</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">threshold</span><span class="p">)</span><span class="w"> </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ... (priority order 0→1→2→...→15)</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="n">priority_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// Fall back to round-robin</span>
+<span class="k">end</span>
+
+<span class="c1">// Use priority_addr instead of addr in arbiter mux</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Prevents FIFO overflow by draining fuller FIFOs first.</p>
+</section>
+<section id="skip-empty-optimization">
+<h3>2. Skip-Empty Optimization<a class="headerlink" href="#skip-empty-optimization" title="Link to this heading">#</a></h3>
+<p>Current arbiter wastes cycles checking empty FIFOs:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Add empty flag aggregation</span>
+<span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">15</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ptrs_empty</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">ptr15_empty</span><span class="p">,</span><span class="w"> </span><span class="p">...,</span><span class="w"> </span><span class="n">ptr0_empty</span><span class="p">};</span>
+
+<span class="c1">// Fast-forward to next non-empty FIFO</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">next_addr</span><span class="p">;</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">next_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">addr</span><span class="p">;</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">16</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ptrs_empty</span><span class="p">[(</span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">4&#39;hF</span><span class="p">])</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="n">next_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">addr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="mh">4&#39;hF</span><span class="p">;</span>
+<span class="w">            </span><span class="k">break</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">resetn</span><span class="p">)</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">4</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">next_addr</span><span class="p">;</span><span class="w">  </span><span class="c1">// Jump to next non-empty</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Reduces latency by ~50% when many FIFOs empty.</p>
+</section>
+<section id="gated-hbm-reads">
+<h3>3. Gated HBM Reads<a class="headerlink" href="#gated-hbm-reads" title="Link to this heading">#</a></h3>
+<p>Don’t read HBM when no spikes:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Compute OR of spike mask</span>
+<span class="kt">wire</span><span class="w"> </span><span class="n">any_spikes</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">|</span><span class="p">(</span><span class="n">exec_bram_spiked</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">exec_uram_spiked</span><span class="p">);</span>
+
+<span class="c1">// Gate HBM read enable</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">hbm2pfc_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">exec_hbm_rvalidready</span><span class="w"> </span><span class="o">&amp;</span><span class="w"> </span><span class="n">any_spikes</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Saves HBM bandwidth during quiescent periods.</p>
+</section>
+<section id="configurable-fifo-count">
+<h3>4. Configurable FIFO Count<a class="headerlink" href="#configurable-fifo-count" title="Link to this heading">#</a></h3>
+<p>Parameterize number of FIFOs:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="n">pointer_fifo_controller</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">NUM_FIFOS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">16</span><span class="p">,</span>
+<span class="w">    </span><span class="k">parameter</span><span class="w"> </span><span class="n">FIFO_DEPTH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">512</span>
+<span class="p">)(</span>
+<span class="w">    </span><span class="k">input</span><span class="w"> </span><span class="p">[</span><span class="n">NUM_FIFOS</span><span class="o">-</span><span class="mh">1</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">exec_bram_spiked</span><span class="p">,</span>
+<span class="w">    </span><span class="c1">// ... (generate FIFO instances and arbiter)</span>
+<span class="p">);</span>
+
+<span class="c1">// Use generate blocks for FIFO instantiation</span>
+<span class="k">genvar</span><span class="w"> </span><span class="n">i</span><span class="p">;</span>
+<span class="k">generate</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">NUM_FIFOS</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">fifo_gen</span>
+<span class="w">        </span><span class="n">fifo_32x512</span><span class="w"> </span><span class="n">ptr_fifo</span><span class="w"> </span><span class="p">(</span>
+<span class="w">            </span><span class="p">.</span><span class="n">din</span><span class="p">(</span><span class="n">exec_hbm_rdata</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mh">1</span><span class="p">)</span><span class="o">*</span><span class="mh">32</span><span class="o">-</span><span class="mh">1</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">i</span><span class="o">*</span><span class="mh">32</span><span class="p">]),</span>
+<span class="w">            </span><span class="p">.</span><span class="n">wr_en</span><span class="p">(</span><span class="n">ptr_wren</span><span class="p">[</span><span class="n">i</span><span class="p">]),</span>
+<span class="w">            </span><span class="c1">// ...</span>
+<span class="w">        </span><span class="p">);</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">endgenerate</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Flexible configuration for different neuron group sizes.</p>
+</section>
+<section id="multi-port-arbiter">
+<h3>5. Multi-Port Arbiter<a class="headerlink" href="#multi-port-arbiter" title="Link to this heading">#</a></h3>
+<p>Read from multiple FIFOs per cycle:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Dual-port arbiter (2 pointers per cycle)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">3</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">addr_a</span><span class="p">,</span><span class="w"> </span><span class="n">addr_b</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">clk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">addr_a</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr_a</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Even addresses</span>
+<span class="w">    </span><span class="n">addr_b</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">addr_b</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span><span class="w">  </span><span class="c1">// Odd addresses</span>
+<span class="k">end</span>
+
+<span class="c1">// Mux for addr_a and addr_b, write to ptrFIFO twice per cycle</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: 2× drain rate, halves FIFO depth requirements.</p>
+<p><strong>Trade-off</strong>: Requires wider ptrFIFO or double-pumped downstream.</p>
+</section>
+<section id="adaptive-fifo-depth">
+<h3>6. Adaptive FIFO Depth<a class="headerlink" href="#adaptive-fifo-depth" title="Link to this heading">#</a></h3>
+<p>Dynamically adjust FIFO depth based on activity:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Use distributed RAM for shallow portion, spill to BRAM when full</span>
+<span class="c1">// Requires custom FIFO controller with dual-tier storage</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: Saves BRAM when network activity is sparse.</p>
+</section>
+<section id="burst-write-to-ptrfifo">
+<h3>7. Burst Write to ptrFIFO<a class="headerlink" href="#burst-write-to-ptrfifo" title="Link to this heading">#</a></h3>
+<p>Instead of one pointer per cycle, burst multiple:</p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// If ptrFIFO has depth, write up to 4 pointers per cycle</span>
+<span class="c1">// Requires ptrFIFO to accept burst writes (wider interface)</span>
+
+<span class="k">assign</span><span class="w"> </span><span class="n">ptrFIFO_din</span><span class="p">[</span><span class="mh">127</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">ptr</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">3</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span><span class="w"> </span><span class="n">ptr</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">2</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span>
+<span class="w">                             </span><span class="n">ptr</span><span class="p">[</span><span class="n">addr</span><span class="o">+</span><span class="mh">1</span><span class="p">]</span><span class="n">_dout</span><span class="p">,</span><span class="w"> </span><span class="n">ptr</span><span class="p">[</span><span class="n">addr</span><span class="p">]</span><span class="n">_dout</span><span class="p">};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">ptrFIFO_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">burst_valid</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Benefit</strong>: 4× drain rate (if downstream supports).</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Pointer FIFO</strong></p></td>
+<td><p>Buffer storing 32-bit pointer records (length + address) for synaptic lists</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Round-Robin</strong></p></td>
+<td><p>Arbitration scheme giving equal service time to each FIFO in cyclic order</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Spike-Gated</strong></p></td>
+<td><p>Write enable conditional on neuron spike (sparse event handling)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Demultiplexing</strong></p></td>
+<td><p>Splitting wide HBM data (512b) into narrow pointer streams (16×32b)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>FWFT (First-Word Fall-Through)</strong></p></td>
+<td><p>FIFO mode where data appears immediately on <code class="docutils literal notranslate"><span class="pre">dout</span></code> when not empty</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Phase 1a</strong></p></td>
+<td><p>External event processing (BRAM reading, external axon spikes)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Phase 1b</strong></p></td>
+<td><p>Internal event processing (URAM reading, neuron-to-neuron spikes)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Phase 2</strong></p></td>
+<td><p>Synaptic weight fetch (pointer drain, HBM synaptic reads)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Neuron Group</strong></p></td>
+<td><p>Set of 16 neurons mapped to one pointer FIFO</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Backpressure</strong></p></td>
+<td><p>Flow control mechanism where full FIFO blocks upstream writes</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Arbiter</strong></p></td>
+<td><p>Logic deciding which FIFO gets access to shared resource (ptrFIFO)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ptrFIFO</strong></p></td>
+<td><p>Aggregated pointer FIFO feeding HBM processor for Phase 2</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Starvation</strong></p></td>
+<td><p>Condition where some FIFOs never serviced (not possible in round-robin)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Overflow</strong></p></td>
+<td><p>Condition where pointer write lost due to FIFO full</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Pointer Record</strong></p></td>
+<td><p>32-bit datum: [31:23]=length (9b), [22:0]=start address (23b)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>HBM rvalidready</strong></p></td>
+<td><p>Signal indicating HBM read data valid and consumer ready</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>exec_run</strong></p></td>
+<td><p>Control pulse starting new time step, initiating Phase 1a</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>The <strong>Pointer FIFO Controller</strong> is a well-designed datapath component that efficiently manages sparse neural spike events through:</p>
+<ol class="arabic simple">
+<li><p><strong>Parallel Buffering</strong>: 16 independent FIFOs decouple HBM read from pointer consumption</p></li>
+<li><p><strong>Spike-Gated Writes</strong>: Only buffer pointers for neurons that actually spiked (sparse efficiency)</p></li>
+<li><p><strong>Fair Arbitration</strong>: Round-robin ensures no FIFO monopolizes downstream bandwidth</p></li>
+<li><p><strong>Two-Phase Coordination</strong>: Seamlessly handles both external and internal event sources</p></li>
+</ol>
+<p><strong>Design Strengths</strong>:</p>
+<ul class="simple">
+<li><p>Simple, proven architecture (demux + FIFOs + arbiter)</p></li>
+<li><p>Minimal logic (mostly wiring and control)</p></li>
+<li><p>FWFT mode reduces latency</p></li>
+<li><p>Phase control cleanly separates external and internal events</p></li>
+</ul>
+<p><strong>Potential Improvements</strong>:</p>
+<ul class="simple">
+<li><p>Priority arbitration to prevent overflow</p></li>
+<li><p>Skip-empty optimization to reduce latency</p></li>
+<li><p>Gated HBM reads to save bandwidth</p></li>
+<li><p>Multi-port arbiter for higher drain rate</p></li>
+</ul>
+<p><strong>Critical Parameters</strong>:</p>
+<ul class="simple">
+<li><p>FIFO depth must accommodate worst-case burst (512-1024 entries)</p></li>
+<li><p>Arbiter must drain faster than fill rate (or FIFOs overflow)</p></li>
+<li><p>Round-robin period (16 cycles) limits drain rate</p></li>
+</ul>
+<p>For complete understanding, see cross-referenced modules: <code class="docutils literal notranslate"><span class="pre">external_events_processor.md</span></code>, <code class="docutils literal notranslate"><span class="pre">internal_events_processor.md</span></code>, <code class="docutils literal notranslate"><span class="pre">hbm_processor.md</span></code>, and <code class="docutils literal notranslate"><span class="pre">spike_fifo_controller.md</span></code>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#role-in-the-software-hardware-stack">Role in the Software/Hardware Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#two-phase-operation">Two-Phase Operation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#execution-control">Execution Control</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-events-processor-interface">External Events Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#internal-events-processor-interface">Internal Events Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-processor-input-interface">HBM Processor Input Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-fifo-interfaces-16-instances-ptr0-ptr15">Pointer FIFO Interfaces (16 instances: ptr0-ptr15)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-processor-output-interface-aggregated-pointer-fifo">HBM Processor Output Interface (Aggregated Pointer FIFO)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-tracking-state-machine">Phase Tracking State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#hbm-data-demultiplexing">HBM Data Demultiplexing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#spike-gated-write-enable-logic">Spike-Gated Write Enable Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin-arbiter">Round-Robin Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fwft-first-word-fall-through-mode">FWFT (First-Word Fall-Through) Mode</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-transition-bram-uram">Phase Transition: BRAM → URAM</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pointer-fifo-write-spike-gated">Pointer FIFO Write (Spike-Gated)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#round-robin-arbiter-operation">Round-Robin Arbiter Operation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-full-backpressure">FIFO Full Backpressure</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#memory-and-resource-usage">Memory and Resource Usage</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-depth-considerations">FIFO Depth Considerations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-estimates">Resource Estimates</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#upstream-modules">Upstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#downstream-modules">Downstream Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#peer-modules">Peer Modules</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-1-pointers-lost-fifo-overflow">Issue 1: Pointers Lost (FIFO Overflow)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-2-unfair-arbitration-starvation">Issue 2: Unfair Arbitration (Starvation)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-3-phase-transition-glitch">Issue 3: Phase Transition Glitch</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-4-hbm-fifo-not-advancing">Issue 4: HBM FIFO Not Advancing</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#issue-5-address-counter-wrapping-incorrectly">Issue 5: Address Counter Wrapping Incorrectly</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput-analysis">Throughput Analysis</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#resource-utilization-summary">Resource Utilization Summary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-1-all-neurons-spike-simultaneously">Edge Case 1: All Neurons Spike Simultaneously</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-2-no-neurons-spike-quiescent-network">Edge Case 2: No Neurons Spike (Quiescent Network)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-3-single-bit-spike-minimal-activity">Edge Case 3: Single Bit Spike (Minimal Activity)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#edge-case-4-ptrfifo-full-downstream-backpressure">Edge Case 4: ptrFIFO Full (Downstream Backpressure)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-write-enable-conflicts">Safety Check: Write Enable Conflicts</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-check-phase-mutual-exclusion">Safety Check: Phase Mutual Exclusion</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#future-enhancement-opportunities">Future Enhancement Opportunities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-arbiter">1. Priority Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#skip-empty-optimization">2. Skip-Empty Optimization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gated-hbm-reads">3. Gated HBM Reads</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configurable-fifo-count">4. Configurable FIFO Count</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multi-port-arbiter">5. Multi-Port Arbiter</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adaptive-fifo-depth">6. Adaptive FIFO Depth</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#burst-write-to-ptrfifo">7. Burst Write to ptrFIFO</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/pointer_fifo_controller.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

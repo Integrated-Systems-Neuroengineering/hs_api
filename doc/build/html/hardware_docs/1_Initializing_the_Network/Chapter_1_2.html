@@ -1,0 +1,1407 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>1.2 How the Network is Written to the FPGA &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/1_Initializing_the_Network/Chapter_1_2';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Diagram of CRI Stack During Network Compilation" href="CRI_Stack_Diagram.html" />
+    <link rel="prev" title="1.1 How the Network Looks in Hardware" href="Chapter_1_1.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/input_data_handler.html">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../3_Verilog_Files_Review/spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_1.html" class="nav-link">1 Initializing the Network</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">1.2 How the Network is Written to the FPGA</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="how-the-network-is-written-to-the-fpga">
+<h1>1.2 How the Network is Written to the FPGA<a class="headerlink" href="#how-the-network-is-written-to-the-fpga" title="Link to this heading">#</a></h1>
+<p>Now that we know <em>where</em> everything ends up, let’s understand <em>how</em> it gets there. This requires understanding how the host computer communicates with the FPGA hardware.</p>
+<section id="what-is-host-fpga-communication">
+<h2>What is Host-FPGA Communication?<a class="headerlink" href="#what-is-host-fpga-communication" title="Link to this heading">#</a></h2>
+<p>Think of the host (your computer running Python) and the FPGA (the specialized chip) as two separate computers that need to talk to each other. They communicate through a physical link called <strong>PCIe</strong> (Peripheral Component Interconnect Express).</p>
+<section id="analogy-sending-mail-between-buildings">
+<h3>Analogy: Sending Mail Between Buildings<a class="headerlink" href="#analogy-sending-mail-between-buildings" title="Link to this heading">#</a></h3>
+<p>Imagine two buildings (Host and FPGA) connected by a mail chute:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>┌─────────────────────┐                           ┌─────────────────────┐
+│   HOST BUILDING     │                           │   FPGA BUILDING     │
+│                     │                           │                     │
+│  Person (Python)    │      PCIe &quot;Mail Chute&quot;    │  Mailroom Worker    │
+│  writes a letter:   │    ═══════════════════►   │  (pcie2fifos.v)     │
+│  &quot;Put 0x03E8 at     │                           │  reads letter       │
+│   address 0x8000&quot;   │                           │  and delivers to    │
+│                     │                           │  Storage Room (HBM) │
+└─────────────────────┘                           └─────────────────────┘
+</pre></div>
+</div>
+<p><strong>Key differences from actual mail:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Speed:</strong> PCIe sends “letters” (data packets) at ~14 GB/second</p></li>
+<li><p><strong>Automation:</strong> Software libraries handle packing/unpacking automatically</p></li>
+<li><p><strong>Direct Memory Access (DMA):</strong> During initialization, the host pushes data directly to FPGA memory without CPU involvement in each transfer</p></li>
+</ol>
+</section>
+<section id="the-physical-link-pcie">
+<h3>The Physical Link: PCIe<a class="headerlink" href="#the-physical-link-pcie" title="Link to this heading">#</a></h3>
+<p><strong>PCIe (Peripheral Component Interconnect Express)</strong> is a high-speed serial communication standard.</p>
+<p><strong>Physical layer:</strong> 16 wires going from Host motherboard to FPGA card</p>
+<ul class="simple">
+<li><p>Each wire (lane) carries 8 Gigabits/second</p></li>
+<li><p>16 lanes × 8 Gb/s = 128 Gb/s raw = ~14 GB/s usable bandwidth</p></li>
+</ul>
+<p><strong>What travels on PCIe:</strong> Packets called <strong>TLPs (Transaction Layer Packets)</strong></p>
+<ul class="simple">
+<li><p>Each packet has: Header (address, command type) + Payload (data)</p></li>
+<li><p>Example packet: “Write 32 bytes of data to FPGA address 0xD000_0000”</p></li>
+</ul>
+<p><strong>Two communication modes:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>Host-to-FPGA (PCIe Memory Write TLPs):</strong></p>
+<ul class="simple">
+<li><p>Host sends packet: “Write this data to FPGA address X”</p></li>
+<li><p>FPGA receives packet, stores data</p></li>
+<li><p>Used for: Initialization data transfers (HBM programming, commands, parameters)</p></li>
+</ul>
+</li>
+<li><p><strong>FPGA-to-Host (PCIe Memory Read TLPs):</strong></p>
+<ul class="simple">
+<li><p>FPGA sends packet: “Read data from Host address Y and send it to me”</p></li>
+<li><p>Host memory responds with data</p></li>
+<li><p>Used for: Output spike data retrieval after execution</p></li>
+</ul>
+</li>
+</ol>
+<p>During network <strong>initialization</strong>, we use <strong>mode 1 exclusively</strong> - the host pushes all network data to the FPGA via PCIe Memory Write TLPs. The FPGA is passive and only receives. During <strong>execution</strong>, the FPGA may use mode 2 to send spike outputs back to the host.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="the-software-hardware-stack-for-initialization">
+<h2>The Software-Hardware Stack for Initialization<a class="headerlink" href="#the-software-hardware-stack-for-initialization" title="Link to this heading">#</a></h2>
+<p>When <code class="docutils literal notranslate"><span class="pre">CRI_network(target=&quot;CRI&quot;)</span></code> is called, a multi-layer software and hardware stack springs into action:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Layer 7: User Code
+┌────────────────────────────────────────────────────────────────┐
+│ from hs_api import CRI_network                                 │
+│ network = CRI_network(axons, connections, config, outputs,     │
+│                       target=&quot;CRI&quot;)                             │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ Calls ▼
+Layer 6: hs_api Internals
+┌────────────────▼───────────────────────────────────────────────┐
+│ hs_api/api.py: CRI_network.__init__()                          │
+│ - Validates network structure                                  │
+│ - Creates connectome object                                    │
+│ - Calls: from hs_bridge import network                         │
+│ - Instantiates: self.CRI = network(...)                        │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ Calls ▼
+Layer 5: hs_bridge Network Class
+┌────────────────▼───────────────────────────────────────────────┐
+│ hs_bridge/network.py: network.__init__()                       │
+│ - Calls compiler to generate HBM data                          │
+│ - Calls controller to program FPGA                             │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ Calls ▼
+Layer 4: fpga_compiler (HBM Data Generation)
+┌────────────────▼───────────────────────────────────────────────┐
+│ hs_bridge/FPGA_Execution/fpga_compiler.py                      │
+│ - create_axon_ptrs(): Builds axon pointer array                │
+│ - create_neuron_ptrs(): Builds neuron pointer array            │
+│ - create_synapses(): Builds synapse data array                 │
+│ - Output: NumPy arrays ready for DMA transfer                  │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ Calls ▼
+Layer 3: fpga_controller (FPGA Programming)
+┌────────────────▼───────────────────────────────────────────────┐
+│ hs_bridge/FPGA_Execution/fpga_controller.py                    │
+│ - write_parameters_simple(): Programs neuron counts            │
+│ - write_neuron_type(): Programs neuron model parameters        │
+│ - clear(): Zeros URAM                                          │
+│ - [Calls dmadump to transfer HBM data]                         │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ Calls ▼
+Layer 2: DMA Library (PCIe Transfer)
+┌────────────────▼───────────────────────────────────────────────┐
+│ hs_bridge/wrapped_dmadump/dmadump.py                           │
+│ - dma_dump_write(data, length, ...): Sends data Host→FPGA      │
+│ - Underlying C library interfaces with Linux kernel driver     │
+└────────────────┬───────────────────────────────────────────────┘
+                 │ PCIe TLPs ▼
+Layer 1: FPGA Hardware Modules
+┌────────────────▼───────────────────────────────────────────────┐
+│ Verilog Modules (synthesized into FPGA fabric):                │
+│ - pcie2fifos.v: Receives PCIe packets → Input FIFO             │
+│ - command_interpreter.v: Parses commands, routes data          │
+│ - hbm_processor.v: Writes data to HBM                          │
+│ - internal_events_processor.v: Writes data to URAM             │
+└─────────────────────────────────────────────────────────────────┘
+</pre></div>
+</div>
+<hr class="docutils" />
+</section>
+<section id="step-by-step-initialization-sequence">
+<h2>Step-by-Step: Initialization Sequence<a class="headerlink" href="#step-by-step-initialization-sequence" title="Link to this heading">#</a></h2>
+<p>Let’s trace the exact sequence of events when you run:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">network</span> <span class="o">=</span> <span class="n">CRI_network</span><span class="p">(</span><span class="n">axons</span><span class="p">,</span> <span class="n">connections</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="n">outputs</span><span class="p">,</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;CRI&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="phase-1-network-compilation-software-hs-bridge">
+<h3><strong>Phase 1: Network Compilation (Software - hs_bridge)</strong><a class="headerlink" href="#phase-1-network-compilation-software-hs-bridge" title="Link to this heading">#</a></h3>
+<p><strong>Step 1.1: CRI_network.<strong>init</strong>() validates and calls compiler</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_api/api.py</span></code> (lines 141-156)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">target</span> <span class="o">==</span> <span class="s2">&quot;CRI&quot;</span><span class="p">:</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Initilizing to run on hardware&quot;</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">connectome</span><span class="o">.</span><span class="n">pad_models</span><span class="p">()</span>
+    <span class="n">formatedOutputs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">connectome</span><span class="o">.</span><span class="n">get_outputs_idx</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;formatedOutputs:&quot;</span><span class="p">,</span> <span class="n">formatedOutputs</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">CRI</span> <span class="o">=</span> <span class="n">network</span><span class="p">(</span>  <span class="c1"># ← Calls hs_bridge.network class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">connectome</span><span class="p">,</span>
+        <span class="n">formatedOutputs</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="p">,</span>
+        <span class="n">simDump</span><span class="o">=</span><span class="n">simDump</span><span class="p">,</span>
+        <span class="n">coreOveride</span><span class="o">=</span><span class="n">coreID</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">CRI</span><span class="o">.</span><span class="n">initalize_network</span><span class="p">()</span>  <span class="c1"># ← Triggers actual initialization</span>
+</pre></div>
+</div>
+<p><strong>Step 1.2: hs_bridge network class creates compiler</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/network.py</span></code> (conceptual - not shown in our files, but referenced)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">initalize_network</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Create compiler</span>
+    <span class="n">compiler</span> <span class="o">=</span> <span class="n">fpga_compiler</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_ptrs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">neuron_ptrs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">synapses</span><span class="p">],</span>
+        <span class="n">N_neurons</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N_neurons</span><span class="p">,</span>
+        <span class="n">outputs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">outputs</span><span class="p">,</span>
+        <span class="n">coreID</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">coreID</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Generate HBM programming data</span>
+    <span class="n">compiler</span><span class="o">.</span><span class="n">create_axon_ptrs</span><span class="p">()</span>    <span class="c1"># ← Generate axon pointer data</span>
+    <span class="n">compiler</span><span class="o">.</span><span class="n">create_neuron_ptrs</span><span class="p">()</span>  <span class="c1"># ← Generate neuron pointer data</span>
+    <span class="n">compiler</span><span class="o">.</span><span class="n">create_synapses</span><span class="p">()</span>     <span class="c1"># ← Generate synapse data</span>
+
+    <span class="c1"># Program FPGA</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">program_fpga</span><span class="p">()</span>
+</pre></div>
+</div>
+<p><strong>Step 1.3: fpga_compiler generates axon pointers</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_compiler.py</span></code> (lines 157-200)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_axon_ptrs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the necessary adxdma_dump commands to program axon pointers into HBM&#39;&#39;&#39;</span>
+
+    <span class="n">axn_ptrs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fliplr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">axon_ptrs</span><span class="p">)</span>  <span class="c1"># Reverse for little-endian</span>
+    <span class="n">batchCmd</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axn_ptrs</span><span class="p">):</span>  <span class="c1"># For each row</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>  <span class="c1"># For each pointer in row (8 pointers per row)</span>
+            <span class="c1"># p = (start_row, end_row) tuple</span>
+            <span class="c1"># Build 32-bit pointer: [31:23]=length, [22:0]=start_address</span>
+            <span class="n">binAddr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">PTR_LEN_BITS</span><span class="p">)</span> <span class="o">+</span> \
+                      <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">SYN_BASE_ADDR</span><span class="p">,</span> <span class="n">PTR_ADDR_BITS</span><span class="p">)</span>
+            <span class="c1"># binAddr is now 32-bit string like &quot;000000001&quot; + &quot;00000000000000000000000&quot;</span>
+
+            <span class="c1"># Convert to bytes (4 bytes per pointer)</span>
+            <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">binAddr</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>    <span class="c1"># Byte 0</span>
+                         <span class="nb">int</span><span class="p">(</span><span class="n">binAddr</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>   <span class="c1"># Byte 1</span>
+                         <span class="nb">int</span><span class="p">(</span><span class="n">binAddr</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>  <span class="c1"># Byte 2</span>
+                         <span class="nb">int</span><span class="p">(</span><span class="n">binAddr</span><span class="p">[</span><span class="mi">24</span><span class="p">:],</span> <span class="mi">2</span><span class="p">)]</span>    <span class="c1"># Byte 3</span>
+
+        <span class="c1"># Prepend HBM write command header</span>
+        <span class="c1"># [511:504]=0x02 (HBM write opcode)</span>
+        <span class="c1"># [503:496]=coreID</span>
+        <span class="c1"># [495:0]=address + data</span>
+        <span class="n">rowAddress</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">AXN_BASE_ADDR</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>  <span class="c1"># 24-bit HBM address</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HBM_OP_RW_LIST</span> <span class="o">+</span> \
+              <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+               <span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+               <span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[</span><span class="mi">16</span><span class="p">:],</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">+</span> <span class="n">cmd</span>
+
+        <span class="n">cmd</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>  <span class="c1"># Reverse for endianness</span>
+        <span class="n">batchCmd</span> <span class="o">=</span> <span class="n">batchCmd</span> <span class="o">+</span> <span class="n">cmd</span>
+
+    <span class="c1"># Send to FPGA via DMA</span>
+    <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">batchCmd</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">batchCmd</span><span class="p">),</span>
+                                       <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>What’s happening here:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">self.axon_ptrs</span></code> is a NumPy array: <code class="docutils literal notranslate"><span class="pre">[[start0,</span> <span class="pre">end0],</span> <span class="pre">[start1,</span> <span class="pre">end1],</span> <span class="pre">...]</span></code></p></li>
+<li><p>For our network, axon 0: <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">0]</span></code> → length=1, start=0</p></li>
+<li><p>Converts to binary format: 9 bits for length + 23 bits for address</p></li>
+<li><p>Adds HBM write command opcode (0x02)</p></li>
+<li><p>Calls <code class="docutils literal notranslate"><span class="pre">dmadump.dma_dump_write()</span></code> to send via PCIe</p></li>
+</ul>
+<p><strong>Example for Axon 0 pointer:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>  <span class="c1"># Start row 0, end row 0 (1 row total)</span>
+<span class="n">length</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">-</span> <span class="mi">0</span> <span class="o">=</span> <span class="mf">0.</span><span class="o">..</span> <span class="n">wait</span><span class="p">,</span> <span class="n">that</span><span class="s1">&#39;s wrong!</span>
+<span class="c1"># Actually the code does p[1] - p[0] but these are (start, end) inclusive</span>
+<span class="c1"># So if start=0, end=0, that means 1 row (from 0 to 0 inclusive)</span>
+<span class="c1"># But the binary repr treats it as end - start = 0</span>
+<span class="c1"># Actually looking closer, length = p[1] - p[0] = end - start</span>
+<span class="c1"># If there&#39;s 1 row, and we use inclusive indexing, end would equal start</span>
+<span class="c1"># So length = 0... but we want to represent &quot;1 row&quot;</span>
+<span class="c1">#</span>
+<span class="c1"># Let me re-read: PTR_LEN_BITS = 9, stores number of rows</span>
+<span class="c1"># The pointer stores: how many rows of synapses</span>
+<span class="c1"># For axon 0 with 5 synapses, that fits in 1 row (8 synapses per row)</span>
+<span class="c1"># So length should be 1</span>
+<span class="c1">#</span>
+<span class="c1"># Looking at line 176: binAddr = np.binary_repr(p[1] - p[0], PTR_LEN_BITS)</span>
+<span class="c1"># If p = (start_row, end_row) and there&#39;s 1 row:</span>
+<span class="c1">#   If 0-indexed and end is exclusive: p = (0, 1) → 1 - 0 = 1 ✓</span>
+<span class="c1">#   If 0-indexed and end is inclusive: p = (0, 0) → 0 - 0 = 0 ✗</span>
+<span class="c1"># The code must use exclusive end indexing</span>
+<span class="c1"># So for axon 0: p = (0, 1) meaning rows [0, 1) = row 0</span>
+<span class="c1">#</span>
+<span class="c1"># Correcting:</span>
+<span class="n">p</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Start row 0, end row 1 (exclusive) = 1 row</span>
+<span class="n">length</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">0</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1"># Binary: 0b000000001 (9 bits)</span>
+<span class="n">start</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">SYN_BASE_ADDR</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="mh">0x8000</span> <span class="o">=</span> <span class="mh">0x8000</span>  <span class="c1"># Binary: 23 bits</span>
+<span class="n">binAddr</span> <span class="o">=</span> <span class="s2">&quot;000000001&quot;</span> <span class="o">+</span> <span class="s2">&quot;00000000000001000000000&quot;</span>  <span class="c1"># 32 bits total</span>
+        <span class="o">=</span> <span class="mb">0b00000000100000000000001000000000</span>
+        <span class="o">=</span> <span class="mh">0x0080_0000</span>
+
+<span class="n">Bytes</span><span class="p">:</span> <span class="p">[</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x80</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">]</span>  <span class="p">(</span><span class="n">little</span><span class="o">-</span><span class="n">endian</span> <span class="n">order</span> <span class="ow">in</span> <span class="n">array</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Step 1.4: fpga_compiler generates neuron pointers</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_compiler.py</span></code> (lines 225-268)</p>
+<p>Same process as axon pointers, but for <code class="docutils literal notranslate"><span class="pre">self.neuron_ptrs</span></code> array. Writes to HBM starting at <code class="docutils literal notranslate"><span class="pre">NRN_BASE_ADDR</span> <span class="pre">=</span> <span class="pre">0x4000</span></code>.</p>
+<p><strong>Step 1.5: fpga_compiler generates synapses</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_compiler.py</span></code> (lines 271-360)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_synapses</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synapses</span>  <span class="c1"># 2D array: rows × 8 synapses per row</span>
+    <span class="n">bigCmdList</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">weights</span><span class="p">):</span>  <span class="c1"># For each synapse row</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>  <span class="c1"># For each synapse in row (up to 8)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Regular synapse</span>
+                <span class="c1"># w = (opcode, target_address, weight)</span>
+                <span class="c1"># Build 32-bit synapse: [31:29]=op, [28:16]=addr, [15:0]=weight</span>
+                <span class="n">binCmd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">SYN_OP_BITS</span><span class="p">)</span> <span class="o">+</span> \
+                         <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">SYN_ADDR_BITS</span><span class="p">)</span> <span class="o">+</span> \
+                         <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span> <span class="n">SYN_WEIGHT_BITS</span><span class="p">)</span>
+                <span class="c1"># Example: op=0 (3 bits), addr=0 (13 bits), weight=1000 (16 bits)</span>
+                <span class="c1"># binCmd = &quot;000&quot; + &quot;0000000000000&quot; + &quot;0000001111101000&quot;</span>
+                <span class="c1">#        = 0b000_0000000000000_0000001111101000</span>
+                <span class="c1">#        = 0x0000_03E8</span>
+
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">binCmd</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binCmd</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binCmd</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binCmd</span><span class="p">[</span><span class="mi">24</span><span class="p">:],</span> <span class="mi">2</span><span class="p">)]</span>
+
+            <span class="k">elif</span> <span class="n">w</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>  <span class="c1"># Spike output entry</span>
+                <span class="c1"># w = (1, neuron_index)</span>
+                <span class="n">binSpike</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">SYN_OP_BITS</span><span class="p">)</span> <span class="o">+</span> \
+                           <span class="mi">12</span><span class="o">*</span><span class="s1">&#39;0&#39;</span> <span class="o">+</span> \
+                           <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">17</span><span class="p">)</span>
+                <span class="c1"># OpCode=100 (4 in decimal), address=neuron index, weight=0</span>
+                <span class="n">cmd</span> <span class="o">=</span> <span class="n">cmd</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">binSpike</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binSpike</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binSpike</span><span class="p">[</span><span class="mi">16</span><span class="p">:</span><span class="mi">24</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+                             <span class="nb">int</span><span class="p">(</span><span class="n">binSpike</span><span class="p">[</span><span class="mi">24</span><span class="p">:],</span> <span class="mi">2</span><span class="p">)]</span>
+
+        <span class="c1"># Prepend HBM write command</span>
+        <span class="n">rowAddress</span> <span class="o">=</span> <span class="s1">&#39;1&#39;</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="n">SYN_BASE_ADDR</span><span class="p">,</span> <span class="mi">23</span><span class="p">)</span>
+        <span class="n">cmd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">HBM_OP_RW_LIST</span> <span class="o">+</span> \
+              <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[:</span><span class="mi">8</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+               <span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">],</span> <span class="mi">2</span><span class="p">),</span>
+               <span class="nb">int</span><span class="p">(</span><span class="n">rowAddress</span><span class="p">[</span><span class="mi">16</span><span class="p">:],</span> <span class="mi">2</span><span class="p">)]</span> <span class="o">+</span> <span class="n">cmd</span>
+
+        <span class="n">cmd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">))</span>
+        <span class="n">bigCmdList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cmd</span><span class="p">)</span>
+
+    <span class="c1"># Send to FPGA in batches</span>
+    <span class="n">split</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">bigCmdList</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Batch size</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">element</span> <span class="o">=</span> <span class="n">split</span><span class="p">[:</span><span class="n">n</span><span class="o">*</span><span class="mi">64</span><span class="p">]</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="n">split</span><span class="p">[</span><span class="n">n</span><span class="o">*</span><span class="mi">64</span><span class="p">:]</span>
+        <span class="k">if</span> <span class="n">element</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">element</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">element</span><span class="p">),</span>
+                                           <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">DmaMethodNormal</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Example for first synapse (a0 → h0, weight=1000):</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">w</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># (opcode=0, target=h0=0, weight=1000)</span>
+<span class="n">binCmd</span> <span class="o">=</span> <span class="s2">&quot;000&quot;</span> <span class="o">+</span> <span class="s2">&quot;0000000000000&quot;</span> <span class="o">+</span> <span class="s2">&quot;0000001111101000&quot;</span>
+       <span class="o">=</span> <span class="mh">0x0000_03E8</span>
+<span class="n">Bytes</span><span class="p">:</span> <span class="p">[</span><span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x00</span><span class="p">,</span> <span class="mh">0x03</span><span class="p">,</span> <span class="mh">0xE8</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>At this point, all HBM data is prepared as NumPy arrays. Now we need to send it!</p>
+</section>
+<hr class="docutils" />
+<section id="phase-2-dma-transfer-pcie-communication">
+<h3><strong>Phase 2: DMA Transfer (PCIe Communication)</strong><a class="headerlink" href="#phase-2-dma-transfer-pcie-communication" title="Link to this heading">#</a></h3>
+<p><strong>Step 2.1: dmadump.dma_dump_write() prepares DMA</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/wrapped_dmadump/dmadump.py</span></code> (Python wrapper for C library)</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">dma_dump_write</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">length</span><span class="p">,</span> <span class="n">flag1</span><span class="p">,</span> <span class="n">flag2</span><span class="p">,</span> <span class="n">flag3</span><span class="p">,</span> <span class="n">flag4</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Sends data from host memory to FPGA via PCIe Memory Write TLPs</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    - data: NumPy array containing bytes to send</span>
+<span class="sd">    - length: Number of bytes</span>
+<span class="sd">    - method: DmaMethodNormal (0) for normal transfer</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    - 0 on success, non-zero on error</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># This Python function calls a C extension</span>
+    <span class="c1"># The C library (adxdma_dmadump.cpp) handles:</span>
+    <span class="c1">#   1. Calls ADXDMA_WriteDMA() from vendor library</span>
+    <span class="c1">#   2. Vendor library interfaces with Linux/Windows kernel driver</span>
+    <span class="c1">#   3. Kernel driver builds PCIe Memory Write TLPs</span>
+    <span class="c1">#   4. TLPs are sent to FPGA&#39;s BAR (Base Address Register) address</span>
+    <span class="c1">#   5. FPGA receives via PCIe endpoint and writes to Input FIFO</span>
+</pre></div>
+</div>
+<p><strong>Step 2.2: Physical DMA operation</strong></p>
+<p>What actually happens on the hardware:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>1. Host allocates DMA buffer in RAM:
+   Virtual address: 0x7FFF_1234_5000 (example - OS virtual memory)
+   Physical address: 0x1_2345_6000 (translated by OS page tables)
+   Size: length bytes (e.g., 64 bytes for one 512-bit packet)
+
+2. Host copies data into DMA buffer:
+   memcpy(dma_buffer, data, length)
+
+3. Host PCIe driver sends Memory Write TLP(s) directly to FPGA:
+   The ADXDMA_WriteDMA() library function calls the kernel driver, which:
+   - Builds PCIe Memory Write Transaction Layer Packets (TLPs)
+   - Sends them to the FPGA&#39;s PCIe Base Address Register (BAR) address
+   - No MMIO register programming needed - data goes directly to FPGA
+
+4. PCIe TLP travels from Host → FPGA:
+   Physical link: 16 lanes × differential pairs
+   Packet format: Header + Payload + CRC
+   The FPGA PCIe endpoint receives the TLP
+
+5. FPGA PCIe Endpoint presents data via AXI4:
+   - PCIe endpoint IP block decodes the TLP
+   - Presents as AXI4 write transaction to pcie2fifos.v
+   - AXI4 signals: awaddr, awvalid, wdata, wvalid, etc.
+
+6. pcie2fifos.v receives AXI4 write:
+   - Accepts write when wvalid=1 and wready=1
+   - Extracts 512-bit payload from s_axi_wdata
+   - Writes to Input FIFO
+   - FIFO stores data for command_interpreter.v to process
+
+   **What pcie2fifos.v does (black box view):**
+
+   INPUT: AXI4 Protocol (complex handshaking: awaddr, awvalid, awready, wdata, wvalid, wready)
+   → Bursty timing, requires coordination between sender and receiver
+
+   OUTPUT: FIFO Interface (simple: fifo_dout[511:0], fifo_empty, fifo_rd_en)
+   → Smooth timing, command_interpreter reads at its own pace
+
+   **Transformation:** Complex AXI4 protocol → Simple FIFO read interface
+   **Buffering:** Can store up to 16 × 512-bit packets
+   **Data:** The 512-bit payload is unchanged, just the access method differs
+
+   Think of it like a mail slot: the mail carrier (PCIe) can drop letters whenever they
+   arrive, and the recipient (command_interpreter) can pick them up whenever convenient.
+   The letters aren&#39;t changed, just stored temporarily (up to 16 letters) so sender and
+   receiver don&#39;t have to coordinate timing.
+</pre></div>
+</div>
+<p><strong>IMPORTANT:</strong> The FPGA is <strong>passive</strong> during initialization - it only receives data. The host is the DMA “master” that pushes data to the FPGA. There is <strong>no FPGA DMA engine</strong> reading from host memory during this process.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="pcie-packet-details">
+<h2>PCIe Packet Details<a class="headerlink" href="#pcie-packet-details" title="Link to this heading">#</a></h2>
+<p><strong>PCIe Memory Write TLP (Host → FPGA):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>TLP Header (16 bytes for 64-bit addressing):
+┌────────────────────────────────────────────────────────────┐
+│ [127:125] Fmt = 011 (Memory Write, 64-bit address, data)   │
+│ [124:120] Type = 00000 (Memory Write)                       │
+│ [119:110] Length = 16 DW (64 bytes = 16 dwords = 512 bits) │
+│ [109:96]  Requester ID = 00:00.0 (Host PCIe Root Complex)  │
+│ [95:88]   Tag = 7 (identifies this transaction)             │
+│ [87:80]   Last DW BE = 0xF (all bytes valid)                │
+│ [79:72]   First DW BE = 0xF (all bytes valid)               │
+│ [71:64]   Address[63:32] = 0x0000_0000 (upper 32 bits)      │
+│ [63:2]    Address[31:2] = BAR0_BASE &gt;&gt; 2 (FPGA address)     │
+│ [1:0]     Reserved = 0b00                                    │
+└────────────────────────────────────────────────────────────┘
+
+Payload (64 bytes = 512 bits):
+  [511:504] = 0x02 (opcode: HBM write command)
+  [503:496] = 0x00 (coreID)
+  [495:280] = padding
+  [279]     = 0x1 (write flag)
+  [278:256] = 0x8000 (HBM row address)
+  [255:0]   = synapse/pointer data (256 bits)
+
+CRC (4 bytes): 0x1A2B3C4D (example - calculated by PCIe controller)
+</pre></div>
+</div>
+<p><strong>What happens when FPGA receives this TLP:</strong></p>
+<ol class="arabic">
+<li><p><strong>PCIe Endpoint IP Block:</strong></p>
+<ul class="simple">
+<li><p>Receives serial data on 16 differential lane pairs</p></li>
+<li><p>Deserializes and decodes TLP</p></li>
+<li><p>Checks CRC (discards if bad)</p></li>
+<li><p>Extracts address and payload</p></li>
+</ul>
+</li>
+<li><p><strong>Address Decode:</strong></p>
+<ul class="simple">
+<li><p>Address 0x0000_0000_XXXX_XXXX falls within BAR0 (Base Address Register 0)</p></li>
+<li><p>Routes to AXI4 master connected to pcie2fifos.v</p></li>
+</ul>
+</li>
+<li><p><strong>AXI4 Write Transaction:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// PCIe endpoint drives these signals to pcie2fifos.v:</span>
+<span class="n">s_axi_awaddr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">64&#39;h0000</span><span class="n">_0000_XXXX_XXXX</span><span class="w">  </span><span class="c1">// Address (ignored by pcie2fifos)</span>
+<span class="n">s_axi_awvalid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">                      </span><span class="c1">// Address valid</span>
+<span class="n">s_axi_wdata</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">512&#39;h02</span><span class="p">...</span><span class="w">                </span><span class="c1">// The 512-bit payload</span>
+<span class="n">s_axi_wvalid</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">                      </span><span class="c1">// Data valid</span>
+<span class="n">s_axi_wlast</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="w">                      </span><span class="c1">// Last beat in burst</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>pcie2fifos.v accepts write:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_wvalid</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">s_axi_wready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">input_fifo_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">s_axi_wdata</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">        </span><span class="n">input_fifo_wr_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Input FIFO stores data:</strong></p>
+<ul class="simple">
+<li><p>FIFO is a BRAM primitive (Xilinx XPM_FIFO)</p></li>
+<li><p>Stores the 512-bit word</p></li>
+<li><p>Asserts ~empty signal</p></li>
+<li><p>command_interpreter.v reads on next cycle</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Note:</strong> If data exceeds one TLP’s maximum payload size (typically 256 bytes), the PCIe driver automatically splits it into multiple TLPs. For our 512-bit (64-byte) packets, one TLP is sufficient.</p>
+<hr class="docutils" />
+<section id="phase-3-fpga-reception-and-hbm-programming">
+<h3><strong>Phase 3: FPGA Reception and HBM Programming</strong><a class="headerlink" href="#phase-3-fpga-reception-and-hbm-programming" title="Link to this heading">#</a></h3>
+<p><strong>Step 3.1: pcie2fifos.v receives packet</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/pcie2fifos.v</span></code></p>
+<p><strong>What is pcie2fifos.v?</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">pcie2fifos.v</span></code> is a <strong>simple AXI4 slave bridge</strong>, NOT a DMA engine. It:</p>
+<ul class="simple">
+<li><p>Has NO MMIO registers for DMA control</p></li>
+<li><p>Has NO ability to become PCIe bus master</p></li>
+<li><p>Simply accepts AXI4 writes from the PCIe endpoint and stores them in a FIFO</p></li>
+<li><p>Similarly, provides AXI4 reads from a different FIFO for outgoing data</p></li>
+</ul>
+<p>Think of it like a mailbox:</p>
+<ul class="simple">
+<li><p><strong>Incoming mail slot (Input FIFO):</strong> PCIe endpoint drops packets here</p></li>
+<li><p><strong>Outgoing mail slot (Output FIFO):</strong> command_interpreter puts responses here</p></li>
+<li><p>pcie2fifos.v is just the slots - it doesn’t “go get” mail from anywhere</p></li>
+</ul>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// Simplified code from pcie2fifos.v</span>
+<span class="c1">// AXI4 Write Data Channel Handler</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">s_axi_wvalid</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">s_axi_wready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// Received 512-bit word from PCIe endpoint</span>
+<span class="w">        </span><span class="n">input_fifo_wr_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">input_fifo_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">s_axi_wdata</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1">// Input FIFO instantiation (Xilinx XPM_FIFO primitive)</span>
+<span class="n">xpm_fifo_sync</span><span class="w"> </span><span class="p">#(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">FIFO_WRITE_DEPTH</span><span class="p">(</span><span class="mh">16</span><span class="p">),</span><span class="w">    </span><span class="c1">// Can store 16 × 512-bit packets</span>
+<span class="w">    </span><span class="p">.</span><span class="n">WRITE_DATA_WIDTH</span><span class="p">(</span><span class="mh">512</span><span class="p">),</span><span class="w">   </span><span class="c1">// 512 bits per entry</span>
+<span class="w">    </span><span class="p">.</span><span class="n">READ_DATA_WIDTH</span><span class="p">(</span><span class="mh">512</span><span class="p">)</span>
+<span class="p">)</span><span class="w"> </span><span class="n">input_fifo</span><span class="w"> </span><span class="p">(</span>
+<span class="w">    </span><span class="p">.</span><span class="n">wr_clk</span><span class="p">(</span><span class="n">aclk</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">wr_en</span><span class="p">(</span><span class="n">input_fifo_wr_en</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">din</span><span class="p">(</span><span class="n">input_fifo_din</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">dout</span><span class="p">(</span><span class="n">input_fifo_dout</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">empty</span><span class="p">(</span><span class="n">input_fifo_empty</span><span class="p">),</span>
+<span class="w">    </span><span class="p">.</span><span class="n">full</span><span class="p">(</span><span class="n">input_fifo_full</span><span class="p">)</span>
+<span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>What’s happening physically:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">s_axi_wdata</span></code> is 512 physical wires coming from PCIe endpoint</p></li>
+<li><p>On clock rising edge where both <code class="docutils literal notranslate"><span class="pre">wvalid=1</span></code> and <code class="docutils literal notranslate"><span class="pre">wready=1</span></code>, data transfers</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">input_fifo_wr_en</span></code> signal triggers FIFO write</p></li>
+<li><p>FIFO is a BRAM primitive (36Kb blocks) configured as 16-deep × 512-bit</p></li>
+<li><p>FIFO write pointer increments, <code class="docutils literal notranslate"><span class="pre">empty</span></code> flag deasserts</p></li>
+<li><p>command_interpreter.v can now read from FIFO</p></li>
+</ul>
+<p><strong>Step 3.2: command_interpreter.v parses command</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/command_interpreter.v</span></code></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// State machine (simplified)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="n">READ_CMD</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">ROUTE_DATA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">input_fifo_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">input_fifo_rd_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">READ_CMD</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">READ_CMD:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// FIFO output valid (FWFT mode)</span>
+<span class="w">            </span><span class="n">cmd_word</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">input_fifo_dout</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span>
+<span class="w">            </span><span class="n">opcode</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">input_fifo_dout</span><span class="p">[</span><span class="mh">511</span><span class="o">:</span><span class="mh">504</span><span class="p">];</span><span class="w">  </span><span class="c1">// Top 8 bits</span>
+<span class="w">            </span><span class="n">coreID</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">input_fifo_dout</span><span class="p">[</span><span class="mh">503</span><span class="o">:</span><span class="mh">496</span><span class="p">];</span><span class="w">  </span><span class="c1">// Next 8 bits</span>
+<span class="w">            </span><span class="n">payload</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">input_fifo_dout</span><span class="p">[</span><span class="mh">495</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">   </span><span class="c1">// Remaining 496 bits</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ROUTE_DATA</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">ROUTE_DATA:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">opcode</span><span class="p">)</span>
+<span class="w">                </span><span class="mh">8&#39;h02</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// HBM write command</span>
+<span class="w">                    </span><span class="c1">// Extract HBM address from payload</span>
+<span class="w">                    </span><span class="n">hbm_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">payload</span><span class="p">[</span><span class="mh">495</span><span class="o">:</span><span class="mh">472</span><span class="p">];</span><span class="w">  </span><span class="c1">// 24-bit address</span>
+<span class="w">                    </span><span class="n">hbm_data</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">payload</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">    </span><span class="c1">// 256-bit data</span>
+<span class="w">                    </span><span class="n">hbm_wr_en</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">                    </span><span class="c1">// Signal hbm_processor to write</span>
+<span class="w">                </span><span class="k">end</span>
+
+<span class="w">                </span><span class="mh">8&#39;h03</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// Clear URAM command</span>
+<span class="w">                    </span><span class="c1">// Extract neuron address</span>
+<span class="w">                    </span><span class="c1">// Signal internal_events_processor</span>
+<span class="w">                </span><span class="k">end</span>
+
+<span class="w">                </span><span class="mh">8&#39;h04</span><span class="o">:</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// Network parameters</span>
+<span class="w">                    </span><span class="c1">// Extract n_inputs, n_outputs</span>
+<span class="w">                    </span><span class="c1">// Store in registers</span>
+<span class="w">                </span><span class="k">end</span>
+
+<span class="w">                </span><span class="c1">// ... other opcodes</span>
+<span class="w">            </span><span class="k">endcase</span>
+<span class="w">            </span><span class="n">state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">IDLE</span><span class="p">;</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>For our HBM write (opcode 0x02):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Input: 512-bit word from Input FIFO
+
+Bits [511:504] = 0x02 → opcode = HBM write
+Bits [503:496] = 0x00 → coreID = 0
+Bits [495:472] = 24-bit HBM row address
+  Example: 0x800000 = row 0 in axon pointer region
+Bits [471:0] = HBM data (256 bits of actual pointers/synapses + padding)
+
+Command interpreter extracts:
+  hbm_addr = 0x000000 (row address, relative to base)
+  hbm_data[255:0] = pointer data
+
+Asserts hbm_wr_en signal to hbm_processor
+</pre></div>
+</div>
+<p><strong>Step 3.3: hbm_processor.v writes to HBM</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hardware_code/gopa/CRI_proj/hbm_processor.v</span></code></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// HBM write state machine (simplified)</span>
+<span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">hbm_state</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">HBM_IDLE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">0</span><span class="p">,</span><span class="w"> </span><span class="n">HBM_WRITE_ADDR</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="p">,</span><span class="w"> </span><span class="n">HBM_WRITE_DATA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">2</span><span class="p">;</span>
+
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">case</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_state</span><span class="p">)</span>
+<span class="w">        </span><span class="nl">HBM_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">hbm_wr_en</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="c1">// Received write request from command_interpreter</span>
+<span class="w">                </span><span class="n">hbm_wr_addr_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm_addr</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_wr_data_reg</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">hbm_data</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">HBM_WRITE_ADDR</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">HBM_WRITE_ADDR:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// AXI4 Write Address Channel</span>
+<span class="w">            </span><span class="n">m_axi_awvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">m_axi_awaddr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="n">hbm_wr_addr_reg</span><span class="p">,</span><span class="w"> </span><span class="mh">5</span><span class="mb">&#39;b00000</span><span class="p">};</span><span class="w">  </span><span class="c1">// Convert row to byte addr</span>
+<span class="w">            </span><span class="n">m_axi_awlen</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">8</span><span class="mi">&#39;d0</span><span class="p">;</span><span class="w">   </span><span class="c1">// 1 beat</span>
+<span class="w">            </span><span class="n">m_axi_awsize</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d5</span><span class="p">;</span><span class="w">  </span><span class="c1">// 32 bytes = 2^5</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_axi_awready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">m_axi_awvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">HBM_WRITE_DATA</span><span class="p">;</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+
+<span class="w">        </span><span class="nl">HBM_WRITE_DATA:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">            </span><span class="c1">// AXI4 Write Data Channel</span>
+<span class="w">            </span><span class="n">m_axi_wvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">m_axi_wdata</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="p">{</span><span class="mh">256</span><span class="mb">&#39;b0</span><span class="p">,</span><span class="w"> </span><span class="n">hbm_wr_data_reg</span><span class="p">};</span><span class="w">  </span><span class="c1">// Pad to 512 bits (HBM bus width)</span>
+<span class="w">            </span><span class="n">m_axi_wstrb</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">64&#39;hFFFFFFFF</span><span class="p">;</span><span class="w">  </span><span class="c1">// All bytes valid</span>
+<span class="w">            </span><span class="n">m_axi_wlast</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">           </span><span class="c1">// Last beat</span>
+
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">m_axi_wready</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">                </span><span class="n">m_axi_wvalid</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="w">                </span><span class="n">hbm_state</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">HBM_IDLE</span><span class="p">;</span>
+<span class="w">                </span><span class="c1">// Write complete</span>
+<span class="w">            </span><span class="k">end</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">endcase</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>What’s happening physically:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">m_axi_awaddr</span></code> is a 33-bit wire bus to HBM controller</p></li>
+<li><p>When <code class="docutils literal notranslate"><span class="pre">awvalid=1</span></code> and HBM controller asserts <code class="docutils literal notranslate"><span class="pre">awready=1</span></code>, address transfers</p></li>
+<li><p>Next cycle: <code class="docutils literal notranslate"><span class="pre">wdata[511:0]</span></code> bus carries 512 bits (256 bits of data + 256 bits padding)</p></li>
+<li><p>HBM controller decodes address: stack, channel, bank, row, column</p></li>
+<li><p>HBM performs DRAM write:</p>
+<ol class="arabic simple">
+<li><p>Activate row (if different row than last access)</p></li>
+<li><p>Write data to sense amplifiers</p></li>
+<li><p>Precharge (close row)</p></li>
+</ol>
+</li>
+<li><p>Takes ~100-200ns total</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">wready</span></code> asserts when HBM controller accepts data</p></li>
+</ul>
+<p><strong>Step 3.4: HBM physically stores the data</strong></p>
+<p>Inside the HBM chip (physical DRAM operation):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Address decoding:
+  33-bit address 0x0_0100_0000 (example for row 0x8000 × 32 bytes)
+
+  [32:30] Stack select = 0b000 → Stack 0
+  [29:27] Channel select = 0b000 → Channel 0 within stack
+  [26:13] Row address = 0b00000000100000 → Row 0x0020
+  [12:5]  Column address = 0b00000000 → Column 0
+  [4:0]   Byte offset = 0b00000 → Byte 0
+
+HBM controller sequence:
+  1. Activate command: Open row 0x0020 in Bank 0
+     - Wordline voltage applied
+     - Entire row (512 bytes) read into sense amps (row buffer)
+
+  2. Write command: Write 32 bytes at column 0
+     - Drive bitlines with new data
+     - Sense amps latch data
+     - Capacitors in DRAM cells charge/discharge
+
+  3. Precharge command: Close row
+     - Write data from sense amps back to cells
+     - Wordline deasserted
+
+  4. Data now stored in DRAM cells (1 transistor + 1 capacitor per bit)
+     - Will persist for ~64ms before refresh needed
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="phase-4-additional-initialization-steps">
+<h3><strong>Phase 4: Additional Initialization Steps</strong><a class="headerlink" href="#phase-4-additional-initialization-steps" title="Link to this heading">#</a></h3>
+<p><strong>Step 4.1: Program network parameters</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py:683-721</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">write_parameters_simple</span><span class="p">(</span><span class="n">n_outputs</span><span class="p">,</span> <span class="n">n_inputs</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Writes the network parameters to the FPGA&quot;&quot;&quot;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+    <span class="n">command</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>      <span class="c1"># Opcode 0x04</span>
+    <span class="n">command</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">17</span><span class="p">:]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">n_inputs</span><span class="p">,</span> <span class="mi">17</span><span class="p">))</span>   <span class="c1"># 17-bit input count</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">34</span><span class="p">:</span><span class="o">-</span><span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">n_outputs</span><span class="p">,</span> <span class="mi">17</span><span class="p">))</span> <span class="c1"># 17-bit output count</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">to_dump_format</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>  <span class="c1"># Convert to byte array</span>
+
+    <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">),</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This sends a command to <code class="docutils literal notranslate"><span class="pre">internal_events_processor.v</span></code> telling it:</p>
+<ul class="simple">
+<li><p>How many input axons exist (5 in our network)</p></li>
+<li><p>How many output neurons exist (5 in our network)</p></li>
+</ul>
+<p><strong>Step 4.2: Program neuron types</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py:724-775</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">write_neuron_type</span><span class="p">(</span><span class="n">stopAddr</span><span class="p">,</span> <span class="n">Threshold</span><span class="p">,</span> <span class="n">neuronModel</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">leak</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Configures neuron model parameters&quot;&quot;&quot;</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">512</span><span class="p">)</span>
+    <span class="n">command</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>      <span class="c1"># Opcode 0x08</span>
+    <span class="n">command</span><span class="p">[</span><span class="mi">8</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">34</span><span class="p">:</span><span class="o">-</span><span class="mi">17</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">stopAddr</span><span class="p">,</span> <span class="mi">17</span><span class="p">))</span>     <span class="c1"># Last neuron index</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">70</span><span class="p">:</span><span class="o">-</span><span class="mi">34</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">Threshold</span><span class="p">,</span> <span class="mi">36</span><span class="p">))</span>    <span class="c1"># Spike threshold</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">72</span><span class="p">:</span><span class="o">-</span><span class="mi">70</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">neuronModel</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>   <span class="c1"># 0=IF, 1=LIF, etc.</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">78</span><span class="p">:</span><span class="o">-</span><span class="mi">72</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>         <span class="c1"># Leak shift amount</span>
+    <span class="n">command</span><span class="p">[</span><span class="o">-</span><span class="mi">84</span><span class="p">:</span><span class="o">-</span><span class="mi">78</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">leak</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>          <span class="c1"># Leak value</span>
+    <span class="n">command</span> <span class="o">=</span> <span class="n">to_dump_format</span><span class="p">(</span><span class="n">command</span><span class="p">)</span>
+
+    <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">command</span><span class="p">),</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This configures:</p>
+<ul class="simple">
+<li><p><strong>Threshold = 2000</strong>: Neurons spike when V ≥ 2000</p></li>
+<li><p><strong>Neuron model = LIF</strong>: Leaky integrate-and-fire</p></li>
+<li><p><strong>Leak parameters</strong>: How much voltage leaks each timestep</p></li>
+</ul>
+<p>The FPGA stores these in internal registers, which <code class="docutils literal notranslate"><span class="pre">internal_events_processor.v</span></code> uses during neuron updates.</p>
+<p><strong>Step 4.3: Clear URAM (zero all membrane potentials)</strong></p>
+<p>File: <code class="docutils literal notranslate"><span class="pre">hs_bridge/FPGA_Execution/fpga_controller.py:191-236</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">clear</span><span class="p">(</span><span class="n">n_internal</span><span class="p">,</span> <span class="n">simDump</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">coreID</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;This function clears the membrane potentials on the fpga.&quot;&quot;&quot;</span>
+    <span class="n">coreBits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">binary_repr</span><span class="p">(</span><span class="n">coreID</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="s1">&#39;0&#39;</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n_internal</span> <span class="o">/</span> <span class="n">ng_num</span><span class="p">))):</span>  <span class="c1"># ng_num = 16 neurons/group</span>
+        <span class="n">commandTail</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">55</span> <span class="o">+</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">coreBits</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="mi">3</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">uint64</span><span class="p">)</span>
+        <span class="n">numCol</span> <span class="o">=</span> <span class="mi">16</span>  <span class="c1"># 16 columns (neuron groups)</span>
+        <span class="n">clearCommandList</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">numCol</span><span class="p">):</span>
+            <span class="c1"># Build clear command for this neuron group</span>
+            <span class="n">clearCommandList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">clear_address_packet</span><span class="p">(</span><span class="n">row</span><span class="o">=</span><span class="n">i</span><span class="p">,</span> <span class="n">col</span><span class="o">=</span><span class="n">column</span><span class="p">),</span> <span class="n">commandTail</span><span class="p">])</span>
+            <span class="p">)</span>
+
+        <span class="n">clearCommand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">clearCommandList</span><span class="p">)</span>
+        <span class="n">exitCode</span> <span class="o">=</span> <span class="n">dmadump</span><span class="o">.</span><span class="n">dma_dump_write</span><span class="p">(</span><span class="n">clearCommand</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">clearCommand</span><span class="p">),</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This sends opcode 0x03 commands to <code class="docutils literal notranslate"><span class="pre">internal_events_processor.v</span></code>, which writes zeros to all URAM addresses.</p>
+<p><strong>What happens in hardware:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="c1">// internal_events_processor.v receives clear command</span>
+<span class="k">always</span><span class="w"> </span><span class="p">@(</span><span class="k">posedge</span><span class="w"> </span><span class="n">aclk450</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">clear_cmd</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// For each neuron in this group</span>
+<span class="w">        </span><span class="n">uram_addr</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">neuron_row</span><span class="p">;</span>
+<span class="w">        </span><span class="n">uram_we</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">        </span><span class="n">uram_din</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="mh">72</span><span class="mb">&#39;b0</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write all zeros</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p>This zeroes the membrane potential for all neurons. After this, every neuron starts with V=0.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="summary-complete-initialization-flow">
+<h2>Summary: Complete Initialization Flow<a class="headerlink" href="#summary-complete-initialization-flow" title="Link to this heading">#</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>User Python Code:
+  network = CRI_network(target=&quot;CRI&quot;)
+       ↓
+hs_api validates network
+       ↓
+hs_bridge.network.__init__()
+       ↓
+fpga_compiler generates HBM data:
+  - Axon pointers array
+  - Neuron pointers array
+  - Synapses array
+       ↓
+dmadump.dma_dump_write() sends data via PCIe:
+  - Host allocates DMA buffer in RAM
+  - Host sends Memory Write TLPs to FPGA
+  - Data flows: Host RAM → PCIe → FPGA PCIe Endpoint → pcie2fifos.v → Input FIFO
+       ↓
+command_interpreter.v parses commands:
+  - Opcode 0x02 → HBM write
+  - Routes data to hbm_processor
+       ↓
+hbm_processor.v writes to HBM:
+  - AXI4 transaction to HBM controller
+  - Physical DRAM write (activate → write → precharge)
+       ↓
+fpga_controller.write_parameters_simple():
+  - Sends opcode 0x04
+  - Programs n_inputs, n_outputs
+       ↓
+fpga_controller.write_neuron_type():
+  - Sends opcode 0x08
+  - Programs threshold, neuron model, leak
+       ↓
+fpga_controller.clear():
+  - Sends opcode 0x03
+  - Zeros all URAM (membrane potentials)
+       ↓
+FPGA is now initialized:
+  ✓ HBM contains network structure (pointers, synapses, weights)
+  ✓ URAM cleared (all neurons at V=0)
+  ✓ Network parameters programmed (threshold, neuron model)
+  ✓ Ready to receive inputs and execute
+</pre></div>
+</div>
+<p><strong>Time elapsed:</strong> Typically 10-100 milliseconds depending on network size</p>
+<ul class="simple">
+<li><p>Small network (our example): ~10 ms</p></li>
+<li><p>Large network (millions of synapses): ~100 ms</p></li>
+<li><p>Dominated by PCIe transfer time for large synapse arrays</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading">#</a></h2>
+<p>Network initialization is a <strong>one-time compilation and transfer process</strong> that transforms your high-level Python network definition into a physical configuration in the FPGA’s memory hierarchy. Once initialized:</p>
+<ul class="simple">
+<li><p><strong>HBM stores the network structure</strong> (connections and weights) - this doesn’t change during execution</p></li>
+<li><p><strong>URAM stores neuron states</strong> (membrane potentials) - this updates every timestep</p></li>
+<li><p><strong>BRAM stores input patterns</strong> (which axons are firing) - this changes every timestep</p></li>
+</ul>
+<p>In the next chapter, we’ll see how this initialized network comes to life when we send inputs and execute timesteps.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-host-fpga-communication">What is Host-FPGA Communication?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analogy-sending-mail-between-buildings">Analogy: Sending Mail Between Buildings</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-physical-link-pcie">The Physical Link: PCIe</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-software-hardware-stack-for-initialization">The Software-Hardware Stack for Initialization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-by-step-initialization-sequence">Step-by-Step: Initialization Sequence</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-1-network-compilation-software-hs-bridge"><strong>Phase 1: Network Compilation (Software - hs_bridge)</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-2-dma-transfer-pcie-communication"><strong>Phase 2: DMA Transfer (PCIe Communication)</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pcie-packet-details">PCIe Packet Details</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-3-fpga-reception-and-hbm-programming"><strong>Phase 3: FPGA Reception and HBM Programming</strong></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#phase-4-additional-initialization-steps"><strong>Phase 4: Additional Initialization Steps</strong></a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-complete-initialization-flow">Summary: Complete Initialization Flow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusion">Conclusion</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/1_Initializing_the_Network/Chapter_1_2.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

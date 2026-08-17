@@ -1,0 +1,1523 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>input_data_handler.v &#8212; hiaerspike-web  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=84003116" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'hardware_docs/3_Verilog_Files_Review/input_data_handler';</script>
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="internal_events_processor.v" href="internal_events_processor.html" />
+    <link rel="prev" title="hbm_processor.v" href="hbm_processor.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="hiaerspike-web  documentation - Home"/>
+    <img src="../../_static/logo_dark.svg" class="logo__image only-dark pst-js-only" alt="hiaerspike-web  documentation - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../about.html">
+    About
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Getting Started
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Examples
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../publications.html">
+    Publications
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../index.html">
+    Hardware Docs
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/Integrated-Systems-Neuroengineering/hs_api" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://bsky.app/profile/hiaer-spike.bsky.social" title="Bluesky" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-bluesky fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Bluesky</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><p aria-level="2" class="caption" role="heading"><span class="caption-text">Hardware Guide Book</span></p>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../introduction.html">0 Introduction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/python_page.html">Our hs_api Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_map.html">Basic Hardware Architecture Map - Low-Level Physical Organization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hardware_component_definitions.html">Hardware Component Definitions (Low-Level)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../0_Introduction/hs_bridge_role.html">hs_bridge Role and Responsibilities</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_1.html">1 Initializing the Network</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_1.html">1.1 How the Network Looks in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/Chapter_1_2.html">1.2 How the Network is Written to the FPGA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../1_Initializing_the_Network/CRI_Stack_Diagram.html">Diagram of CRI Stack During Network Compilation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_2.html">2 The Network Comes to Life</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_1.html">2.1 Visualizing the Network’s Signal Processing in Hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_2.html">2.2 State Machine Coordination and Control Signals</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/Chapter_2_3.html">2.3 The Code Behind Execution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../2_The_Network_Comes_to_Life/FPGA_Timestep_Diagram.html">Diagram of FPGA During 1 Timestep</a></li>
+
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../chapter_3.html">3 Verilog Files Review</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="command_interpreter.html">command_interpreter.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="external_events_processor.html">External Events Processor Module Family</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hbm_processor.html">hbm_processor.v</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">input_data_handler.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal_events_processor.html">internal_events_processor.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pcie2fifos.html">pcie2fifos.v</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pointer_fifo_controller.html">Pointer FIFO Controller Module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spike_fifo_controller.html">Spike FIFO Controller Module</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../chapter_4.html">4 Implementing RSTDP</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/what_is_rstdp.html">4.1 What is R-STDP?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/synapse_read_write.html">4.2 Reading and Writing Synapses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../4_Implementing_RSTDP/hardware_only_writing.html">4.3 Hardware Implementation of R-STDP</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../supplementary_information.html">Supplementary Information</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/appendix.html">Appendix: Hardware Glossary for Software Experts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/packet_encoding.html">Packet Encoding Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../supplementary_information/addresses_explained.html">Address Encoding Explained</a></li>
+</ul>
+</details></li>
+</ul>
+<p aria-level="2" class="caption" role="heading"><span class="caption-text">PCIe and HBM Packet Definitions</span></p>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../pcie_hbm_packet_definitions.html">PCIe and HBM Packet Definitions</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">HiAER Spike Hardware Docs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../chapter_3.html" class="nav-link">3 Verilog Files Review</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">input_data_handler.v</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="input-data-handler-v">
+<h1>input_data_handler.v<a class="headerlink" href="#input-data-handler-v" title="Link to this heading">#</a></h1>
+<section id="module-overview">
+<h2>Module Overview<a class="headerlink" href="#module-overview" title="Link to this heading">#</a></h2>
+<section id="purpose-and-role-in-stack">
+<h3>Purpose and Role in Stack<a class="headerlink" href="#purpose-and-role-in-stack" title="Link to this heading">#</a></h3>
+<p>The <strong>input_data_handler</strong> module acts as a <strong>BRAM arbiter</strong>, managing access to the shared Block RAM (BRAM) that stores axon/external event data. This module:</p>
+<ul class="simple">
+<li><p><strong>Arbitrates between two requesters:</strong></p>
+<ul>
+<li><p>Command interpreter (CI) - for host read/write access</p></li>
+<li><p>External events processor (EEP) - for runtime axon event processing</p></li>
+</ul>
+</li>
+<li><p><strong>Enforces priority:</strong> Command interpreter has higher priority than external events processor</p></li>
+<li><p><strong>Handles BRAM read latency:</strong> Implements 3-cycle pipeline to account for BRAM read delay</p></li>
+<li><p><strong>Routes responses</strong> back to appropriate requester with address passthrough</p></li>
+</ul>
+<p>In the software/hardware stack:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Command Interpreter ──┐
+                      ├──► input_data_handler ──► BRAM (2^15 x 256-bit)
+External Events       │         (Arbiter)              │
+Processor         ────┘                                │
+                                                       │
+                         ┌─────────────────────────────┘
+                         │
+                    Response Router
+                         │
+            ┌────────────┴─────────────┐
+            ▼                          ▼
+    Command Interpreter      External Events Processor
+    (read response)          (read response)
+</pre></div>
+</div>
+<p>This module is essential for <strong>efficient BRAM utilization</strong>, allowing both configuration/debug access (via CI) and high-speed runtime processing (via EEP) to share the same memory resource.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="module-architecture">
+<h2>Module Architecture<a class="headerlink" href="#module-architecture" title="Link to this heading">#</a></h2>
+<section id="high-level-block-diagram">
+<h3>High-Level Block Diagram<a class="headerlink" href="#high-level-block-diagram" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>        input_data_handler
+    ┌─────────────────────────────────────────────────────────────┐
+    │                                                             │
+    │         ┌───────────────────────────────┐                  │
+    │         │   Command Interpreter FIFO    │                  │
+    │         │   (Input: Local Read)          │                  │
+CI→FIFO  ────►│ ci2idp_dout[271:0]            │                  │
+(local)       │  [271] = R/W command          │                  │
+empty/rden    │  [270:256] = 15-bit address   │                  │
+              │  [255:0] = 256-bit data        │                  │
+              └───────────┬───────────────────┘                  │
+                          │                                      │
+    │                     │                                      │
+    │         ┌───────────▼───────────────────┐                  │
+    │         │   External Events Proc FIFO   │                  │
+    │         │   (Input: Local Read)          │                  │
+EEP→FIFO  ────►│ eep2idp_dout[14:0]           │                  │
+(local)       │  15-bit address only          │                  │
+empty/rden    └───────────┬───────────────────┘                  │
+              │           │                                      │
+              │           │                                      │
+    │         │   ┌───────▼─────────────────────────────┐        │
+    │         │   │   Priority Arbiter                  │        │
+    │         │   │   - CI has priority over EEP        │        │
+    │         │   │   - Selects address source          │        │
+    │         │   │   - Generates BRAM control signals  │        │
+    │         │   └───────┬─────────────────────────────┘        │
+    │         │           │                                      │
+    │         │           ▼                                      │
+    │         │   ┌────────────────────────┐                    │
+    │         │   │   BRAM Interface       │                    │
+BRAM  ◄───────┼───┤ addr[14:0]             │                    │
+Interface     │   │ din[255:0] (write data)│                    │
+(2^15 x 256)  │   │ dout[255:0] (read data)│                    │
+              │   │ wren (write enable)    │                    │
+              │   └────────┬───────────────┘                    │
+    │         │            │                                     │
+    │         │            ▼                                     │
+    │         │   ┌──────────────────────────────────┐          │
+    │         │   │   3-Cycle Read Pipeline          │          │
+    │         │   │   (Compensates for BRAM latency) │          │
+    │         │   │                                  │          │
+    │         │   │   IDLE → WAIT_0 → WAIT_1 →      │          │
+    │         │   │         → WAIT_2 → output       │          │
+    │         │   │                                  │          │
+    │         │   └──────────┬───────────────────────┘          │
+    │         │              │                                   │
+    │         │              ▼                                   │
+    │         │   ┌──────────────────────────────────┐          │
+    │         │   │   Response Router                │          │
+    │         │   │   - Directs read data to         │          │
+    │         │   │     original requester           │          │
+    │         │   │   - Includes address passthrough │          │
+    │         │   └──────┬─────────┬─────────────────┘          │
+    │         │          │         │                             │
+    │         │          ▼         ▼                             │
+    │         │   ┌──────────┐ ┌──────────┐                    │
+    │         │   │ idp2ci   │ │ idp2eep  │                    │
+CI←FIFO  ◄──────┤ FIFO     │ │ FIFO     │◄───────────EEP←FIFO │
+(remote)        │ (Output: │ │ (Output: │                (remote)
+full/wren       │  Remote) │ │  Remote) │                        │
+data            └──────────┘ └──────────┘                        │
+                │                                                 │
+                └─────────────────────────────────────────────────┘
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="interface-specification">
+<h2>Interface Specification<a class="headerlink" href="#interface-specification" title="Link to this heading">#</a></h2>
+<section id="clock-and-reset">
+<h3>Clock and Reset<a class="headerlink" href="#clock-and-reset" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clk</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>225 MHz system clock</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">resetn</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Active-low synchronous reset</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="command-interpreter-interface">
+<h3>Command Interpreter Interface<a class="headerlink" href="#command-interpreter-interface" title="Link to this heading">#</a></h3>
+<p><strong>Input FIFO (Local - CI to IDP):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2idp_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Input FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ci2idp_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>272</p></td>
+<td><p>Input FIFO data output</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ci2idp_rden</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Input FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Format (<code class="docutils literal notranslate"><span class="pre">ci2idp_dout[271:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">271</span><span class="p">]</span>       <span class="o">=</span> <span class="n">R</span><span class="o">/</span><span class="n">W</span> <span class="n">command</span> <span class="p">(</span><span class="mi">0</span><span class="o">=</span><span class="n">read</span><span class="p">,</span> <span class="mi">1</span><span class="o">=</span><span class="n">write</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">270</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">15</span><span class="o">-</span><span class="n">bit</span> <span class="n">BRAM</span> <span class="n">address</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">write</span> <span class="n">data</span>
+</pre></div>
+</div>
+<p><strong>Output FIFO (Remote - IDP to CI):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idp2ci_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Output FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">idp2ci_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>271</p></td>
+<td><p>Output FIFO data input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idp2ci_wren</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Output FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Format (<code class="docutils literal notranslate"><span class="pre">idp2ci_din[270:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">270</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">15</span><span class="o">-</span><span class="n">bit</span> <span class="n">BRAM</span> <span class="n">address</span> <span class="p">(</span><span class="n">echoed</span> <span class="kn">from</span><span class="w"> </span><span class="nn">request</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">read</span> <span class="n">data</span>
+</pre></div>
+</div>
+</section>
+<section id="external-events-processor-interface">
+<h3>External Events Processor Interface<a class="headerlink" href="#external-events-processor-interface" title="Link to this heading">#</a></h3>
+<p><strong>Input FIFO (Local - EEP to IDP):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eep2idp_empty</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Input FIFO empty flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eep2idp_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>15</p></td>
+<td><p>Input FIFO data output (address only)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">eep2idp_rden</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Input FIFO read enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Format (<code class="docutils literal notranslate"><span class="pre">eep2idp_dout[14:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">14</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">15</span><span class="o">-</span><span class="n">bit</span> <span class="n">BRAM</span> <span class="n">address</span> <span class="p">(</span><span class="n">read</span> <span class="n">request</span> <span class="n">only</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Output FIFO (Remote - IDP to EEP):</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idp2eep_full</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>1</p></td>
+<td><p>Output FIFO full flag</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">idp2eep_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>271</p></td>
+<td><p>Output FIFO data input</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">idp2eep_wren</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>Output FIFO write enable</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Data Format (<code class="docutils literal notranslate"><span class="pre">idp2eep_din[270:0]</span></code>):</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="mi">270</span><span class="p">:</span><span class="mi">256</span><span class="p">]</span>   <span class="o">=</span> <span class="mi">15</span><span class="o">-</span><span class="n">bit</span> <span class="n">BRAM</span> <span class="n">address</span> <span class="p">(</span><span class="n">echoed</span> <span class="kn">from</span><span class="w"> </span><span class="nn">request</span><span class="p">)</span>
+<span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>     <span class="o">=</span> <span class="mi">256</span><span class="o">-</span><span class="n">bit</span> <span class="n">read</span> <span class="n">data</span>
+</pre></div>
+</div>
+</section>
+<section id="bram-interface">
+<h3>BRAM Interface<a class="headerlink" href="#bram-interface" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Signal</p></th>
+<th class="head"><p>Direction</p></th>
+<th class="head"><p>Width</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram_addr</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>15</p></td>
+<td><p>BRAM address (0 to 32,767)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram_din</span></code></p></td>
+<td><p>Output</p></td>
+<td><p>256</p></td>
+<td><p>BRAM write data</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">bram_wren</span></code></p></td>
+<td><p>Output (reg)</p></td>
+<td><p>1</p></td>
+<td><p>BRAM write enable</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">bram_dout</span></code></p></td>
+<td><p>Input</p></td>
+<td><p>256</p></td>
+<td><p>BRAM read data (3-cycle latency)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>BRAM Specifications:</strong></p>
+<ul class="simple">
+<li><p><strong>Depth:</strong> 32,768 rows (2^15)</p></li>
+<li><p><strong>Width:</strong> 256 bits per row</p></li>
+<li><p><strong>Total Size:</strong> 1 MB (32,768 × 256 bits = 8,388,608 bits)</p></li>
+<li><p><strong>Read Latency:</strong> 3 clock cycles</p></li>
+<li><p><strong>Write Latency:</strong> 1 clock cycle (synchronous write)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="detailed-logic-description">
+<h2>Detailed Logic Description<a class="headerlink" href="#detailed-logic-description" title="Link to this heading">#</a></h2>
+<section id="command-decoder">
+<h3>Command Decoder<a class="headerlink" href="#command-decoder" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="n">CMD_READ</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="n">CMD_WRITE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+
+<span class="kt">wire</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2idp_dout</span><span class="p">[</span><span class="mh">271</span><span class="p">];</span><span class="w">  </span><span class="c1">// Extract R/W bit</span>
+</pre></div>
+</div>
+</section>
+<section id="state-machine">
+<h3>State Machine<a class="headerlink" href="#state-machine" title="Link to this heading">#</a></h3>
+<p><strong>States:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_RESET</span><span class="w">                </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d0</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_IDLE</span><span class="w">                 </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d1</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_0</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d2</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d3</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d4</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_CI_WAIT_BRAM_READ_0</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d5</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_CI_WAIT_BRAM_READ_1</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d6</span><span class="p">;</span>
+<span class="k">localparam</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">STATE_CI_WAIT_BRAM_READ_2</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="mh">3</span><span class="mi">&#39;d7</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>State Transition Diagram:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                   ┌──────────────┐
+                   │ STATE_RESET  │
+                   └──────┬───────┘
+                          │
+                          ▼
+                   ┌──────────────┐
+              ┌───▶│ STATE_IDLE   │◄────────────────┬─────────────────┐
+              │    │ (Arbitrate)  │                 │                 │
+              │    └──┬───────┬───┘                 │                 │
+              │       │       │                     │                 │
+              │  !eep │       │ !ci                 │                 │
+              │  empty│       │ empty               │                 │
+              │       │       │                     │                 │
+              │       │       └─ CMD_READ           │                 │
+              │       │              │              │                 │
+              │       │              ▼              │                 │
+              │       │       STATE_CI_WAIT_0       │                 │
+              │       │              │              │                 │
+              │       │              ▼              │                 │
+              │       │       STATE_CI_WAIT_1       │                 │
+              │       │              │              │                 │
+              │       │              ▼              │                 │
+              │       │       STATE_CI_WAIT_2       │                 │
+              │       │              │              │                 │
+              │       │              │!idp2ci_full  │                 │
+              │       │              └──────────────┘                 │
+              │       │                                               │
+              │       │ CMD_WRITE                                     │
+              │       └─(immediate pop)──────────────────────────────┘
+              │       │
+              │       ▼
+              │    STATE_EEP_WAIT_0
+              │       │
+              │       ▼
+              │    STATE_EEP_WAIT_1
+              │       │
+              │       ▼
+              │    STATE_EEP_WAIT_2
+              │       │
+              │       │!idp2eep_full
+              └───────┘
+</pre></div>
+</div>
+</section>
+<section id="priority-arbitration-logic">
+<h3>Priority Arbitration Logic<a class="headerlink" href="#priority-arbitration-logic" title="Link to this heading">#</a></h3>
+<p><strong>IDLE State Behavior:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">STATE_IDLE:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">eep2idp_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// EEP has pending request</span>
+<span class="w">        </span><span class="n">bram_addr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">eep2idp_dout</span><span class="p">;</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">end</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">ci2idp_empty</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="c1">// CI has pending request (higher priority)</span>
+<span class="w">        </span><span class="n">bram_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2idp_dout</span><span class="p">[</span><span class="mh">270</span><span class="o">:</span><span class="mh">256</span><span class="p">];</span><span class="w">  </span><span class="c1">// Extract 15-bit address</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">command</span><span class="o">==</span><span class="n">CMD_READ</span><span class="p">)</span>
+<span class="w">            </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_CI_WAIT_BRAM_READ_0</span><span class="p">;</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">begin</span><span class="w">  </span><span class="c1">// CMD_WRITE</span>
+<span class="w">            </span><span class="n">bram_wren</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">ci2idp_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span>
+<span class="w">            </span><span class="n">next_state</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_IDLE</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write completes immediately</span>
+<span class="w">        </span><span class="k">end</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>Priority Rules:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>CI Write:</strong> Highest priority, completes in 1 cycle (no wait states)</p></li>
+<li><p><strong>CI Read:</strong> High priority, 3-cycle wait for BRAM latency</p></li>
+<li><p><strong>EEP Read:</strong> Lower priority, serviced only when CI FIFO empty</p></li>
+<li><p><strong>No Starvation:</strong> EEP will eventually be serviced due to finite CI request rate</p></li>
+</ol>
+</section>
+<section id="bram-read-pipeline-3-cycle-latency">
+<h3>BRAM Read Pipeline (3-Cycle Latency)<a class="headerlink" href="#bram-read-pipeline-3-cycle-latency" title="Link to this heading">#</a></h3>
+<p><strong>Cycle Breakdown:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Cycle</span> <span class="mi">0</span><span class="p">:</span> <span class="n">Request</span> <span class="n">arrives</span> <span class="ow">in</span> <span class="n">IDLE</span> <span class="n">state</span>
+         <span class="o">-</span> <span class="n">bram_addr</span> <span class="o">=</span> <span class="n">address</span> <span class="kn">from</span><span class="w"> </span><span class="nn">FIFO</span>
+         <span class="o">-</span> <span class="n">Transition</span> <span class="n">to</span> <span class="n">WAIT_0</span>
+
+<span class="n">Cycle</span> <span class="mi">1</span><span class="p">:</span> <span class="n">STATE_WAIT_0</span>
+         <span class="o">-</span> <span class="n">BRAM</span> <span class="n">internal</span> <span class="n">pipeline</span> <span class="n">stage</span> <span class="mi">1</span>
+         <span class="o">-</span> <span class="n">bram_addr</span> <span class="n">held</span> <span class="n">stable</span>
+         <span class="o">-</span> <span class="n">Transition</span> <span class="n">to</span> <span class="n">WAIT_1</span>
+
+<span class="n">Cycle</span> <span class="mi">2</span><span class="p">:</span> <span class="n">STATE_WAIT_1</span>
+         <span class="o">-</span> <span class="n">BRAM</span> <span class="n">internal</span> <span class="n">pipeline</span> <span class="n">stage</span> <span class="mi">2</span>
+         <span class="o">-</span> <span class="n">bram_addr</span> <span class="n">held</span> <span class="n">stable</span>
+         <span class="o">-</span> <span class="n">Transition</span> <span class="n">to</span> <span class="n">WAIT_2</span>
+
+<span class="n">Cycle</span> <span class="mi">3</span><span class="p">:</span> <span class="n">STATE_WAIT_2</span>
+         <span class="o">-</span> <span class="n">bram_dout</span> <span class="n">now</span> <span class="n">valid</span>
+         <span class="o">-</span> <span class="n">Wait</span> <span class="k">for</span> <span class="n">output</span> <span class="n">FIFO</span> <span class="ow">not</span> <span class="n">full</span>
+         <span class="o">-</span> <span class="n">Write</span> <span class="n">to</span> <span class="n">output</span> <span class="n">FIFO</span> <span class="p">(</span><span class="n">wren</span> <span class="n">pulse</span><span class="p">)</span>
+         <span class="o">-</span> <span class="n">Pop</span> <span class="nb">input</span> <span class="n">FIFO</span> <span class="p">(</span><span class="n">rden</span> <span class="n">pulse</span><span class="p">)</span>
+         <span class="o">-</span> <span class="n">Transition</span> <span class="n">to</span> <span class="n">IDLE</span>
+</pre></div>
+</div>
+<p><strong>EEP Read Example:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="nl">STATE_EEP_WAIT_BRAM_READ_0:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">bram_addr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">eep2idp_dout</span><span class="p">;</span><span class="w">  </span><span class="c1">// Hold address stable</span>
+<span class="w">    </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_1</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="nl">STATE_EEP_WAIT_BRAM_READ_1:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">bram_addr</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">eep2idp_dout</span><span class="p">;</span>
+<span class="w">    </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_EEP_WAIT_BRAM_READ_2</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="nl">STATE_EEP_WAIT_BRAM_READ_2:</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">    </span><span class="n">bram_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep2idp_dout</span><span class="p">;</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">~</span><span class="n">idp2eep_full</span><span class="p">)</span><span class="w"> </span><span class="k">begin</span>
+<span class="w">        </span><span class="n">idp2eep_wren</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Write read data to output FIFO</span>
+<span class="w">        </span><span class="n">eep2idp_rden</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mh">1</span><span class="mb">&#39;b1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Pop request from input FIFO</span>
+<span class="w">        </span><span class="n">next_state</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">STATE_IDLE</span><span class="p">;</span>
+<span class="w">    </span><span class="k">end</span>
+<span class="w">    </span><span class="c1">// else: stall until output FIFO has space</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+<p><strong>CI Read:</strong> Same pattern using <code class="docutils literal notranslate"><span class="pre">ci2idp_dout[270:256]</span></code> for address and <code class="docutils literal notranslate"><span class="pre">idp2ci</span></code> FIFOs.</p>
+</section>
+<section id="output-data-routing">
+<h3>Output Data Routing<a class="headerlink" href="#output-data-routing" title="Link to this heading">#</a></h3>
+<p><strong>Assignments:</strong></p>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="k">assign</span><span class="w"> </span><span class="n">idp2eep_din</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">bram_addr</span><span class="p">,</span><span class="w"> </span><span class="n">bram_dout</span><span class="p">};</span><span class="w">  </span><span class="c1">// [270:256]=addr, [255:0]=data</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">idp2ci_din</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="n">bram_addr</span><span class="p">,</span><span class="w"> </span><span class="n">bram_dout</span><span class="p">};</span>
+<span class="k">assign</span><span class="w"> </span><span class="n">bram_din</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">ci2idp_dout</span><span class="p">[</span><span class="mh">255</span><span class="o">:</span><span class="mh">0</span><span class="p">];</span><span class="w">      </span><span class="c1">// Only CI can write</span>
+</pre></div>
+</div>
+<p><strong>Address Passthrough:</strong></p>
+<ul class="simple">
+<li><p>Read responses include the original address</p></li>
+<li><p>Allows requester to correlate response with request</p></li>
+<li><p>Critical for pipelined operation (though this module doesn’t pipeline)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="timing-diagrams">
+<h2>Timing Diagrams<a class="headerlink" href="#timing-diagrams" title="Link to this heading">#</a></h2>
+<section id="ci-write-transaction">
+<h3>CI Write Transaction<a class="headerlink" href="#ci-write-transaction" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2
+           │      │      │
+State      IDLE   │IDLE  │
+           │      │      │
+ci2idp     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│  (WR, Addr=0x1234, Data=0xABCD...)
+_empty     │      │      │
+           │      │      │
+ci2idp     ▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+_rden      │      │      │
+           │      │      │
+bram_addr  XXXX   │0x1234│
+           │      │      │
+bram_wren  ▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+           │      │      │
+bram_din   XXXX   │0xABCD│
+           │      │...   │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Single-cycle write operation</p></li>
+<li><p>No wait states required</p></li>
+<li><p>Returns to IDLE immediately</p></li>
+</ul>
+</section>
+<section id="ci-read-transaction">
+<h3>CI Read Transaction<a class="headerlink" href="#ci-read-transaction" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3      4      5
+           │      │      │      │      │      │
+State      IDLE   │WAIT_0│WAIT_1│WAIT_2│IDLE  │
+           │      │      │      │      │      │
+ci2idp     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│  (RD, Addr=0x5678)
+_empty     │      │      │      │      │      │
+           │      │      │      │      │      │
+ci2idp     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+_rden      │      │      │      │      │      │
+           │      │      │      │      │      │
+bram_addr  XXXX   │0x5678│0x5678│0x5678│0x5678│
+           │      │      │      │      │      │
+bram_dout  XXXX   │XXXX  │XXXX  │XXXX  │DATA  │
+           │      │      │      │      │      │
+idp2ci     ▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁│▔▔▔▔▔▔▁▁
+_wren      │      │      │      │      │      │
+           │      │      │      │      │      │
+idp2ci_din XXXX   │XXXX  │XXXX  │XXXX  │{0x5678,
+           │      │      │      │      │ DATA}
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>3-cycle wait for BRAM read latency</p></li>
+<li><p>Address held stable during wait states</p></li>
+<li><p>Response includes address + data</p></li>
+</ul>
+</section>
+<section id="priority-arbitration-eep-deferred">
+<h3>Priority Arbitration: EEP Deferred<a class="headerlink" href="#priority-arbitration-eep-deferred" title="Link to this heading">#</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Cycle:     0      1      2      3      4      5      6      7      8
+           │      │      │      │      │      │      │      │      │
+State      IDLE   │WAIT_0│WAIT_1│WAIT_2│IDLE  │WAIT_0│WAIT_1│WAIT_2│
+           │      │      │      │      │      │      │      │      │
+eep2idp    ▔▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│  (pending request)
+_empty     │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │
+ci2idp     ▁▁▁▁▁▁▁│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔│▔▔▔▔▔▔▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁▁  (higher priority)
+_empty     │      │      │      │      │      │      │      │      │
+           │      │      │      │      │      │      │      │      │
+Serviced   -      │CI    │CI    │CI    │CI    │EEP   │EEP   │EEP   │EEP
+           │      │      │      │      │      │      │      │      │
+</pre></div>
+</div>
+<p><strong>Notes:</strong></p>
+<ul class="simple">
+<li><p>Cycle 0: Both FIFOs have requests, CI serviced first</p></li>
+<li><p>Cycles 1-4: CI read completes (3-cycle wait)</p></li>
+<li><p>Cycle 5: EEP request now serviced</p></li>
+<li><p>Demonstrates priority enforcement</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="cross-references">
+<h2>Cross-References<a class="headerlink" href="#cross-references" title="Link to this heading">#</a></h2>
+<section id="related-modules">
+<h3>Related Modules<a class="headerlink" href="#related-modules" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Relationship</p></th>
+<th class="head"><p>Interface</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>command_interpreter.v</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>Connects to <code class="docutils literal notranslate"><span class="pre">ci2idp_*</span></code> and <code class="docutils literal notranslate"><span class="pre">idp2ci_*</span></code> FIFOs</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>external_events_processor.v</strong></p></td>
+<td><p>Upstream</p></td>
+<td><p>Connects to <code class="docutils literal notranslate"><span class="pre">eep2idp_*</span></code> and <code class="docutils literal notranslate"><span class="pre">idp2eep_*</span></code> FIFOs</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>BRAM (Xilinx IP)</strong></p></td>
+<td><p>Downstream</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bram_*</span></code> signals control Block RAM</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="bram-structure-parent-pcie2fifos-command-interpreter">
+<h3>BRAM Structure (Parent: pcie2fifos → command_interpreter)<a class="headerlink" href="#bram-structure-parent-pcie2fifos-command-interpreter" title="Link to this heading">#</a></h3>
+<p><strong>Data Stored in BRAM:</strong></p>
+<ul class="simple">
+<li><p><strong>Axon/External Event Data</strong></p></li>
+<li><p>Each row: 256 bits = 16 × 16-bit masks (one per neuron group)</p></li>
+<li><p>Row address: Axon ID / 16</p></li>
+</ul>
+<p><strong>Example Row at Address 0x1000:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Bits</span> <span class="p">[</span><span class="mi">255</span><span class="p">:</span><span class="mi">240</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mask</span> <span class="k">for</span> <span class="n">neuron</span> <span class="n">group</span> <span class="mi">15</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">239</span><span class="p">:</span><span class="mi">224</span><span class="p">]</span> <span class="o">=</span> <span class="n">Mask</span> <span class="k">for</span> <span class="n">neuron</span> <span class="n">group</span> <span class="mi">14</span>
+<span class="o">...</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">31</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span>   <span class="o">=</span> <span class="n">Mask</span> <span class="k">for</span> <span class="n">neuron</span> <span class="n">group</span> <span class="mi">1</span>
+<span class="n">Bits</span> <span class="p">[</span><span class="mi">15</span><span class="p">:</span><span class="mi">0</span><span class="p">]</span>    <span class="o">=</span> <span class="n">Mask</span> <span class="k">for</span> <span class="n">neuron</span> <span class="n">group</span> <span class="mi">0</span>
+
+<span class="n">Each</span> <span class="mi">16</span><span class="o">-</span><span class="n">bit</span> <span class="n">mask</span><span class="p">:</span> <span class="n">One</span> <span class="n">bit</span> <span class="n">per</span> <span class="n">neuron</span> <span class="n">group</span> <span class="n">indicating</span> <span class="n">which</span> <span class="n">received</span> <span class="n">axon</span> <span class="n">spike</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="key-terms-and-definitions">
+<h2>Key Terms and Definitions<a class="headerlink" href="#key-terms-and-definitions" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Term</p></th>
+<th class="head"><p>Definition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Arbiter</strong></p></td>
+<td><p>Logic that decides which requester gains access to shared resource</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Priority</strong></p></td>
+<td><p>CI requests serviced before EEP when both pending</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Read Latency</strong></p></td>
+<td><p>3 clock cycles from address presentation to valid data</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Passthrough</strong></p></td>
+<td><p>Address echoed back with read data for correlation</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Local FIFO</strong></p></td>
+<td><p>FIFO in same clock domain as module (input side)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Remote FIFO</strong></p></td>
+<td><p>FIFO potentially in different clock domain (output side)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>CMD_READ</strong></p></td>
+<td><p>Command bit value 0, triggers read transaction</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>CMD_WRITE</strong></p></td>
+<td><p>Command bit value 1, triggers write transaction</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>BRAM</strong></p></td>
+<td><p>Block RAM - On-chip synchronous memory primitive</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>FIFO Backpressure</strong></p></td>
+<td><p>Waiting for output FIFO not full before writing</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading">#</a></h2>
+<section id="throughput">
+<h3>Throughput<a class="headerlink" href="#throughput" title="Link to this heading">#</a></h3>
+<p><strong>Best Case (No Contention):</strong></p>
+<ul class="simple">
+<li><p><strong>CI Write:</strong> 1 operation per clock cycle = 225 MHz = 225M writes/sec</p></li>
+<li><p><strong>CI Read:</strong> 4 cycles per operation (1 IDLE + 3 WAIT) = 56.25M reads/sec</p></li>
+<li><p><strong>EEP Read:</strong> 4 cycles per operation = 56.25M reads/sec (when CI idle)</p></li>
+</ul>
+<p><strong>Worst Case (Contention):</strong></p>
+<ul class="simple">
+<li><p><strong>EEP Read (with CI active):</strong> Indefinitely deferred until CI idle</p></li>
+<li><p><strong>CI Read (with output FIFO full):</strong> Stalled in WAIT_2 state</p></li>
+</ul>
+<p><strong>Realistic (Mixed Workload):</strong></p>
+<ul class="simple">
+<li><p>CI accesses: Infrequent (configuration, debug)</p></li>
+<li><p>EEP accesses: Burst during Phase 1 execution</p></li>
+<li><p>Typical: EEP dominates, achieving ~50M reads/sec effective rate</p></li>
+</ul>
+</section>
+<section id="latency">
+<h3>Latency<a class="headerlink" href="#latency" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>Latency (Cycles)</p></th>
+<th class="head"><p>Latency (ns &#64; 225 MHz)</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CI Write</p></td>
+<td><p>1</p></td>
+<td><p>4.4 ns</p></td>
+<td><p>Immediate, no wait</p></td>
+</tr>
+<tr class="row-odd"><td><p>CI Read</p></td>
+<td><p>4</p></td>
+<td><p>17.8 ns</p></td>
+<td><p>1 IDLE + 3 WAIT</p></td>
+</tr>
+<tr class="row-even"><td><p>EEP Read</p></td>
+<td><p>4</p></td>
+<td><p>17.8 ns</p></td>
+<td><p>When CI idle</p></td>
+</tr>
+<tr class="row-odd"><td><p>EEP Read (deferred)</p></td>
+<td><p>4 + CI latency</p></td>
+<td><p>Variable</p></td>
+<td><p>Must wait for CI completion</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="stall-conditions">
+<h3>Stall Conditions<a class="headerlink" href="#stall-conditions" title="Link to this heading">#</a></h3>
+<p><strong>Input Side Stalls:</strong></p>
+<ul class="simple">
+<li><p>None - FIFOs assumed to handle backpressure</p></li>
+</ul>
+<p><strong>Output Side Stalls:</strong></p>
+<ul class="simple">
+<li><p><strong>WAIT_2 State:</strong> If output FIFO full, module holds until space available</p></li>
+<li><p><strong>Impact:</strong> Backpressure propagates to input FIFO (requesters must wait)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="design-considerations">
+<h2>Design Considerations<a class="headerlink" href="#design-considerations" title="Link to this heading">#</a></h2>
+<section id="why-priority-to-ci">
+<h3>Why Priority to CI?<a class="headerlink" href="#why-priority-to-ci" title="Link to this heading">#</a></h3>
+<ol class="arabic simple">
+<li><p><strong>Low Frequency:</strong> CI accesses are rare (host-initiated)</p></li>
+<li><p><strong>Latency Sensitive:</strong> Host expects fast response for debug/config</p></li>
+<li><p><strong>No Starvation:</strong> EEP can afford to wait a few cycles</p></li>
+<li><p><strong>Simplicity:</strong> Avoids complex round-robin or fair arbitration</p></li>
+</ol>
+</section>
+<section id="why-3-cycle-wait">
+<h3>Why 3-Cycle Wait?<a class="headerlink" href="#why-3-cycle-wait" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>BRAM Primitive:</strong> Xilinx Block RAM has inherent 2-3 cycle read latency</p></li>
+<li><p><strong>Pipeline Registers:</strong> Additional registering for timing closure</p></li>
+<li><p><strong>Fixed Latency:</strong> Simplifies state machine design (no variable wait)</p></li>
+</ul>
+</section>
+<section id="alternative-designs">
+<h3>Alternative Designs<a class="headerlink" href="#alternative-designs" title="Link to this heading">#</a></h3>
+<p><strong>Round-Robin Arbitration:</strong></p>
+<ul class="simple">
+<li><p>Pros: Fair access, prevents EEP starvation</p></li>
+<li><p>Cons: More complex, CI latency increases</p></li>
+</ul>
+<p><strong>Pipelined Operation:</strong></p>
+<ul class="simple">
+<li><p>Pros: Higher throughput (overlapped requests)</p></li>
+<li><p>Cons: Requires buffering, address tracking, out-of-order handling</p></li>
+<li><p>Not needed: Current design adequate for workload</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="common-issues-and-debugging">
+<h2>Common Issues and Debugging<a class="headerlink" href="#common-issues-and-debugging" title="Link to this heading">#</a></h2>
+<section id="problem-eep-never-gets-access">
+<h3>Problem: EEP Never Gets Access<a class="headerlink" href="#problem-eep-never-gets-access" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> EEP input FIFO fills up, no reads complete</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">ci2idp_empty</span></code> - should toggle to 1 occasionally</p></li>
+<li><p>Check state machine - should eventually reach <code class="docutils literal notranslate"><span class="pre">STATE_EEP_WAIT_0</span></code></p></li>
+<li><p>Verify CI not continuously sending requests</p></li>
+</ol>
+<p><strong>Common Cause:</strong> CI stuck in continuous read/write loop</p>
+</section>
+<section id="problem-read-data-incorrect">
+<h3>Problem: Read Data Incorrect<a class="headerlink" href="#problem-read-data-incorrect" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> Returned data doesn’t match expected values</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check <code class="docutils literal notranslate"><span class="pre">bram_addr</span></code> during WAIT states - should be stable</p></li>
+<li><p>Verify <code class="docutils literal notranslate"><span class="pre">bram_dout</span></code> on cycle 3 (WAIT_2 state)</p></li>
+<li><p>Confirm write operations completed before read</p></li>
+<li><p>Check address calculation in requester module</p></li>
+</ol>
+<p><strong>Common Cause:</strong> Address mismatch or read-before-write hazard</p>
+</section>
+<section id="problem-module-stuck-in-wait-2">
+<h3>Problem: Module Stuck in WAIT_2<a class="headerlink" href="#problem-module-stuck-in-wait-2" title="Link to this heading">#</a></h3>
+<p><strong>Symptoms:</strong> State machine doesn’t return to IDLE</p>
+<p><strong>Debug Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Check output FIFO full flag (<code class="docutils literal notranslate"><span class="pre">idp2ci_full</span></code> or <code class="docutils literal notranslate"><span class="pre">idp2eep_full</span></code>)</p></li>
+<li><p>Verify downstream module consuming from output FIFO</p></li>
+<li><p>Check for clock domain crossing issues (if FIFOs are async)</p></li>
+</ol>
+<p><strong>Common Cause:</strong> Output FIFO overflow or downstream stall</p>
+</section>
+<section id="vio-ila-probes-recommended">
+<h3>VIO/ILA Probes (Recommended)<a class="headerlink" href="#vio-ila-probes-recommended" title="Link to this heading">#</a></h3>
+<div class="highlight-verilog notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">reg</span><span class="w"> </span><span class="p">[</span><span class="mh">2</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">curr_state</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">command</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2idp_dout</span><span class="p">[</span><span class="mh">271</span><span class="p">];</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">ci_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ci2idp_dout</span><span class="p">[</span><span class="mh">270</span><span class="o">:</span><span class="mh">256</span><span class="p">];</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">eep_addr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">eep2idp_dout</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">ci_request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">ci2idp_empty</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">eep_request</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">~</span><span class="n">eep2idp_empty</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="p">[</span><span class="mh">14</span><span class="o">:</span><span class="mh">0</span><span class="p">]</span><span class="w"> </span><span class="n">bram_addr</span><span class="p">;</span>
+<span class="p">(</span><span class="o">*</span><span class="n">mark_debug</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;true&quot;</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="kt">wire</span><span class="w"> </span><span class="n">bram_wren</span><span class="p">;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="safety-and-edge-cases">
+<h2>Safety and Edge Cases<a class="headerlink" href="#safety-and-edge-cases" title="Link to this heading">#</a></h2>
+<section id="reset-behavior">
+<h3>Reset Behavior<a class="headerlink" href="#reset-behavior" title="Link to this heading">#</a></h3>
+<p>On <code class="docutils literal notranslate"><span class="pre">resetn</span></code> deassertion:</p>
+<ul class="simple">
+<li><p>State machine → <code class="docutils literal notranslate"><span class="pre">STATE_RESET</span></code> → <code class="docutils literal notranslate"><span class="pre">STATE_IDLE</span></code></p></li>
+<li><p>All output signals → 0 (no spurious FIFO operations)</p></li>
+<li><p>BRAM address → <code class="docutils literal notranslate"><span class="pre">15'dX</span></code> (don’t care)</p></li>
+</ul>
+</section>
+<section id="simultaneous-requests">
+<h3>Simultaneous Requests<a class="headerlink" href="#simultaneous-requests" title="Link to this heading">#</a></h3>
+<p><strong>Both FIFOs have data at IDLE state:</strong></p>
+<ul class="simple">
+<li><p>CI serviced first (priority)</p></li>
+<li><p>EEP serviced after CI completes</p></li>
+</ul>
+<p><strong>Write During Read:</strong></p>
+<ul class="simple">
+<li><p>Write completes in 1 cycle</p></li>
+<li><p>Subsequent read sees updated value (BRAM write latency = 1 cycle)</p></li>
+</ul>
+</section>
+<section id="fifo-full-during-wait-2">
+<h3>FIFO Full During WAIT_2<a class="headerlink" href="#fifo-full-during-wait-2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Module stalls in WAIT_2 state</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bram_addr</span></code> held stable (safe to stall)</p></li>
+<li><p>No timeout - waits indefinitely for FIFO space</p></li>
+<li><p>Assumes downstream will eventually consume</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="potential-enhancements">
+<h2>Potential Enhancements<a class="headerlink" href="#potential-enhancements" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p><strong>Pipelined Reads:</strong> Allow new request while waiting for previous read</p>
+<ul class="simple">
+<li><p>Requires FIFO buffering and address tracking</p></li>
+<li><p>Could double read throughput</p></li>
+</ul>
+</li>
+<li><p><strong>Write Acknowledgment:</strong> Provide write confirmation to CI</p>
+<ul class="simple">
+<li><p>Currently fire-and-forget</p></li>
+<li><p>Useful for verification</p></li>
+</ul>
+</li>
+<li><p><strong>Round-Robin or Weighted Arbitration:</strong> Fairer access to EEP</p>
+<ul class="simple">
+<li><p>Prevent worst-case starvation scenarios</p></li>
+<li><p>At cost of CI latency</p></li>
+</ul>
+</li>
+<li><p><strong>Variable BRAM Latency:</strong> Support configurable wait cycles</p>
+<ul class="simple">
+<li><p>Adapt to different BRAM configurations</p></li>
+<li><p>Requires parameterization</p></li>
+</ul>
+</li>
+<li><p><strong>Performance Counters:</strong> Track utilization and contention</p>
+<ul class="simple">
+<li><p>CI access count</p></li>
+<li><p>EEP access count</p></li>
+<li><p>Stall cycles</p></li>
+<li><p>Useful for profiling</p></li>
+</ul>
+</li>
+<li><p><strong>Error Detection:</strong> Detect protocol violations</p>
+<ul class="simple">
+<li><p>Write with read-pending</p></li>
+<li><p>Address out of range</p></li>
+<li><p>Currently no error reporting</p></li>
+</ul>
+</li>
+</ol>
+<hr class="docutils" />
+<p><strong>Document Version:</strong> 1.0
+<strong>Last Updated:</strong> December 2025
+<strong>Module File:</strong> <code class="docutils literal notranslate"><span class="pre">input_data_handler.v</span></code>
+<strong>Module Location:</strong> <code class="docutils literal notranslate"><span class="pre">CRI_proj/cri_fpga/code/new/hyddenn2/vivado/single_core.srcs/sources_1/new/</span></code>
+<strong>Purpose:</strong> BRAM arbiter for shared axon/external event memory
+<strong>BRAM Size:</strong> 1 MB (2^15 × 256-bit)
+<strong>Read Latency:</strong> 3 cycles</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-overview">Module Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#purpose-and-role-in-stack">Purpose and Role in Stack</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-architecture">Module Architecture</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#high-level-block-diagram">High-Level Block Diagram</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interface-specification">Interface Specification</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#clock-and-reset">Clock and Reset</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-interpreter-interface">Command Interpreter Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#external-events-processor-interface">External Events Processor Interface</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-interface">BRAM Interface</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#detailed-logic-description">Detailed Logic Description</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#command-decoder">Command Decoder</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#state-machine">State Machine</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-arbitration-logic">Priority Arbitration Logic</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-read-pipeline-3-cycle-latency">BRAM Read Pipeline (3-Cycle Latency)</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#output-data-routing">Output Data Routing</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#timing-diagrams">Timing Diagrams</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-write-transaction">CI Write Transaction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#ci-read-transaction">CI Read Transaction</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#priority-arbitration-eep-deferred">Priority Arbitration: EEP Deferred</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cross-references">Cross-References</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#related-modules">Related Modules</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bram-structure-parent-pcie2fifos-command-interpreter">BRAM Structure (Parent: pcie2fifos → command_interpreter)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#key-terms-and-definitions">Key Terms and Definitions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#performance-characteristics">Performance Characteristics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#throughput">Throughput</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#latency">Latency</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stall-conditions">Stall Conditions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-considerations">Design Considerations</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-priority-to-ci">Why Priority to CI?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#why-3-cycle-wait">Why 3-Cycle Wait?</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#alternative-designs">Alternative Designs</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#common-issues-and-debugging">Common Issues and Debugging</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-eep-never-gets-access">Problem: EEP Never Gets Access</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-read-data-incorrect">Problem: Read Data Incorrect</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-module-stuck-in-wait-2">Problem: Module Stuck in WAIT_2</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#vio-ila-probes-recommended">VIO/ILA Probes (Recommended)</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#safety-and-edge-cases">Safety and Edge Cases</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#reset-behavior">Reset Behavior</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#simultaneous-requests">Simultaneous Requests</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fifo-full-during-wait-2">FIFO Full During WAIT_2</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#potential-enhancements">Potential Enhancements</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/hardware_docs/3_Verilog_Files_Review/input_data_handler.md.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Gwen Frank.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 8.1.3.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
