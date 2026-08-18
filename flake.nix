@@ -120,6 +120,15 @@
           cp dist/*.whl "$out/"
         '';
 
+        # Sphinx env: main + docs groups only, no fpga/hardware deps needed to build the site.
+        docsEnv = p2n.mkPoetryEnv {
+          projectDir = ./.;
+          python = pkgs.python310;
+          groups = [ "main" "docs" ];
+          preferWheels = true;
+          inherit overrides;
+        };
+
       in {
         packages.default = p2n.mkPoetryApplication {
           projectDir = ./.;
@@ -208,6 +217,18 @@ SCRIPT_EOF
           mkdir -p "$out"
           cp ${hsApiWheel}/*.whl "$out/"
           cp ${hs-bridge.packages.${system}.wheel}/*.whl "$out/"
+        '';
+
+        # -D plot_gallery=0: the sphinx-gallery example scripts under webexamples/
+        # need real HiAER-Spike hardware/data to execute, so the docs build renders
+        # them from source without running them rather than regenerating outputs.
+        packages.docs = pkgs.runCommandNoCC "hs-api-docs" {
+          src = pkgs.lib.cleanSource ./.;
+          nativeBuildInputs = [ docsEnv ];
+        } ''
+          cp -r "$src/." .
+          chmod -R +w .
+          sphinx-build -b html -D plot_gallery=0 doc/source "$out"
         '';
 
         devShells.default = pkgs.devshell.mkShell {
