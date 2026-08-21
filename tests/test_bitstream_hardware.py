@@ -171,7 +171,7 @@ class TestBitStream:
             numberAxons=numberAxons, 
             numberNeurons=numberAxons, 
             weight=1, 
-            neuron_model=ANN_neuron(0, shift=0),
+            neuron_model=ANN_neuron(theta = 0),
             fully_connect_axons_to_neurons=False  #each axon connects to only one neuron
         )
         
@@ -221,7 +221,7 @@ class TestBitStream:
             numberAxons=512, 
             numberNeurons=1, 
             weight=1, 
-            neuron_model=ANN_neuron(0, shift=0)
+            neuron_model=ANN_neuron(theta = 0)
         )
         
         currSpikes1 = network.step(inputs) #0th time step
@@ -264,7 +264,7 @@ class TestBitStream:
             numberAxons=513, 
             numberNeurons=1, 
             weight=1, 
-            neuron_model=ANN_neuron(0, shift=0)
+            neuron_model=ANN_neuron(theta = 0)
         )
         
         currSpikes1 = network.step(inputs) #0th time step
@@ -315,8 +315,8 @@ class TestBitStream:
             numberN2=1, 
             weightAxon_N1=1, 
             weightN1_N2=1, 
-            neuron_model1=ANN_neuron(-1, shift=0), 
-            neuron_model2=ANN_neuron(0, shift=0)
+            neuron_model1=ANN_neuron(theta = -1), 
+            neuron_model2=ANN_neuron(theta = 0)
         )
 
         for i in range(1):    #add N1 neurons to the output list
@@ -376,7 +376,7 @@ class TestBitStream:
             numberAxons=3, 
             numberNeurons=1, 
             weight=[0, -1, 1],   #weight of A0 is 0, A1 is -1, A2 is 1
-            neuron_model=LIF_neuron(threshold=20, shift=-17, leak=63)
+            neuron_model=LIF_neuron(theta=20, nu=-17, Lambda=63)
         )
         
         FPGA_Vs = []   # membrane potential trace
@@ -453,8 +453,8 @@ class TestBitStream:
             numberN2=1, 
             weightAxon_N1=1, 
             weightN1_N2=1, 
-            neuron_model1=ANN_neuron(0, shift=0), 
-            neuron_model2=ANN_neuron(0, shift=0),
+            neuron_model1=ANN_neuron(theta = 0), 
+            neuron_model2=ANN_neuron(theta = 0),
             output_neurons_only_N2=False  #read spikes from both N1 and N2 layers
         )
 
@@ -512,7 +512,7 @@ class TestBitStream:
             numberAxons=1,
             numberNeurons=1,
             weight=0,  # No actual input weight
-            neuron_model=LIF_neuron(threshold=0, shift=shift, leak=63)
+            neuron_model=LIF_neuron(theta=0, nu=shift, Lambda=63)
         )
         
         # Run for 100 timesteps and verify MP is 0 at each step
@@ -551,7 +551,7 @@ class TestBitStream:
             numberAxons=1,
             numberNeurons=1,
             weight=0,  # No actual input weight
-            neuron_model=LIF_neuron(threshold=0, shift=shift, leak=63)
+            neuron_model=LIF_neuron(theta=0, nu=shift, Lambda=63)
         )
         
         # Run for 100 time steps and collect membrane potentials
@@ -569,9 +569,9 @@ class TestBitStream:
         axons = {}
         connections = {}
 
-        neuron_model0 = LIF_neuron(threshold=0, shift=0, leak=63)
-        neuron_model1 = LIF_neuron(threshold=0, shift=-16, leak=63)
-        neuron_model2 = LIF_neuron(threshold=0, shift=16, leak=63)
+        neuron_model0 = LIF_neuron(theta=0, nu=0, Lambda=63)
+        neuron_model1 = LIF_neuron(theta=0, nu=-16, Lambda=63)
+        neuron_model2 = LIF_neuron(theta=0, nu=16, Lambda=63)
         axons["A0"] = [("N1.0", 0), ("N1.1", 0), ("N1.2", 0)]  # Dummy axon with weight=0 to all neurons
         connections[f"N1.0"] = ([], neuron_model0)
         connections[f"N1.1"] = ([], neuron_model1)
@@ -641,7 +641,7 @@ class TestBitStream:
             numberAxons=1,
             numberNeurons=1,
             weight=1,
-            neuron_model=ANN_neuron(0, shift=0)
+            neuron_model=ANN_neuron(theta = 0)
         )
         
         # time step 0: Activate axon
@@ -661,7 +661,7 @@ class TestBitStream:
             numberAxons=1,
             numberNeurons=1,
             weight=1,
-            neuron_model=ANN_neuron(1, shift=0)
+            neuron_model=ANN_neuron(theta = 1)
         )
         
         # time step 0: Activate axon
@@ -679,7 +679,7 @@ class TestBitStream:
     @pytest.mark.parametrize("numberN1_neurons", [4000, 4050, 4095, 4096, 4097])
     def test_max_axonal_fanout(self, setup_dictionaries_2layers, numberN1_neurons):
         """Test maximum axonal fanout to neuron with detailed membrane potential checks."""
-        neuron_model = ANN_neuron(0, shift=0)
+        neuron_model = ANN_neuron(theta = 0)
         network, inputs, outputs = setup_dictionaries_2layers(
                 numberAxons=1, 
                 numberN1=numberN1_neurons, 
@@ -733,7 +733,7 @@ class TestBitStream:
             numberAxons=number_axons, 
             numberNeurons=1, 
             weight=1, 
-            neuron_model=ANN_neuron(1, shift=0)
+            neuron_model=ANN_neuron(theta = 1)
         )
         
         currSpikes1 = network.step(inputs) #0th time step
@@ -755,7 +755,7 @@ class TestBitStream:
     @pytest.mark.parametrize("numberN2_neurons", [4094, 4095, 4096, 4097])
     def test_max_neuronal_fanout(self, setup_dictionaries_2layers, numberN2_neurons):
         """Test maximum neuronal fanout from one neuron to neurons in the next layer."""
-        neuron_model = ANN_neuron(0, shift=0)
+        neuron_model = ANN_neuron(theta = 0)
         network, inputs, outputs = setup_dictionaries_2layers(
                 numberAxons=1, 
                 numberN1=1, 
@@ -802,7 +802,7 @@ class TestBitStream:
     @pytest.mark.parametrize("numberN1_neurons", [10, 1000, 5000, 8158, 8159, 8160])
     def test_neuronal_fan_in(self, setup_dictionaries_2layers, numberN1_neurons):
         """Test neuronal fan-in to a single second-layer neuron from different numbers of first-layer neurons."""
-        neuron_model = ANN_neuron(0, shift=0)
+        neuron_model = ANN_neuron(theta = 0)
         network, inputs, outputs = setup_dictionaries_2layers(
                 numberAxons=numberN1_neurons, 
                 numberN1=numberN1_neurons, 
