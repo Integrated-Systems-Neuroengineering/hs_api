@@ -2,6 +2,7 @@
 import hs_bridge
 import pytest
 import pickle
+import time
 from hs_api.api import CRI_network
 import hs_bridge
 import torch
@@ -12,13 +13,13 @@ class TestDVSInference:
     @pytest.fixture
     def model_config(self):
         """Load saved model configuration"""
-        with open('./fixtures/DVS_model_config_shift=-17.pkl', 'rb') as f:
+        with open('./tests/fixtures/DVS_model_config_shift=-17.pkl', 'rb') as f:
             return pickle.load(f)
     
     @pytest.fixture
     def test_batch(self):
         """Load saved test batch"""
-        with open('./fixtures/DVS_test_batch.pkl', 'rb') as f:
+        with open('./tests/fixtures/DVS_test_batch.pkl', 'rb') as f:
             return pickle.load(f)
     
     def test_dvs_accuracy(self, model_config, test_batch):
@@ -46,6 +47,11 @@ class TestDVSInference:
             This end-to-end test ensures the hardware correctly executes a
             real-world model. If accuracy drops below threshold, it indicates
             hardware malfunction, weight corruption, or spike readout issues.
+
+        Timing:
+            Also measures average real time per timestep during the stepping
+            phase (after the model is loaded onto the FPGA), per Leif's
+            request, to assess feasibility of real-time streaming use cases.
         """
         axons = model_config['axons']
         connections = model_config['connections']
@@ -59,6 +65,12 @@ class TestDVSInference:
             target="CRI"
         )
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        # Timing setup for the stepping phase (per Leif's request): measure
+        # real time and total step count AFTER the model is loaded onto the
+        # FPGA, to compute average real time per timestep.
+        total_step_time = 0.0
+        total_steps = 0
 
         #test model
         correct = 0
@@ -92,7 +104,10 @@ class TestDVSInference:
                 results = network.read_membrane(outputs)
                 print(f"Membrane potentials: {results}")
 
+                t_step_start = time.perf_counter()
                 hardwareSpikes, _, _ = network.step(inputs)
+                total_step_time += time.perf_counter() - t_step_start
+                total_steps += 1
                 print(f"Output spikes: {hardwareSpikes}")
 
                 for spike in hardwareSpikes:
@@ -104,7 +119,10 @@ class TestDVSInference:
             #add 6 extra timesteps after lastinput frame to allow it to propogate through network
             for i in range(6):
                 inputs = []  #no input spikes
+                t_step_start = time.perf_counter()
                 hardwareSpikes, _, _ = network.step(inputs)
+                total_step_time += time.perf_counter() - t_step_start
+                total_steps += 1
                 print(f"Output spikes: {hardwareSpikes}")
 
                 for spike in hardwareSpikes:
@@ -127,4 +145,6 @@ class TestDVSInference:
             print(f"Running accuracy : {running_accuracy:.2f} %")
 
         accuracy = 100 * correct / total
+        avg_ms_per_step = (total_step_time / total_steps) * 1000
+        print(f"\nTiming: {total_steps} total steps, {total_step_time:.4f}s total, {avg_ms_per_step:.4f} ms/step average")
         assert accuracy >= 55, f"Expected accuracy is at least 55%, but got {accuracy:.2f}%"
