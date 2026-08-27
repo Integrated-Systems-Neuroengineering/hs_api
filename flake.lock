@@ -347,7 +347,6 @@
       },
       "original": {
         "owner": "nix-community",
-        "ref": "master",
         "repo": "poetry2nix",
         "type": "github"
       }

@@ -17,6 +17,7 @@ fxpmath = {git = "https://github.com/jfrank8/fxpmath.git", branch = "master"}
 hs_bridge = {git = "ssh://git@github.com/Integrated-Systems-Neuroengineering/hs_bridge.git", rev = "fa24290d65b10ae5f429fc1c2b3b20f5f85dcf17", optional = true}
 charset-normalizer = "<3.4.3"
 markupsafe = "<3.0.3"
+nir = "^1.0.8"
 
 [tool.poetry.extras]
 fpga = ["hs_bridge"]
