@@ -1,6 +1,6 @@
 import pytest
 from hs_api.api import CRI_network
-from hs_api.neuron_models import ANN_neuron, LIF_neuron
+from hs_api.neuron_models import ANN_neuron, LIF_neuron, IF_neuron
 import pytest
 
 #shift values for ANN neurons are 0
