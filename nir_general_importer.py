@@ -242,3 +242,61 @@ if __name__ == "__main__":
     assert set(outputs2) == {'lif_0', 'lif_1', 'lif_2', 'lif_3'}, f"FAIL: outputs incorrect, got {outputs2}"
 
     print("\nPASS: general importer produces exactly the expected topology on the recurrent network")
+
+    # ---- Self-test 3: a genuine two-layer feedforward network ----
+    # Input (2 channels) -> Linear -> LIF1 (2 neurons) -> Linear -> LIF2 (1 neuron) -> Output
+    # This tests cross-population connectivity, distinct from Test 2's single
+    # recurrent population -- closer to what a real multi-layer NIR-exported
+    # model (e.g. from PyTorch) would actually look like.
+    print("\n=== Test 3: two-layer feedforward network ===")
+    layer1_thetas = np.array([2, 2], dtype=np.float32)
+    layer1_lambdas = np.array([4, 4], dtype=np.float32)
+    layer2_thetas = np.array([3], dtype=np.float32)
+    layer2_lambdas = np.array([5], dtype=np.float32)
+
+    w_in = np.array([[1, 0], [0, 1]], dtype=np.float32)  # 2 channels -> 2 neurons, identity
+    w_out = np.array([[2, 3]], dtype=np.float32)  # 2 neurons -> 1 neuron
+
+    graph3 = nir.NIRGraph(
+        nodes={
+            "input": nir.Input(input_type={"input": np.array([2])}),
+            "linear1": nir.Linear(weight=w_in),
+            "lif1": nir.LIF(
+                tau=2.0 ** layer1_lambdas,
+                r=np.ones(2, dtype=np.float32),
+                v_leak=np.zeros(2, dtype=np.float32),
+                v_threshold=layer1_thetas,
+                v_reset=np.zeros(2, dtype=np.float32),
+            ),
+            "linear2": nir.Linear(weight=w_out),
+            "lif2": nir.LIF(
+                tau=2.0 ** layer2_lambdas,
+                r=np.ones(1, dtype=np.float32),
+                v_leak=np.zeros(1, dtype=np.float32),
+                v_threshold=layer2_thetas,
+                v_reset=np.zeros(1, dtype=np.float32),
+            ),
+            "output": nir.Output(output_type={"output": np.array([1])}),
+        },
+        edges=[
+            ("input", "linear1"),
+            ("linear1", "lif1"),
+            ("lif1", "linear2"),
+            ("linear2", "lif2"),
+            ("lif2", "output"),
+        ],
+    )
+
+    axons3, connections3, outputs3 = nir_to_hiaer_spike(graph3)
+    print(f"Axons: {axons3}")
+    print(f"Connections: { {k: v[0] for k, v in connections3.items()} }")
+    print(f"Outputs: {outputs3}")
+
+    assert axons3 == {'axon_0': [('lif1_0', 1)], 'axon_1': [('lif1_1', 1)]}, \
+        f"FAIL: axons don't match expected topology, got {axons3}"
+    expected_conn3 = {'lif1_0': [('lif2_0', 2)], 'lif1_1': [('lif2_0', 3)], 'lif2_0': []}
+    actual_conn3 = {k: v[0] for k, v in connections3.items()}
+    assert actual_conn3 == expected_conn3, f"FAIL: connections don't match expected, got {actual_conn3}"
+    assert outputs3 == ['lif2_0'], f"FAIL: outputs incorrect, got {outputs3}"
+
+    print("\nPASS: general importer correctly handles cross-population feedforward connectivity")
