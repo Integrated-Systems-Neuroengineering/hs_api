@@ -95,26 +95,29 @@ def nir_to_hiaer_spike(nir_graph):
             neuron_objs[name] = LIF_neuron(theta=theta, nu=-17, Lambda=Lambda)
 
     # Build axons from Input -> Linear -> LIF
-    # Build axons from Input -> Linear -> LIF
-    if output_name in outgoing.get(input_name, []) or any(
-        isinstance(nodes[dst], nir.LIF) for dst in outgoing.get(input_name, [])
-    ):
-        raise NotImplementedError(
-            "Input connects directly to a LIF node with no Linear in between. "
-            "This general importer currently requires an explicit Linear node "
-            "for every Input->LIF connection, even if the weights would just be "
-            "identity. This is a real gap (see the single-neuron demo, which "
-            "used this exact pattern) -- needs to be added as a special case."
-        )
-
+    # Build axons from Input -> [Linear ->] LIF. Input may connect directly
+    # to a LIF with no Linear in between (as in the single-neuron demo) --
+    # treat that as an implicit identity connection (weight 1 per channel),
+    # as long as the channel count matches the neuron count exactly.
     axons = {}
-    # NIR's input_type shape descriptor stores the channel COUNT as the
-    # array's value, e.g. np.array([2]) means "shape (2,)" -- 2 channels.
-    # It is not an array of 2 actual elements, so len() is wrong here.
     num_input_channels = int(list(nodes[input_name].input_type.values())[0][0])
     input_axon_names = [f"axon_{i}" for i in range(num_input_channels)]
     for axon_name in input_axon_names:
         axons[axon_name] = []
+
+    direct_lif_targets = [dst for dst in outgoing.get(input_name, []) if isinstance(nodes[dst], nir.LIF)]
+    for target_lif in direct_lif_targets:
+        target_neurons = neuron_names_by_lif[target_lif]
+        if len(target_neurons) != num_input_channels:
+            raise NotImplementedError(
+                f"Input connects directly to LIF node '{target_lif}' with no Linear "
+                f"node, but channel count ({num_input_channels}) doesn't match neuron "
+                f"count ({len(target_neurons)}). An implicit identity connection only "
+                f"makes sense when these match; a mismatched direct connection isn't "
+                f"supported."
+            )
+        for axon_name, neuron_name in zip(input_axon_names, target_neurons):
+            axons[axon_name].append((neuron_name, 1))
 
     for lin in feedforward_linears:
         if input_name in incoming[lin]:
@@ -185,12 +188,14 @@ if __name__ == "__main__":
         },
         edges=[("input", "lif"), ("lif", "output")],
     )
-    try:
-        axons1, connections1, outputs1 = nir_to_hiaer_spike(graph1)
-        print(f"UNEXPECTED: no error raised. Got axons={axons1}, connections={connections1}")
-        print("This is a bug in the importer -- it should have detected the missing Linear node.")
-    except NotImplementedError as e:
-        print(f"Correctly detected unsupported pattern: {e}")
+    axons1, connections1, outputs1 = nir_to_hiaer_spike(graph1)
+    print(f"Axons: {axons1}")
+    print(f"Connections: { {k: v[0] for k, v in connections1.items()} }")
+    print(f"Outputs: {outputs1}")
+    assert axons1 == {'axon_0': [('lif_0', 1)]}, f"FAIL: expected identity weight=1, got {axons1}"
+    assert connections1 == {'lif_0': ([], connections1['lif_0'][1])}, f"FAIL: unexpected connections, got {connections1}"
+    assert outputs1 == ['lif_0'], f"FAIL: outputs incorrect, got {outputs1}"
+    print("PASS: direct Input->LIF connection correctly imported as identity (weight=1)")
 
     # ---- Self-test 2: reproduce Gwen's 4-neuron network demo ----
     print("\n=== Test 2: Gwen's 4-neuron recurrent network ===")
