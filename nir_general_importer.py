@@ -161,11 +161,32 @@ def nir_to_hiaer_spike(nir_graph):
                     connections[source_name][0].append((target_name, int(w)))
 
     # Outputs: whichever LIF population feeds directly into Output
+        # Outputs: either a LIF population feeds directly into Output (whole
+    # population is output), or a Linear node sits between them, selecting
+    # a specific subset. HiAER-Spike can only report individual neurons'
+    # spikes, not weighted combinations, so a selection Linear must have
+    # exactly one nonzero (weight=1) entry per output row.
     outputs = []
     for lif_name in lif_names:
         if output_name in outgoing[lif_name]:
             outputs.extend(neuron_names_by_lif[lif_name])
 
+    for lin in linear_names:
+        if output_name in outgoing.get(lin, []):
+            source_lif = incoming[lin][0]
+            weight_matrix = nodes[lin].weight
+            neuron_list = neuron_names_by_lif[source_lif]
+            for row in weight_matrix:
+                nonzero_indices = np.nonzero(row)[0]
+                if len(nonzero_indices) != 1 or row[nonzero_indices[0]] != 1:
+                    raise NotImplementedError(
+                        "A Linear node selecting outputs must have exactly one "
+                        "weight=1 entry per row (a direct neuron selection); "
+                        "weighted combinations as outputs aren't representable "
+                        "in HiAER-Spike, which can only report individual "
+                        "neurons' spikes."
+                    )
+                outputs.append(neuron_list[nonzero_indices[0]])
     return axons, connections, outputs
 
 
