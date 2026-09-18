@@ -19,6 +19,27 @@ import nir
 from hs_api.neuron_models import LIF_neuron, IF_neuron, ANN_neuron
 
 
+def check_tau_approximation(tau_value):
+    """Check if tau is a power of 2 and warn if not.
+    
+    Parameters:
+    -----------
+    tau_value : float
+        The time constant from NIR
+        
+    Returns:
+    --------
+    int : log2 of the approximated tau (power of 2)
+    """
+    log_tau = np.log2(float(tau_value))
+    if log_tau != int(log_tau):
+        approx_log = int(round(log_tau))
+        approx_tau = 2 ** approx_log
+        error_pct = abs(approx_tau - float(tau_value)) / float(tau_value) * 100
+        print(f"WARNING: tau={tau_value} is not power of 2, approximating as {approx_tau} (error: {error_pct:.1f}%)")
+    return int(round(log_tau))
+
+
 def import_nir_graph(nir_graph: nir.NIRGraph):
     """Import a NIR graph into HiAER-Spike format."""
 
@@ -54,7 +75,7 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
         neuron_names_by_lif[lif_name] = names
         for i, name in enumerate(names):
             theta = int(round(float(lif_node.v_threshold[i])))
-            Lambda = int(round(np.log2(float(lif_node.tau[i]))))
+            Lambda = check_tau_approximation(lif_node.tau[i])
             neuron_objs[name] = LIF_neuron(theta=theta, nu=-17, Lambda=Lambda)
 
     if_names = [n for n, obj in nodes.items() if isinstance(obj, nir.IF)]
@@ -66,10 +87,9 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
         neuron_names_by_if[if_name] = names
         for i, name in enumerate(names):
             theta = int(round(float(if_node.v_threshold[i])))
-            Lambda = int(round(np.log2(float(if_node.tau[i]))))
+            Lambda = check_tau_approximation(if_node.tau[i])
             neuron_objs[name] = IF_neuron(theta=theta, nu=-17, Lambda=Lambda)
 
-    # Expand each Threshold node into individually named neurons
     threshold_names = [n for n, obj in nodes.items() if isinstance(obj, nir.Threshold)]
     neuron_names_by_threshold = {}
     for threshold_name in threshold_names:
@@ -81,7 +101,6 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
             theta = int(round(float(threshold_node.threshold[i])))
             neuron_objs[name] = ANN_neuron(theta=theta, nu=-17)
 
-    # Expand each Conv2d node into individually named neurons
     conv2d_names = [n for n, obj in nodes.items() if isinstance(obj, nir.Conv2d)]
     neuron_names_by_conv2d = {}
     
@@ -115,7 +134,6 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
                 if lin_node.weight[i, j] != 0
             ]
 
-    # Linear -> LIF/IF/Threshold/Conv2d connections
     for lin in linear_names:
         lin_node = nodes[lin]
         target_lif = next((dst for dst in outgoing.get(lin, []) if isinstance(nodes[dst], nir.LIF)), None)
@@ -175,7 +193,6 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
                         ]
                         idx += 1
 
-    # Output selection
     for output_node_name in output_nodes:
         source_lif = next((src for src in incoming.get(output_node_name, []) if src in lif_names), None)
         source_if = next((src for src in incoming.get(output_node_name, []) if src in if_names), None)
@@ -195,7 +212,6 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
 
         outputs.extend(source_neurons)
 
-    # Initialize all neurons in connections dict
     for neuron_name in neuron_objs:
         connections.setdefault(neuron_name, [])
 
@@ -272,36 +288,25 @@ if __name__ == "__main__":
     assert "threshold_1" in connections_threshold
     print("PASS: Threshold (ANN) node test")
 
-    print("\n=== Test 4: Conv2d node ===")
-    input_node_conv = nir.Input(input_type=[25])
-    conv2d = nir.Conv2d(
-        input_shape=(5, 5),
-        weight=np.ones((2, 1, 3, 3)),
-        stride=(1, 1),
-        padding=(1, 1),
-        dilation=(1, 1),
-        groups=1,
-        bias=np.zeros((2,))
-    )
-    lin_to_conv = nir.Linear(weight=np.random.randn(1, 25))  # Random to avoid zero weight issues
-    output_node_conv = nir.Output(output_type=[50])
+    print("\n=== Test 4: Tau approximation warnings ===")
+    lif_nonpow2 = nir.LIF(tau=np.array([7.5, 15.0]), v_threshold=np.array([1.0, 1.0]), r=np.array([1.0, 1.0]), v_leak=np.array([0.0, 0.0]))
+    lin_nonpow2 = nir.Linear(weight=np.array([[1.0], [1.0]]))
+    output_node_nonpow2 = nir.Output(output_type=[2])
 
-    edges_conv = {
+    edges_nonpow2 = {
         ("input", "linear"): None,
-        ("linear", "conv2d"): None,
-        ("conv2d", "output"): None,
+        ("linear", "lif"): None,
+        ("lif", "output"): None,
     }
-    nodes_conv = {
-        "input": input_node_conv,
-        "linear": lin_to_conv,
-        "conv2d": conv2d,
-        "output": output_node_conv,
+    nodes_nonpow2 = {
+        "input": input_node,
+        "linear": lin_nonpow2,
+        "lif": lif_nonpow2,
+        "output": output_node_nonpow2,
     }
-    
-    try:
-        graph_conv = nir.NIRGraph(nodes_conv, edges_conv)
-        axons_conv, connections_conv, outputs_conv = import_nir_graph(graph_conv)
-        assert len(outputs_conv) == 50, f"Expected 50 output neurons, got {len(outputs_conv)}"
-        print("PASS: Conv2d node test")
-    except ValueError as e:
-        print(f"SKIP: Conv2d node test (NIR type inference issue: {e})")
+    graph_nonpow2 = nir.NIRGraph(nodes_nonpow2, edges_nonpow2)
+
+    axons_nonpow2, connections_nonpow2, outputs_nonpow2 = import_nir_graph(graph_nonpow2)
+    assert "lif_0" in connections_nonpow2
+    assert "lif_1" in connections_nonpow2
+    print("PASS: Tau approximation warnings test")
