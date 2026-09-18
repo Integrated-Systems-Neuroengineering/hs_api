@@ -1,13 +1,13 @@
 """
 General importer for arbitrary NIR graphs.
 
-This walks an arbitrary NIR graph made of Input, Output, LIF, IF, and Linear
+This walks an arbitrary NIR graph made of Input, Output, LIF, IF, Threshold, and Linear
 nodes -- including feedforward multi-layer connectivity.
 
 Limitations:
 
-- Only Input, Output, LIF, IF, and Linear node types are supported.
-- A feedforward chain of LIF/IF/Linear layers is supported.
+- Only Input, Output, LIF, IF, Threshold, and Linear node types are supported.
+- A feedforward chain of LIF/IF/Threshold/Linear layers is supported.
 
 Returns:
   (axons, connections, outputs) tuple
@@ -15,7 +15,7 @@ Returns:
 
 import numpy as np
 import nir
-from hs_api.neuron_models import LIF_neuron, IF_neuron
+from hs_api.neuron_models import LIF_neuron, IF_neuron, ANN_neuron
 
 
 def import_nir_graph(nir_graph: nir.NIRGraph):
@@ -24,10 +24,10 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
     nodes = nir_graph.nodes
     edges = nir_graph.edges
 
-    supported_types = (nir.Input, nir.Output, nir.LIF, nir.IF, nir.Linear)
+    supported_types = (nir.Input, nir.Output, nir.LIF, nir.IF, nir.Threshold, nir.Linear)
     for name, node in nodes.items():
         if not isinstance(node, supported_types):
-            raise NotImplementedError(f"only Input, Output, LIF, IF, and Linear are supported")
+            raise NotImplementedError(f"only Input, Output, LIF, IF, Threshold, and Linear are supported")
 
     outgoing = {}
     incoming = {}
@@ -68,6 +68,18 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
             Lambda = int(round(np.log2(float(if_node.tau[i]))))
             neuron_objs[name] = IF_neuron(theta=theta, nu=-17, Lambda=Lambda)
 
+    # Expand each Threshold node into individually named neurons
+    threshold_names = [n for n, obj in nodes.items() if isinstance(obj, nir.Threshold)]
+    neuron_names_by_threshold = {}
+    for threshold_name in threshold_names:
+        threshold_node = nodes[threshold_name]
+        n = len(threshold_node.threshold)
+        names = [f"{threshold_name}_{i}" for i in range(n)]
+        neuron_names_by_threshold[threshold_name] = names
+        for i, name in enumerate(names):
+            theta = int(round(float(threshold_node.threshold[i])))
+            neuron_objs[name] = ANN_neuron(theta=theta, nu=-17, Lambda=0)
+
     linear_names = [n for n, obj in nodes.items() if isinstance(obj, nir.Linear)]
     for lin in linear_names:
         lin_node = nodes[lin]
@@ -80,11 +92,12 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
                 if lin_node.weight[i, j] != 0
             ]
 
-    # Linear -> LIF connections
+    # Linear -> LIF/IF/Threshold connections
     for lin in linear_names:
         lin_node = nodes[lin]
         target_lif = next((dst for dst in outgoing.get(lin, []) if isinstance(nodes[dst], nir.LIF)), None)
         target_if = next((dst for dst in outgoing.get(lin, []) if isinstance(nodes[dst], nir.IF)), None)
+        target_threshold = next((dst for dst in outgoing.get(lin, []) if isinstance(nodes[dst], nir.Threshold)), None)
 
         if target_lif:
             target_neurons = neuron_names_by_lif[target_lif]
@@ -104,15 +117,27 @@ def import_nir_graph(nir_graph: nir.NIRGraph):
                     if lin_node.weight[i, j] != 0
                 ]
 
+        if target_threshold:
+            target_neurons = neuron_names_by_threshold[target_threshold]
+            for i, target_name in enumerate(target_neurons):
+                connections[target_name] = [
+                    (target_name, float(lin_node.weight[i, j]))
+                    for j in range(lin_node.weight.shape[1])
+                    if lin_node.weight[i, j] != 0
+                ]
+
     # Output selection
     for output_node_name in output_nodes:
         source_lif = next((src for src in incoming.get(output_node_name, []) if src in lif_names), None)
         source_if = next((src for src in incoming.get(output_node_name, []) if src in if_names), None)
+        source_threshold = next((src for src in incoming.get(output_node_name, []) if src in threshold_names), None)
 
         if source_lif:
             source_neurons = neuron_names_by_lif[source_lif]
         elif source_if:
             source_neurons = neuron_names_by_if[source_if]
+        elif source_threshold:
+            source_neurons = neuron_names_by_threshold[source_threshold]
         else:
             raise ValueError(f"Output {output_node_name} has no source")
 
@@ -150,8 +175,8 @@ if __name__ == "__main__":
     print("\n=== Test 2: two-layer feedforward network ===")
     lif1 = nir.LIF(tau=np.array([10.0, 10.0]), v_threshold=np.array([1.0, 1.0]), r=np.array([1.0, 1.0]), v_leak=np.array([0.0, 0.0]))
     lif2 = nir.LIF(tau=np.array([10.0]), v_threshold=np.array([1.0]), r=np.array([1.0]), v_leak=np.array([0.0]))
-    lin1 = nir.Linear(weight=np.array([[1.0], [1.0]]))  # 1 input -> 2 outputs
-    lin2 = nir.Linear(weight=np.array([[2.0, 3.0]]))    # 2 inputs -> 1 output
+    lin1 = nir.Linear(weight=np.array([[1.0], [1.0]]))
+    lin2 = nir.Linear(weight=np.array([[2.0, 3.0]]))
 
     edges_2layer = {
         ("input", "linear1"): None,
@@ -177,3 +202,29 @@ if __name__ == "__main__":
     assert "lif1_0" in connections_2layer
     assert "lif2_0" in connections_2layer
     print("PASS: two-layer feedforward network test")
+
+    print("\n=== Test 3: Threshold (ANN) node ===")
+    threshold = nir.Threshold(threshold=np.array([1.0, 2.0]))
+    lin_to_threshold = nir.Linear(weight=np.array([[1.0], [1.0]]))
+    output_node_threshold = nir.Output(output_type=[2])
+
+    edges_threshold = {
+        ("input", "linear"): None,
+        ("linear", "threshold"): None,
+        ("threshold", "output"): None,
+    }
+    nodes_threshold = {
+        "input": input_node,
+        "linear": lin_to_threshold,
+        "threshold": threshold,
+        "output": output_node_threshold,
+    }
+    graph_threshold = nir.NIRGraph(nodes_threshold, edges_threshold)
+
+    axons_threshold, connections_threshold, outputs_threshold = import_nir_graph(graph_threshold)
+    print(f"Axons: {axons_threshold}")
+    print(f"Connections: {connections_threshold}")
+    print(f"Outputs: {outputs_threshold}")
+    assert "threshold_0" in connections_threshold
+    assert "threshold_1" in connections_threshold
+    print("PASS: Threshold (ANN) node test")
