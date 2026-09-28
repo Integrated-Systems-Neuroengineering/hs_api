@@ -310,3 +310,32 @@ if __name__ == "__main__":
     assert "lif_0" in connections_nonpow2
     assert "lif_1" in connections_nonpow2
     print("PASS: Tau approximation warnings test")
+
+    print("\n=== Test 5: Conv2d node (corrected) ===")
+    input_node_conv = nir.Input(input_type=np.array([1, 5, 5]))
+    conv2d = nir.Conv2d(
+        input_shape=(5, 5),
+        weight=np.ones((2, 1, 3, 3)),
+        stride=(1, 1),
+        padding=(1, 1),
+        dilation=(1, 1),
+        groups=1,
+        bias=np.zeros((2,))
+    )
+    output_node_conv = nir.Output(output_type=np.array([2, 5, 5]))
+
+    edges_conv = {
+        ("input", "conv2d"): None,
+        ("conv2d", "output"): None,
+    }
+    nodes_conv = {
+        "input": input_node_conv,
+        "conv2d": conv2d,
+        "output": output_node_conv,
+    }
+    graph_conv = nir.NIRGraph(nodes_conv, edges_conv)
+
+    axons_conv, connections_conv, outputs_conv = import_nir_graph(graph_conv)
+    assert len(outputs_conv) == 50, f"Expected 50 output neurons, got {len(outputs_conv)}"
+    assert "conv2d_0_0_0" in connections_conv, "Conv2d neurons should be in connections"
+    print("PASS: Conv2d node test")
