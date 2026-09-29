@@ -126,7 +126,7 @@ def build_cmd13_packet(delta_mode=1, decay_ex=0, decay_in=0, decay_w=0,
                        delta_w=0, coba_mode=0, E_ex=0, E_in=0,
                        neuromod_level=0, neuromod_excitability_bias=0,
                        stdp_enable=0, A_plus=0, A_minus=0,
-                       w_max=32767, w_min=0, coreID=0):
+                       w_max=32767, w_min=0, syn_64bit_en=0, coreID=0):
     """Build a 512-bit CMD 13 packet as a uint64 numpy array.
 
     Bit positions are RTL-verified against command_interpreter.v.
@@ -180,6 +180,7 @@ def build_cmd13_packet(delta_mode=1, decay_ex=0, decay_in=0, decay_w=0,
     _set_rxfifo_bits(cmd,  98,  91, A_minus & 0xFF, 8)
     _set_rxfifo_bits(cmd, 114,  99, w_max, 16)    # signed
     _set_rxfifo_bits(cmd, 130, 115, w_min, 16)    # signed
+    _set_rxfifo_bits(cmd, 131, 131, int(syn_64bit_en) & 1, 1)   # 64-bit synapse entries
 
     return _cmd_to_uint64_array(cmd, coreID)
 
@@ -253,12 +254,19 @@ def pack_synapse_row_64bit(entries):
 # =========================================================================
 
 def _cmd_to_uint64_array(cmd_bits, coreID):
-    """Convert 512-char bit list to 64-element uint64 array for DMA."""
-    bit_string = ''.join(cmd_bits)
+    """Convert 512-char bit list to 64-element uint64 array for DMA.
+    Each element = one byte. element[0] = rxFIFO_dout[7:0], element[63] = rxFIFO_dout[511:504].
+    cmd_bits[0] = MSB = rxFIFO_dout[511]. cmd_bits[511] = LSB = rxFIFO_dout[0].
+    """
     data = np.zeros(64, dtype=np.uint64)
-    for i in range(8):
-        data[i] = int(bit_string[i * 64:(i + 1) * 64], 2)
-    data[62] = np.uint64(coreID & 0xF)
+    for byte_idx in range(64):
+        byte_val = 0
+        for bit_pos in range(8):
+            # rxFIFO_dout[byte_idx*8 + bit_pos] = cmd_bits[511 - (byte_idx*8 + bit_pos)]
+            cmd_idx = 511 - (byte_idx * 8 + bit_pos)
+            if 0 <= cmd_idx < 512 and cmd_bits[cmd_idx] == '1':
+                byte_val |= (1 << bit_pos)
+        data[byte_idx] = np.uint64(byte_val)
     return data
 
 

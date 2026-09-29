@@ -3,10 +3,10 @@
 # SW Build 5076996 on Wed May 22 18:36:09 MDT 2024
 # IP Build 5075265 on Wed May 22 21:45:21 MDT 2024
 # SharedData Build 5076995 on Wed May 22 18:29:18 MDT 2024
-# Start of session at: Fri Jun 19 01:22:09 2026
-# Process ID: 46632
+# Start of session at: Wed Jul 22 16:12:00 2026
+# Process ID: 48275
 # Current directory: /home/omowuyi/testing/hs_api
-# Command line: vivado -mode batch -source /bitstreams/scripts/progbit.tcl -tclargs /bitstreams/sixteen_core_top_multicore_4.bit
+# Command line: vivado -mode batch -source /bitstreams/progbit.tcl
 # Log file: /home/omowuyi/testing/hs_api/vivado.log
 # Journal file: /home/omowuyi/testing/hs_api/vivado.jou
 # Running On        :crisdsc0.ucsd.edu
@@ -19,41 +19,12 @@
 # Host memory       :1081498 MB
 # Swap memory       :0 MB
 # Total Virtual     :1081498 MB
-# Available Virtual :1071922 MB
+# Available Virtual :1075318 MB
 #-----------------------------------------------------------
-source /bitstreams/scripts/progbit.tcl
-# if {$argc < 1 || $argc > 2} {
-#     puts "Usage: $argv0 <bitfile_path> \[ltxfile_path\]"
-#     puts "Example: $argv0 /path/to/file.bit /path/to/file.ltx"
-#     exit 1
-# }
-# set bitfile [lindex $argv 0]
-# set ltxfile [expr {$argc == 2 ? [lindex $argv 1] : ""}]
-# if {![file exists $bitfile]} {
-#     puts "Error: Bitfile '$bitfile' does not exist"
-#     exit 1
-# }
-# if {$ltxfile ne "" && ![file exists $ltxfile]} {
-#     puts "Error: LTX file '$ltxfile' does not exist"
-#     exit 1
-# }
-# set hw_server_url "localhost:3121"
-# set target_device "xcvu37p_0"
-# set programming_freq 5000000
-# set target_serial "210308B09B70"
-# puts "Opening hardware manager..."
-Opening hardware manager...
-# if {[catch {open_hw_manager} err]} {
-#     puts "Error: Failed to open hardware manager: $err"
-#     exit 1
-# }
-open_hw_manager: Time (s): cpu = 00:00:08 ; elapsed = 00:00:07 . Memory (MB): peak = 1653.625 ; gain = 130.828 ; free physical = 1018700 ; free virtual = 1021948
-# puts "Connecting to hardware server at $hw_server_url..."
-Connecting to hardware server at localhost:3121...
-# if {[catch {connect_hw_server -url $hw_server_url} err]} {
-#     puts "Error: Failed to connect to hardware server: $err"
-#     exit 1
-# }
+source /bitstreams/progbit.tcl
+# open_hw_manager
+open_hw_manager: Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 1654.008 ; gain = 67.828 ; free physical = 1022483 ; free virtual = 1025158
+# connect_hw_server -url localhost:3121
 INFO: [Labtools 27-2285] Connecting to hw_server url TCP:localhost:3121
 INFO: [Labtools 27-2222] Launching hw_server...
 INFO: [Labtools 27-2221] Launch Output:
@@ -79,84 +50,9 @@ OSError: [Errno 22] Invalid argument
 
 
 
-# puts "Setting programming frequency to $programming_freq Hz..."
-Setting programming frequency to 5000000 Hz...
-# if {[catch {
-#     set_property PARAM.FREQUENCY $programming_freq [get_hw_targets */xilinx_tcf/Digilent/$target_serial]
-# } err]} {
-#     puts "Error: Failed to set frequency: $err"
-#     exit 1
-# }
-# puts "Opening hardware target..."
-Opening hardware target...
-# if {[catch {open_hw_target} err]} {
-#     puts "Error: Failed to open hardware target: $err"
-#     exit 1
-# }
+# set_property PARAM.FREQUENCY 5000000 [get_hw_targets */xilinx_tcf/Digilent/210308B09B70]
+# open_hw_target
 INFO: [Labtoolstcl 44-466] Opening hw_target localhost:3121/xilinx_tcf/Digilent/210308B09B70
-# set device [lindex [get_hw_devices $target_device] 0]
-# if {$device eq ""} {
-#     puts "Error: Device $target_device not found"
-#     exit 1
-# }
-# puts "Setting bitfile: [file tail $bitfile]"
-Setting bitfile: sixteen_core_top_multicore_4.bit
-# if {[catch {set_property PROGRAM.FILE $bitfile $device} err]} {
-#     puts "Error: Failed to set bitfile: $err"
-#     exit 1
-# }
-# if {$ltxfile ne ""} {
-#     puts "Setting probes file: [file tail $ltxfile]"
-#     if {[catch {set_property PROBES.FILE $ltxfile $device} err]} {
-#         puts "Error: Failed to set probes file: $err"
-#         exit 1
-#     }
-# } else {
-#     puts "No probes file provided, skipping"
-# }
-No probes file provided, skipping
-# current_hw_device $device
-# refresh_hw_device $device
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 2 HBM core(s).
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 1 ILA core(s).
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 1 VIO core(s).
-WARNING: [Labtools 27-1347] Unable to find Debug Probes file []. Please update hw_device property [PROBES.FILE]
- Update of hw_probe objects, will be skipped.
-WARNING: [Labtools 27-1974] Mismatch between the design programmed into the device xcvu37p_0 and the probes file(s) .
-The device design has 1 ILA core(s) and 1 VIO core(s). 0 ILA core(s) and 0 VIO core(s) are matched in the probes file(s).
-Resolution: 
-1. Reprogram device with the correct programming file and associated probes file(s) OR
-2. Goto device properties and associate the correct probes file(s) with the programming file already programmed in the device.
-# puts "Programming Device $target_device with [file tail $bitfile]..."
-Programming Device xcvu37p_0 with sixteen_core_top_multicore_4.bit...
-# if {[catch {program_hw_devices $device} err]} {
-#     puts "Error: Programming failed: $err"
-#     exit 1
-# }
-INFO: [Labtools 27-3164] End of startup status: HIGH
-program_hw_devices: Time (s): cpu = 00:01:52 ; elapsed = 00:01:43 . Memory (MB): peak = 1746.723 ; gain = 1.000 ; free physical = 1018378 ; free virtual = 1021778
-# puts "Programming verification: startup status HIGH (DONE)"
-Programming verification: startup status HIGH (DONE)
-# puts "Waiting for device to stabilize..."
-Waiting for device to stabilize...
-# after 5000
-# refresh_hw_device $device
-WARNING: [Labtools 27-3422] Calibration Incomplete.
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 2 HBM core(s).
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 1 ILA core(s).
-INFO: [Labtools 27-2302] Device xcvu37p (JTAG device index = 0) is programmed with a design that has 1 VIO core(s).
-WARNING: [Labtools 27-1347] Unable to find Debug Probes file []. Please update hw_device property [PROBES.FILE]
- Update of hw_probe objects, will be skipped.
-WARNING: [Labtools 27-1974] Mismatch between the design programmed into the device xcvu37p_0 and the probes file(s) .
-The device design has 1 ILA core(s) and 1 VIO core(s). 0 ILA core(s) and 0 VIO core(s) are matched in the probes file(s).
-Resolution: 
-1. Reprogram device with the correct programming file and associated probes file(s) OR
-2. Goto device properties and associate the correct probes file(s) with the programming file already programmed in the device.
-# puts "Closing hardware target..."
-Closing hardware target...
-# close_hw_target "localhost:3121/xilinx_tcf/Digilent/$target_serial"
-INFO: [Labtoolstcl 44-464] Closing hw_target localhost:3121/xilinx_tcf/Digilent/210308B09B70
-# puts "Programming completed successfully"
-Programming completed successfully
-# exit 0
-INFO: [Common 17-206] Exiting Vivado at Fri Jun 19 01:24:17 2026...
+# set_property PROGRAM.FILE {single_core_conductance_STDP.bit} [lindex [get_hw_devices xcvu37p_0] 0]
+ERROR: [Labtools 27-2149] File single_core_conductance_STDP.bit not found. Check file name and file permissions.
+INFO: [Common 17-206] Exiting Vivado at Wed Jul 22 16:12:17 2026...

@@ -60,7 +60,8 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(
-            self, axons, connections, outputs, target=None, simDump=False, coreID=0
+            self, axons, connections, outputs, target=None, simDump=False, coreID=0,
+            syn_64bit=False, syn_delay=0, membership=None, n_cores=None
     ):
         # return
         # breakpoint()
@@ -133,9 +134,15 @@ class CRI_network:
 
         if self.target == "CRI":
             logging.info("Initilizing to run on hardware")
+            # The partition has to be applied BEFORE pad_models: padding is per
+            # (core, model) to a multiple of 32 and cutoffs are per core, so
+            # both are wrong if every neuron is still on the default core 0
+            # when the padding runs.
+            self.membership = membership
+            self.n_cores = n_cores
+            if membership is not None:
+                self.connectome.apply_partition(membership)
             self.connectome.pad_models()
-            ##neurons are default to core ID 0, need to be fixed in the connectome to assign correct coreIdx to neurons
-            # formatedOutputs = self.connectome.get_core_outputs_idx(coreID)
             formatedOutputs = self.connectome.get_outputs_idx()
             print("formatedOutputs:", formatedOutputs)
             self.CRI = network(
@@ -143,8 +150,13 @@ class CRI_network:
                 formatedOutputs,
                 simDump=simDump,
                 coreOveride=coreID,
+                syn_64bit=syn_64bit,
+                syn_delay=syn_delay,
+                membership=membership,
+                n_cores=n_cores,
             )
             self.CRI.initalize_network()
+            self._load_noc_routing()
         elif self.target == "simpleSim":
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(
@@ -496,14 +508,64 @@ class CRI_network:
 
 
         if self.target == "CRI":
-            formated_inputs = [
-                self.connectome.get_neuron_by_key(symbol).get_hbmIdx()
-                for symbol in neuronList
-            ]
-            results = self.CRI.readMP(formated_inputs)
-            formatedResults = [(self.connectome.get_neuron_by_hbmIdx(element[0]).get_user_key(),element[3]) for element in results] #each membrane potential contains (membraneIdx, row, column, potential)
+            # Group the requested neurons by core: an index is only meaningful
+            # alongside the core it belongs to, and each core is read
+            # separately.
+            byCore = {}
+            for symbol in neuronList:
+                neuronObj = self.connectome.get_neuron_by_key(symbol)
+                byCore.setdefault(neuronObj.get_core(), []).append(
+                    neuronObj.get_hbmIdx())
+            formatedResults = []
+            for core in sorted(byCore):
+                results = self.CRI.readMP(byCore[core], core=core)
+                #each membrane potential contains (membraneIdx, row, column, potential)
+                formatedResults = formatedResults + [
+                    (self.connectome.get_neuron_by_core_idx(core, element[0]).get_user_key(),
+                     element[3]) for element in results]
             return formatedResults
 
+
+    def _load_noc_routing(self):
+        """Program each core's NoC routing table.
+
+        Only meaningful once neurons live on more than one core: an unwritten
+        entry resets to LOCAL, which is exactly right for a single-core
+        network, so nothing is sent in that case.
+        """
+        if getattr(self, "membership", None) is None:
+            return
+        try:
+            import noc_routing
+        except ImportError:
+            logging.warning(
+                "neurons are partitioned across cores but noc_routing is not "
+                "importable -- routing tables were NOT loaded, so spikes will "
+                "not cross cores")
+            return
+        try:
+            edges = []
+            for preKey in self.userConnections:
+                entry = self.userConnections[preKey]
+                if not entry:
+                    continue
+                for syn in entry[synapseIdx]:
+                    edges.append((preKey, syn[0]))
+            tables = noc_routing.from_connectome(self.connectome, edges)
+            bad = noc_routing.check_alignment(
+                {k: n.get_core() for k, n in self.connectome.get_neurons().items()},
+                core_index={k: n.get_coreTypeIdx()
+                            for k, n in self.connectome.get_neurons().items()})
+            if bad:
+                logging.warning(
+                    "%d routing block(s) span more than one core; those blocks "
+                    "multicast to every core holding part of them", len(bad))
+            sent = noc_routing.load_tables(tables, verbose=False)
+            logging.info("NoC routing: %d entries loaded across %d cores",
+                         sent, len(tables))
+        except Exception as e:
+            logging.error("NoC routing tables were NOT loaded (%s) -- the "
+                          "network will run with every core isolated", e)
 
     def step(self, inputs, target="simpleSim", membranePotential=False):
         """
@@ -542,10 +604,17 @@ class CRI_network:
             else:
                 new_q.append((axon_key, remaining - 1))
         self._delay_queue = new_q
-        formated_inputs = [
-            self.connectome.get_neuron_by_key(symbol).get_coreTypeIdx()
-            for symbol in inputs
-        ]  # convert symbols to internal indicies
+        # An axon index is per core, so inputs are grouped by the core that
+        # owns the axon.  With one core this is a single-entry dict and the
+        # order within it is the order the flat list had.
+        formated_inputs = {}
+        for symbol in inputs:
+            axonObj = self.connectome.get_neuron_by_key(symbol)
+            formated_inputs.setdefault(axonObj.get_core(), []).append(
+                axonObj.get_coreTypeIdx())
+        if self.target != "CRI":
+            formated_inputs = [i for core in sorted(formated_inputs)
+                               for i in formated_inputs[core]]
         if self.target == "simpleSim":
             output, spikeOutput = self.simpleSim.step_run(formated_inputs)
             spikeOutput = [
@@ -576,9 +645,13 @@ class CRI_network:
                     )
                     # breakpoint()
                     spikeList = spikeResult[0]
-                    # we currently ignore the run execution counter
+                    # we currently ignore the run execution counter.  A spike is
+                    # (counter, per-core index, core); the pair identifies the
+                    # neuron, the index alone does not.
                     spikeList = [
-                        self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
+                        self.connectome.get_neuron_by_core_idx(
+                            spike[2] if len(spike) > 2 else 0,
+                            spike[1]).get_user_key()
                         for spike in spikeList
                     ]
                     for sk in spikeList:
@@ -598,7 +671,9 @@ class CRI_network:
                     # breakpoint()
                     spikeList = spikeResult[0]
                     spikeList = [
-                        self.connectome.get_neuron_by_hbmIdx(spike[1]).get_user_key()
+                        self.connectome.get_neuron_by_core_idx(
+                            spike[2] if len(spike) > 2 else 0,
+                            spike[1]).get_user_key()
                         for spike in spikeList
                     ]
                     for sk in spikeList:
