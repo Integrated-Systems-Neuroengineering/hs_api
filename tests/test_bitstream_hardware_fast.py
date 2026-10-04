@@ -6,6 +6,30 @@ import pytest
 #shift values for ANN neurons are -17
 #shift values for LIF neurons are -17 (for tests not involving noise)
 #has synaptic delay or refractory period tests
+#version 2: adds test_LIF_neuron_negative_membrane_leak (LIF leak when the membrane potential is negative)
+
+
+def expected_LIF_trace(weights, schedule, number_steps, theta, Lambda):
+    """Reference LIF (floor math) for one neuron: returns membrane potentials and spikes after each time step.
+
+    Each time step: if MP > theta the neuron spikes and resets to 0, otherwise it leaks
+    MP = MP - (MP >> Lambda), where >> is an arithmetic (floor) shift. Then the weights of
+    the axons activated this time step are added. This matches SpikingJelly Custom_LIFNode_Floor
+    and simpleSim exactly (checked against Task A: 30/30 time steps).
+    """
+    mp = 0
+    expected_Vs = []
+    expected_Ss = []
+    for t in range(number_steps):
+        if mp > theta:
+            mp = 0
+            expected_Ss.append(["N1.0"])
+        else:
+            mp = mp - (mp >> Lambda)
+            expected_Ss.append([])
+        mp += sum(weights[i] for i in schedule.get(t, []))
+        expected_Vs.append(mp)
+    return expected_Vs, expected_Ss
 
 class TestBitStream:
     """Test suite using pytest framework"""
@@ -881,5 +905,71 @@ class TestBitStream:
         currSpikes_after_delay = network.step([])
         assert len(currSpikes_after_delay[0]) == 1, f"Expected 1 spike after delay, got {len(currSpikes_after_delay[0])}"
         assert currSpikes_after_delay[0][0] == "N2.1", f"Expected N2.1 spike after delay, got {currSpikes_after_delay[0][0] if len(currSpikes_after_delay[0]) > 0 else 'no spikes'}"
+        
+    @pytest.mark.parametrize("Lambda, weight, schedule, number_steps", [
+        (3, [20000], {1: [0]}, 12),                                      # positive_only_control
+        (3, [20000, -25000], {1: [0], 3: [1]}, 30),                      # exc_then_inh (Task A)
+        (7, [20000, -25000], {1: [0], 3: [1]}, 30),                      # exc_then_inh_lambda7
+        (3, [-25000], {1: [0]}, 12),                                     # inh_only
+        (3, [20000, -25000, 30000], {1: [0], 3: [1], 6: [2], 7: [2]}, 12),  # inh_then_exc_spike
+    ], ids=["positive_only_control", "exc_then_inh", "exc_then_inh_lambda7", "inh_only", "inh_then_exc_spike"])
+    def test_LIF_neuron_negative_membrane_leak(self, setup_dictionaries, Lambda, weight, schedule, number_steps):
+        """Test LIF leak when the membrane potential goes negative. Several axons connected to 1 LIF neuron
+
+        Test Description:
+            Validates that the leak of a LIF neuron is correct when its membrane potential is
+            negative, by comparing every time step against the expected floor math (which matches
+            SpikingJelly Custom_LIFNode_Floor and simpleSim exactly).
+
+        Network Configuration:
+            - 1 to 3 axons (A0, A1, A2) with the weights given for each case
+            - 1 LIF neuron with threshold=32000, shift=-17, leak=Lambda (3 means tau=8, 7 means tau=128)
+
+        Test Procedure:
+            Activate each axon at the time steps in schedule ({time step: [axon indices]}),
+            no input at other time steps. Read the MP and spikes after every time step.
+
+        Cases:
+            - positive_only_control: A0 (+20000) at t=1. MP stays positive (control, leak of positive MP)
+            - exc_then_inh: A0 (+20000) at t=1, A1 (-25000) at t=3. MP goes negative at t=3
+              and should leak back towards 0 (-9687, -8476, -7416, ...) with no spikes
+            - exc_then_inh_lambda7: same as exc_then_inh with leak=7
+            - inh_only: A0 (-25000) at t=1. MP negative from t=1
+            - inh_then_exc_spike: as exc_then_inh, then A2 (+30000) at t=6 and t=7. MP goes negative,
+              comes back positive, and the neuron should spike exactly once, at t=8
+
+        Expected Behavior:
+            MPs and spikes equal expected_LIF_trace() at every time step.
+
+        Explanation:
+            On the L6m bitstream the leak of a negative MP is wrong: in the Task A pattern the MP
+            at t=4 is -536879388 instead of -8476 (a difference of exactly -2^29), keeps falling,
+            wraps around to +1927556870 at t=9 and causes a spike at t=10 that should not happen.
+            Every value matches MP - (unsigned(MP) >> Lambda) in 32 bits, i.e. the leak shift
+            seems to be logical (unsigned) instead of arithmetic (signed). The control case
+            should pass, the other cases should fail until this is fixed.
+        """
+        network, inputs, outputs = setup_dictionaries(
+            numberAxons=len(weight),
+            numberNeurons=1,
+            weight=weight,
+            neuron_model=LIF_neuron(theta=32000, nu=-17, Lambda=Lambda)
+        )
+
+        FPGA_Vs = []   # membrane potential trace
+        FPGA_Ss = []   # spikes
+
+        for t in range(number_steps):
+            currSpikes = network.step([inputs[i] for i in schedule.get(t, [])])
+            results = network.read_membrane(outputs)
+            FPGA_Vs.append(results[0][1])
+            FPGA_Ss.append(currSpikes[0])
+
+        expected_Vs, expected_Ss = expected_LIF_trace(weight, schedule, number_steps, theta=32000, Lambda=Lambda)
+
+        first_wrong_step = next((t for t in range(number_steps) if FPGA_Vs[t] != expected_Vs[t] or FPGA_Ss[t] != expected_Ss[t]), None)
+        assert FPGA_Vs == expected_Vs, f"Membrane potentials do not match expected values (first wrong time step: {first_wrong_step}): Outputs {FPGA_Vs}, Expected {expected_Vs}"
+        assert FPGA_Ss == expected_Ss, f"Spikes do not match expected values (first wrong time step: {first_wrong_step}): Outputs {FPGA_Ss}, Expected {expected_Ss}"
+
 if __name__ == '__main__':
     pytest.main([__file__, '-v'])
