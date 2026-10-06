@@ -6,3 +6,7 @@ result/
 figure/
 test_figure/
 log/
+vivado*.jou
+vivado*.log
+vivado*.backup.*
+.Xil/
