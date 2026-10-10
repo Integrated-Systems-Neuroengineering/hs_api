@@ -4,8 +4,15 @@ import torch.nn as nn
 from typing import Dict, Tuple, Any
 import torch.nn.functional as F
 
-
 class ModularSNNConverter:
+
+    #hardware constraints
+    MAX_AXON_NUMBER = 16352
+    MAX_AXONAL_FANOUT = 4096
+    MAX_AXONAL_FANIN = 8192
+    MAX_NEURONAL_FANOUT = 4095
+    MAX_NEURONAL_FANIN = 8159
+
     def __init__(self, energy_efficient_mode: bool = False, neuron_type: str = "ANN"):
         # Dispatch table mapping PyTorch types to conversion handlers
         self.registry: Dict[type, callable] = {}      #values of dictionary are functions that handle the conversion of each layer type
@@ -102,8 +109,7 @@ class ModularSNNConverter:
     def convert(self, model: nn.Module, weights_path: str, sample_input_shape=Tuple[int, ...]):
         """Primary endpoint for end-users."""
         # 1. Load full model structure and weights
-        model = model
-        weights = torch.load(weights_path, weights_only=True)  # Load the weights separately
+        weights = torch.load(weights_path, weights_only=True, map_location="cpu")  # Load the weights separately
         model.load_state_dict(weights)
         model.eval()
         neuron_type = self.neuron_type  # Use the neuron type specified during initialization
@@ -136,8 +142,8 @@ class ModularSNNConverter:
         #5. State tracking
         prev_layer_name = None
         prev_layer_type = None
-        prev_layer_idx = -1
-        layer_counters = {"conv": 0, "linear": 0, "gap": 0}
+        prev_layer_idx = 0   #layers use 1-based indexing for naming (C1, C2, FC1, FC2, etc.)
+        layer_counters = {"conv": 0, "linear": 0, "gap": 0, "maxpool": 0}  # Track the number of each layer type processed
         
 
         # 6. Dealing with energy-efficient mode (applicable to biases only)
@@ -186,15 +192,29 @@ class ModularSNNConverter:
             print("Energy-efficient mode is ON. Bias axons have been created for layers with bias terms. Conversion returns config dictionary for CRI and bias axon dictionary. BOTH are used to run model on FPGA.")
             return {'axons': axons, 'connections': connections, 'outputs': outputs, 'bias_axons': bias}  # Return both the config dictionary and the bias axon dictionary
 
-    @staticmethod
-    def convert_bias_helper(connections: dict, axons: dict, layer_bias: torch.Tensor, feature_map: int, neuronName: str, bias_implementation: object):
+    def convert_bias_helper(self, connections: dict, axons: dict, layer_bias: torch.Tensor, feature_map: int, neuronName: str, bias_implementation: object, bias_tracker: dict):
         "bias_implementation can be either a dict (for energy-efficient mode) or an ANN neuron (for non-energy-efficient mode)"
+        neuronName_no_index= neuronName.rsplit('.', 1)[0] # remove index from neuron name (C1.1.1 becomes C1.1)
+        if neuronName_no_index not in bias_tracker:
+            bias_tracker[neuronName_no_index] = 1  #first bias neuron or axon has index 1 for the given output channel
+        biasIndex = bias_tracker[neuronName_no_index]
+
         if isinstance(bias_implementation, dict):
             #implement bias using axon
+            biasAxonName = f"BiasA.{neuronName_no_index}.{biasIndex}"   
+            if biasAxonName not in axons:
+                axons[biasAxonName] = []  #create bias axon in axon dictionary
+            else:
+                if len(axons[biasAxonName]) == self.MAX_AXONAL_FANOUT:   #check if axon fan-out equals limit
+                    print(f"{biasAxonName} exceeds max axonal fanout. Creating another bias axon." )
+                    biasAxonName = f"BiasA.{neuronName_no_index}.{biasIndex+1}"
+                    bias_tracker[neuronName_no_index] += 1
+                    axons[biasAxonName] = []  #create bias axon in axon dictionary
+
             bias = layer_bias[feature_map-1]   #synaptic weight between bias axon and feature map neuron. feature_map-1 because feature_map starts from 1 while layer_bias is indexed from 0
-            biasAxonName = "BiasA." + neuronName 
-            axons[biasAxonName] = [(neuronName, bias)]    #add bias axon to axon dictionary
-            layer_name = neuronName.split('.')[0]  # Extract layer name from neuronName (e.g., "C0" from "C0.1.1")
+            axons[biasAxonName].append((neuronName, bias))   #add bias axon to axon dictionary
+            
+            layer_name = neuronName.split('.')[0]  # Extract layer name from neuronName (e.g., "C1" from "C1.1.1")
             if layer_name not in bias_implementation:
                 bias_implementation[layer_name] = []
             bias_implementation[layer_name].append(biasAxonName)  # Store bias axon name
@@ -202,13 +222,22 @@ class ModularSNNConverter:
         
         #implement bias using ANN neuron
         bias = layer_bias[feature_map-1]   #synaptic weight between bias neuron and feature map neruon
-        biasNeuronName = "BiasN." + neuronName 
-        connections[biasNeuronName] = ([(neuronName, bias)], bias_implementation)    #add bias neuron to connections dictionary
+        biasNeuronName = f"BiasN.{neuronName_no_index}.{biasIndex}"  
+        if biasNeuronName not in connections:
+            connections[biasNeuronName] = ([], bias_implementation)
+        else:
+            if len(connections[biasNeuronName][0]) == self.MAX_NEURONAL_FANOUT:
+                print(f"{biasNeuronName} exceeds max neuronal fan out. Creating another bias neuron.")
+                biasNeuronName = f"BiasN.{neuronName_no_index}.{biasIndex+1}"
+                bias_tracker[neuronName_no_index] += 1
+                connections[biasNeuronName] = ([], bias_implementation)
+        connections[biasNeuronName][0].append((neuronName, bias))    #add bias neuron to connections dictionary
         
     # Handler implementations (accepting standardized parameters)
     def _convert_conv2d(self, **kwargs):
         # Conv2d specific logic using kwargs['shapes']['in_shape'], etc.
         # ...
+        curr_layer_type = "conv"
 
         # 1. Extract only the variables THIS layer needs from kwargs
         int16_sd = kwargs['int16_sd']
@@ -235,8 +264,10 @@ class ModularSNNConverter:
         # 3. Retrieve weights, scale,bias, and neuron type for this specific layer name
         weight_key = f"{layer_name}.weight"
         bias_key = f"{layer_name}.bias"
+        bias_tracker = {}
         layer_weights = int16_sd[weight_key]
         layer_bias = int16_sd[bias_key] if bias_key in int16_sd else None
+        
 
         if neuron_type == "IF":
             neuron = IF_neuron(theta=scales[weight_key])
@@ -275,12 +306,12 @@ class ModularSNNConverter:
                         key = f"A{axon_id}"     
                         #each axon index has a connection to one neuron in each feature map of the current layer. Iterate through each feature map and create an axonal synapse to the corresponding neuron in that feature map.
                         for feature_map, kernel in enumerate(layer_weights, start=1):
-                            neuronName = f"C{prev_layer_idx+1}.{feature_map}.{index}"  #Create neuron entry C0.{feature map#}.{index}
+                            neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{feature_map}.{index}"  #Create neuron entry C1.{feature map#}.{index}
                             if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
                                 connections[neuronName] = ([], neuron) 
                                 # first time this neuron is being added, implement bias if applicable
                                 if layer_bias is not None:
-                                    self.convert_bias_helper(connections, axons, layer_bias, feature_map, neuronName, bias) 
+                                    self.convert_bias_helper(connections, axons, layer_bias, feature_map, neuronName, bias, bias_tracker) 
                                 # for the first time this neuron is being added, check if it is the output layer and add to outputs list if so
                                 if layer_name == self.output_layer_name:   #if this is the output layer, add neurons to outputs list
                                     outputs.append(neuronName)
@@ -289,7 +320,7 @@ class ModularSNNConverter:
                             axons[key].append((neuronName, weight))
         
         # 3. Create new layer nodes for this Conv2d layer
-        else:
+        elif prev_layer_type in ["conv", "maxpool"]:
             #creating cMap to identify which conv neuron from the previous layer is connected to which conv neuron in the current layer.
             cMap = torch.arange(in_h * in_w, dtype=torch.float32).reshape(1, 1, in_h, in_w)
             cMap = cMap + 1          
@@ -307,24 +338,27 @@ class ModularSNNConverter:
                     index = int(elem.item())
                     if index != 0:
                         for output_idx, output_channel in enumerate(layer_weights, start=1): 
-                            neuronName = f"C{prev_layer_idx+1}.{output_idx}.{j}"  #each row corresponds to one pixel in feature map. Create neuron entry C{layer_index}.{feature map#}.{index}
+                            neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{output_idx}.{j}"  #each row corresponds to one pixel in feature map. Create neuron entry C{layer_index}.{feature map#}.{index}
                             if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
                                 connections[neuronName] = ([], neuron) 
                                 #this is first time this neuron is being added, implement bias if applicable
                                 if layer_bias is not None:
-                                    self.convert_bias_helper(connections, axons, layer_bias, output_idx, neuronName, bias) 
+                                    self.convert_bias_helper(connections, axons, layer_bias, output_idx, neuronName, bias, bias_tracker) 
                                 #this is first time this neuron is being added, check if it is the output layer and add to outputs list if so
                                 if layer_name == self.output_layer_name:   
                                     outputs.append(neuronName)
                                     
                             #inner loop: iterate over input-channel kernels with index for this output channel
                             for feature_map, kernel in enumerate(output_channel, start=1):
-                                key = f"C{prev_layer_idx}.{feature_map}.{index}"
+                                key = f"{prev_layer_type}{prev_layer_idx}.{feature_map}.{index}"
                                 flat_kernel = kernel.flatten() #flatten kernel is 1D tensor of the weights for C1 -> C2
                                 weight = flat_kernel[i].item()
                                 connections[key][0].append((neuronName, weight))
 
-        prev_layer_type = "conv"
+        else:
+            raise ValueError(f"Unsupported previous layer type: {prev_layer_type} for layer {layer_name}")
+
+        prev_layer_type = curr_layer_type
         prev_layer_idx += 1
         layer_counters['conv'] += 1
     
@@ -333,6 +367,8 @@ class ModularSNNConverter:
     def _convert_linear(self, **kwargs):
         # Linear logic
         # ...
+        curr_layer_type = "linear"
+
         # 1. Extract only the variables THIS layer needs from kwargs
         int16_sd = kwargs['int16_sd']
         scales = kwargs['scales']
@@ -381,7 +417,7 @@ class ModularSNNConverter:
             for i in range(in_h * in_w):
                 allConnections = []
                 for j, weight in enumerate(layer_weights[:, i], start=1):
-                    neuronName = f"FC{prev_layer_idx+1}.{j}"
+                    neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{j}"
                     if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
                         connections[neuronName] = ([], neuron)
                     connectingNeuron = (neuronName, weight.item())
@@ -393,7 +429,7 @@ class ModularSNNConverter:
                     outputs.append(neuron[0])  #add neuronName to outputs list
             
         # 5. Check if prev_layer_type is "conv", "linear", "GAP", or "MaxPool" to determine how to connect the previous layer's neurons to this linear layer's neurons
-        elif prev_layer_type == "conv":
+        elif prev_layer_type in ["conv", "maxpool"]:
             # connect conv neurons to linear neurons
             _, prev_in_c, prev_in_h, prev_in_w = kwargs['shapes'][prev_layer_name]['out_shape']  #extract output shape of previous conv layer
             feature_map = 1
@@ -402,44 +438,41 @@ class ModularSNNConverter:
                 if col % (prev_in_h * prev_in_w) == 0 and col != 0:  
                     feature_map += 1
                 for i, elem in enumerate(layer_weights[:, col], start=1):     #iterate over element in a col
-                    neuronName = f"FC{prev_layer_idx+1}.{i}"
+                    neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{i}"
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
                 for connectingNeuron in allConnections:
-                    connections[f"C{prev_layer_idx}.{feature_map}.{(col % (prev_in_h * prev_in_w)) + 1}"][0].append(connectingNeuron)
+                    connections[f"{prev_layer_type}{prev_layer_idx}.{feature_map}.{(col % (prev_in_h * prev_in_w)) + 1}"][0].append(connectingNeuron)
 
             if layer_name == self.output_layer_name:   #if this is the last layer, add neurons to outputs list
                 for neuron in allConnections:
                     outputs.append(neuron[0])  #add neuronName to outputs list
             
-        elif prev_layer_type == "linear":
+        elif prev_layer_type in ["linear", "gap"]:
             # connect linear neurons to linear neurons
             for col in range(layer_weights.shape[1]):  #x.shape[1] == number of col
                 allConnections = []
                 for i, elem in enumerate(layer_weights[:, col], start=1):     #iterate over element in a col
-                    neuronName = f"FC{prev_layer_idx+1}.{i}"
+                    neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{i}"
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
                 for connectingNeuron in allConnections:
-                    connections[f"FC{prev_layer_idx}.{col+1}"][0].append(connectingNeuron)
+                    connections[f"{prev_layer_type}{prev_layer_idx}.{col+1}"][0].append(connectingNeuron)
 
             if layer_name == self.output_layer_name:   #if this is the last layer, add neurons to outputs list
                 for neuron in allConnections:
                     outputs.append(neuron[0])  #add neuronName to outputs list
 
-        elif prev_layer_type == "GAP":
-            return 0  # Placeholder for GAP to Linear conversion logic
-
-        elif prev_layer_type == "MaxPool":
-            return 0  # Placeholder for MaxPool to Linear conversion logic
+        else:
+            raise ValueError(f"Unsupported previous layer type: {prev_layer_type} for layer {layer_name}")
     
-        prev_layer_type = "linear"
+        prev_layer_type = curr_layer_type
         prev_layer_idx += 1
         layer_counters['linear'] += 1
             
@@ -448,9 +481,185 @@ class ModularSNNConverter:
     def _convert_gap(self, **kwargs):
         # Global Average Pooling logic
         # ...
-        return 0
+        curr_layer_type = "gap"
+
+         # 1. Extract only the variables THIS layer needs from kwargs
+        layer_name = kwargs['layer_name']
+        shapes = kwargs['shapes'][layer_name]               # From forward hook tracer
+        connections = kwargs['connections']     # Global CRI connections dict
+        axons = kwargs['axons']                   # Global CRI axons dict
+        outputs = kwargs['outputs']               # Global CRI outputs list
+        prev_layer_type = kwargs['prev_layer_type']
+        prev_layer_idx = kwargs['prev_layer_idx']
+        layer_counters = kwargs['layer_counters']
+        module = kwargs['module']
+        neuron_type = kwargs['neuron_type']
+
+        # 2. Extract spatial metadata automatically from `module` and `shapes`
+        _, in_c, in_h, in_w = shapes['in_shape']
+        _, out_c, out_h, out_w = shapes['out_shape']
+
+        if out_h != 1 or out_w != 1 or out_c != in_c:
+            raise ValueError(f"Global Average Pooling layer {layer_name} must have output size of (1, 1), but got ({out_h}, {out_w}). Only GAP conversion is supported in this converter.")
+
+        if neuron_type == "IF":
+            neuron = IF_neuron(theta=(in_h * in_w))  # MaxPool neurons typically don't have learnable parameters, so we can set a default threshold
+
+        elif neuron_type == "LIF":
+            neuron = LIF_neuron(theta=(in_h * in_w))  # Similar reasoning as above
+
+        elif neuron_type == "ANN":
+            neuron = ANN_neuron(theta=0)
+
+        else:
+            raise ValueError(f"Unsupported neuron type detected: {neuron_type} for layer {layer_name}")
+
+
+        print(f"Converting GAP layer: {layer_name}")
+        print(f"input shape: {shapes['in_shape']}, output shape: {shapes['out_shape']}")
+        # 3. Check if prev_layer_type is None; if so, this is the first layer. Create axons and connections accordingly.
+        if prev_layer_type is None:
+            # Create input axons for the first layer
+            for i in range(1, (in_c * in_h * in_w) + 1): # Axon indices start from 1
+                axons[f"A{i}"] = []
+
+            # axons -> GAPneurons
+            axonMap = torch.arange(in_c * in_h * in_w, dtype=torch.float32).reshape(1, in_c, in_h, in_w)
+            axonMap = axonMap + 1 #each entry labeled 1 to in_c * in_h * in_w to ignore zeros from padding          
+            patchTensor = F.unfold(input=axonMap, kernel_size=(in_h * in_w), stride=1, padding=0)   
+
+            #patch_rows is a tensor where #rows = resolution of feature maps.
+            #Each row contains the indices of the axons corresponding to the GAP neuron for one feature map
+            patch_rows = patchTensor.transpose(1, 2).squeeze(0) 
+            patch_rows = patch_rows.to(torch.int16)   #convert patch_rows from FP32 tensor to INT16 tensor
+            # for each axon index in patch_rows, create a connection to the corresponding GAP neuron. Note: all weights are 1
+            for index , row in enumerate(patch_rows, start=1):
+                for i, elem in enumerate(row):   #each elem in row is the axon index
+                    axon_id = int(elem.item())
+                    if axon_id != 0:     #avoid all zeros from padding 
+                        key = f"A{axon_id}" 
+                        neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{index}"  #Create neuron entry GAP1.{row}
+                        if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
+                            connections[neuronName] = ([], neuron) 
+                            if layer_name == self.output_layer_name:   #if this is the output layer, add neurons to outputs list
+                                outputs.append(neuronName)
+                        axons[key].append((neuronName, 1)) #weight is always 1 for GAP connections
+
+        elif prev_layer_type in ["conv", "maxpool"]:
+            for x in range(1, (in_c + 1)): #iterate through each input channel/feature map
+                for i in range(1, (in_h * in_w) + 1): #iterate through each neuron in feature map
+                    neuronName = f"{prev_layer_type}{prev_layer_idx}.{x}.{i}"
+                    GAP_neuron_name = f"{curr_layer_type}{prev_layer_idx+1}.{x}"  #Create neuron entry GAP1.{feature map#}
+                    if GAP_neuron_name not in connections:  #first time this neuron is being added, initialize its connection entry
+                        connections[GAP_neuron_name] = ([], neuron) 
+                        if layer_name == self.output_layer_name:   #if this is the output layer, add neurons to outputs list
+                            outputs.append(GAP_neuron_name)
+                    connections[neuronName][0].append((GAP_neuron_name, 1)) #connect each neuron in feature map to one GAP neuron with weight of 1
+
+        else:
+            raise ValueError(f"Unsupported previous layer type: {prev_layer_type} for layer {layer_name}")
+
+        prev_layer_type = curr_layer_type
+        prev_layer_idx += 1
+        layer_counters['gap'] += 1
+        return prev_layer_type, prev_layer_idx, layer_counters
 
     def _convert_maxpool(self, **kwargs):
         # Max Pooling logic
         # ...
-        return 0
+
+        curr_layer_type = "maxpool"
+        
+        # 1. Extract only the variables THIS layer needs from kwargs
+        layer_name = kwargs['layer_name']
+        shapes = kwargs['shapes'][layer_name]               # From forward hook tracer
+        connections = kwargs['connections']     # Global CRI connections dict
+        axons = kwargs['axons']                   # Global CRI axons dict
+        outputs = kwargs['outputs']               # Global CRI outputs list
+        prev_layer_type = kwargs['prev_layer_type']
+        prev_layer_idx = kwargs['prev_layer_idx']
+        layer_counters = kwargs['layer_counters']
+        module = kwargs['module']
+        neuron_type = kwargs['neuron_type']
+
+        # 2. Extract spatial metadata automatically from `module` and `shapes`
+        _, in_c, in_h, in_w = shapes['in_shape']
+        kernel_size = module.kernel_size
+        stride = module.stride
+        padding = module.padding
+
+        if neuron_type == "IF":
+            neuron = IF_neuron(theta=1)  # MaxPool neurons typically don't have learnable parameters, so we can set a default threshold
+
+        elif neuron_type == "LIF":
+            neuron = LIF_neuron(theta=1)  # Similar reasoning as above
+
+        elif neuron_type == "ANN":
+            neuron = ANN_neuron(theta=0)
+
+        else:
+            raise ValueError(f"Unsupported neuron type detected: {neuron_type} for layer {layer_name}")
+        
+        print(f"Converting MaxPool layer: {layer_name} with kernel_size={kernel_size}, stride={stride}, padding={padding}")
+        print(f"input shape: {shapes['in_shape']}, output shape: {shapes['out_shape']}")
+        # 3. Check if prev_layer_type is None; if so, this is the first layer. Create axons and connections accordingly.
+        if prev_layer_type is None:
+            # Create input axons for the first layer
+            for i in range(1, (in_c * in_h * in_w) + 1): # Axon indices start from 1
+                axons[f"A{i}"] = []
+
+            # axons -> MaxPoolneurons
+            axonMap = torch.arange(in_c * in_h * in_w, dtype=torch.float32).reshape(1, in_c, in_h, in_w)
+            axonMap = axonMap + 1 #each entry labeled 1 to in_c * in_h * in_w to ignore zeros from padding          
+            patchTensor = F.unfold(input=axonMap, kernel_size=kernel_size, stride=stride, padding=padding)   
+
+            #patch_rows is a tensor where #rows = resolution of feature maps.
+            #Each row contains the indices of the axons corresponding to each pixel in the feature map
+            patch_rows = patchTensor.transpose(1, 2).squeeze(0) 
+            patch_rows = patch_rows.to(torch.int16)   #convert patch_rows from FP32 tensor to INT16 tensor
+            # for each axon index in patch_rows, create a connection to the corresponding MaxPool neurons. Note: all weights are 1
+            for index , row in enumerate(patch_rows, start=1):
+                for i, elem in enumerate(row):   #each elem in row is the axon index
+                    axon_id = int(elem.item())
+                    if axon_id != 0:     #avoid all zeros from padding 
+                        key = f"A{axon_id}"     
+                        #each axon index has a connection to one neuron in each feature map/in_c of the current layer. Iterate through each feature map and create an axonal synapse to the corresponding neuron in that feature map.
+                        for feature_map in range (1, (in_c)+1):  #iterate through each channel of the input.
+                            neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{feature_map}.{index}"  #Create neuron entry MAXPOOL1.{feature map#}.{index}
+                            if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
+                                connections[neuronName] = ([], neuron) 
+                                if layer_name == self.output_layer_name:   #if this is the output layer, add neurons to outputs list
+                                    outputs.append(neuronName)
+                            axons[key].append((neuronName, 1)) #weight is always 1 for MaxPool connections
+        
+        # 4. Create new layer nodes for MaxPool layer
+        elif prev_layer_type in ["conv", "maxpool"]:
+            #creating maxPoolMap to identify which neuron from the previous layer is connected to which neuron in the current layer.
+            MaxpoolMap = torch.arange(in_h * in_w, dtype=torch.float32).reshape(1, 1, in_h, in_w)
+            MaxpoolMap = MaxpoolMap + 1          
+            patchTensor = F.unfold(input=MaxpoolMap, kernel_size=kernel_size, stride=stride, padding=padding)   # dilation=1 by default
+
+            #patch_rows is a tensor where #rows = resolution of feature maps.
+            #Each row contains the indices of the axons corresponding to each pixel in the feature map
+            patch_rows = patchTensor.transpose(1, 2).squeeze(0)
+            patch_rows = patch_rows.to(torch.int16)   #convert patch_rows from FP32 tensor to INT16 tensor
+                    
+            #iterate through each patch row. #rows = resolution of output feature map 
+            for j, row in enumerate(patch_rows, start=1):
+                for i, elem in enumerate(row):
+                    index = int(elem.item())
+                    if index != 0:
+                        for feature_map in range(1, (in_c)+1):  #iterate through each channel of the input.
+                            key = f"{prev_layer_type}{prev_layer_idx}.{feature_map}.{index}"
+                            neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{feature_map}.{j}" 
+                            if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
+                                connections[neuronName] = ([], neuron)
+                                if layer_name == self.output_layer_name:   
+                                    outputs.append(neuronName)
+                            connections[key][0].append((neuronName, 1))
+
+        prev_layer_type = "maxpool"
+        prev_layer_idx += 1
+        layer_counters['maxpool'] += 1
+
+        return prev_layer_type, prev_layer_idx, layer_counters
