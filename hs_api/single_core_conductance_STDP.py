@@ -159,8 +159,9 @@ def build_cmd13_packet(delta_mode=1, decay_ex=0, decay_in=0, decay_w=0,
     for i in range(8):
         cmd[i] = opcode_bits[i]
 
-    # coreID at rxFIFO_dout[503:496] (byte 1, bits [499:496] for tdest)
-    core_bits = '000' + format(coreID & 0xF, '05b')
+    # coreID at rxFIFO_dout[503:499]: the router takes tdest from the top five
+    # bits of byte 62, the same encoding as every command in fpga_controller.py
+    core_bits = format((coreID & 0x1F) << 3, '08b')
     for i in range(8):
         cmd[8 + i] = core_bits[i]
 
@@ -185,8 +186,12 @@ def build_cmd13_packet(delta_mode=1, decay_ex=0, decay_in=0, decay_w=0,
     return _cmd_to_uint64_array(cmd, coreID)
 
 
-def send_cmd13_psc_params(fpga_controller, **kwargs):
+def send_cmd13_psc_params(fpga_controller=None, **kwargs):
     """Send CMD 13 to the FPGA. Wraps build_cmd13_packet + dma_dump_write.
+
+    The first argument is accepted for compatibility with existing callers and
+    is not used; the packet goes out through hs_bridge's dmadump.  Pass coreID=N
+    to configure core N.
 
     Example:
         send_cmd13_psc_params(fpga,
@@ -201,8 +206,9 @@ def send_cmd13_psc_params(fpga_controller, **kwargs):
             w_min=-32768,
         )
     """
+    from hs_bridge.wrapped_dmadump import dmadump
     data = build_cmd13_packet(**kwargs)
-    fpga_controller.dma_dump_write(data)
+    dmadump.dma_dump_write(data, len(data), 1, 0, 0, 0, dmadump.DmaMethodNormal)
     log.info("CMD 13 sent: delta_mode=%d, stdp_enable=%d, coba_mode=%d",
              kwargs.get('delta_mode', 1),
              kwargs.get('stdp_enable', 0),
@@ -273,26 +279,21 @@ def _cmd_to_uint64_array(cmd_bits, coreID):
 def decode_cmd13_packet(data):
     """Decode a uint64[64] DMA packet back to CMD 13 fields.
 
-    Useful for verifying packets before sending to FPGA.
+    Useful for verifying packets before sending to FPGA.  Each element holds
+    one byte: element i = rxFIFO_dout[8i+7:8i].
     """
-    # Reconstruct 512-bit string
-    bits = ''
-    for i in range(8):
-        bits += format(int(data[i]), '064b')
-    bits += '0' * (512 - len(bits))
-
     def get_field(high, low, width, signed=False):
         val = 0
         for b in range(low, high + 1):
-            bit_val = int(bits[511 - b])
-            val |= (bit_val << (b - low))
+            val |= ((int(data[b // 8]) >> (b % 8)) & 1) << (b - low)
         if signed and val >= (1 << (width - 1)):
             val -= (1 << width)
         return val
 
-    opcode = int(bits[0:8], 2)
+    opcode = int(data[63])
     return {
         'opcode': opcode,
+        'coreID': int(data[62]) >> 3,
         'delta_mode': get_field(0, 0, 1),
         'decay_ex': get_field(12, 1, 12),
         'decay_in': get_field(24, 13, 12),
