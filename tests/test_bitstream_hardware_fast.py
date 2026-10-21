@@ -1,6 +1,11 @@
+import os
 import pytest
 from hs_api.api import CRI_network
 from hs_api.neuron_models import ANN_neuron, LIF_neuron
+
+# Core under test: HIAER_CORE_ID=N runs every network on core N (default 0),
+# the same convention as test_DVS_small.py.
+_CORE_ID = int(os.environ.get("HIAER_CORE_ID", 0))
 import pytest
 
 #shift values for ANN neurons are -17
@@ -60,7 +65,7 @@ class TestBitStream:
             for i in range(numberNeurons):    #add each neuron to the connections dictionary
                 outputs.append(f"N1.{i}")
 
-            network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+            network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI", coreID=_CORE_ID)
             created_networks.append(network)
             
             return network, inputs, outputs
@@ -130,7 +135,7 @@ class TestBitStream:
                 for i in range(numberN2):    #add N2 neurons to the output list
                     outputs.append(f"N2.{i}")
 
-            network = CRI_network(axons=axons,connections=connections,outputs=outputs,target="CRI")
+            network = CRI_network(axons=axons,connections=connections,outputs=outputs,target="CRI", coreID=_CORE_ID)
             created_networks.append(network)
             
             return network, inputs, outputs
@@ -850,7 +855,7 @@ class TestBitStream:
             "N2.1": ([], model2)
         }
         outputs = ["N1.0", "N2.0", "N2.1"]
-        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
+        network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI", coreID=_CORE_ID)
 
         # T0: activate axon
         _ = network.step(["A0"])
