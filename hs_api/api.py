@@ -626,7 +626,6 @@ class CRI_network:
                     for ak, dv in self._delay_map[sk]:
                         self._delay_queue.append((ak, max(0, dv - 1)))
             if membranePotential == True:
-                breakpoint()
                 output = [
                     (self.connectome.get_neuron_by_idx(idx).get_user_key(), potential)
                     for idx, potential in enumerate(output)
