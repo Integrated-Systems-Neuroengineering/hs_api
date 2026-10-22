@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 from typing import Dict, Tuple, Any
 import torch.nn.functional as F
+import warnings
 
 class ModularSNNConverter:
 
@@ -13,11 +14,12 @@ class ModularSNNConverter:
     MAX_NEURONAL_FANOUT = 4095
     MAX_NEURONAL_FANIN = 8159
 
-    def __init__(self, energy_efficient_mode: bool = False, neuron_type: str = "ANN"):
+    def __init__(self, energy_efficient_mode: bool = False, quantization_aware_training: bool = False, neuron_type: str = "ANN"):
         # Dispatch table mapping PyTorch types to conversion handlers
         self.registry: Dict[type, callable] = {}      #values of dictionary are functions that handle the conversion of each layer type
         self._register_default_handlers()
         self.energy_efficient_mode = energy_efficient_mode
+        self.quantization_aware_training = quantization_aware_training
         self.neuron_type = neuron_type
         self.output_layer_name = None  
 
@@ -63,6 +65,38 @@ class ModularSNNConverter:
                 scales[name] = scale  # Store bias scale under its own name
         return int16_sd, scales
 
+    @staticmethod
+    def get_weights(weights):
+        if isinstance(weights, str):  #path to weights provided 
+            weights = torch.load(weights, map_location="cpu", weights_only=True)
+
+        elif not isinstance(weights, dict):
+            raise TypeError("Expected a .pth file path or a state_dict")
+
+        return weights
+
+    @staticmethod
+    def get_scales(weights):  #used if quantization utilized is not quantization aware training
+        scales = {}
+
+        same_scale = input("Apply the same scale to all weights? (y/n): ").strip().lower()
+
+        if same_scale == "y":
+            scale = float(input("Enter the scale value for all weights: "))
+
+            for key in weights.keys():
+                scales[key] = scale
+
+        elif same_scale == "n":
+            for key in weights.keys():
+                scale = float(input(f"Enter the scale value for '{key}': "))
+                scales[key] = scale
+
+        else:
+            raise ValueError("Invalid input. Please enter 'y' or 'n'.")
+        
+        return scales
+    
     def _trace_layer_shapes(self, model: nn.Module, sample_input: torch.Tensor) -> Dict[str, Tuple]:
         """Collects dynamic shape metadata for every layer using forward hooks.
         
@@ -106,16 +140,37 @@ class ModularSNNConverter:
                 return handler
             
         return None
-    def convert(self, model: nn.Module, weights_path: str, sample_input_shape=Tuple[int, ...]):
+    def convert(self, model: nn.Module, weights, sample_input_shape=Tuple[int, ...]):
         """Primary endpoint for end-users."""
         # 1. Load full model structure and weights
-        weights = torch.load(weights_path, weights_only=True, map_location="cpu")  # Load the weights separately
+        weights = self.get_weights(weights)  #weights variable can be path or dict
         model.load_state_dict(weights)
         model.eval()
         neuron_type = self.neuron_type  # Use the neuron type specified during initialization
 
         # 2. Quantize weights & biases
-        int16_sd, scales = self.fp32_to_int16_state_dict(weights)
+
+        #applies quantization to QAT weights
+        if self.quantization_aware_training == True:
+            int16_sd, scales = self.fp32_to_int16_state_dict(weights)
+
+        #assumes weights are already quantized using some method. Checks that weights are int16
+        else:
+            for key, tensor in weights.items():
+                if tensor.dtype != torch.int16:
+                    old_dtype = tensor.dtype
+
+                    weights[key] = tensor.to(torch.int16)
+
+                    warnings.warn(
+                        f"Weight '{key}' converted from {old_dtype} "
+                        f"to {weights[key].dtype}. Values may lose precision.",
+                        UserWarning
+                    )
+
+            scales = self.get_scales(weights)
+            int16_sd = weights
+            
 
         # 3. Trace shape execution graph
         dummy_input = torch.randn(sample_input_shape)
