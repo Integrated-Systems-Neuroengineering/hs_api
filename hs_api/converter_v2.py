@@ -203,8 +203,8 @@ class ModularSNNConverter:
 
         # 6. Dealing with energy-efficient mode (applicable to biases only)
         if not self.energy_efficient_mode:
-            bias = ANN_neuron(theta=-1) # In non-energy-efficient mode, we create a bias neuron for each layer that has a bias term. This neuron will be connected to the feature map neurons in that layer.  
-
+            bias = ["BiasN.1", ANN_neuron(theta=-1)] # In non-energy-efficient mode, we create a bias neuron for each layer that has a bias term. This neuron will be connected to the feature map neurons in that layer.
+            connections[bias[0]] = ([], bias[1])   #first bias neuron will be created regardless if biases are utilized in the model
         else:
             bias = {}  # In energy-efficient mode, we skip bias neurons and use bias axons. Bias axons must be saved in a separate dictionary for later use in the CRI. 
 
@@ -248,14 +248,14 @@ class ModularSNNConverter:
             return {'axons': axons, 'connections': connections, 'outputs': outputs, 'bias_axons': bias}  # Return both the config dictionary and the bias axon dictionary
 
     def convert_bias_helper(self, connections: dict, axons: dict, layer_bias: torch.Tensor, feature_map: int, neuronName: str, bias_implementation: object, bias_tracker: dict):
-        "bias_implementation can be either a dict (for energy-efficient mode) or an ANN neuron (for non-energy-efficient mode)"
-        neuronName_no_index= neuronName.rsplit('.', 1)[0] # remove index from neuron name (C1.1.1 becomes C1.1)
-        if neuronName_no_index not in bias_tracker:
-            bias_tracker[neuronName_no_index] = 1  #first bias neuron or axon has index 1 for the given output channel
-        biasIndex = bias_tracker[neuronName_no_index]
+        "bias_implementation can be either a dict (for energy-efficient mode) or a list containg two elements: the name of the current bias neuron and the ANN neuron object (for non-energy-efficient mode)"
 
         if isinstance(bias_implementation, dict):
             #implement bias using axon
+            neuronName_no_index= neuronName.rsplit('.', 1)[0] # remove index from neuron name (C1.1.1 becomes C1.1)
+            if neuronName_no_index not in bias_tracker:
+                bias_tracker[neuronName_no_index] = 1  #first bias neuron or axon has index 1 for the given output channel
+            biasIndex = bias_tracker[neuronName_no_index]
             biasAxonName = f"BiasA.{neuronName_no_index}.{biasIndex}"   
             if biasAxonName not in axons:
                 axons[biasAxonName] = []  #create bias axon in axon dictionary
@@ -276,17 +276,16 @@ class ModularSNNConverter:
             return
         
         #implement bias using ANN neuron
-        bias = layer_bias[feature_map-1]   #synaptic weight between bias neuron and feature map neruon
-        biasNeuronName = f"BiasN.{neuronName_no_index}.{biasIndex}"  
-        if biasNeuronName not in connections:
-            connections[biasNeuronName] = ([], bias_implementation)
-        else:
-            if len(connections[biasNeuronName][0]) == self.MAX_NEURONAL_FANOUT:
-                print(f"{biasNeuronName} exceeds max neuronal fan out. Creating another bias neuron.")
-                biasNeuronName = f"BiasN.{neuronName_no_index}.{biasIndex+1}"
-                bias_tracker[neuronName_no_index] += 1
-                connections[biasNeuronName] = ([], bias_implementation)
-        connections[biasNeuronName][0].append((neuronName, bias))    #add bias neuron to connections dictionary
+        biasNeuronName = bias_implementation[0]  #name of current bias neuron
+        biasNeuronModel = bias_implementation[1]
+        bias = layer_bias[feature_map-1]   #synaptic weight between bias neuron and feature map neuron
+        biasIndex = int(biasNeuronName.split(".")[1])
+        if len(connections[biasNeuronName][0]) == self.MAX_NEURONAL_FANOUT:
+            print(f"{biasNeuronName} exceeds max neuronal fan out. Creating another bias neuron.")
+            biasNeuronName = f"BiasN.{biasIndex+1}"    #change name of current bias neuron
+            connections[biasNeuronName] = ([], biasNeuronModel)    #add new bias neuron to connections dictionary
+            bias_implementation[0] = biasNeuronName        #update bias_implementation with new current bias neuron name
+        connections[biasNeuronName][0].append((neuronName, bias))    
         
     # Handler implementations (accepting standardized parameters)
     def _convert_conv2d(self, **kwargs):
