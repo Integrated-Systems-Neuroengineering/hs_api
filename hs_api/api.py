@@ -60,8 +60,8 @@ class CRI_network:
     # TODO: remove inputs
     # TODO: move target config.yaml
     def __init__(
-            self, axons, connections, outputs, target=None, simDump=False, coreID=0,
-            syn_64bit=False, syn_delay=0, membership=None, n_cores=None
+        self, axons, connections, outputs, target=None, simDump=False, coreID=0,
+        syn_64bit=False, syn_delay=0, membership=None, n_cores=None, psc_params=None
     ):
         # return
         # breakpoint()
@@ -156,6 +156,9 @@ class CRI_network:
                 n_cores=n_cores,
             )
             self.CRI.initalize_network()
+            if psc_params is not None:
+                from hs_api import single_core_conductance_STDP as p2
+                p2.send_cmd13_psc_params(coreID=coreID, **psc_params)
             self._load_noc_routing()
         elif self.target == "simpleSim":
             formatedOutputs = self.connectome.get_outputs_idx()
