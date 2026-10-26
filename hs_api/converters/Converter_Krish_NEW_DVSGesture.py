@@ -1,7 +1,7 @@
 import hs_bridge
 from hs_api.api import CRI_network
-from hs_api.neuron_models2 import IF_neuron
-from quantizer import Quantize_Network
+from hs_api.neuron_models import IF_neuron
+from hs_api.quantizer import Quantize_Network
 from spikingjelly.activation_based import functional
 
 import torch
@@ -13,6 +13,14 @@ import pickle
 from torch.utils.data import DataLoader, Subset
 from spikingjelly.datasets import pad_sequence_collate
 from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
+from spikingjelly.activation_based import surrogate
+from hs_api.custom_neurons import Custom_IFNode
+import pickle
+
+import sys
+
+sys.path.append("/home/ckdeng/myprojects/DVS_Gesture/ch=100_conv=3")
+
 
 # ─── CHANGE HERE FOR DIFFERENT MODELS ─────────────────────────────────────────
 # Swap model_file and PATH to test a different architecture.
@@ -24,53 +32,24 @@ from spikingjelly.datasets.dvs128_gesture import DVS128Gesture
 # Ch50 conv3:     import DVS_Stride2_Ch50_conv3_model;     input_res = 63
 # Ch100 conv3:    import DVS_Stride2_Ch100_conv3_model;    input_res = 63
 
-import DVS_Stride2_Ch1_model as model_file
+import krish_icrcdemo_hardware_Ch100_conv3 as model_file
 
-input_res     = model_file.input_res   # 63
-data_dir      = "/home/k7arora/DVS128Gesture"
-PATH          = "/home/k7arora/hs_api/examples/CRI_Mapping/chris_code/CIFAR10_SNN_Finetuning/Final_SNN_Model/DVS_weights_channels1"
+input_res     = 63
+num_classes = 11
+data_dir      = "/home/ckdeng/myprojects/DVS_Gesture"
+PATH          = "/home/ckdeng/myprojects/DVS_Gesture/ch=100_conv=3/checkpoint_max_T_10_C_100_lr_0.001.pth"
 frames_number = 10
 batch_size    = 64
 
 def _make_model():
-    return model_file.Model(model_file.num_classes)
+    return model_file.DVSGestureNetChrisModeled( spiking_neuron=Custom_IFNode, surrogate_function=surrogate.ATan(), detach_reset=True,)
+
 # ──────────────────────────────────────────────────────────────────────────────
 
 threshold = 32767
-N = IF_neuron(threshold)
+N = IF_neuron(theta=threshold)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-
-def _eval_sj_accuracy(net, test_loader, device, num_drain_steps):
-    net.eval()
-    loss_fn = nn.CrossEntropyLoss()
-    correct = 0
-    total = 0
-    total_loss = 0.0
-    with torch.no_grad():
-        for img, label, _ in test_loader:
-            functional.reset_net(net)
-            img = img.to(device)
-            img = img.transpose(0, 1)  # (T, B, C, H, W)
-            label = label.to(device)
-            T = img.shape[0]
-            out_fr = torch.zeros(label.shape[0], 11, device=device)
-            for t in range(T):
-                encoded_img = img[t]
-                out_fr += net(encoded_img)
-            blank_input = torch.zeros_like(encoded_img)
-            for _ in range(num_drain_steps):
-                out_fr += net(blank_input)
-            out_fr = out_fr / T
-            total_loss += loss_fn(out_fr, label).item() * label.numel()
-            correct += (out_fr.argmax(1) == label).sum().item()
-            total += label.numel()
-    accuracy = correct / total
-    avg_loss = total_loss / total
-    print(f"accuracy: {accuracy:.4f}")
-    return accuracy, avg_loss
-
 
 def _conv_output_res(res, kernel, stride, padding=0):
     return int((res + 2 * padding - (kernel - 1) - 1) / stride + 1)
@@ -178,39 +157,11 @@ def main():
     model = _make_model().to(device)
     checkpoint = torch.load(PATH, map_location=device, weights_only=False)
     model.load_state_dict(checkpoint["net"])
-    model.eval()
 
-    print("\n" + "="*50)
-    print("TESTING ORIGINAL MODEL ACCURACY")
-    print("="*50)
-    original_accuracy, original_loss = _eval_sj_accuracy(model, test_loader, device, num_layers)
-
-    # ── Quantize ───────────────────────────────────────────────────────────────
-    print("\n" + "="*50)
-    print("QUANTIZING MODEL")
-    print("="*50)
     qn = Quantize_Network(w_alpha=1, dynamic_alpha=False)
-    print(f"w_alpha: {qn.w_alpha}  dynamic_alpha: {qn.dynamic_alpha}  "
-          f"w_bits: {qn.w_bits}  w_delta: {qn.w_delta}")
-
+   
     net_quan = qn.quantize(model)
     net_quan.eval()
-
-    print("\n" + "="*50)
-    print("TESTING QUANTIZED MODEL ACCURACY")
-    print("="*50)
-    quantized_accuracy, quantized_loss = _eval_sj_accuracy(net_quan, test_loader, device, num_layers)
-
-    accuracy_drop = original_accuracy - quantized_accuracy
-    print(f"\n{'='*50}")
-    print(f"QUANTIZATION RESULTS:")
-    print(f"Original Accuracy:   {original_accuracy:.4f}")
-    print(f"Quantized Accuracy:  {quantized_accuracy:.4f}")
-    print(f"Accuracy Drop:       {accuracy_drop:.4f} ({accuracy_drop/max(original_accuracy,1e-8)*100:.2f}%)")
-    print(f"Original Loss:       {original_loss:.4f}")
-    print(f"Quantized Loss:      {quantized_loss:.4f}")
-    print(f"Loss increase:       {quantized_loss - original_loss:.4f}")
-    print(f"{'='*50}")
 
     # Cast quantized weights to int16 (matching the specific converters)
     int16_sd     = net_quan.state_dict()
@@ -330,76 +281,15 @@ def main():
     print(f"Max fan-out (axon):   {max_axon_fanout}")
     print(f"Outputs:              {outputs}")
 
-    # ── Create network ─────────────────────────────────────────────────────────
-    network = CRI_network(axons=axons, connections=connections, outputs=outputs, target="CRI")
-    print("Network Loaded onto HiAER Spike")
+    #save axon, connection, and output dictionaries
+    model_config = {
+        'axons': axons,
+        'connections': connections,
+        'outputs': outputs
+    }
 
-    # ── Hardware inference ─────────────────────────────────────────────────────
-    data      = []
-    correct   = 0
-    total     = 0
-    loss_fn   = nn.CrossEntropyLoss()
-    test_loss = 0
-
-    for img, label in test_set:
-        hs_bridge.FPGA_Execution.fpga_controller.clear(len(connections), False, 0)
-
-        network.read_membrane(outputs)
-
-        img          = img.to(device)          # [T, C, H, W]
-        spike_counts = torch.zeros(len(outputs))
-
-        for t in range(img.shape[0]):
-            flat = img[t].unsqueeze(0).flatten(start_dim=1).to(torch.int16)
-            inputs = [f"A{i}" for i, v in enumerate(flat[0]) if v.item() > 0]
-
-            network.read_membrane(outputs)
-            hardware_spikes, _, _ = network.step(inputs)
-            for spike in hardware_spikes:
-                if spike in outputs:
-                    spike_counts[spike] += 1
-                else:
-                    print(f"Error: invalid output spike {spike}")
-
-        clock_cycles, hbm_accesses = 0, 0
-        for _ in range(extra_timesteps):
-            hardware_spikes, clock_cycles, hbm_accesses = network.step([])
-            for spike in hardware_spikes:
-                if spike in outputs:
-                    spike_counts[spike] += 1
-                else:
-                    print(f"Error: invalid output spike {spike}")
-
-        data.append((clock_cycles, hbm_accesses))
-
-        spike_counts /= img.size(0)
-        predicted  = torch.argmax(spike_counts).item()
-        label_int  = int(label.item()) if torch.is_tensor(label) else int(label)
-        print(f"Predicted: {predicted}, Label: {label_int}")
-
-        total += 1
-        if predicted == label_int:
-            correct += 1
-        print(f"Running accuracy: {100 * correct / total:.2f}%")
-
-        label_onehot = F.one_hot(torch.tensor(label_int), num_classes=num_outputs).float()
-        test_loss += loss_fn(spike_counts, label_onehot).item()
-
-    snn_accuracy = 100 * correct / total
-    print(f"Accuracy of the network on the test images: {snn_accuracy:.2f}%")
-    print(f"Test Loss: {test_loss / total:.4f}")
-
-    # ── Save results ───────────────────────────────────────────────────────────
-    parent_directory = os.path.dirname(PATH)
-    output_txt = os.path.join(parent_directory, "accuracies_dvs_converted.txt")
-    mode = "a" if os.path.exists(output_txt) else "w"
-    with open(output_txt, mode) as f:
-        f.write(f"Original SNN Accuracy:   {original_accuracy:.2f}%\n")
-        f.write(f"Quantized SNN Accuracy:  {quantized_accuracy:.2f}%\n")
-        f.write(f"FPGA Converted Accuracy: {snn_accuracy:.2f}%\n")
-
-    np.save(os.path.join(parent_directory, "clock_cycles_dvs_converted.npy"), np.asarray(data))
-
+    with open('./DVS_model_config.pkl', 'wb') as f:
+        pickle.dump(model_config, f)
 
 if __name__ == "__main__":
     main()
