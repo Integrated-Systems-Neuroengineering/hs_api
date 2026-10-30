@@ -239,6 +239,9 @@ class ModularSNNConverter:
 
             prev_layer_name = name  # Update previous layer name for the next iteration
 
+        if len(connections["BiasN.1"][0]) == 0:
+            connections.pop("BiasN.1")   #remove first bias neuron in connections if it has no outgoing synapses
+
         if not self.energy_efficient_mode:
             print("Energy-efficient mode is OFF. Bias neurons have been created for layers with bias terms. Conversion returns only config dictionary for CRI.")
             return {'axons': axons, 'connections': connections, 'outputs': outputs} 
@@ -447,6 +450,7 @@ class ModularSNNConverter:
         # 3. Retrieve weights, scale,bias, and neuron type for this specific layer name
         weight_key = f"{layer_name}.weight"
         bias_key = f"{layer_name}.bias"
+        bias_tracker = {}
         layer_weights = int16_sd[weight_key]
         layer_bias = int16_sd[bias_key] if bias_key in int16_sd else None
 
@@ -474,6 +478,8 @@ class ModularSNNConverter:
                     neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{j}"
                     if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
                         connections[neuronName] = ([], neuron)
+                        if layer_bias is not None:
+                            self.convert_bias_helper(connections, axons, layer_bias, j, neuronName, bias, bias_tracker) 
                     connectingNeuron = (neuronName, weight.item())
                     allConnections.append(connectingNeuron)
                 axons[f"A{i+1}"] = allConnections
@@ -495,6 +501,8 @@ class ModularSNNConverter:
                     neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{i}"
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
+                        if layer_bias is not None:
+                            self.convert_bias_helper(connections, axons, layer_bias, i, neuronName, bias, bias_tracker)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
@@ -513,6 +521,8 @@ class ModularSNNConverter:
                     neuronName = f"{curr_layer_type}{prev_layer_idx+1}.{i}"
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
+                        if layer_bias is not None:
+                            self.convert_bias_helper(connections, axons, layer_bias, i, neuronName, bias, bias_tracker)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
