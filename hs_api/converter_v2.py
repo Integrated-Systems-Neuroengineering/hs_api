@@ -53,10 +53,10 @@ All indices are 1-based.
 - Non-spatial neurons (linear / gap): {type}{layer}.{neuron},
   e.g. linear4.10.
 - Bias neurons (standard mode): BiasN.{k}.
-- Bias axons (energy-efficient mode): BiasA.{group}.{k}, where group
-  is the target neuron name with its last index removed.
+- Bias axons (energy-efficient mode): BiasA.{layer}.{k}, where layer
+is the specific model layer the axon is handling biases for.
 
-{layer} is a single global counter shared by all layer types, so a
+{layer_idx} is a single global counter shared by all layer types, so a
 LeNet-style network produces conv1, maxpool2, conv3, maxpool4,
 linear5, ... rather than a separate counter per type.
 
@@ -103,19 +103,19 @@ class ModularSNNConverter:
         Controls how bias terms are implemented. If False (default),
         biases are implemented with always-firing bias *neurons*
         (BiasN.k) placed inside the network. If True, biases are
-        implemented with bias *axons* (BiasA.*) that are driven from the
-        host, which avoids spending neuron resources and spike traffic on
-        bias neurons. In this mode the bias axon names are also returned
-        under "bias_axons" so the host knows which axons to drive.
-    quantization_aware_training : bool, optional
+        implemented with bias *axons* (BiasA.*) that are activated by the user,
+        which avoids spending energy on always-firing bias neurons. In this mode the 
+        bias axon names are also returned under "bias_axons" so the user
+        knows which axons to activate at a given timestep. 
+    quantization_aware_training : bool
         If True, the supplied weights are assumed to be floating point
         (e.g. from a QAT model) and are quantized to int16 with a per-tensor
-        symmetric scale by fp32_to_int16_state_dict(). If False
-        (default), the weights are assumed to be quantized already; any
+        symmetric scale by fp32_to_int16_state_dict(). If False,
+        the weights are assumed to be quantized already; any
         non-int16 tensor is cast to int16 with a warning, and the per-tensor
         scales are requested interactively via get_scales().
-    neuron_type : {"ANN", "IF", "LIF"}, optional
-        Neuron model used for every converted layer. "ANN" (default)
+    neuron_type : {"ANN", "IF", "LIF"}
+        Neuron model used for every converted layer. "ANN"
         creates memory-less ANN_neuron
         instances with theta=0. "IF" / "LIF" create
         integrate-and-fire / leaky integrate-and-fire neurons whose threshold
@@ -162,7 +162,7 @@ class ModularSNNConverter:
     MAX_NEURONAL_FANOUT = 4095
     MAX_NEURONAL_FANIN = 8159
 
-    def __init__(self, energy_efficient_mode: bool = False, quantization_aware_training: bool = False, neuron_type: str = "ANN"):
+    def __init__(self, quantization_aware_training: bool, neuron_type: str, energy_efficient_mode: bool = False):
         """
         Initialize the converter and register the default layer handlers.
 
@@ -411,7 +411,7 @@ class ModularSNNConverter:
         def get_hook(name):
             def hook(module, input_tensor, output_tensor):
                 shapes[name] = {
-                    'in_shape': input_tensor[0].shape,
+                    'in_shape': input_tensor[0].shape,  #PyTorch forward hooks always receive positional inputs as a tuple. In this case, tuple contains only one tensor
                     'out_shape': output_tensor.shape
                 }
             return hook
@@ -470,7 +470,7 @@ class ModularSNNConverter:
         4. Create the first bias neuron BiasN.1 (standard mode) or an
            empty bias-axon dict (energy-efficient mode).
         5. Walk model.named_modules() and dispatch every module that has
-           a registered handler, threading the previous-layer state through
+           a registered handler, passing the previous-layer state through
            consecutive handlers.
         6. Standard mode only: remove BiasN.1 if no layer used it.
 
@@ -478,8 +478,9 @@ class ModularSNNConverter:
         ----------
         model : nn.Module
             Model architecture. Its parameter names must match the keys of
-            weights. Layers must be defined in the same order in which
-            they execute (see module docstring).
+            weights (e.g. layer name is conv1 so weight key is conv1.weight). 
+            Layers must be defined in the same order in which they 
+            execute (see module docstring).
         weights : str or dict
             Path to a .pth state dict or the state dict itself. In
             non-QAT mode, non-int16 tensors in this dict are replaced in
@@ -555,15 +556,15 @@ class ModularSNNConverter:
         registered_layer_names = list(shape_info.keys())
 
         if registered_layer_names:
-            print("Registered layer names in the model:")
+            print("Registered layer names in the model:")    
             for name in registered_layer_names:
                 print(f" - {name}")
-            self.output_layer_name = registered_layer_names[-1]
+            self.output_layer_name = registered_layer_names[-1]    #output layer is last leaf module executed during tracking
             print(f"Output layer identified as: {self.output_layer_name}")
         else:
             raise ValueError("No registered layers found in the model. Please ensure that the model contains supported layer types.")
 
-        # 4. Global IR representations
+        # 4. Global Intermediate Representations (IR)
         axons = {}
         connections = {}
         outputs = []
@@ -578,7 +579,7 @@ class ModularSNNConverter:
 
         # 6. Dealing with energy-efficient mode (applicable to biases only)
         if not self.energy_efficient_mode:
-            bias = ["BiasN.1", ANN_neuron(theta=-1)] # In non-energy-efficient mode, we create a bias neuron for each layer that has a bias term. This neuron will be connected to the feature map neurons in that layer.
+            bias = ["BiasN.1", ANN_neuron(theta=-1)] # In non-energy-efficient mode, we create a bias neuron to handle all biases in the model (additional bias neurons added if max neuronal fanout is exceeded)
             connections[bias[0]] = ([], bias[1])   #first bias neuron will be created regardless if biases are utilized in the model
         else:
             bias = {}  # In energy-efficient mode, we skip bias neurons and use bias axons. Bias axons must be saved in a separate dictionary for later use in the CRI. 
@@ -590,9 +591,6 @@ class ModularSNNConverter:
             if handler is None:
                 print(f"Skipping unregistered module type: {type(module).__name__} for layer {name}")
                 continue  # Skip unregistered module types (e.g., Dropout, Flatten, etc.)
-
-            #layer_shapes = shape_info[name]
-            #neuron_type = self.get_neuron_type_string(module)
 
             # Delegate to layer handler
             prev_layer_type, prev_layer_idx, layer_counters = handler(
@@ -618,14 +616,14 @@ class ModularSNNConverter:
             connections.pop("BiasN.1")   #remove first bias neuron in connections if it has no outgoing synapses
 
         if not self.energy_efficient_mode:
-            print("Energy-efficient mode is OFF. Bias neurons have been created for layers with bias terms. Conversion returns only config dictionary for CRI.")
+            print("Energy-efficient mode is OFF. Bias neurons have been created to handle all model biases. Conversion returns only config dictionary for CRI.")
             return {'axons': axons, 'connections': connections, 'outputs': outputs} 
 
         else:
             print("Energy-efficient mode is ON. Bias axons have been created for layers with bias terms. Conversion returns config dictionary for CRI and bias axon dictionary. BOTH are used to run model on FPGA.")
             return {'axons': axons, 'connections': connections, 'outputs': outputs, 'bias_axons': bias}  # Return both the config dictionary and the bias axon dictionary
 
-    def convert_bias_helper(self, connections: dict, axons: dict, layer_bias: torch.Tensor, feature_map: int, neuronName: str, bias_implementation: object, bias_tracker: dict):
+    def convert_bias_helper(self, connections: dict, axons: dict, layer_bias: torch.Tensor, feature_map: int, neuronName: str, bias_implementation: object):
         """
         Bias_implementation can be either a dict (for energy-efficient mode) or a list containing two elements: the name of the current bias neuron and the ANN neuron object (for non-energy-efficient mode)
 
@@ -646,14 +644,13 @@ class ModularSNNConverter:
 
         Energy-efficient mode (bias_implementation is a dict)
             The synapse is added to a bias axon named
-            BiasA.{group}.{k}, where group is neuronName without
-            its last index (one group per output channel for conv layers,
-            one group per layer for linear layers). When an axon reaches
-            MAX_AXONAL_FANOUT synapses a new axon with index k+1 is
-            created. Each layer has its own corresponding set of bias axons. 
-            No bias axon has synapses to neurons belonging to different layers.
-            The axon name is recorded in bias_implementation[layer] 
-            so the user knows which axons to activate for a given layer.
+            BiasA.{layer}.{k}. The biases in each layer are handled by
+            a single axon until the axon reaches MAX_AXONAL_FANOUT synapses,
+            at which point a new axon with index k+1 is created to handle
+            the remaining biases.No bias axon has synapses to neurons 
+            belonging to different layers. The axon name is recorded in
+            bias_implementation[layer] so the user knows which axons 
+            to activate for a given layer.
 
         Parameters
         ----------
@@ -673,43 +670,29 @@ class ModularSNNConverter:
             [current_bias_neuron_name, bias_neuron_model] in standard
             mode, or the bias-axon dict in energy-efficient mode. Mutated in
             place.
-        bias_tracker : dict[str, int]
-            Per-layer state mapping a bias group to its current bias axon
-            index. Only used in energy-efficient mode.
 
         Returns
         -------
         None
-
-        Notes
-        -----
-        In energy-efficient mode the axon name is appended to
-        bias_implementation[layer] once per target neuron, so the list
-        may contain repeated names.
         """
 
         if isinstance(bias_implementation, dict):
             #implement bias using axon
             layer_name = neuronName.split('.')[0]  # Extract layer name from neuronName (e.g., "conv1" from "conv1.1.1")
-            if layer_name not in bias_tracker:
-                bias_tracker[layer_name] = 1  #first bias neuron or axon has index 1 for the given output channel
-            biasIndex = bias_tracker[layer_name]
-            biasAxonName = f"BiasA.{layer_name}.{biasIndex}"   
-            if biasAxonName not in axons:
-                axons[biasAxonName] = []  #create bias axon in axon dictionary
-            else:
-                if len(axons[biasAxonName]) == self.MAX_AXONAL_FANOUT:   #check if axon fan-out equals limit
-                    print(f"{biasAxonName} exceeds max axonal fanout. Creating another bias axon." )
-                    biasAxonName = f"BiasA.{layer_name}.{biasIndex+1}"
-                    bias_tracker[layer_name] += 1
-                    axons[biasAxonName] = []  #create bias axon in axon dictionary
-
-            bias = layer_bias[feature_map-1]   #synaptic weight between bias axon and feature map neuron. feature_map-1 because feature_map starts from 1 while layer_bias is indexed from 0
-            axons[biasAxonName].append((neuronName, bias))   #add bias axon to axon dictionary
-            
             if layer_name not in bias_implementation:
-                bias_implementation[layer_name] = []
-            bias_implementation[layer_name].append(biasAxonName)  # Store bias axon name
+                bias_implementation[layer_name] = [f"BiasA.{layer_name}.1"]  #first bias axon of the current layer has index 1 
+                axons[f"BiasA.{layer_name}.1"] = []  #create first bias axon in axon dictionary
+            biasIndex = len(bias_implementation[layer_name])  #number of axons in bias_implementation[layer_name] equals index of current bias axon
+            biasAxonName = f"BiasA.{layer_name}.{biasIndex}"   
+
+            if len(axons[biasAxonName]) == self.MAX_AXONAL_FANOUT:   #check if axon fan-out equals limit
+                print(f"{biasAxonName} exceeds max axonal fanout. Creating another bias axon.")
+                biasAxonName = f"BiasA.{layer_name}.{biasIndex+1}"
+                bias_implementation[layer_name].append(biasAxonName)
+                axons[biasAxonName] = []  #create bias axon in axon dictionary
+
+            bias = layer_bias[feature_map-1]   #synaptic weight between bias axon and neuron. feature_map-1 because feature_map starts from 1 while layer_bias is indexed from 0
+            axons[biasAxonName].append((neuronName, bias))   #add bias axonal synapse to axon dictionary
             return
         
         #implement bias using ANN neuron
@@ -795,7 +778,6 @@ class ModularSNNConverter:
         # 3. Retrieve weights, scale,bias, and neuron type for this specific layer name
         weight_key = f"{layer_name}.weight"
         bias_key = f"{layer_name}.bias"
-        bias_tracker = {}
         layer_weights = int16_sd[weight_key]
         layer_bias = int16_sd[bias_key] if bias_key in int16_sd else None
         
@@ -820,7 +802,7 @@ class ModularSNNConverter:
             for i in range(1, (in_c * in_h * in_w) + 1): # Axon indices start from 1
                 axons[f"A{i}"] = []
 
-            # axons -> C0 neurons
+            # axons -> conv neurons
             axonMap = torch.arange(in_c * in_h * in_w, dtype=torch.float32).reshape(1, in_c, in_h, in_w)
             axonMap = axonMap + 1 #each entry labeled 1 to in_c * in_h * in_w to ignore zeros from padding          
             patchTensor = F.unfold(input=axonMap, kernel_size=kernel_size, stride=stride, padding=padding)   
@@ -829,7 +811,7 @@ class ModularSNNConverter:
             #Each row contains the indices of the axons corresponding to each pixel in output channel feature maps
             patch_rows = patchTensor.transpose(1, 2).squeeze(0) 
             patch_rows = patch_rows.to(torch.int16)   #convert patch_rows from FP32 tensor to INT16 tensor
-            # for each axon index in patch_rows, create a connection to the corresponding C0 neurons with the appropriate weight from layer_weights
+            # for each axon index in patch_rows, create a connection to the corresponding conv neurons with the appropriate weight from layer_weights
             for output_pixel , row in enumerate(patch_rows, start=1):
                 for i, elem in enumerate(row):   #each elem in row is the axon index
                     axon_id = int(elem.item())
@@ -842,7 +824,7 @@ class ModularSNNConverter:
                                 connections[neuronName] = ([], neuron) 
                                 # first time this neuron is being added, implement bias if applicable
                                 if layer_bias is not None:
-                                    self.convert_bias_helper(connections, axons, layer_bias, output_channel, neuronName, bias, bias_tracker) 
+                                    self.convert_bias_helper(connections, axons, layer_bias, output_channel, neuronName, bias) 
                                 # for the first time this neuron is being added, check if it is the output layer and add to outputs list if so
                                 if layer_name == self.output_layer_name:   #if this is the output layer, add neurons to outputs list
                                     outputs.append(neuronName)
@@ -872,7 +854,7 @@ class ModularSNNConverter:
                                 connections[neuronName] = ([], neuron) 
                                 #this is first time this neuron is being added, implement bias if applicable
                                 if layer_bias is not None:
-                                    self.convert_bias_helper(connections, axons, layer_bias, output_channel, neuronName, bias, bias_tracker) 
+                                    self.convert_bias_helper(connections, axons, layer_bias, output_channel, neuronName, bias) 
                                 #this is first time this neuron is being added, check if it is the output layer and add to outputs list if so
                                 if layer_name == self.output_layer_name:   
                                     outputs.append(neuronName)
@@ -956,7 +938,6 @@ class ModularSNNConverter:
         # 3. Retrieve weights, scale,bias, and neuron type for this specific layer name
         weight_key = f"{layer_name}.weight"
         bias_key = f"{layer_name}.bias"
-        bias_tracker = {}
         layer_weights = int16_sd[weight_key]
         layer_bias = int16_sd[bias_key] if bias_key in int16_sd else None
 
@@ -985,7 +966,7 @@ class ModularSNNConverter:
                     if neuronName not in connections:  #first time this neuron is being added, initialize its connection entry
                         connections[neuronName] = ([], neuron)
                         if layer_bias is not None:
-                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias, bias_tracker) 
+                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias) 
                     connectingNeuron = (neuronName, weight.item())
                     allConnections.append(connectingNeuron)
                 axons[f"A{i+1}"] = allConnections
@@ -1008,7 +989,7 @@ class ModularSNNConverter:
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
                         if layer_bias is not None:
-                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias, bias_tracker)
+                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
@@ -1028,7 +1009,7 @@ class ModularSNNConverter:
                     if neuronName not in connections:
                         connections[neuronName] = ([], neuron)
                         if layer_bias is not None:
-                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias, bias_tracker)
+                            self.convert_bias_helper(connections, axons, layer_bias, output_feature, neuronName, bias)
                     connectingNeuron = (neuronName, elem.item())
                     allConnections.append(connectingNeuron)
 
