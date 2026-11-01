@@ -20,15 +20,28 @@ class neuron_model(ABC):
     def get_Lambda(self):
         pass
 
-    def __hash__(self):
-        return hash(
-            (
-                self.get_theta(),
-                self.get_neuronModel,
-                self.get_nu(),
-                self.get_Lambda(),
-            )
+    def _settings(self):
+        """Every setting of the neuron, so neurons with the same settings share one model."""
+        return (
+            self.get_neuronModel(),
+            self.get_theta(),
+            self.get_nu(),
+            self.get_Lambda(),
+            self.get_refractory_max(),
+            self.get_dual_synapse_en(),
+            self.get_delay_value(),
+            self.get_legacy_noise_en(),
+            getattr(self, "shadow_uram_offset", 0),  # IF_neuron has no shadow_uram_offset
+            int(getattr(self, "soft_reset", False)),  # only IF_neuron has soft_reset
         )
+
+    def __hash__(self):
+        return hash(self._settings())
+
+    def __eq__(self, other):
+        if not isinstance(other, neuron_model):
+            return NotImplemented
+        return self._settings() == other._settings()
 
     def __lt__(self, other):
         return hash(self) < hash(other)
