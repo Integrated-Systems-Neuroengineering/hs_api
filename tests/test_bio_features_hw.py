@@ -45,8 +45,10 @@ _TRACES = os.environ.get("HIAER_BIO_TRACES")
 BIG = 1_000_000
 EVERY = lambda n: list(range(n))
 
-# Every test uses a different threshold: a threshold change makes the core clear all
-# neuron state (V and the synaptic currents) on the next step, so nothing carries over.
+# Each test loads its own network; the load runs clear(), which zeroes V and the Row B state (synaptic currents,
+# adaptation) and, where the bitstream supports opcode 18, drops pending delayed inputs.  Each test then runs 8 idle
+# steps in the biological mode before applying its own CMD 13.  The per-test threshold only keeps the records
+# distinguishable; changing a threshold does not clear state.
 CONTROL = dict(id="F00", name="control_delta_mode", cmd13=dict(delta_mode=1),
                syn={"A0": 1000}, sched={"A0": [0]}, theta=BIG + 0, steps=8)
 
@@ -105,6 +107,10 @@ def _hardware(f):
                       syn_64bit=f.get("syn_64bit", False), syn_delay=f.get("syn_delay", 0))
     if f.get("syn_64bit"):
         net.CRI.compiledNetwork.create_synapses(syn_64bit=True)  # write synapses again in 64-bit format
+    # drain what the previous test left: 8 idle biological-mode steps (this network's load already ran clear())
+    p2.send_cmd13_psc_params(coreID=_CORE_ID, delta_mode=0)
+    for _ in range(8):
+        net.step([])
     p2.send_cmd13_psc_params(coreID=_CORE_ID, **f["cmd13"])
     hw, spikes = [], []
     try:
