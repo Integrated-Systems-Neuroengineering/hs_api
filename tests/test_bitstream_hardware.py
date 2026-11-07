@@ -351,7 +351,10 @@ class TestBitStream:
         
         Network Configuration:
             - 3 axons: A0 (weight=0), A1 (weight=-1), A2 (weight=+1)
-            - 1 LIF neuron with threshold=20, leak=63, shift=-17 (leak=63 means LIF_neuron has basically no leak)
+            - 1 LIF neuron with threshold=20, leak=63, shift=-17
+              (LIF leak uses plain floor math: V = V - (V >> Lambda), an arithmetic shift.
+              With Lambda=63, V >> 63 is 0 for V >= 0 and -1 for V < 0, so a positive MP
+              never leaks and a negative MP moves up by 1 each time step.)
             
         Test Procedure:
             Time step 0: No input
@@ -362,15 +365,15 @@ class TestBitStream:
         Expected Behavior:
             - Time step 0: MP=0 (no input, no spikes)
             - Time step 1: MP=-1 (negative input applied, no spikes)
-            - Time step 2: MP=0 (positive cancels negative, no spikes)
-            - Time step 3-4: MP=0 (no spikes)
+            - Time step 2: MP=1 (leak: -1 - (-1 >> 63) = 0, then +1 input, no spikes)
+            - Time step 3-4: MP=1 (1 >> 63 = 0, so no leak; no spikes)
             
         Explanation:
             One LIF neuron is connected to three axons: A0 (weight=0), A1 (weight=-1), A2 (weight=+1).
             No input is passed in the 0th time step, A1 is activated in the 1st time step, and A2 is
-            activated in the 2nd time step. Thus, at each time step, the membrane potentials are expected
-            to be 0, -1, 0, 0, and 0 respectively, with no spikes occurring throughout. This tests the
-            hardware's ability to perform summation of both positive and negative weights.
+            activated in the 2nd time step. With floor-math leak, the membrane potentials are expected
+            to be 0, -1, 1, 1, and 1 respectively, with no spikes occurring throughout. This tests the
+            hardware's summation of positive and negative weights and the floor-math leak at Lambda=63.
         """
         network, inputs, outputs = setup_dictionaries(
             numberAxons=3, 
@@ -407,7 +410,7 @@ class TestBitStream:
         FPGA_Vs.append(results5[0][1])
         FPGA_Ss.append(currSpikes5[0])
 
-        expected_Vs = [0, -1, 0, 0, 0]
+        expected_Vs = [0, -1, 1, 1, 1]  # floor-math leak, see docstring
         expected_Ss = [[], [], [], [], []]
 
         assert FPGA_Vs == expected_Vs, f"Membrane potentials do not match expected values: Outputs {FPGA_Vs}, Expected {expected_Vs}"
