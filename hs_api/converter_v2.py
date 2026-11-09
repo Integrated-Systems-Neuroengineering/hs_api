@@ -80,11 +80,15 @@ Example
 """
 
 from hs_api.neuron_models import IF_neuron, ANN_neuron, LIF_neuron
+from hs_api.quantizer import Quantize_Network
 import torch
 import torch.nn as nn
 from typing import Dict, Tuple, Any
 import torch.nn.functional as F
 import warnings
+import difflib
+import math
+import sys
 
 class ModularSNNConverter:
     """
@@ -112,8 +116,9 @@ class ModularSNNConverter:
         (e.g. from a QAT model) and are quantized to int16 with a per-tensor
         symmetric scale by fp32_to_int16_state_dict(). If False,
         the weights are assumed to be quantized already; any
-        non-int16 tensor is cast to int16 with a warning, and the per-tensor
-        scales are requested interactively via get_scales().
+        non-int16 tensor is cast to int16 with a warning, and the neuron
+        thresholds come from the scales argument of convert() (or are
+        requested interactively via get_scales() if it is omitted).
     neuron_type : {"ANN", "IF", "LIF"}
         Neuron model used for every converted layer. "ANN"
         creates memory-less ANN_neuron
@@ -162,17 +167,25 @@ class ModularSNNConverter:
     MAX_NEURONAL_FANOUT = 4095
     MAX_NEURONAL_FANIN = 8159
 
-    def __init__(self, quantization_aware_training: bool, neuron_type: str, energy_efficient_mode: bool = False):
+    def __init__(self, neuron_type: str, quantization_aware_training: bool = False, post_training_quantization: bool = False, energy_efficient_mode: bool = False):
         """
         Initialize the converter and register the default layer handlers.
 
         See the class docstring for a description of each parameter.
         """
+         # Prevent enabling both quantization methods
+        if quantization_aware_training and post_training_quantization:
+            raise ValueError(
+                "quantization_aware_training and post_training_quantization "
+                "cannot both be True. Please select only one or disable both."
+            )
+
         # Dispatch table mapping PyTorch types to conversion handlers
         self.registry: Dict[type, callable] = {}      #values of dictionary are functions that handle the conversion of each layer type
         self._register_default_handlers()
         self.energy_efficient_mode = energy_efficient_mode
         self.quantization_aware_training = quantization_aware_training
+        self.post_training_quantization = post_training_quantization
         self.neuron_type = neuron_type
         self.output_layer_name = None  
 
@@ -329,57 +342,231 @@ class ModularSNNConverter:
 
         return weights
 
-    @staticmethod
-    def get_scales(weights):  #used if quantization utilized is not quantization aware training
+    def _weighted_layers(self, model: nn.Module, weights: dict, shape_info: dict) -> list:
         """
-        Interactively ask the user for the quantization scale of each tensor.
+        List the layers that need a threshold, in conversion order.
 
-        Used when the weights were quantized outside this converter, so the
-        scale that maps them back to floating point is not known. The user is
-        first asked whether a single scale applies to all tensors; if not,
-        one scale is requested per tensor.
+        A layer needs a threshold if it has a registered handler and a
+        "{name}.weight" entry in the state dict (by default Conv2d and
+        Linear). Pooling layers are excluded because their thresholds are
+        fixed by the pooling window.
+
+        Returns
+        -------
+        list[dict]
+            One dict per layer with keys "name", "type",
+            "weight_shape" and "out_shape" (None if the layer did not
+            run during tracing).
+        """
+        layers = []
+        for name, module in model.named_modules():
+            if not name or self._get_handler(module) is None:
+                continue
+            weight_key = f"{name}.weight"
+            if weight_key not in weights:
+                continue
+            out_shape = shape_info.get(name, {}).get('out_shape')
+            layers.append({
+                "name": name,
+                "type": type(module).__name__,
+                "weight_shape": tuple(weights[weight_key].shape),
+                "out_shape": tuple(out_shape) if out_shape is not None else None,
+            })
+        return layers
+
+    @staticmethod
+    def _format_layer_table(layers: list, thresholds: dict = None) -> str:
+        """
+        Render layers as an aligned text table.
 
         Parameters
         ----------
-        weights : dict[str, torch.Tensor]
-            State dict whose keys determine which scales are requested.
+        layers : list[dict]
+            Output of _weighted_layers().
+        thresholds : dict[str, float], optional
+            Threshold per layer name. If given, a "Threshold" column is added.
+        """
+        headers = ["#", "Layer", "Type", "Weight shape", "Output shape"]
+        if thresholds is not None:
+            headers.append("Threshold")
+
+        rows = []
+        for i, layer in enumerate(layers, 1):
+            row = [
+                str(i),
+                layer["name"],
+                layer["type"],
+                str(layer["weight_shape"]),
+                str(layer["out_shape"]) if layer["out_shape"] is not None else "-",
+            ]
+            if thresholds is not None:
+                row.append(repr(thresholds[layer["name"]]))
+            rows.append(row)
+
+        widths = [max(len(headers[c]), *(len(r[c]) for r in rows)) if rows else len(headers[c])
+                  for c in range(len(headers))]
+
+        def fmt(cells):
+            return "  " + "  ".join(cell.ljust(w) for cell, w in zip(cells, widths)).rstrip()
+
+        lines = [fmt(headers), "  " + "  ".join("-" * w for w in widths)]
+        lines += [fmt(r) for r in rows]
+        return "\n".join(lines)
+
+    def get_scales(self, layers: list) -> dict:  #used if quantization utilized is not quantization aware training or post-training quantization
+        """
+        Interactively ask the user for the threshold of each weighted layer.
+
+        Only used when no thresholds were passed to convert(). The layers are
+        listed first; the user is then asked whether a single threshold
+        applies to all layers and, if not, one threshold per layer.
+
+        Parameters
+        ----------
+        layers : list[dict]
+            Output of _weighted_layers().
+
+        Returns
+        -------
+        dict[str, str]
+            Raw answer per layer name. Values are validated by
+            _resolve_thresholds().
+
+        Raises
+        ------
+        RuntimeError
+            If no interactive terminal is available (e.g. under nohup or
+            in a batch job). The message explains how to pass the
+            thresholds to convert() instead.
+        ValueError
+            If the yes/no answer is not "y" or "n".
+        """
+        table = self._format_layer_table(layers)
+
+        if sys.stdin is None or not sys.stdin.isatty(): #checks whether Python is running in an interactive terminal where the user can type input
+            raise RuntimeError(
+                "No thresholds were provided and there is no interactive terminal "
+                "to ask for them (e.g. running under nohup or in a batch job).\n"
+                "Pass them to convert() with the 'scales' argument:\n"
+                "  scales=128.0                     same threshold for every layer\n"
+                f"  scales=[t1, t2, ...]             one value per layer, in the order below ({len(layers)} values)\n"
+                "  scales={'layer_name': t, ...}    one value per layer name below\n\n"
+                "Weighted layers, in order:\n" + table
+            )
+
+        print("Weighted layers that need a threshold, in order:\n" + table)
+        same = input("Apply the same threshold to all layers? (y/n): ").strip().lower()
+
+        if same == "y":
+            value = input("Enter the threshold for all layers: ")
+            return {layer["name"]: value for layer in layers}
+
+        if same == "n":
+            answers = {}
+            for i, layer in enumerate(layers, 1):
+                answers[layer["name"]] = input(
+                    f"Enter the threshold for layer {i} '{layer['name']}' "
+                    f"({layer['type']}, weight shape {layer['weight_shape']}): "
+                )
+            return answers
+
+        raise ValueError("Invalid input. Please enter 'y' or 'n'.")
+
+    def _resolve_thresholds(self, scales, layers: list) -> dict:
+        """
+        Turn the user's scales argument into one threshold per weighted layer.
+
+        Parameters
+        ----------
+        scales : None, float, list/tuple of float, or dict[str, float]
+            - None: ask interactively (see get_scales()).
+            - number: the same threshold for every layer.
+            - list/tuple: one threshold per weighted layer, in the order
+              returned by _weighted_layers().
+            - dict: maps layer name (e.g. "conv1"; "conv1.weight" is
+              also accepted) to its threshold. Every weighted layer must
+              be present.
+        layers : list[dict]
+            Output of _weighted_layers().
 
         Returns
         -------
         dict[str, float]
-            Scale for every key in weights.
+            Threshold per layer name, in layer order.
 
         Raises
         ------
         ValueError
-            If the yes/no answer is not "y" or "n", or if an entered
-            scale cannot be parsed as a float.
-
-        Notes
-        -----
-        This method blocks on input() and therefore cannot be used in
-        non-interactive environments (batch jobs, CI, some notebooks).
+            If the number of values or the layer names do not match the
+            model. The message includes the table of weighted layers.
+        TypeError
+            If scales has an unsupported type.
         """
-        scales = {}
+        names = [layer["name"] for layer in layers]
+        table = self._format_layer_table(layers)
 
-        same_scale = input("Apply the same scale to all weights? (y/n): ").strip().lower()
+        if scales is None:
+            scales = self.get_scales(layers)
 
-        if same_scale == "y":
-            scale = float(input("Enter the scale value for all weights: "))
+        if isinstance(scales, (list, tuple)):
+            if len(scales) != len(names):
+                raise ValueError(
+                    f"Got {len(scales)} threshold value(s) but the model has "
+                    f"{len(names)} weighted layer(s). Provide one value per layer, "
+                    "in this order:\n" + table
+                )
+            raw = dict(zip(names, scales))  #creates a dictionary where keys come from names and values come from scales
 
-            for key in weights.keys():
-                scales[key] = scale
+        elif isinstance(scales, dict):
+            raw = {}
+            for key, value in scales.items():
+                name = key[:-len(".weight")] if isinstance(key, str) and key.endswith(".weight") else key  #removes .weight suffix if present
+                if name in raw:
+                    raise ValueError(f"Threshold for layer '{name}' was given more than once.")
+                raw[name] = value
 
-        elif same_scale == "n":
-            for key in weights.keys():
-                scale = float(input(f"Enter the scale value for '{key}': "))
-                scales[key] = scale
+            unknown = [k for k in raw if k not in names] #collects layer names that are in the input scales dictionary but not in the model's weighted layers
+            missing = [n for n in names if n not in raw] #collects layer names that are in the model's weighted layers but not in the input scales dictionary
+            if unknown or missing:
+                problems = []
+                for key in unknown:
+                    close = difflib.get_close_matches(str(key), names, n=1)
+                    hint = f" (did you mean '{close[0]}'?)" if close else ""
+                    problems.append(f"  - unknown layer name '{key}'{hint}")
+                if missing:
+                    problems.append(f"  - no threshold given for: {', '.join(missing)}")
+                raise ValueError(
+                    "Invalid threshold dictionary:\n" + "\n".join(problems) +
+                    "\n\nValid layer names, in order:\n" + table
+                )
+
+        elif isinstance(scales, (str, bytes)) or isinstance(scales, bool):
+            raise TypeError(
+                f"scales must be a number, a list of numbers, or a dict of "
+                f"{{layer_name: number}}, got {type(scales).__name__}."
+            )
 
         else:
-            raise ValueError("Invalid input. Please enter 'y' or 'n'.")
-        
-        return scales
-    
+            raw = {n: scales for n in names}   # single value for every layer
+
+        thresholds = {}
+        for name in names:
+            value = raw[name]
+            try:
+                if isinstance(value, bool):
+                    raise TypeError
+                value = float(value)
+            except (TypeError, ValueError):
+                raise ValueError(
+                    f"Threshold for layer '{name}' must be a number, got {raw[name]!r}."
+                ) from None
+            if not math.isfinite(value):
+                raise ValueError(
+                    f"Threshold for layer '{name}' must be a finite number, got {value}."
+                )
+            thresholds[name] = value
+        return thresholds
+
     def _trace_layer_shapes(self, model: nn.Module, sample_input: torch.Tensor) -> Dict[str, Tuple]:
         """Collects dynamic shape metadata for every layer using forward hooks.
         
@@ -456,14 +643,14 @@ class ModularSNNConverter:
                 return handler
             
         return None
-    def convert(self, model: nn.Module, weights, sample_input_shape: Tuple[int, ...]):
+    def convert(self, model: nn.Module, weights, sample_input_shape: Tuple[int, ...], scales=None):
         """Primary endpoint for end-users.
 
         Runs the full conversion pipeline:
 
         1. Load weights into model and switch it to eval mode.
-        2. Quantize the weights (QAT mode) or validate/cast them to int16 and
-           request their scales interactively (non-QAT mode).
+        2. Quantize the weights (QAT mode) or validate/cast them to int16
+           (non-QAT mode).
         3. Trace per-layer input/output shapes with a random input of shape
            sample_input_shape and identify the output layer as the last
            leaf module to execute.
@@ -488,6 +675,21 @@ class ModularSNNConverter:
         sample_input_shape : tuple of int
             Shape of one model input including a batch dimension of 1, e.g.
             (1, 1, 28, 28) for MNIST or (1, 784) for an MLP.
+        scales : float, list of float, dict[str, float] or None, optional
+            Neuron thresholds for the weighted layers (Conv2d / Linear) when
+            neuron_type is "IF" or "LIF" and QAT is not used. Ignored
+            (with a warning) for "ANN" neurons and in QAT mode.
+
+            - number: the same threshold for every weighted layer.
+            - list: one threshold per weighted layer, in model order.
+            - dict: {layer_name: threshold}, e.g. {"conv1": 128.0};
+              "conv1.weight" style keys are also accepted.
+            - None (default): ask interactively. Raises RuntimeError if
+              there is no terminal (e.g. under nohup).
+
+            If the count or names do not match the model, a ValueError lists
+            the weighted layers in order. On success, a table of layer name,
+            type, shapes and threshold is printed.
 
         Returns
         -------
@@ -499,12 +701,15 @@ class ModularSNNConverter:
         Raises
         ------
         TypeError
-            If weights is neither a path nor a dict.
+            If weights is neither a path nor a dict, or scales has an
+            unsupported type.
         RuntimeError
             If weights does not match the model's parameters
-            (raised by load_state_dict).
+            (raised by load_state_dict), or if scales is None and there is
+            no interactive terminal to ask for thresholds.
         ValueError
-            If tracing finds no leaf modules, if neuron_type is not
+            If scales does not provide exactly one valid threshold per
+            weighted layer, if tracing finds no leaf modules, if neuron_type is not
             supported, or if a layer follows a layer type its handler cannot
             connect to.
 
@@ -528,8 +733,17 @@ class ModularSNNConverter:
 
         #applies quantization to QAT weights
         if self.quantization_aware_training == True:
-            int16_sd, scales = self.fp32_to_int16_state_dict(weights)
+            print("Quantization-aware training is enabled. Quantizing weights to int16 and computing thresholds.")
+            int16_sd, qat_scales = self.fp32_to_int16_state_dict(weights)
 
+        #applies post-training quantization to weights
+        elif self.post_training_quantization == True:
+            print("Post-training quantization is enabled. Quantizing weights to int16 and computing thresholds.")
+            qn = Quantize_Network(w_alpha=1, dynamic_alpha=False) #tau=2.0 by default
+            quant_model = qn.quantize(model)
+            quant_model.eval()
+            int16_sd = quant_model.state_dict()
+            
         #assumes weights are already quantized using some method. Checks that weights are int16
         else:
             for key, tensor in weights.items():
@@ -544,7 +758,6 @@ class ModularSNNConverter:
                         UserWarning
                     )
 
-            scales = self.get_scales(weights)
             int16_sd = weights
             
 
@@ -563,6 +776,40 @@ class ModularSNNConverter:
             print(f"Output layer identified as: {self.output_layer_name}")
         else:
             raise ValueError("No registered layers found in the model. Please ensure that the model contains supported layer types.")
+
+        # 3b. Resolve one threshold per weighted layer (Conv2d / Linear)
+        weighted_layers = self._weighted_layers(model, int16_sd, shape_info)
+
+        if neuron_type == "ANN":
+            if scales is not None:
+                warnings.warn("neuron_type='ANN' uses theta=0; the 'scales' argument is ignored.", UserWarning)
+            thresholds = {layer["name"]: 0 for layer in weighted_layers}
+        elif self.quantization_aware_training:
+            if scales is not None:
+                warnings.warn(
+                    "quantization_aware_training=True computes thresholds from the weights; "
+                    "the 'scales' argument is ignored.", UserWarning
+                )
+            thresholds = {layer["name"]: qat_scales[f"{layer['name']}.weight"] for layer in weighted_layers}
+        elif self.post_training_quantization:
+            if scales is not None:
+                warnings.warn(
+                    "post_training_quantization=True computes thresholds from the weights; "
+                    "the 'scales' argument is ignored.", UserWarning
+                )
+            unkeyed_thresholds = []
+            for name, layer in quant_model.named_modules():
+                if hasattr(layer, "v_threshold"):
+                    unkeyed_thresholds.append(layer.v_threshold)
+            thresholds = {layer["name"]: thresh for layer, thresh in zip(weighted_layers, unkeyed_thresholds)}
+        else:
+            thresholds = self._resolve_thresholds(scales, weighted_layers)
+
+        if weighted_layers:
+            print(f"Neuron thresholds ({neuron_type}):\n" + self._format_layer_table(weighted_layers, thresholds))
+
+        # Handlers look thresholds up by "{layer_name}.weight"
+        scales = {f"{name}.weight": value for name, value in thresholds.items()}  #final scales dictionary used in handlers
 
         # 4. Global Intermediate Representations (IR)
         axons = {}
@@ -789,7 +1036,7 @@ class ModularSNNConverter:
             neuron = LIF_neuron(theta=scales[weight_key])
 
         elif neuron_type == "ANN":
-            neuron = ANN_neuron(theta=0)
+            neuron = ANN_neuron(theta=scales[weight_key])
 
         else:
             raise ValueError(f"Unsupported neuron type detected: {neuron_type} for layer {layer_name}")
@@ -948,7 +1195,7 @@ class ModularSNNConverter:
             neuron = LIF_neuron(theta=scales[weight_key])
 
         elif neuron_type == "ANN":
-            neuron = ANN_neuron(theta=0)
+            neuron = ANN_neuron(theta=scales[weight_key])
 
         else:
             raise ValueError(f"Unsupported neuron type detected: {neuron_type} for layer {layer_name}")
