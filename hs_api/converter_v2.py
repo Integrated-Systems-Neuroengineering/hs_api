@@ -71,12 +71,80 @@ Assumptions and limitations
 - A Linear layer that follows a spatial layer assumes the activations were
   flattened in PyTorch's default channel-major (C, H, W) order.
 
-Example
--------
+Quantization modes
+------------------
+The hardware uses integer weights, so every weight and bias is converted to
+an integer and every IF/LIF threshold is expressed on the same integer scale.
+Choose one of three modes when creating the converter (at most one of the two
+flags may be True):
+
+=============================  =====================  ==========================
+Mode                           Weights passed in      IF / LIF thresholds
+=============================  =====================  ==========================
+quantization_aware_training    floating point         per-layer scale computed
+                                                      from the weights
+post_training_quantization     floating point         each spiking layer's
+                                                      v_threshold * 32767 
+                                                      (by default but can be changed
+                                                      manually)
+neither (default)              already quantized      given by the user via
+                               (int16)                convert(scales=...)
+=============================  =====================  ==========================
+
+Quantization-aware training (QAT)
+    fp32_to_int16_state_dict() scales each weight tensor so that its
+    largest absolute value maps to 32767. The threshold of the layer is that
+    scale, i.e. the integer equivalent of a floating-point activation of 1.0.
+
+Post-training quantization (PTQ)
+    hs_api.quantizer.Quantize_Network (w_alpha=1, 16 bits) quantizes a
+    copy of the model:
+
+    - weights and biases are clipped to [-1, 1] and mapped to whole numbers
+      in [-32767, 32767] (they stay float tensors holding integer values);
+    - each spiking neuron layer (spikingjelly IFNode / LIFNode or
+      hs_api.custom_neurons Custom_IFNode / Custom_LIFNode) has its
+      v_threshold converted to int(v_threshold * 32767).
+
+    The k-th spiking layer's threshold is assigned to the k-th weighted
+    layer (Conv2d / Linear), so the model must contain one spiking layer
+    after every weighted layer, in the same order. Quantize_Network prints
+    weight statistics for every quantized layer.
+
+Already quantized weights (no QAT, no PTQ)
+    Non-int16 tensors are cast to int16 with a warning. Because the scale
+    used to quantize them is unknown, the thresholds must be supplied with
+    convert(scales=...) as a single number, a list (one value per weighted
+    layer, in model order) or a dict {layer_name: threshold}. If scales is
+    omitted, the user is prompted, which only works in an interactive
+    terminal (not under nohup).
+
+With neuron_type="ANN" all thresholds are 0 regardless of the mode. In
+every mode, convert() prints a table of the weighted layers and their
+thresholds.
+
+Examples
+--------
+Quantization-aware training:
+
 >>> converter = ModularSNNConverter(neuron_type="IF",
 ...                                 quantization_aware_training=True)
 >>> config = converter.convert(model, "lenet5.pth", (1, 1, 28, 28))
 >>> config["axons"], config["connections"], config["outputs"]
+
+Post-training quantization (model contains IFNode / LIFNode layers):
+
+>>> converter = ModularSNNConverter(neuron_type="IF",
+...                                 post_training_quantization=True)
+>>> config = converter.convert(snn_model, "snn.pth", (1, 2, 64, 64))
+
+Already quantized weights, thresholds supplied by the user:
+
+>>> converter = ModularSNNConverter(neuron_type="IF")
+>>> config = converter.convert(model, "int16.pth", (1, 1, 28, 28),
+...                            scales=[128, 96, 64])          # one per layer
+>>> config = converter.convert(model, "int16.pth", (1, 1, 28, 28),
+...                            scales={"conv1": 128, "conv2": 96, "fc1": 64})
 """
 
 from hs_api.neuron_models import IF_neuron, ANN_neuron, LIF_neuron
@@ -94,38 +162,57 @@ class ModularSNNConverter:
     """
     Convert a feed-forward PyTorch model into a CRI axon/neuron network.
 
-    The converter loads weights into the model, quantizes them to int16 (or
-    validates that they already are), traces the tensor shape at every layer
-    with a sample input, and then walks the model layer by layer, delegating
-    each layer to the handler registered for its type. Handlers append to
-    shared axons, connections and outputs structures that together
-    form the CRI network description.
+    The converter loads weights into the model, quantizes them to integers
+    (QAT or PTQ) or validates that they already are, works out one threshold
+    per weighted layer, traces the tensor shape at every layer with a sample
+    input, and then walks the model layer by layer, delegating each layer to
+    the handler registered for its type. Handlers append to shared axons,
+    connections and outputs structures that together form the CRI
+    network description. See "Quantization modes" in the module docstring.
 
     Parameters
     ----------
+    neuron_type : {"ANN", "IF", "LIF"}
+        Neuron model used for every converted layer. "ANN"
+        creates memory-less ANN_neuron
+        instances with theta=0. "IF" / "LIF" create
+        integrate-and-fire / leaky integrate-and-fire neurons. For weighted
+        layers the threshold depends on the quantization mode (see below);
+        for pooling layers it is set by the pooling window.
+    quantization_aware_training : bool, optional
+        If True, the supplied weights are assumed to be floating point
+        (e.g. from a QAT model) and are quantized to int16 with a per-tensor
+        symmetric scale by fp32_to_int16_state_dict(). Each layer's
+        threshold is its weight scale. Default False.
+    post_training_quantization : bool, optional
+        If True, the supplied weights are assumed to be floating point and
+        the model is quantized with hs_api.quantizer.Quantize_Network
+        (w_alpha=1, 16 bits): weights and biases are clipped to [-1, 1] and
+        scaled by 32767, and each layer's threshold is the v_threshold of
+        the matching spiking neuron layer (IFNode, LIFNode, ...) in the model,
+        scaled by 32767. The model must contain one spiking layer after every
+        Conv2d / Linear layer. Default False.
+
+        If neither quantization_aware_training nor
+        post_training_quantization is True, the weights are assumed to be
+        quantized already; any non-int16 tensor is cast to int16 with a
+        warning, and the thresholds come from the scales argument of
+        convert() (or are requested interactively via get_scales() if it is
+        omitted).
     energy_efficient_mode : bool, optional
         Controls how bias terms are implemented. If False (default),
         biases are implemented with always-firing bias *neurons*
         (BiasN.k) placed inside the network. If True, biases are
         implemented with bias *axons* (BiasA.*) that are activated by the user,
-        which avoids spending energy on always-firing bias neurons. In this mode the 
+        which avoids spending energy on always-firing bias neurons. In this mode the
         bias axon names are also returned under "bias_axons" so the user
-        knows which axons to activate at a given timestep. 
-    quantization_aware_training : bool
-        If True, the supplied weights are assumed to be floating point
-        (e.g. from a QAT model) and are quantized to int16 with a per-tensor
-        symmetric scale by fp32_to_int16_state_dict(). If False,
-        the weights are assumed to be quantized already; any
-        non-int16 tensor is cast to int16 with a warning, and the neuron
-        thresholds come from the scales argument of convert() (or are
-        requested interactively via get_scales() if it is omitted).
-    neuron_type : {"ANN", "IF", "LIF"}
-        Neuron model used for every converted layer. "ANN"
-        creates memory-less ANN_neuron
-        instances with theta=0. "IF" / "LIF" create
-        integrate-and-fire / leaky integrate-and-fire neurons whose threshold
-        is derived from the layer's quantization scale (weighted layers) or
-        from the pooling window (pooling layers).
+        knows which axons to activate at a given timestep.
+
+    Raises
+    ------
+    ValueError
+        If quantization_aware_training and post_training_quantization
+        are both True.
 
     Attributes
     ----------
@@ -146,6 +233,8 @@ class ModularSNNConverter:
     energy_efficient_mode : bool
         See the parameter of the same name.
     quantization_aware_training : bool
+        See the parameter of the same name.
+    post_training_quantization : bool
         See the parameter of the same name.
     neuron_type : str
         See the parameter of the same name.
@@ -208,8 +297,10 @@ class ModularSNNConverter:
 
             - module (nn.Module): the layer being converted.
             - layer_name (str): fully-qualified PyTorch module name.
-            - int16_sd (dict): quantized state dict.
-            - scales (dict): per-tensor quantization scales.
+            - int16_sd (dict): quantized state dict (integer-valued
+              weights and biases).
+            - scales (dict[str, float]): IF/LIF threshold of each weighted
+              layer, keyed by "{layer_name}.weight" (0 for ANN neurons).
             - shapes (dict): output of _trace_layer_shapes() for
               the whole model, keyed by module name.
             - axons, connections, outputs: the shared CRI
@@ -649,11 +740,15 @@ class ModularSNNConverter:
         Runs the full conversion pipeline:
 
         1. Load weights into model and switch it to eval mode.
-        2. Quantize the weights (QAT mode) or validate/cast them to int16
-           (non-QAT mode).
+        2. Quantize the weights: fp32_to_int16_state_dict() in QAT mode,
+           Quantize_Network in PTQ mode, or validate/cast them to int16
+           when neither is enabled.
         3. Trace per-layer input/output shapes with a random input of shape
            sample_input_shape and identify the output layer as the last
            leaf module to execute.
+        3b. Work out one threshold per weighted layer (QAT scale, PTQ
+           spiking-layer threshold, or the scales argument) and print them
+           as a table.
         4. Create the first bias neuron BiasN.1 (standard mode) or an
            empty bias-axon dict (energy-efficient mode).
         5. Walk model.named_modules() and dispatch every module that has
@@ -669,16 +764,23 @@ class ModularSNNConverter:
             Layers must be defined in the same order in which they 
             execute (see module docstring).
         weights : str or dict
-            Path to a .pth state dict or the state dict itself. In
-            non-QAT mode, non-int16 tensors in this dict are replaced in
-            place with int16 copies.
+            Path to a .pth state dict or the state dict itself. In QAT and
+            PTQ mode these are the trained floating-point weights. When
+            neither mode is enabled, non-int16 tensors in this dict are
+            replaced in place with int16 copies.
+
+            In PTQ mode the model must contain spiking neuron layers
+            (IFNode, LIFNode, Custom_IFNode or Custom_LIFNode), one after
+            every Conv2d / Linear layer, because their v_threshold values
+            become the layer thresholds.
         sample_input_shape : tuple of int
             Shape of one model input including a batch dimension of 1, e.g.
             (1, 1, 28, 28) for MNIST or (1, 784) for an MLP.
         scales : float, list of float, dict[str, float] or None, optional
             Neuron thresholds for the weighted layers (Conv2d / Linear) when
-            neuron_type is "IF" or "LIF" and QAT is not used. Ignored
-            (with a warning) for "ANN" neurons and in QAT mode.
+            neuron_type is "IF" or "LIF" and neither QAT nor PTQ is used.
+            Ignored (with a warning) for "ANN" neurons and in QAT and PTQ
+            mode, where the thresholds are computed automatically.
 
             - number: the same threshold for every weighted layer.
             - list: one threshold per weighted layer, in model order.
@@ -794,7 +896,8 @@ class ModularSNNConverter:
         elif self.post_training_quantization:
             if scales is not None:
                 warnings.warn(
-                    "post_training_quantization=True computes thresholds from the weights; "
+                    "post_training_quantization=True takes thresholds from the model's spiking "
+                    "neuron layers (v_threshold); "
                     "the 'scales' argument is ignored.", UserWarning
                 )
             unkeyed_thresholds = []
@@ -974,10 +1077,11 @@ class ModularSNNConverter:
               previous layer's {type}{L-1}.{in_channel}.{pixel} neurons.
 
         Neuron model
-            IF / LIF: threshold theta equals the layer's weight
-            quantization scale, i.e. the int16 equivalent of a
-            floating-point activation of 1.0. Users may also manually
-            input a threshold if QAT was not used.
+            IF / LIF: threshold theta is scales["{layer_name}.weight"],
+            which convert() sets according to the quantization mode:
+            the weight scale (QAT), the matching spiking layer's
+            v_threshold * 32767 (PTQ), or the value supplied with
+            convert(scales=...) (already quantized weights).
             ANN: theta=0
 
         Parameters
