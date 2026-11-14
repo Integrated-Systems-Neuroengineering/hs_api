@@ -185,7 +185,11 @@ class TestBitStream:
         mp2_dict = dict(mp2)
 
         assert len(currSpikes1[0]) == 0
-        assert len(currSpikes2[0]) != 0
+        names = [s[1] if isinstance(s, (tuple, list)) else s for s in currSpikes2[0]]
+        missing = sorted(set(f"N1.{i}" for i in range(numberAxons)) - set(names), key=lambda k: int(k.split(".")[1]))
+        assert len(names) == numberAxons and not missing, (
+            "step 1: %d spikes (%d distinct), expected %d; first missing: %s" % (len(names), len(set(names)), numberAxons,
+            [(m, "row %d grp %d" % (int(m.split(".")[1]) // 16, int(m.split(".")[1]) % 16)) for m in missing[:6]]))
 
         for i in range(numberAxons):
              neuron_name = f"N1.{i}"

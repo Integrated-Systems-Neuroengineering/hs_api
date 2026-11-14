@@ -24,7 +24,7 @@ class neuron_model(ABC):
         return hash(
             (
                 self.get_threshold(),
-                self.get_neuronModel,
+                self.get_neuronModel(),   # v13 S6: the value, not the bound method
                 self.get_shift(),
                 self.get_leak(),
             )

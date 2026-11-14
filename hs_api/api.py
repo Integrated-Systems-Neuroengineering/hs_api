@@ -61,7 +61,7 @@ class CRI_network:
     # TODO: move target config.yaml
     def __init__(
             self, axons, connections, outputs, target=None, simDump=False, coreID=0,
-            syn_64bit=False, syn_delay=0, membership=None, n_cores=None
+            syn_64bit=False, syn_delay=0, membership=None, n_cores=None, plasticity=None
     ):
         # return
         # breakpoint()
@@ -83,7 +83,7 @@ class CRI_network:
         if type(axons) == dict:
             for keys in axons:
                 for values in axons[keys]:
-                    if not ((type(values) == tuple) and (len(values) in (2, 3))):
+                    if not ((type(values) == tuple) and (len(values) in (2, 3, 4))):
                         logging.error(
                             "Each synapse should only consists of 2 elements: neuron, weight"
                         )
@@ -99,7 +99,7 @@ class CRI_network:
                     for values in connections[keys][
                         synapseIdx
                     ]:  # synapse list is first element in tuple
-                        if not ((type(values) == tuple) and (len(values) in (2, 3))):
+                        if not ((type(values) == tuple) and (len(values) in (2, 3, 4))):
                             logging.error(
                                 "Each synapse should only consists of 2 elements: neuron, weight"
                             )
@@ -140,9 +140,20 @@ class CRI_network:
             # when the padding runs.
             self.membership = membership
             self.n_cores = n_cores
-            if membership is not None:
-                self.connectome.apply_partition(membership)
-            self.connectome.pad_models()
+            self.noc_plan = None
+            if membership is not None and len(set(membership.values())) > 1:   # v13 multi-core: the NoC compiler
+                pass   # v13 NOC64: 64-bit synapses, delays and plasticity are carried by the NoC compiler per core
+                for key, core in membership.items():
+                    obj = self.connectome.get_neuron_by_key(key)
+                    if obj is None: raise KeyError("membership names %r, which is not in the network" % (key,))
+                    obj.set_core(core)
+                self.connectome.pad_models()
+                import noc_compiler.hs_integration as _noc
+                self.noc_plan = _noc.plan_from_connectome(self.connectome)
+            else:
+                if membership is not None:
+                    self.connectome.apply_partition(membership)
+                self.connectome.pad_models()
             formatedOutputs = self.connectome.get_outputs_idx()
             print("formatedOutputs:", formatedOutputs)
             self.CRI = network(
@@ -154,9 +165,12 @@ class CRI_network:
                 syn_delay=syn_delay,
                 membership=membership,
                 n_cores=n_cores,
+                plasticity=plasticity,
+                noc_plan=self.noc_plan,
             )
             self.CRI.initalize_network()
-            self._load_noc_routing()
+            if self.noc_plan is not None: self.CRI.load_noc_routes(self.noc_plan)
+            else: self._load_noc_routing()
         elif self.target == "simpleSim":
             formatedOutputs = self.connectome.get_outputs_idx()
             self.simpleSim = simple_sim(
@@ -245,10 +259,11 @@ class CRI_network:
             synapses = self.userAxons[axonKey]
             for axonSynapse in synapses:
                 weight = axonSynapse[1]
-                delayed = axonSynapse[2] if len(axonSynapse) == 3 else False
+                delayed = axonSynapse[2] if len(axonSynapse) >= 3 else False
+                rule = axonSynapse[3] if len(axonSynapse) == 4 else 0     # plasticity rule slot
                 postsynapticNeuron = self.connectome.connectomeDict[axonSynapse[0]]
                 self.connectome.connectomeDict[axonKey].addSynapse(
-                    postsynapticNeuron, weight, delayed=delayed
+                    postsynapticNeuron, weight, delayed=delayed, rule=rule
                 )
         # print("added axon synpases")
         for neuronKey in self.userConnections:
@@ -257,10 +272,11 @@ class CRI_network:
             # breakpoint()
             for neuronSynapse in synapses:
                 weight = neuronSynapse[1]
-                delayed = neuronSynapse[2] if len(neuronSynapse) == 3 else False
+                delayed = neuronSynapse[2] if len(neuronSynapse) >= 3 else False
+                rule = neuronSynapse[3] if len(neuronSynapse) == 4 else 0     # plasticity rule slot
                 postsynapticNeuron = self.connectome.connectomeDict[neuronSynapse[0]]
                 self.connectome.connectomeDict[neuronKey].addSynapse(
-                    postsynapticNeuron, weight, delayed=delayed
+                    postsynapticNeuron, weight, delayed=delayed, rule=rule
                 )
         # print("added neuron synapses")
 
@@ -567,6 +583,51 @@ class CRI_network:
             logging.error("NoC routing tables were NOT loaded (%s) -- the "
                           "network will run with every core isolated", e)
 
+    def reward(self, R):
+        """Plasticity: reward R (signed, Q8.8 weight units) to every core; eligibility rules apply it."""
+        self.CRI.reward(R)
+
+    def _spike_keys(self, spikeList):
+        """Reported spikes (counter, per-core index, core) -> neuron keys.  An address that belongs to no neuron of this
+        network is counted in self.unknown_spikes, logged, and left out; a nonzero count means the card reported
+        something it should not have."""
+        if getattr(self, "noc_plan", None) is not None:   # v13: global and secondary addresses fold into their neuron
+            import noc_compiler.hs_integration as _noc
+            def _unknown(core, addr):
+                self.unknown_spikes = getattr(self, 'unknown_spikes', 0) + 1
+                logging.warning('spike from core %d address %d belongs to no neuron of this network '
+                                '(unknown spikes so far: %d)' % (core, addr, self.unknown_spikes))
+            return _noc.spike_keys(self.noc_plan, spikeList, _unknown)
+        keys = []
+        cri = getattr(self, "CRI", None); p2c = {}   # v13 SPIKECORE: spike words carry the physical core; map it back
+        for c, ph in (getattr(cri, "core_target", None) or {}).items(): p2c.setdefault(int(ph), int(c))
+        if not p2c and getattr(cri, "coreOveride", None) is not None: p2c = {int(cri.coreOveride): 0}
+        for spike in spikeList:
+            core = spike[2] if len(spike) > 2 else 0
+            core = p2c.get(int(core), core)   # v13 SPIKECORE: physical core -> connectome core
+            n = self.connectome.get_neuron_by_core_idx(core, spike[1])
+            if n is None:
+                self.unknown_spikes = getattr(self, 'unknown_spikes', 0) + 1
+                logging.warning('spike from core %d address %d belongs to no neuron of this network '
+                                '(unknown spikes so far: %d)' % (core, spike[1], self.unknown_spikes))
+                continue
+            keys.append(n.get_user_key())
+        return keys
+
+    def _cont_spike_keys(self, spikeList):
+        """run_cont spikes (step counter, index) -> (step counter, key); an unknown index is counted and logged as in
+        _spike_keys."""
+        out = []
+        for spike in spikeList:
+            n = self.connectome.get_neuron_by_idx(spike[1])
+            if n is None:
+                self.unknown_spikes = getattr(self, 'unknown_spikes', 0) + 1
+                logging.warning('run_cont: spike at index %d belongs to no neuron of this network '
+                                '(unknown spikes so far: %d)' % (spike[1], self.unknown_spikes))
+                continue
+            out.append((spike[0], n.get_user_key()))
+        return out
+
     def step(self, inputs, target="simpleSim", membranePotential=False):
         """
         Runs a step of the simulation.
@@ -612,6 +673,11 @@ class CRI_network:
             axonObj = self.connectome.get_neuron_by_key(symbol)
             formated_inputs.setdefault(axonObj.get_core(), []).append(
                 axonObj.get_coreTypeIdx())
+        if getattr(self, "noc_plan", None) is not None:   # v13: an input feeds every core its targets are on
+            formated_inputs = {}
+            for symbol in inputs:
+                for core, idx in self.noc_plan["input_map"][symbol]:
+                    formated_inputs.setdefault(core, []).append(idx)
         if self.target != "CRI":
             formated_inputs = [i for core in sorted(formated_inputs)
                                for i in formated_inputs[core]]
@@ -647,12 +713,7 @@ class CRI_network:
                     # we currently ignore the run execution counter.  A spike is
                     # (counter, per-core index, core); the pair identifies the
                     # neuron, the index alone does not.
-                    spikeList = [
-                        self.connectome.get_neuron_by_core_idx(
-                            spike[2] if len(spike) > 2 else 0,
-                            spike[1]).get_user_key()
-                        for spike in spikeList
-                    ]
+                    spikeList = self._spike_keys(spikeList)
                     for sk in spikeList:
                         if sk in self._delay_map:
                             for ak, dv in self._delay_map[sk]:
@@ -669,12 +730,7 @@ class CRI_network:
                     spikeResult = self.CRI.run_step(formated_inputs, membranePotential)
                     # breakpoint()
                     spikeList = spikeResult[0]
-                    spikeList = [
-                        self.connectome.get_neuron_by_core_idx(
-                            spike[2] if len(spike) > 2 else 0,
-                            spike[1]).get_user_key()
-                        for spike in spikeList
-                    ]
+                    spikeList = self._spike_keys(spikeList)
                     for sk in spikeList:
                         if sk in self._delay_map:
                             for ak, dv in self._delay_map[sk]:
@@ -721,9 +777,6 @@ class CRI_network:
         spikeList = result[0]
         # breakpoint()
         if self.simDump == False:
-            spikeList = [
-                (spike[0], self.connectome.get_neuron_by_idx(spike[1]).get_user_key())
-                for spike in spikeList
-            ]
+            spikeList = self._cont_spike_keys(spikeList)
             return (spikeList, result[1], result[2])
         

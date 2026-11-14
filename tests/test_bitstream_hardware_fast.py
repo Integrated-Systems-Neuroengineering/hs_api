@@ -190,7 +190,11 @@ class TestBitStream:
         mp2_dict = dict(mp2)
 
         assert len(currSpikes1[0]) == 0
-        assert len(currSpikes2[0]) != 0
+        names = [s[1] if isinstance(s, (tuple, list)) else s for s in currSpikes2[0]]
+        missing = sorted(set(f"N1.{i}" for i in range(numberAxons)) - set(names), key=lambda k: int(k.split(".")[1]))
+        assert len(names) == numberAxons and not missing, (
+            "step 1: %d spikes (%d distinct), expected %d; first missing: %s" % (len(names), len(set(names)), numberAxons,
+            [(m, "row %d grp %d" % (int(m.split(".")[1]) // 16, int(m.split(".")[1]) % 16)) for m in missing[:6]]))
 
         for i in range(numberAxons):
              neuron_name = f"N1.{i}"
@@ -545,7 +549,7 @@ class TestBitStream:
             Sum of absolute value of MPs over 100 timesteps > 0 (noise present)
             
         Explanation:
-            For shift values other than -17, the LIF neuron should inject
+            For shift values above -16, the LIF neuron should inject (-16 and -17: no noise)
             noise into the membrane potential. Even with no axonal input, the 
             neuron's MP should fluctuate due to the noise injection. Over 100
             time steps, the cumulative sum should be nonzero, demonstrating that noise
@@ -567,7 +571,11 @@ class TestBitStream:
             mp_sum += abs(mp[0][1])  # Add absolute MP value to sum
         
         # Test passes if total MP sum is 0
-        assert mp_sum > 0, f"Shift={shift}: Expected MP sum to be nonzero, got {mp_sum}"
+        if shift <= -16:
+            # specification: shift -16 and -17 inject no noise (noise spec fix)
+            assert mp_sum == 0, f"Shift={shift}: Expected no noise (MP sum 0), got {mp_sum}"
+        else:
+            assert mp_sum > 0, f"Shift={shift}: Expected MP sum to be nonzero, got {mp_sum}"
 
     def test_network_reset(self, setup_dictionaries):
         """Test network reset without running flash.sh by running two different networks back-to-back
