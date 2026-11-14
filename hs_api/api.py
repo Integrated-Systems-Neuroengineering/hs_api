@@ -579,8 +579,12 @@ class CRI_network:
         network is counted in self.unknown_spikes, logged, and left out; a nonzero count means the card reported
         something it should not have."""
         keys = []
+        cri = getattr(self, "CRI", None); p2c = {}   # v13 SPIKECORE: spike words carry the physical core; map it back
+        for c, ph in (getattr(cri, "core_target", None) or {}).items(): p2c.setdefault(int(ph), int(c))
+        if not p2c and getattr(cri, "coreOveride", None) is not None: p2c = {int(cri.coreOveride): 0}
         for spike in spikeList:
             core = spike[2] if len(spike) > 2 else 0
+            core = p2c.get(int(core), core)   # v13 SPIKECORE: physical core -> connectome core
             n = self.connectome.get_neuron_by_core_idx(core, spike[1])
             if n is None:
                 self.unknown_spikes = getattr(self, 'unknown_spikes', 0) + 1

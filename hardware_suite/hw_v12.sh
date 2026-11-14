@@ -3,7 +3,7 @@
 # Results: <kit>/results_<date>/.  Put round 27's heavy-spike replay (r_heavy_p0_tx.txt) in <kit>/sim/ to compare the
 # card with the simulation.  Status bits 16-19 (watchdog, bypass, delay-slot overflow, Phase-2 fallback) must never set.
 K=$(cd "$(dirname "$0")" && pwd); T=${HW_SW:-$(cd "$K/../.." && pwd)}
-B=${HW_BIT:-/bitstreams/sixteen_core_noc_v12c_ila.bit}   # the bitstream under test (v12c: v12b + fix 29, each core leaves reset on one clock edge)
+B=${HW_BIT:-/bitstreams/sixteen_core_noc_v14_ila.bit}   # the bitstream under test (v14: the 16-core NoC with fixes 1-35; this suite runs each test on the core HW_CORE selects)
 C=${HW_CORE:-1}                  # the core under test (0-15); hw_v12_sweep.sh runs this on every core
 case $C in [0-9]|1[0-5]) ;; *) echo "HW_CORE must be 0-15"; exit 1;; esac
 O=$K/results_core${C}_$(date +%m%d_%H%M); mkdir -p $O; S=$O/summary.txt
