@@ -522,7 +522,17 @@ class simple_sim:
             # spike when the membrane potential > self.threshold
             spiked_inds = np.nonzero(self.membranePotentials() > threshs)
 
-            self.membranePotentials[spiked_inds] = 0
+            soft_resets = np.array([self.connections[key][1].get_soft_reset_en() 
+                         for key in self.connections.keys()])
+            soft_reset_inds = spiked_inds[0][soft_resets[spiked_inds[0]].astype(bool)]
+            hard_reset_inds = spiked_inds[0][~soft_resets[spiked_inds[0]].astype(bool)]
+            if len(hard_reset_inds) > 0:
+                self.membranePotentials[hard_reset_inds] = 0
+            if len(soft_reset_inds) > 0:
+                self.membranePotentials[soft_reset_inds] = (
+                    self.membranePotentials[soft_reset_inds] - 
+                    np.array(threshs)[soft_reset_inds]
+                )
             # TODO: you may be able to avoid the transpose if you use fortran ordering flatten
             self.firedNeurons = np.transpose(spiked_inds).flatten().tolist()
 
@@ -538,8 +548,9 @@ class simple_sim:
             #update LIF neurons
             #
             if lifNeurons.size > 0:
-                self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - (self.membranePotentials[lifNeurons] // np.power(2, leaks[lifNeurons]))
-
+                clamped_leaks = np.where(leaks[lifNeurons] >= 32, 32, leaks[lifNeurons])
+                leak_terms = self.membranePotentials[lifNeurons] // np.power(2, clamped_leaks)
+                self.membranePotentials[lifNeurons] = self.membranePotentials[lifNeurons] - leak_terms      
 
             #update ANN neurons
             if memLessNeurons.size > 0:
