@@ -46,7 +46,7 @@ class LIF_neuron(neuron_model):
 
     """
 
-    def __init__(self, threshold, shift, leak, refractory_max=0, dual_synapse_en=False, delay_value=0, soft_reset_en=False):
+    def __init__(self, threshold, shift, leak, refractory_max=0, dual_synapse_en=False, delay_value=0, soft_reset_en=False, decay_ex=0):
         self.threshold = threshold
         self.shift = shift
         self.leak = leak
@@ -54,6 +54,7 @@ class LIF_neuron(neuron_model):
         self.dual_synapse_en = dual_synapse_en
         self.delay_value = delay_value
         self.soft_reset_en = soft_reset_en
+        self.decay_ex = decay_ex
 
     def get_threshold(self):
         return self.threshold
@@ -78,6 +79,10 @@ class LIF_neuron(neuron_model):
 
     def get_soft_reset_en(self):
         return getattr(self, 'soft_reset_en', False)
+
+    def get_decay_ex(self):
+        return self.decay_ex
+        
     def get_shadow_uram_offset(self):
         return getattr(self, 'shadow_uram_offset', 0)
     def get_legacy_noise_en(self):

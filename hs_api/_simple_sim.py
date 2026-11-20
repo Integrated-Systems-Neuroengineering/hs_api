@@ -366,6 +366,7 @@ class simple_sim:
         self.membranePotentials = Fxp(
             np.zeros(numNeurons), dtype=self.formatDict["membrane_potential"]
         )
+        self.I_ex = np.zeros(numNeurons, dtype=np.int32)
         self.firedNeurons = []  # np.array([], dtype=np.single)
 
     """
@@ -486,6 +487,7 @@ class simple_sim:
         # breakpoint()
         #
         leaks = np.array(self.get_leak())
+        decay_exs = np.array([self.connections[key][1].get_decay_ex() for key in self.connections.keys()])
         threshs = self.get_threshold()
         perturbs = self.get_perturbMag()
         lifNeurons = np.where(np.array(self.get_model()) == 2)[0]
@@ -555,6 +557,11 @@ class simple_sim:
             #update ANN neurons
             if memLessNeurons.size > 0:
                 self.membranePotentials[memLessNeurons] = 0
+                # decay I_ex and add to V
+            psc_neurons = np.where(decay_exs > 0)[0]
+            if psc_neurons.size > 0:
+                self.I_ex[psc_neurons] = (self.I_ex[psc_neurons] * decay_exs[psc_neurons]) >> 12
+                self.membranePotentials[psc_neurons] = self.membranePotentials[psc_neurons] + self.I_ex[psc_neurons]
 
 
             # leakage = Fxp(self.membranePotentials, dtype=self.formatDict['membrane_potential'])
@@ -589,11 +596,14 @@ class simple_sim:
             )
 
             # breakpoint()
-            combinedUpdates = membraneUpdates + membraneUpdatesAxon
-            # breakpoint()
-            membranePotentials = self.membranePotentials + combinedUpdates.transpose()
+            combinedUpdates = (membraneUpdates + membraneUpdatesAxon).transpose().get_val().toarray().flatten()
+            # Route positive weights to I_ex for PSC neurons, negative to V
+            for i in psc_neurons:
+                if combinedUpdates[i] >= 0:
+                    self.I_ex[i] += int(combinedUpdates[i])
+                    combinedUpdates[i] = 0
+            membranePotentials = self.membranePotentials + Fxp(combinedUpdates, dtype=self.formatDict["membrane_potential"])
             membranePotentials = membranePotentials.flatten()
-            # breakpoint()
             self.membranePotentials(membranePotentials)
             # breakpoint()
             self.stepNum = self.stepNum + 1
