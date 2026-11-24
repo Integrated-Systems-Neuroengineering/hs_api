@@ -614,6 +614,19 @@ class CRI_network:
             keys.append(n.get_user_key())
         return keys
 
+    def _membrane_keys(self, output):
+        keyed = []
+        position = {}
+        for data in output:
+            core = data[-1]
+            idx = position.get(core, 0)
+            position[core] = idx + 1
+            n = self.connectome.get_neuron_by_core_idx(core, idx)
+            if n is None:
+                raise RuntimeError('membrane value %d of core %d belongs to no neuron of this network' % (idx, core))
+            keyed.append((n.get_user_key(), data[3]))
+        return keyed
+
     def _cont_spike_keys(self, spikeList):
         """run_cont spikes (step counter, index) -> (step counter, key); an unknown index is counted and logged as in
         _spike_keys."""
@@ -720,10 +733,7 @@ class CRI_network:
                                 self._delay_queue.append((ak, max(0, dv - 1)))
                     numNeurons = len(self.connections)
                     # we currently only print the membrane potential, not the other contents of the spike packet
-                    output = [
-                        (self.connectome.get_neuron_by_hbmIdx(idx).get_user_key(), data[3])
-                        for idx, data in enumerate(output)
-                    ]  # because the number of neurons will always be a perfect multiple of 16 there will be extraneous neurons at the end so we slice the output array just to get the numNerons valid neurons, due to the way we construct networks the valid neurons will be first
+                    output = self._membrane_keys(output)
                     return output, (spikeList, spikeResult[1], spikeResult[2])
                 else:
                     # breakpoint()
